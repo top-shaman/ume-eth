@@ -1,9 +1,3 @@
-require('@babel/register');
-require('@babel/polyfill');
-require('dotenv').config();
-const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
-const privateKeys = process.env.PRIVATE_KEYS || ""
-
 module.exports = {
   networks: {
     development: {
@@ -60,7 +54,7 @@ module.exports = {
   contracts_build_directory: './src/abis/',
   compilers: {
     solc: {
-      version: ">=0.6.0 <0.8.0",
+      version: ">=0.8.0 <0.9.0",
       optimizer: {
         enabled: true,
         runs: 200
