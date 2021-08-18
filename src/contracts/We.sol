@@ -13,27 +13,27 @@ contract We {
   uint umeToMint = 0;
   uint256[7] meIds = [0,1,2,3,4,5,6];
 
-  mapping(address => uint) postRedeemed;
-  mapping(address => uint) likeRedeemed;
-  mapping(address => uint) tagRedeemed;
-  mapping(address => uint) followRedeemed;
-  mapping(address => uint) respondRedeemed;
-  mapping(address => uint) curateRedeemed;
-  mapping(address => uint) juryRedeemed;
+  mapping(address => uint) public postRedeemed;
+  mapping(address => uint) public likeRedeemed;
+  mapping(address => uint) public tagRedeemed;
+  mapping(address => uint) public followRedeemed;
+  mapping(address => uint) public respondRedeemed;
+  mapping(address => uint) public curateRedeemed;
+  mapping(address => uint) public juryRedeemed;
 
 
-  mapping(address => uint) postInCache;
-  mapping(address => uint) likeInCache;
-  mapping(address => uint) tagInCache;
-  mapping(address => uint) followInCache;
-  mapping(address => uint) respondInCache;
-  mapping(address => uint) curateInCache;
-  mapping(address => uint) juryInCache;
+  mapping(address => uint) public postInCache;
+  mapping(address => uint) public likeInCache;
+  mapping(address => uint) public tagInCache;
+  mapping(address => uint) public followInCache;
+  mapping(address => uint) public respondInCache;
+  mapping(address => uint) public curateInCache;
+  mapping(address => uint) public juryInCache;
 
-  mapping(address => uint) redeemStart;
-  mapping(address => bool) isCalculated;
-  mapping(address => bool) isCached;
-  mapping(address => bool) isRedeemed;
+  mapping(address => uint) public redeemStart;
+  mapping(address => bool) public isCalculated;
+  mapping(address => bool) public isCached;
+  mapping(address => bool) public isRedeemed;
 
   event MintUME(address account, uint mintTime, uint amount);
 
@@ -42,12 +42,12 @@ contract We {
     umeToken = _umeToken;
   }
   // cache ME
-  function cache() private {
+  function cache() public returns(bool){
     require(isCached[msg.sender]!=true, 'Error: cache already active');
     require(isCalculated[msg.sender]!=true, 'Error: cache already calculated');
     // reset isRedeemed
     require(isRedeemed[msg.sender]!=true, 'Error: cache has been redeemed');
-
+/*
     uint256[7] memory _meBalances;
     for(uint8 i = 0; i < 7; i++) {
       _meBalances[i] = meToken.balanceOf(msg.sender, i);
@@ -68,11 +68,22 @@ contract We {
     for(uint i = 0; i < 7; i++) {
       meToken.safeTransferFrom(address(msg.sender), address(this), i, _meBalances[i], msg.data);
     }
+*/
+/*
+    postInCache[msg.sender] = meToken.balanceOf(msg.sender, 0);
+    likeInCache[msg.sender] = meToken.balanceOf(msg.sender, 1);
+    tagInCache[msg.sender] = meToken.balanceOf(msg.sender, 2);
+    followInCache[msg.sender] = meToken.balanceOf(msg.sender, 3);
+    respondInCache[msg.sender] = meToken.balanceOf(msg.sender, 4);
+    curateInCache[msg.sender] = meToken.balanceOf(msg.sender, 5);
+    juryInCache[msg.sender] = meToken.balanceOf(msg.sender, 6);
+*/
 
     isCached[msg.sender] = true;
+    return true;
   }
   // calculate UME to mint
-  function calculate() private {
+  function calculate() public {
     require(isCached[msg.sender]==true, 'Error: ME hasn\'t cached');
     require(postInCache[msg.sender] > 0 ||
             likeInCache[msg.sender] > 0 ||
@@ -96,7 +107,7 @@ contract We {
     isCalculated[msg.sender] = true;
   }
 
-  function clear() private {
+  function clear() public {
     require(isRedeemed[msg.sender]==true, 'Error: cache hasn\'t yet been redeemed');
     postInCache[msg.sender] = 0;
     likeInCache[msg.sender] = 0;
@@ -111,10 +122,8 @@ contract We {
     isRedeemed[msg.sender] = false;
   }
 
-  function redeem() payable public {
+  function redeem() public {
     // cache to get values
-    cache();
-    calculate();
 
     umeToken.mint(msg.sender, umeToMint);
     isRedeemed[msg.sender] = true;
