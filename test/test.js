@@ -24,15 +24,17 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('We', ([deployer, user1, user2]) => {
-  let we, umeToken, user1MeToken
+contract('Timeline', ([deployer, user1, user2]) => {
+  let we, umeToken, timeline
 
   beforeEach(async () => {
     umeToken = await UME.new()
     we = await We.new(umeToken.address)
+    timeline = await Timeline.new(umeToken.address)
     await umeToken.passMinterRole(we.address, {from: deployer})
 
   })
+  /*
   describe ('testing basic UME minting functionality', () => {
     describe('success', () => {
       it('checking UME token name', async () => {
@@ -68,13 +70,13 @@ contract('We', ([deployer, user1, user2]) => {
         expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
       })
       it('checking if Respond mints', async () => {
-        await umeToken.mintRespond(user1, user2, '0x12345', '0x0678919', {from: user1}) // sample Respond
+        await umeToken.mintRespond(user1, user2, '0x12345', {from: user1}) // sample Respond
 
         expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('2')
         expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('4')
       })
       it('checking if Curate mints', async () => {
-        await umeToken.mintCurate(user1, user2, '0x12345', '0x0678919', {from: user1}) // sample Curate
+        await umeToken.mintCurate(user1, user2, '0x12345', {from: user1}) // sample Curate
 
         expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('2')
         expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('4')
@@ -170,6 +172,17 @@ contract('We', ([deployer, user1, user2]) => {
       it('minting role should not be able to be passed between users who don\'t have it', async () => {
         await umeToken.passMinterRole(user1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
       })
+    })
+  })*/
+  describe('testing Timeline functionality', () => {
+    describe('success', () => {
+      it('post meme', async () => {
+        console.log(timeline.address)
+        await timeline.newMeme(user1, '0x012345', 'hello world!', [], '0x012345', '0x012345', {from: user1})
+        expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+      })
+    })
+    describe('failure', () => {
     })
   })
 })

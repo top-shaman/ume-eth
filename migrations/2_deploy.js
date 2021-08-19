@@ -8,5 +8,8 @@ module.exports = async function(deployer) {
   const umeToken = await UME.deployed()
   await deployer.deploy(We, UME.address)
   const we = await We.deployed()
+  await deployer.deploy(Timeline, UME.address)
+  const timeline = await Timeline.deployed()
+
   await umeToken.passMinterRole(we.address)
 }

@@ -2,30 +2,45 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-import "./ME.sol";
 import "./UME.sol";
 
 contract Timeline {
   // public variables
-  ME private meToken;
+  UME private umeToken;
+  // app name
   string public name = "uMe";
   uint public memeCount = 0;
 
+
+  // mapping of Memes
+  mapping(uint => Meme) public memes; // memeId to meme map
+  /*
+  mapping(uint => uint) public memeCreation; // memeId to meme creation time
+  mapping(uint => string) public memeHashes; // memeId to memeHash
+  mapping(uint => string) public memeTexts; // memeId to memeText
+  mapping(uint => uint) public memeLikes; // memeId to like count
+  mapping(uint => uint[]) public memeLikers; // memeId to likers
+  mapping(uint => uint[]) public memeTags; // memeId to tagged, input needs to be parsed before
+  mapping(uint => uint[]) public memeResponses; // memeId to response id's
+  */
+  mapping(uint => address) public users; // memeId to user addresses
+
+  // Meme structure
   struct Meme {
-    uint memeId; // number in all of timeline
-    uint memeTime; // time of post
-    string memeHash; // hash of Meme
-    string memeText; // test of Meme
+    uint id; // number in all of timeline
+    uint time; // time of post
+    string hash; // hash of Meme
+    string text; // test of Meme
+    uint likes; // number of likes on Meme
+    address[] likers; // list of addresses of likers
+    uint[] tags; // list of id's of tagged
+    uint[] responses; // collection of id's of responses
+    uint parentId; // memeId of parent (can be self)
+    uint originId; // memeId of origin (can be self)
+    address author; // address of author
     //bool hasLink // if Meme has link
     //bool hasMedia; // if Meme has media
     //string mediaHash; // address of media
-    uint likeCount; // number of likes on Meme
-    //address[] likers; // list of addresses of likers
-    //address[] tags; // list of addresses of tagged
-    //bool isChild; // if meme is child of a previous meme
-    //string parentHash; // hash of direct parent in thread
-    //string originHash; // hash of originator of thread
-    address author; // address of author
   }
 
   event MemeCreated(
@@ -43,8 +58,6 @@ contract Timeline {
     address author
   );
 
-  // mapping of ERC1155 (ME)'s values
-  mapping(uint => Meme) public memes;
 /*
   struct Engagements {
   // engagements to mint from
@@ -57,57 +70,93 @@ contract Timeline {
     uint amtJuried;
   }
 */
-  constructor(ME _meToken) public {
-    meToken = _meToken;
+  constructor(UME _umeToken) public {
+    umeToken = _umeToken;
   }
 
-  function newMeme(string memory _memeHash, string memory _memeText) public {
+  function newMeme(address account, string memory _memeHash, string memory _memeText, uint[] memory _tags, uint _parentId, uint _originId) public {
     require(bytes(_memeHash).length > 0, 'Error: meme hash doesn\'t exist');
     require(bytes(_memeText).length > 0, 'Error: meme text doesn\'t exist');
+    require(msg.sender==account, 'Error: poster must be operating account');
     require(msg.sender != address(0x0), 'Error: author address doesn\'t exist');
 
-    // increment meme id
-    memeCount++;
-    memes[memeCount] = Meme(memeCount, block.timestamp, _memeHash, _memeText, 0, msg.sender);
+    memeCount++; // increment meme id
 
+    //memeTime[memeCount] = block.timestamp; // set creation time
+    //memeHashes[memeCount] = _memeHash; // set meme hash
+    //memeTexts[memeCount] = _memeText; // set meme text
+    //memeLikes[memeCount] = 0;
+    //memeLikers[memeCount] = []; // set likers to default
+    //memeTagged[memeCount] = tags; // set tagged to tags
+    //memeResponses[memeCount] = []; // set responses to default
+
+    users[memeCount] = msg.sender; // set meme to user address
+    // map memeId to meme (if parent & origin)
+    memes[memeCount] = Meme(
+      memeCount, // meme id
+      block.timestamp, // meme time
+      _memeHash, // meme hash
+      _memeText, // meme text
+      0, // like count
+      new address[](0), // likers
+      _tags, // tagged
+      new uint[](0), // response array
+      _parentId, // parent
+      _originId, // origin
+      msg.sender // author
+    );
+    // if responding to a single post, then mint respond token
+    if(memeCount!=_parentId && _parentId==_originId) {
+      //umeToken.mintRespond(account, users[_parentId], _memeHash);
+    } // if responding to a thread, mint respond token for parent, curate token for original
+    else if(memeCount!=_parentId && _parentId!=_originId) {
+      //umeToken.mintRespond(account, users[_parentId], _memeHash);
+      //umeToken.mintCurate(account, users[_originId], _memeHash);
+    }
     // mint post token
-    meToken.mintPost(msg.sender, _memeHash, _memeText);
+    umeToken.mintPost(msg.sender, _memeHash, _memeText);
 
-    // create token event
+    // mint tags
+    for(uint i = 0; i < _tags.length; i++) {
+      //umeToken.mintTag(account, users[_tags[i]], _memeHash);
+    }
+
     emit MemeCreated(memeCount, block.timestamp, _memeHash, _memeText, msg.sender);
   }
 
-
+  function likeMeme(address account, uint memeId) public {
+    require(account!=users[memeId], 'Error: cannot like one\'s own meme');
+    require(account==msg.sender, 'Error: liker must be operating account');
+    require(users[memeId]!=address(0x0), 'Error: Meme must exist');
+    require(memes[memeId].time==0, 'Error: Meme must exist');
+    // fetch meme from blockchain
+    //Meme memory _meme = memes[memeId];
+    //if(_meme.likes==0) {
+      //_meme.likers = new address[](0);
+    //}
 /*
-  function redeemMe(Me _me) public {
-    require(isTallied[msg.sender]==false, 'Error: ME has already been redeemed');
-    //assign ERC1155 token deployed to contract as variable
-    me = _me;
-    //extract values of each value in ERC1155 token
-    engagementsOf[msg.sender] = Engagements(
-      me.balanceOf(msg.sender, 1),
-      me.balanceOf(msg.sender, 2),
-      me.balanceOf(msg.sender, 3),
-      me.balanceOf(msg.sender, 4),
-      me.balanceOf(msg.sender, 5),
-      me.balanceOf(msg.sender, 6),
-      me.balanceOf(msg.sender, 7)
+    Meme memory _meme = Meme(
+      memes[memeId].id, // meme id
+      memes[memeId].time, // meme time
+      memes[memeId].hash, // meme hash
+      memes[memeId].text, // meme text
+      memes[memeId].likes, // like count
+      new address[](0), // likers
+      memes[memeId].tags, // tagged
+      memes[memeId].responses, // response array
+      memes[memeId].parentId, // parent
+      memes[memeId].originId, // origin
+      memes[memeId].author// author
     );
-    //me.balanceOf(msg.sender,
-    // updates redeem time to msg.sender
-    redeemStart[msg.sender] += block.timestamp;
-    // set Redeemed to true
-    isTallied[msg.sender] = true;
-    safe
-    // mint UME
-    emit RedeemMe(msg.sender, block.timestamp, umeAmt);
-  }
 */
-/*
-  function mint(address account, uint256 amount) public {
-    require(msg.sender==minter, 'Error: msg.sender is not minter');
-    require(isTallied==true, 'Error: hasn\'t redeemed');
-    _mint(account, amount);
+    // increment like count of particular image
+    //likeCount[memeId]++;
+    //memeLikers[memeId].push(msg.sender);
+    memes[memeId].likes++;
+    memes[memeId].likers.push(msg.sender);
+    //memes[memeId] = _meme;
+
+    // mint like token
+    umeToken.mintLike(msg.sender, users[memeId], memes[memeId].hash);
   }
-  */
 }
