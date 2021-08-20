@@ -34,10 +34,10 @@ contract('Timeline', ([deployer, user1, user2]) => {
     timeline = await Timeline.new(umeToken.address)
     await umeToken.passMinterRole(we.address, {from: deployer})
 
-  })
+  }) /*
   describe ('testing basic UME minting functionality', () => {
     beforeEach(async () => {
-      await umeToken.passCallerRole(user1, {from: deployer})
+      await umeToken.passCallerRole(user1, {from: deployer}) // for the sake of testing basic functionality, assign caller to user1
     })
     describe('success', () => {
       it('checking UME token name', async () => {
@@ -210,7 +210,7 @@ contract('Timeline', ([deployer, user1, user2]) => {
         await umeToken.passCallerRole(deployer, {from: user2}).should.be.rejectedWith(EVM_REVERT)
       })
     })
-  })
+  }) */
   describe('testing Timeline functionality', () => {
     beforeEach(async () => {
       await umeToken.passCallerRole(timeline.address, {from: deployer})
@@ -250,6 +250,35 @@ contract('Timeline', ([deployer, user1, user2]) => {
           expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
           expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
         })
+        it('respond & curate work when parentId & originId are different', async () => {
+          await timeline.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user1}) // user1 posts
+          await timeline.newMeme(user2, '0x67891011', 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
+          await timeline.newMeme(deployer, '0x67891011', 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
+          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
+        })
+        it('like functionality and extended response situations', async () => {
+          await timeline.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user1}) // user1 posts
+          await timeline.newMeme(user2, '0x67891011', 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
+          await timeline.newMeme(deployer, '0x67891011', 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
+          await timeline.likeMeme(user2, 1, {from: user2}) //user2 likes meme id1
+
+          const meme1 = await timeline.memes(1)
+          const meme2 = await timeline.memes(2)
+          const meme3 = await timeline.memes(3)
+          //const meme1Likers = await timeline.memeLikers(1, 0)
+          console.log(meme1)
+          console.log(meme2)
+          console.log(meme3)
+          console.log(meme1Likers)
+          console.log(meme2Likers)
+          //expect(await timeline.memes(1).likes).to.be.eq(1)
+          //expect(await timeline.memes[1].likers()).to.be.eq([user1])
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('21')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('16')
+        })
       })
       describe('failure', () => {
         it('doesn\'t post meme with wrong users', async () => {
@@ -259,7 +288,6 @@ contract('Timeline', ([deployer, user1, user2]) => {
         it('doesn\'t post meme with empty message', async () => {
           await timeline.newMeme(user1, '0x012345', '', [], 0, 0, {from: user1}).should.be.rejectedWith(EVM_REVERT)
         })
-
       })
     })
   })

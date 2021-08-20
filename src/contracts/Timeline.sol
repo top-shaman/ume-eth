@@ -19,7 +19,9 @@ contract Timeline {
   mapping(uint => string) public memeHashes; // memeId to memeHash
   mapping(uint => string) public memeTexts; // memeId to memeText
   mapping(uint => uint) public memeLikes; // memeId to like count
-  mapping(uint => uint[]) public memeLikers; // memeId to likers
+  */
+  mapping(uint => address[]) public memeLikers; // memeId to likers
+  /*
   mapping(uint => uint[]) public memeTags; // memeId to tagged, input needs to be parsed before
   mapping(uint => uint[]) public memeResponses; // memeId to response id's
   */
@@ -32,7 +34,7 @@ contract Timeline {
     string hash; // hash of Meme
     string text; // test of Meme
     uint likes; // number of likes on Meme
-    address[] likers; // list of addresses of likers
+    //address[] likers; // list of addresses of likers
     address[] tags; // list of id's of tagged
     uint[] responses; // collection of id's of responses
     uint parentId; // memeId of parent (can be self)
@@ -103,7 +105,7 @@ contract Timeline {
       _memeHash, // meme hash
       _memeText, // meme text
       0, // like count
-      new address[](0), // likers
+      // new address[](0), // likers
       _tags, // tagged
       new uint[](0), // response array
       _parentId, // parent
@@ -134,10 +136,26 @@ contract Timeline {
   function likeMeme(address account, uint memeId) public {
     require(account!=users[memeId], 'Error: cannot like one\'s own meme');
     require(account==msg.sender, 'Error: liker must be operating account');
-    require(users[memeId]!=address(0x0), 'Error: Meme must exist');
-    require(memes[memeId].time==0, 'Error: Meme must exist');
+    require(users[memeId]!=address(0x0), 'Error: Meme must exist1');
+    require(memes[memeId].time!=0, 'Error: Meme must exist2');
+    require(memeCount > 0, 'Error: Meme must exist3');
+
+
+    // set memory to _meme.likers length plus one
+    //address[] memory _likers = new address[](_meme.likers.length+1);
+
+    // check if account has already liked meme
+    for(uint i = 0; i < memeLikers[memeId].length; i++) {
+      require(account==memeLikers[memeId][i], 'Error: liker has already liked account');
+      //_likers[i] = _meme.likers[i];
+    }
+
     // fetch meme from blockchain
-    //Meme memory _meme = memes[memeId];
+    Meme memory _meme = memes[memeId];
+
+    // populate address array with existing _meme.likers
+    //for(uint i = 0; i < _meme.likers.length; i++) {
+    //}
     //if(_meme.likes==0) {
       //_meme.likers = new address[](0);
     //}
@@ -158,12 +176,13 @@ contract Timeline {
 */
     // increment like count of particular image
     //likeCount[memeId]++;
-    //memeLikers[memeId].push(msg.sender);
-    memes[memeId].likes++;
-    memes[memeId].likers.push(msg.sender);
-    //memes[memeId] = _meme;
+    memeLikers[memeId].push(msg.sender);
+    _meme.likes++;
+    //_likers[_meme.likers.length-1] = msg.sender;
+    //_meme.likers = _likers;
+    memes[memeId] = _meme;
 
     // mint like token
-    umeToken.mintLike(msg.sender, users[memeId], memes[memeId].hash);
+    umeToken.mintLike(msg.sender, users[memeId], _meme.hash);
   }
 }
