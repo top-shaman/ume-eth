@@ -12,4 +12,5 @@ module.exports = async function(deployer) {
   const timeline = await Timeline.deployed()
 
   await umeToken.passMinterRole(we.address)
+  await umeToken.passCallerRole(timeline.address)
 }

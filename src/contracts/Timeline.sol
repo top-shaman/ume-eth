@@ -33,7 +33,7 @@ contract Timeline {
     string text; // test of Meme
     uint likes; // number of likes on Meme
     address[] likers; // list of addresses of likers
-    uint[] tags; // list of id's of tagged
+    address[] tags; // list of id's of tagged
     uint[] responses; // collection of id's of responses
     uint parentId; // memeId of parent (can be self)
     uint originId; // memeId of origin (can be self)
@@ -74,14 +74,19 @@ contract Timeline {
     umeToken = _umeToken;
   }
 
-  function newMeme(address account, string memory _memeHash, string memory _memeText, uint[] memory _tags, uint _parentId, uint _originId) public {
+  function newMeme(address account, string memory _memeHash, string memory _memeText, address[] memory _tags, uint _parentId, uint _originId) public {
     require(bytes(_memeHash).length > 0, 'Error: meme hash doesn\'t exist');
     require(bytes(_memeText).length > 0, 'Error: meme text doesn\'t exist');
     require(msg.sender==account, 'Error: poster must be operating account');
     require(msg.sender != address(0x0), 'Error: author address doesn\'t exist');
 
     memeCount++; // increment meme id
-
+    if (_parentId == 0) {
+      _parentId = memeCount;
+    }
+    if (_originId == 0) {
+      _originId = 0;
+    }
     //memeTime[memeCount] = block.timestamp; // set creation time
     //memeHashes[memeCount] = _memeHash; // set meme hash
     //memeTexts[memeCount] = _memeText; // set meme text
@@ -107,18 +112,20 @@ contract Timeline {
     );
     // if responding to a single post, then mint respond token
     if(memeCount!=_parentId && _parentId==_originId) {
-      //umeToken.mintRespond(account, users[_parentId], _memeHash);
+      umeToken.mintRespond(account, users[_parentId], _memeHash);
     } // if responding to a thread, mint respond token for parent, curate token for original
     else if(memeCount!=_parentId && _parentId!=_originId) {
-      //umeToken.mintRespond(account, users[_parentId], _memeHash);
-      //umeToken.mintCurate(account, users[_originId], _memeHash);
+      umeToken.mintRespond(account, users[_parentId], _memeHash);
+      umeToken.mintCurate(account, users[_originId], _memeHash);
     }
     // mint post token
-    umeToken.mintPost(msg.sender, _memeHash, _memeText);
+    umeToken.mintPost(account, _memeHash, _memeText);
 
     // mint tags
     for(uint i = 0; i < _tags.length; i++) {
-      //umeToken.mintTag(account, users[_tags[i]], _memeHash);
+      if(account!=_tags[i]){
+        umeToken.mintTag(account, _tags[i], _memeHash);
+      }
     }
 
     emit MemeCreated(memeCount, block.timestamp, _memeHash, _memeText, msg.sender);
