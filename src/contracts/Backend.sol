@@ -46,14 +46,15 @@ contract Backend {
 
   struct User {
     uint id; // user number in order
-    string userName; // user name
-    string userAddress; // user address (@)
+    string name; // user name
+    string userAddr; // user address (@)
     uint time; // user creation time
     address addr; // address of user
     uint followerCount; // user follower count
     address[] followers; // addresses of followers
     uint followingCount; // user following count
     address[] following; // addressses of following
+    uint postCount; // post count
     uint[] posts; // memeIds of posts
   }
 
@@ -90,6 +91,7 @@ contract Backend {
       new address[](0), // addresses of followers
       0, // following count
       new address[](0), // addresses of following
+      0, // post count
       new uint[](0) // memeIds of posts
     );
   }
@@ -127,15 +129,13 @@ contract Backend {
       msg.sender // author
     );
     // if responding to a single post, then mint respond token
-    if(memeCount!=_parentId && _parentId==_originId) {
+    if(memeCount!=_parentId && _parentId==_originId && usersByMeme[_parentId]!=account) {
       umeToken.mintRespond(account, usersByMeme[_parentId], _memeHash);
     } // if responding to a thread, mint respond token for parent, curate token for original
-    else if(memeCount!=_parentId && _parentId!=_originId) {
+    else if(memeCount!=_parentId && _parentId!=_originId && usersByMeme[_originId]!=account) {
       umeToken.mintRespond(account, usersByMeme[_parentId], _memeHash);
       umeToken.mintCurate(account, usersByMeme[_originId], _memeHash);
     }
-    // mint post token
-    umeToken.mintPost(account, _memeHash, _memeText);
 
     // mint tags
     for(uint i = 0; i < _tags.length; i++) {
@@ -143,6 +143,28 @@ contract Backend {
         umeToken.mintTag(account, _tags[i], _memeHash);
       }
     }
+
+    // add meme to User posts list
+    // create user instance
+    User memory _user = users[account];
+    // create memory array with length one greater than _user.posts length
+
+    uint[] memory _posts = new uint[](_user.posts.length+1);
+    // populate memory array
+    for(uint i = 0; i < _user.posts.length; i++) {
+      _posts[i] = _user.posts[i];
+    }
+    // increment postCount
+    _user.postCount++;
+    // insert new post in last slot of array
+    _posts[_posts.length-1] = memeCount;
+    // set posts of _user instance to _posts
+    _user.posts = _posts;
+    users[account] = _user;
+
+    // mint post token
+    umeToken.mintPost(account, _memeHash, _memeText);
+
     emit MemeCreated(memeCount, block.timestamp, _memeHash, _memeText, msg.sender);
   }
 
@@ -167,9 +189,11 @@ contract Backend {
     }
     // increment meme's likes
     _meme.likes++;
-    // set likers to
+    // set _likers value to msg.sender at last slot of array
     _likers[_likers.length-1] = msg.sender;
+    // set likers field of _meme.likers to _likers
     _meme.likers = _likers;
+    // set meme at memeId to _meme instance
     memes[memeId] = _meme;
 
     // mint like token
@@ -194,8 +218,8 @@ contract Backend {
       _userToFollowers[i] = _userTo.followers[i];
     }
     // increment _userFrom's following & _userTo's followers
-    _userFrom.followerCount++;
-    _userTo.followingCount++;
+    _userFrom.followingCount++;
+    _userTo.followerCount++;
     // update last element of _userFromFollowing to accountTo
     _userFromFollowing[_userFromFollowing.length-1] = accountTo;
     // update last element of _userToFollowers to accountFrom
@@ -209,6 +233,7 @@ contract Backend {
     umeToken.mintFollow(msg.sender, accountTo);
   }
 
+  // getter functions for Meme
   function getLikers(uint memeId) public view returns(address[] memory) {
     Meme memory _meme = memes[memeId];
     address[] memory _likers = _meme.likers;
@@ -224,14 +249,38 @@ contract Backend {
     uint[] memory _responses = _meme.responses;
     return _responses;
   }
+  // getter functions for User
+  function getId(address account) public view returns(uint) {
+    return users[account].id;
+  }
+  function getName(address account) public view returns(string memory) {
+    return users[account].name;
+  }
+  function getUserAddr(address account) public view returns(string memory) {
+    return users[account].userAddr;
+  }
+  function getFollowerCount(address account) public view returns(uint) {
+    return users[account].followerCount;
+  }
   function getFollowers(address account) public view returns(address[] memory) {
     User memory _user = users[account];
     address[] memory _followers = _user.followers;
     return _followers;
   }
+  function getFollowingCount(address account) public view returns(uint) {
+    return users[account].followingCount;
+  }
   function getFollowing(address account) public view returns(address[] memory) {
     User memory _user = users[account];
     address[] memory _following = _user.following;
     return _following;
+  }
+  function getPostCount(address account) public view returns (uint) {
+    return users[account].postCount;
+  }
+  function getPosts(address account) public view returns (uint[] memory) {
+    User memory _user = users[account];
+    uint[] memory _posts = _user.posts;
+    return _posts;
   }
 }

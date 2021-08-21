@@ -217,15 +217,15 @@ contract('Backend', ([deployer, user1, user2]) => {
       await backend.newAccount(user1, 'user_1', '@user_1', {from: user1})
       await backend.newAccount(user2, 'user_2', '@user_2', {from: user2})
     })
+    /*
     describe('Posting meme', () => {
       describe('success', () => {
-        /*
         it('post meme', async () => {
           await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user1})
 
           expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
           expect(await backend.memeCount().then(bal => bal.toString())).to.be.eq('1')
-          expect(await backend.users(1)).to.be.eq(user1)
+          expect(await backend.usersByMeme(1)).to.be.eq(user1)
         })
         it('post meme with tags', async () => {
           await backend.newMeme(user1, '0x012345', 'hello world!', [user2, deployer], 0, 0, {from: user1})
@@ -262,7 +262,29 @@ contract('Backend', ([deployer, user1, user2]) => {
           expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
           expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
         })
-        */
+        it('user post count works', async () => {
+          await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user1}) // user1 posts
+          await backend.newMeme(user2, '0x67891011', 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
+          await backend.newMeme(deployer, '0x5363635735', 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
+          await backend.newMeme(user1, '0x064536476', 'you heard me!', [], 3, 1, {from: user1}) // user1 posts
+
+          expect(await backend.getPosts(user1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['1','4'])
+          expect(await backend.getPosts(user2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2'])
+          expect(await backend.getPosts(deployer).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
+        })
+      })
+      describe('failure', () => {
+        it('doesn\'t post meme with wrong users', async () => {
+          await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+          await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('doesn\'t post meme with empty message', async () => {
+          await backend.newMeme(user1, '0x012345', '', [], 0, 0, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+        })
+      })
+    })
+    describe('Liking meme', () => {
+      describe('success', () => {
         it('like functionality', async () => {
           await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user1}) // user1 posts
           await backend.newMeme(user2, '0x67891011', 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
@@ -280,15 +302,29 @@ contract('Backend', ([deployer, user1, user2]) => {
           expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
           expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('14')
         })
+      })
+      describe('failure', () => {
+      })
+    })
+      */
+    describe('User functionality', () => {
+      describe('success', () => {
+        it('2 accounts created from before statement', async () => {
+          expect(await backend.userCount().then(elem => elem.toString())).to.be.eq('2')
+        })
+        it('account #1 has id #1 and account #2 has name #2', async () => {
+          expect(await backend.getId(user1).then(elem => elem.toString())).to.be.eq('1')
+          expect(await backend.getId(user2).then(elem => elem.toString())).to.be.eq('2')
+        })
         it('follow functionality', async () => {
           await backend.follow(user1, user2, {from: user1})
-          /*
-          // check follower/following counts
-          expect(await backend.users(user1).followerCount).to.be.eq(0)
-          expect(await backend.users(user1).followingCount).to.be.eq(1)
-          expect(await backend.users(user2).followerCount).to.be.eq(1)
-          expect(await backend.users(user1).followingCount).to.be.eq(0)
-          */
+
+          //check follower/following counts
+          expect(await backend.getFollowerCount(user1).then(elem => elem.toString())).to.be.eq('0')
+          expect(await backend.getFollowingCount(user1).then(elem => elem.toString())).to.be.eq('1')
+          expect(await backend.getFollowerCount(user2).then(elem => elem.toString())).to.be.eq('1')
+          expect(await backend.getFollowingCount(user2).then(elem => elem.toString())).to.be.eq('0')
+
           // check follower/following list
           expect(await backend.getFollowers(user1).then(elem => elem)).to.deep.eq([])
           expect(await backend.getFollowing(user1).then(elem => elem)).to.deep.eq([user2])
@@ -299,16 +335,8 @@ contract('Backend', ([deployer, user1, user2]) => {
           expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
           expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
         })
-
       })
       describe('failure', () => {
-        it('doesn\'t post meme with wrong users', async () => {
-          await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-          await backend.newMeme(user1, '0x012345', 'hello world!', [], 0, 0, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('doesn\'t post meme with empty message', async () => {
-          await backend.newMeme(user1, '0x012345', '', [], 0, 0, {from: user1}).should.be.rejectedWith(EVM_REVERT)
-        })
       })
     })
   })
