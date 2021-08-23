@@ -325,7 +325,7 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //          expect(await post.getResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 //          expect(await post.getResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 //        })
-//        it('delete meme doesn\'t delete responses', async () => {
+//        it('delete meme deletes response in parent', async () => {
 //          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
 //          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
 //          await user.newMeme(deployer /* , '0x5363635735'*/, 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
@@ -333,10 +333,10 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //          await user.newMeme(deployer /* , '0x5363635735'*/, 'wait what?', [], 1, 1, {from: deployer}) // deployer responds to user2
 //          await user.deleteMeme(user2, 2, {from: user2})
 //          await user.deleteMeme(deployer, 3, {from: deployer})
-//          await user.deleteMeme(deployer, 4, {from: deployer})
+//          await user.deleteMeme(deployer, 5, {from: deployer})
 //
-//          expect(await post.getResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2','5'])
-//          expect(await post.getResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
+//          expect(await post.getResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await post.getResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 //          expect(await post.getResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 //          expect(await post.getResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 //        })
@@ -367,154 +367,157 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //        })
 //      })
 //    })
-    describe('Liking meme', () => {
-      beforeEach(async () => {
-        /*await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
-        await user.newAccount(user2, 'user_2', '@user_2', {from: user2})
-        await user.newAccount(deployer, 'deployer', '@deployer', {from: deployer})
-        */
-        await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-        await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-        await user.newMeme(deployer /* , '0x67891011' */, 'what?', [user1, user2], 2, 1, {from: deployer}) // deployer responds to user2, tags user1 & user2
-        await user.likeMeme(user2, 1, {from: user2}) //user2 likes meme id1
-      })
-      describe('success', () => {
-        it('like functionality', async () => {
-          let meme1 = await post.memes(1)
-          let meme2 = await post.memes(2)
-          let meme3 = await post.memes(3)
-          // checks resulting struct data
-          // checks likers
-          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
-          // checks taggs of third post
-          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
-          // checks number of likes in first & 2nd post
-          expect(await meme1.likes.toNumber()).to.be.eq(1)
-          expect(await meme2.likes.toNumber()).to.be.eq(0)
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('14')
-        })
-        it('unlike functionality', async () => {
-          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
-
-          let meme1 = await post.memes(1)
-          // likers list should have a deleted element
-          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([])
-          // unlikers list should have increased
-          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([user2])
-          // likes should decrement
-          expect(await meme1.likes.toNumber()).to.be.eq(0)
-          // balance should remain unchanged
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
-        })
-        it('like, unlike, like functionality', async () => {
-          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
-          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
-
-          let meme1 = await post.memes(1)
-
-          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
-          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([])
-          // checks taggs of third post
-          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
-          // checks number of likes in first & 2nd post
-          expect(await meme1.likes.toNumber()).to.be.eq(1)
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
-        })
-      })
-      describe('failure', () => {
-        it('wrong account shouldn\'t be able to like', async () => {
-           await user.likeMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-           await user.likeMeme(deployer, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('user shouldn\'t be able to call post.likeMeme', async () => {
-          await post.likeMeme(user1, 1, {from: user1}).should.be.rejected
-        })
-        it('post shouldn\'t be able to call post.likeMeme', async () => {
-          await post.likeMeme(user1, 1, {from: post.address}).should.be.rejected
-        })
-      })
-    })
-    describe('User functionality', () => {
-      describe('success', () => {
-        it('3 accounts created from before statement', async () => {
-          expect(await user.userCount().then(elem => elem.toString())).to.be.eq('3')
-        })
-        it('account #1 has id #1 and account #2 has name #2', async () => {
-          const account1 = await user.users(user1)
-          const account2 = await user.users(user2)
-          assert.equal(await account1.id.toNumber(), 1, 'id is correct')
-          assert.equal(await account2.id.toNumber(), 2, 'id is correct')
-        })
-        it('follow functionality', async () => {
-          await user.follow(user1, user2, {from: user1})
-
-          const account1 = await user.users(user1)
-          const account2 = await user.users(user2)
-
-          //check follower/following counts
-          assert.equal(await account1.followerCount.toNumber(), 0, 'acct1 followerCount is correct')
-          assert.equal(await account1.followingCount.toNumber(), 1, 'acct1 followingCount is correct')
-          assert.equal(await account2.followerCount.toNumber(), 1, 'acct2 followerCount is correct')
-          assert.equal(await account2.followingCount.toNumber(), 0, 'acct2 followingCount is correct')
-          // check follower/following list
-
-          expect(await user.getFollowers(user1).then(e => e)).to.deep.eq([])
-          expect(await user.getFollowing(user1).then(e => e)).to.deep.eq([user2])
-          expect(await user.getFollowers(user2).then(e => e)).to.deep.eq([user1])
-          expect(await user.getFollowing(user2).then(e => e)).to.deep.eq([])
-
-          // check minting
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
-        })
-      })
-      describe('failure', () => {
-        it('can\'t double follow', async () => {
-          await user.follow(user1, user2, {from: user1})
-          await user.follow(user1, user2, {from: user1}).should.be.rejected
-        })
-        // creation
-        it('can\'t create double account', async () => {
-          await user.newAccount(user1, 'user_3', '@user_3', {from: user1}).should.be.rejected
-        })
-        it('can\'t create redundant user address', async () => {
-          await user.newAccount(user3, 'user_3', '@user_1', {from: user3}).should.be.rejected
-        })
-        it('can\'t create account for other address', async () => {
-          await user.newAccount(user3, 'user_3', '@user_3', {from: user2}).should.be.rejected
-        })
-        it('can\'t create user address without @', async () => {
-          await user.newAccount(user3, 'user_3', 'user_3', {from: user3}).should.be.rejected
-        })
-        // userAddress/userName change
-        it('can\'t change user address for other address', async () => {
-          await user.changeUserAddress(user3, '@user_3', {from: user2}).should.be.rejected
-        })
-        it('can\'t change user address to same user address', async () => {
-          await user.changeUserAddress(user2, '@user_2', {from: user2}).should.be.rejected
-        })
-        it('can\'t change username to same username', async () => {
-          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
-        })
-        it('can\'t change username to same username', async () => {
-          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
-        })
-        it('can\'t change user address without account', async () => {
-          await user.changeUserAddress(user3, '@user_2', {from: user3}).should.be.rejected
-        })
-        it('can\'t change username without account', async () => {
-          await user.changeUserName(user3, 'user_2', {from: user3}).should.be.rejected
-        })
-        it('can\'t change user address without @ at beginning', async () => {
-          await user.changeUserName(user3, 'user_3', {from: user3}).should.be.rejected
-        })
-      })
-    })
+//    describe('Liking meme', () => {
+//      beforeEach(async () => {
+//        /*await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
+//        await user.newAccount(user2, 'user_2', '@user_2', {from: user2})
+//        await user.newAccount(deployer, 'deployer', '@deployer', {from: deployer})
+//        */
+//        await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
+//        await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
+//        await user.newMeme(deployer /* , '0x67891011' */, 'what?', [user1, user2], 2, 1, {from: deployer}) // deployer responds to user2, tags user1 & user2
+//        await user.likeMeme(user2, 1, {from: user2}) //user2 likes meme id1
+//      })
+//      describe('success', () => {
+//        it('like functionality', async () => {
+//          let meme1 = await post.memes(1)
+//          let meme2 = await post.memes(2)
+//          let meme3 = await post.memes(3)
+//          // checks resulting struct data
+//          // checks likers
+//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
+//          // checks taggs of third post
+//          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
+//          // checks number of likes in first & 2nd post
+//          expect(await meme1.likes.toNumber()).to.be.eq(1)
+//          expect(await meme2.likes.toNumber()).to.be.eq(0)
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('14')
+//        })
+//        it('unlike functionality', async () => {
+//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
+//
+//          let meme1 = await post.memes(1)
+//          // likers list should have a deleted element
+//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([])
+//          // unlikers list should have increased
+//          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([user2])
+//          // likes should decrement
+//          expect(await meme1.likes.toNumber()).to.be.eq(0)
+//          // balance should remain unchanged
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+//        })
+//        it('like, unlike, like functionality', async () => {
+//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
+//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
+//
+//          let meme1 = await post.memes(1)
+//
+//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
+//          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([])
+//          // checks taggs of third post
+//          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
+//          // checks number of likes in first & 2nd post
+//          expect(await meme1.likes.toNumber()).to.be.eq(1)
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+//        })
+//      })
+//      describe('failure', () => {
+//        it('wrong account shouldn\'t be able to like', async () => {
+//           await user.likeMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//           await user.likeMeme(deployer, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('user shouldn\'t be able to call post.likeMeme', async () => {
+//          await post.likeMeme(user1, 1, {from: user1}).should.be.rejected
+//        })
+//        it('post shouldn\'t be able to call post.likeMeme', async () => {
+//          await post.likeMeme(user1, 1, {from: post.address}).should.be.rejected
+//        })
+//        it('user shouldn\'t be able to like memes that don\'t exist', async () => {
+//          await user.likeMeme(user1, 4, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//      })
+//    })
+//    describe('User functionality', () => {
+//      describe('success', () => {
+//        it('3 accounts created from before statement', async () => {
+//          expect(await user.userCount().then(elem => elem.toString())).to.be.eq('3')
+//        })
+//        it('account #1 has id #1 and account #2 has name #2', async () => {
+//          const account1 = await user.users(user1)
+//          const account2 = await user.users(user2)
+//          assert.equal(await account1.id.toNumber(), 1, 'id is correct')
+//          assert.equal(await account2.id.toNumber(), 2, 'id is correct')
+//        })
+//        it('follow functionality', async () => {
+//          await user.follow(user1, user2, {from: user1})
+//
+//          const account1 = await user.users(user1)
+//          const account2 = await user.users(user2)
+//
+//          //check follower/following counts
+//          assert.equal(await account1.followerCount.toNumber(), 0, 'acct1 followerCount is correct')
+//          assert.equal(await account1.followingCount.toNumber(), 1, 'acct1 followingCount is correct')
+//          assert.equal(await account2.followerCount.toNumber(), 1, 'acct2 followerCount is correct')
+//          assert.equal(await account2.followingCount.toNumber(), 0, 'acct2 followingCount is correct')
+//          // check follower/following list
+//
+//          expect(await user.getFollowers(user1).then(e => e)).to.deep.eq([])
+//          expect(await user.getFollowing(user1).then(e => e)).to.deep.eq([user2])
+//          expect(await user.getFollowers(user2).then(e => e)).to.deep.eq([user1])
+//          expect(await user.getFollowing(user2).then(e => e)).to.deep.eq([])
+//
+//          // check minting
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
+//        })
+//      })
+//      describe('failure', () => {
+//        it('can\'t double follow', async () => {
+//          await user.follow(user1, user2, {from: user1})
+//          await user.follow(user1, user2, {from: user1}).should.be.rejected
+//        })
+//        // creation
+//        it('can\'t create double account', async () => {
+//          await user.newAccount(user1, 'user_3', '@user_3', {from: user1}).should.be.rejected
+//        })
+//        it('can\'t create redundant user address', async () => {
+//          await user.newAccount(user3, 'user_3', '@user_1', {from: user3}).should.be.rejected
+//        })
+//        it('can\'t create account for other address', async () => {
+//          await user.newAccount(user3, 'user_3', '@user_3', {from: user2}).should.be.rejected
+//        })
+//        it('can\'t create user address without @', async () => {
+//          await user.newAccount(user3, 'user_3', 'user_3', {from: user3}).should.be.rejected
+//        })
+//        // userAddress/userName change
+//        it('can\'t change user address for other address', async () => {
+//          await user.changeUserAddress(user3, '@user_3', {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change user address to same user address', async () => {
+//          await user.changeUserAddress(user2, '@user_2', {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change username to same username', async () => {
+//          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change username to same username', async () => {
+//          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change user address without account', async () => {
+//          await user.changeUserAddress(user3, '@user_2', {from: user3}).should.be.rejected
+//        })
+//        it('can\'t change username without account', async () => {
+//          await user.changeUserName(user3, 'user_2', {from: user3}).should.be.rejected
+//        })
+//        it('can\'t change user address without @ at beginning', async () => {
+//          await user.changeUserName(user3, 'user_3', {from: user3}).should.be.rejected
+//        })
+//      })
+ //   })
   })
 })

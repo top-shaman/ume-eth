@@ -31,7 +31,7 @@ contract User {
     address[] followers; // addresses of followers
     uint followingCount; // user following count
     address[] following; // addressses of following
-    uint postCount; // post count
+    //uint postCount; // post count
     uint[] posts; // memeIds of posts
   }
 
@@ -60,7 +60,7 @@ contract User {
       new address[](0), // addresses of followers
       0, // following count
       new address[](0), // addresses of following
-      0, // post count
+      //0, // post count
       new uint[](0) // memeIds of posts
     );
     // set new account's user address to account address
@@ -101,7 +101,7 @@ contract User {
       _posts[i] = _user.posts[i];
     }
     // increment postCount
-    _user.postCount++;
+    //_user.postCount++;
     // insert new post in last slot of array
     _posts[_posts.length-1] = post.memeCount();
     // set posts of _user instance to _posts
@@ -109,22 +109,70 @@ contract User {
     users[account] = _user;
     usersByMeme[post.memeCount()] = account;
   }
+  /*
+  function rememe(address account, uint memeId) public {
+    require(account==msg.sender, 'Error: wrong account calling post');
+    require(users[account].addr!=address(0x0), 'Error: user doesn\'t have account');
+    // repost meme
+    post.repost(account, memeId);
+    // set meme to user address
+    User memory _user = users[account];
+    // create memory array with length one greater than _user.posts length
+    uint[] memory _posts = new uint[](_user.posts.length+1);
+    // populate memory array
+    for(uint i = 0; i < _user.posts.length; i++) {
+      _posts[i] = _user.posts[i];
+    }
+    // increment postCount
+    //_user.postCount++;
+    // insert new post in last slot of array
+    _posts[_posts.length-1] = post.memeCount();
+    // set posts of _user instance to _posts
+    _user.posts = _posts;
+    users[account] = _user;
+    usersByMeme[post.memeCount()] = account;
+  }
+  function quoteMeme(address account, string memory postText, address[] memory tags, uint parentId, uint originId, uint memeId) public {
+    require(account==msg.sender, 'Error: wrong account calling post');
+    require(bytes(postText).length > 0, 'Error: meme must have text');
+    require(users[account].addr!=address(0x0), 'Error: user doesn\'t have account');
+    require(parentId<=post.memeCount() && originId<=post.memeCount(), 'Error: parent&origin must exist');
+
+    post.quotePost(account, postText, tags, parentId, originId, memeId);
+    // set meme to user address
+    User memory _user = users[account];
+    // create memory array with length one greater than _user.posts length
+    uint[] memory _posts = new uint[](_user.posts.length+1);
+    // populate memory array
+    for(uint i = 0; i < _user.posts.length; i++) {
+      _posts[i] = _user.posts[i];
+    }
+    // increment postCount
+    //_user.postCount++;
+    // insert new post in last slot of array
+    _posts[_posts.length-1] = post.memeCount();
+    // set posts of _user instance to _posts
+    _user.posts = _posts;
+    users[account] = _user;
+    usersByMeme[post.memeCount()] = account;
+  }
+*/
   function deleteMeme(address account, uint memeId) public {
     require(account==msg.sender, 'Require: only account can delete meme');
     post.deleteMeme(account, memeId);
     User memory _user = users[account];
-     uint memeIndex;
-     for(uint i = 0; i < _user.posts.length; i++) {
-       if(_user.posts[i]==memeId) {
-         memeIndex = i;
-         break;
-       }
-     }
-     _user.postCount--;
-     _user.posts = _deleteUints(_user.posts, memeIndex);
-     users[account] = _user;
-     // clears mapping of deleted meme, reroutes to 0x0 address instead of deleter
-     usersByMeme[memeId] = address(0x0);
+    uint memeIndex;
+    for(uint i = 0; i < _user.posts.length; i++) {
+      if(_user.posts[i]==memeId) {
+        memeIndex = i;
+        break;
+      }
+    }
+    //_user.postCount--;
+    _user.posts = _deleteUints(_user.posts, memeIndex);
+    users[account] = _user;
+    // clears mapping of deleted meme, reroutes to 0x0 address instead of deleter
+    usersByMeme[memeId] = address(0x0);
   }
 
 
@@ -202,7 +250,7 @@ contract User {
     return users[account].following;
   }
   function getPostCount(address account) public view returns (uint) {
-    return users[account].postCount;
+    return users[account].posts.length;
   }
   function getPosts(address account) public view returns (uint[] memory) {
     return users[account].posts;

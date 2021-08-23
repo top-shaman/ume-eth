@@ -124,7 +124,8 @@ contract Post {
     // mint post token
     umeToken.mintPost(account /* , _memehash */, _memeText);
     emit MemeCreated(memeCount, block.timestamp /* , _memehash */, _memeText, account);
-  }/*
+  }
+  /*
   function repost(address account, uint memeId) public {
     require(caller==msg.sender, 'Error: only account owner can repost a meme');
     // increment memeCount;
@@ -153,7 +154,7 @@ contract Post {
       true // is Repost
     );
     Meme memory _repostedMeme = memes[memeId];
-    umeToken.mintRepost(account, memes[memeId].author);
+    if(account==memes[memeId].author) umeToken.mintRepost(account, memes[memeId].author);
     emit MemeCreated(memeCount, block.timestamp, 'Repost', account);
   }
   function quotePost(address account, string memory _memeText, address[] memory _tags, uint _parentId, uint _originId, uint memeId) public {
@@ -196,12 +197,12 @@ contract Post {
     // if responding to a single post, then mint respond token
     if(memeCount!=_parentId && _parentId==_originId && memes[_parentId].author!=account) {
       umeToken.mintRespond(account, memes[_parentId].author);
-      _addResponse(_parentId);
+      _addResponse(memeId, _parentId);
     } // if responding to a thread, mint respond token for parent, curate token for original
     else if(memeCount!=_parentId && _parentId!=_originId && memes[_originId].author!=account) {
       umeToken.mintRespond(account, memes[_parentId].author);
       umeToken.mintCurate(account, memes[_originId].author);
-      _addResponse(_parentId);
+      _addResponse(memeId, _parentId);
     }
     // mint tags
     for(uint i = 0; i < _tags.length; i++) {
@@ -210,15 +211,14 @@ contract Post {
       }
     }
     // mint post token
-    umeToken.mintPost(account, _memeText);
+    if(account==memes[memeId].author) umeToken.mintPost(account, _memeText);
     emit MemeCreated(memeCount, block.timestamp, _memeText, account);
   }
-  */
-
+*/
   function deleteMeme(address account, uint memeId) public {
     require(caller==msg.sender, 'Error: only account owner can delete meme');
     // create empty Meme instance
-    //if(memes[memeId].responses.length > 0) _deleteResponse(memeId, memes[memeId].parentId);
+    if(memes[memes[memeId].parentId].responses.length>0) _deleteResponse(memeId, memes[memeId].parentId);
     memes[memeId] = Meme(
       memeId, // memeId
       0, // time
@@ -233,7 +233,7 @@ contract Post {
       new uint[](0), // quote posts
       0, // repost address
       new address[](0), // tagged
-      memes[memeId].responses, // response array
+      new uint[](0), // response array
       0, // parent
       0, // origin
       address(0x0), // author
@@ -332,16 +332,15 @@ contract Post {
     Meme memory _parentMeme = memes[_parentId];
     // delete liked index, moving all successive elements
     uint[] memory _responses = new uint[](_parentMeme.responses.length-1);
-    uint index;
-    for(uint i = 0; i < _parentMeme.responses.length; i++) {
-      if(_parentMeme.responses[i]==memeId) {
-        _responses[i] = _parentMeme.responses[i+1];
-        index = i;
+    if(_responses.length > 0) {
+      uint index;
+      for(uint i = 0; i < _parentMeme.responses.length; i++) {
+        if (_parentMeme.responses[i]==memeId) {
+          index = i;
+          break;
+        }
       }
-      _responses[i] = _parentMeme.responses[i];
-    }
-    for(uint i = index+1; i < _responses.length; i++) {
-      _responses[i+1] = _parentMeme.responses[i];
+      _responses = _deleteUint(_parentMeme.responses, index);
     }
     _parentMeme.responses = _responses;
     // set meme at memeId to _parentMeme instance
@@ -351,8 +350,14 @@ contract Post {
   function getLikers(uint memeId) public view returns(address[] memory) {
     return memes[memeId].likers;
   }
+  function getRepostCount(uint memeId) public view returns(uint) {
+    return memes[memeId].reposts.length;
+  }
   function getReposts(uint memeId) public view returns(uint[] memory) {
     return memes[memeId].reposts;
+  }
+  function getQuotePostCount(uint memeId) public view returns(uint) {
+    return memes[memeId].quotePosts.length;
   }
   function getQuotePosts(uint memeId) public view returns(uint[] memory) {
     return memes[memeId].quotePosts;
@@ -369,6 +374,16 @@ contract Post {
   // helper functions
   function _deleteAddress(address[] memory array, uint index) private returns(address[] memory) {
     address[] memory _array = new address[](array.length-1);
+    for(uint i = 0; i < index; i++) {
+      _array[i] = array[i];
+    }
+    for(uint i = index; i < _array.length; i++) {
+      _array[i] = array[i+1];
+    }
+    return _array;
+  }
+  function _deleteUint(uint[] memory array, uint index) private returns(uint[] memory) {
+    uint[] memory _array = new uint[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];
     }
