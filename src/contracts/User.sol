@@ -14,7 +14,12 @@ contract User {
   uint public userCount = 0;
 
   mapping(address => User) public users; // address to Users map
-  mapping(uint => address) public usersByMeme; // memeId to user addresses
+  mapping(uint => address) public usersByMeme; // memeId to account addresses
+  mapping(string => address) public usersByUserAddr; // userAddr to account address
+
+  event NewUser(address account, string userName, string userAddr);
+  event ChangedUserName(address account, string userName);
+  event ChangedUserAddress(address account, string userAddr);
 
   struct User {
     uint id; // user number in order
@@ -38,8 +43,13 @@ contract User {
   function newAccount(address account, string memory userName, string memory userAddress) public {
     require(msg.sender==account, 'Error: account must be account creator');
     require(bytes(userName).length > 0, 'Error: userName must have characters');
-    require(bytes(userAddress).length > 0, 'Error: userAddress must have characters');
+    require(bytes(userAddress)[0]==bytes1('@'), 'Error: first element of string must be "@"');
+    require(bytes(userAddress).length > 1, 'Error: userAddress must have characters');
+    require(users[account].addr!=account, 'Error: account already exists');
+    require(usersByUserAddr[userAddress]==address(0x0), 'Error: user address already exists');
+
     userCount++;
+    // set user to account address
     users[account] = User(
       userCount, // user id
       userName, // user name
@@ -53,29 +63,51 @@ contract User {
       0, // post count
       new uint[](0) // memeIds of posts
     );
+    // set new account's user address to account address
+    usersByUserAddr[userAddress] = account;
+    emit NewUser(account, userName, userAddress);
   }
+  function changeUserName(address account, string memory userName) public {
+    require(msg.sender==account, 'Error: operator must be account owner');
+    require(keccak256(abi.encodePacked(users[account].name))!=keccak256(abi.encodePacked(userName)), 'Error: must be different username');
+    require(users[account].id!=0, 'Error: must have an existing account');
+    users[account].name = userName;
+    emit ChangedUserName(account, userName);
+  }
+  function changeUserAddress(address account, string memory userAddress) public {
+    require(msg.sender==account, 'Error: operator must be account owner');
+    require(bytes(userAddress)[0]==bytes1('@'), 'Error: first element of string must be "@"');
+    require(keccak256(abi.encodePacked(users[account].userAddr))!=keccak256(abi.encodePacked(userAddress)), 'Error: must be different user address');
+    require(usersByUserAddr[userAddress]==account, 'Error: user address must exist at current address');
+    users[account].userAddr = userAddress;
+    usersByUserAddr[userAddress] = account;
+    emit ChangedUserAddress(account, userAddress);
+  }
+
 
   function newMeme(address account, string memory postText, address[] memory tags, uint parentId, uint originId) public {
     require(account==msg.sender, 'Error: wrong account calling post');
     require(bytes(postText).length > 0, 'Error: meme must have text');
     require(users[account].addr!=address(0x0), 'Error: user doesn\'t have account');
+    require(parentId<=post.memeCount() && originId<=post.memeCount(), 'Error: parent&origin must exist');
+    // post new meme
     post.newMeme(account, postText, tags, parentId, originId);
     // set meme to user address
     User memory _user = users[account];
-     // create memory array with length one greater than _user.posts length
-     uint[] memory _posts = new uint[](_user.posts.length+1);
-     // populate memory array
-     for(uint i = 0; i < _user.posts.length; i++) {
-       _posts[i] = _user.posts[i];
-     }
-     // increment postCount
-     _user.postCount++;
-     // insert new post in last slot of array
-     _posts[_posts.length-1] = post.memeCount();
-     // set posts of _user instance to _posts
-     _user.posts = _posts;
-     users[account] = _user;
-     usersByMeme[post.memeCount()] = msg.sender;
+    // create memory array with length one greater than _user.posts length
+    uint[] memory _posts = new uint[](_user.posts.length+1);
+    // populate memory array
+    for(uint i = 0; i < _user.posts.length; i++) {
+      _posts[i] = _user.posts[i];
+    }
+    // increment postCount
+    _user.postCount++;
+    // insert new post in last slot of array
+    _posts[_posts.length-1] = post.memeCount();
+    // set posts of _user instance to _posts
+    _user.posts = _posts;
+    users[account] = _user;
+    usersByMeme[post.memeCount()] = account;
   }
   function deleteMeme(address account, uint memeId) public {
     require(account==msg.sender, 'Require: only account can delete meme');
@@ -91,6 +123,8 @@ contract User {
      _user.postCount--;
      _user.posts = _deleteUints(_user.posts, memeIndex);
      users[account] = _user;
+     // clears mapping of deleted meme, reroutes to 0x0 address instead of deleter
+     usersByMeme[memeId] = address(0x0);
   }
 
 
@@ -110,8 +144,7 @@ contract User {
 
     _addFollower(accountFrom, accountTo);
     _addFollowing(accountFrom, accountTo);
-
-    umeToken.mintFollow(msg.sender, accountTo);
+    umeToken.mintFollow(accountFrom, accountTo);
   }
   function _addFollower(address accountFrom, address accountTo) private {
     User memory _userTo = users[accountTo];
@@ -120,6 +153,7 @@ contract User {
     // create new memory instance of an array one larger than current follower count
     address[] memory _followers = new address[](_userTo.followers.length+1);
     for (uint i = 0; i < _userTo.followers.length; i++) {
+      require(_userTo.followers[i]!=accountFrom, 'Error: account already a follower');
       _followers[i] = _userTo.followers[i];
     }
     // set last element in new array to accountFrom
@@ -135,6 +169,7 @@ contract User {
     // create new memory instance of an array one larger than current follower count
     address[] memory _following = new address[](_userFrom.following.length+1);
     for (uint i = 0; i < _userFrom.following.length; i++) {
+      require(_userFrom.following[i]!=accountFrom, 'Error: account already following');
       _following[i] = _userFrom.following[i];
     }
     // set last element in new array to accountTo

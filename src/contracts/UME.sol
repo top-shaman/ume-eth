@@ -105,7 +105,19 @@ contract UME is ERC20 {
     // set event for CURATE token TO
     emit Minted(accountTo, block.timestamp /*, _postHash  */ , 'CURATE');
   }
-
+  function mintRepost(address accountFrom, address accountTo) public {
+    require(postCaller==msg.sender, 'Error: wrong account');
+    require(minter!=accountFrom, 'Error: "we" cannot mint');
+    require(accountFrom!=accountTo, 'Error: same account');
+    //mint REPOST token for reposter
+    _mint(accountFrom, 5);
+    // set event for REPOST from
+    emit Minted(accountFrom, block.timestamp, 'REPOST');
+    // mint REPOST token for original poster
+    _mint(accountTo, 6);
+    // set event for REPOST to
+    emit Minted(accountFrom, block.timestamp, 'REPOST');
+  }
   function mintJury(address account /* , string memory _postHash */ , bool consensusReached) public { // 4 Juror token if no consensus reached, 24 if consensus reached
     require(userCaller==msg.sender, 'Error: wrong account');
     require(minter!=account, 'Error: "we" cannot mint');
