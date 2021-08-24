@@ -8,26 +8,26 @@ contract UME is ERC20 {
 
   // minter's address
   address public minter;
-  address public postCaller;
-  address public userCaller;
+  address public postSigner;
+  address public followSigner;
 
   // minter role has changed to We
   event MinterChanged(address indexed accountFrom, address indexed accountTo);
-  event PostCallerChanged(address indexed accountFrom, address indexed accountTo);
-  event UserCallerChanged(address indexed accountFrom, address indexed accountTo);
+  event PostSignerChanged(address indexed accountFrom, address indexed accountTo);
+  event FollowSignerChanged(address indexed accountFrom, address indexed accountTo);
   // minting events
   event Minted(address indexed account, uint time /*, string postHash */, string flag);
 
   constructor() public payable ERC20("uMe token", "UME") {
     // assign minter & caller roles
     minter = msg.sender;
-    postCaller = msg.sender;
-    userCaller = msg.sender;
+    postSigner = msg.sender;
+    followSigner = msg.sender;
   }
 
   function mintPost(address account /* , string memory _postHash */ , string memory _postText) public {
     // make sure minter is same as sender
-    require(postCaller==msg.sender, 'Error: wrong account calling mint');
+    require(postSigner==msg.sender, 'Error: wrong account calling mint');
     //require(minter!=account, 'Error: "we" cannot call mint');
     //require(bytes(_postHash).length > 0, 'Error: no post exists'); // check if post hash exists
     require(bytes(_postText).length > 0, 'Error: no text in post'); // check if there's text in post
@@ -37,7 +37,7 @@ contract UME is ERC20 {
     emit Minted(account, block.timestamp /*, _postHash  */ , 'POST');
   }
   function mintLike(address accountFrom, address accountTo /* , string memory _postHash */ ) public { // 2:5 Liker:Liked
-    require(postCaller==msg.sender, 'Error: wrong account calling mint');
+    require(postSigner==msg.sender, 'Error: wrong account calling mint');
     require(accountFrom!=accountTo, 'Error: same account');
     require(minter!=accountFrom, 'Error: "we" cannot call mint');
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
@@ -51,7 +51,7 @@ contract UME is ERC20 {
     emit Minted(accountTo, block.timestamp /*, _postHash  */ , 'LIKE');
   }
   function mintTag(address accountFrom, address accountTo /* , string memory _postHash */ ) public { // 1:3 Tagger:Tagged
-    require(postCaller==msg.sender, 'Error: wrong account');
+    require(postSigner==msg.sender, 'Error: wrong account');
     require(minter!=accountFrom, 'Error: "we" cannot call mint');
     require(accountFrom!=accountTo, 'Error: same account');
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
@@ -65,7 +65,7 @@ contract UME is ERC20 {
     emit Minted(accountTo, block.timestamp /*, _postHash  */ , 'TAG');
   }
   function mintFollow(address accountFrom, address accountTo) public { // 1:3 Follower:Followed
-    require(userCaller==msg.sender, 'Error: wrong account');
+    require(followSigner==msg.sender, 'Error: wrong account');
     require(minter!=accountFrom, 'Error: "we" cannot call mint');
     require(accountFrom!=accountTo, 'Error: same account'); // doesn't mint tokens if tagged oneself
     // mint a FOLLOW token for follower
@@ -78,7 +78,7 @@ contract UME is ERC20 {
     emit Minted(accountTo, block.timestamp,'FOLLOW');
   }
   function mintRespond(address accountFrom, address accountTo /* , string memory _postHash */ ) public { // 2:4 Responder:Responded
-    require(postCaller==msg.sender, 'Error: wrong account');
+    require(postSigner==msg.sender, 'Error: wrong account');
     require(minter!=accountFrom, 'Error: "we" cannot call mint');
     require(accountFrom!=accountTo, 'Error: same account');
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
@@ -92,7 +92,7 @@ contract UME is ERC20 {
     emit Minted(accountTo, block.timestamp /*, _postHash  */ , 'RESPOND TO');
   }
   function mintCurate(address accountFrom, address accountTo /* , string memory _postHash */ ) public { // 2:4 Responder:Responded
-    require(postCaller==msg.sender, 'Error: wrong account');
+    require(postSigner==msg.sender, 'Error: wrong account');
     require(minter!=accountFrom, 'Error: "we" cannot mint');
     require(accountFrom!=accountTo, 'Error: same account'); // doesn't mint tokens if tagged oneself
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
@@ -106,7 +106,7 @@ contract UME is ERC20 {
     emit Minted(accountTo, block.timestamp /*, _postHash  */ , 'CURATE');
   }
   function mintRepost(address accountFrom, address accountTo) public {
-    require(postCaller==msg.sender, 'Error: wrong account');
+    require(postSigner==msg.sender, 'Error: wrong account');
     require(minter!=accountFrom, 'Error: "we" cannot mint');
     require(accountFrom!=accountTo, 'Error: same account');
     //mint REPOST token for reposter
@@ -119,7 +119,7 @@ contract UME is ERC20 {
     emit Minted(accountFrom, block.timestamp, 'REPOST');
   }
   function mintJury(address account /* , string memory _postHash */ , bool consensusReached) public { // 4 Juror token if no consensus reached, 24 if consensus reached
-    require(userCaller==msg.sender, 'Error: wrong account');
+    require(followSigner==msg.sender, 'Error: wrong account');
     require(minter!=account, 'Error: "we" cannot mint');
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
     if(consensusReached==true){
@@ -139,21 +139,21 @@ contract UME is ERC20 {
     require(msg.sender == minter, 'Error, only owner can change pass minter role');
     minter = we;
 
-    emit MinterChanged(msg.sender, we);
+    emit MinterChanged(msg.sender, minter);
     return true;
   }
-  function passPostCallerRole(address post) public returns (bool) {
-    require(msg.sender == postCaller, 'Error, only owner can pass post\'s caller role');
+  function passPostSignerRole(address post) public returns (bool) {
+    require(msg.sender == postSigner, 'Error, only owner can pass post\'s caller role');
 
-    postCaller = post;
-    emit PostCallerChanged(msg.sender, post);
+    postSigner = post;
+    emit PostSignerChanged(msg.sender, postSigner);
     return true;
   }
-  function passUserCallerRole(address user) public returns (bool) {
-    require(msg.sender == userCaller, 'Error, only owner can pass user\'s caller role');
+  function passFollowSignerRole(address user) public returns (bool) {
+    require(msg.sender == followSigner, 'Error, only owner can pass user\'s caller role');
 
-    userCaller = user;
-    emit UserCallerChanged(msg.sender, user);
+    followSigner = user;
+    emit FollowSignerChanged(msg.sender, userSigner);
     return true;
   }
 }
