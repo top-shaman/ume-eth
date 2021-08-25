@@ -3,9 +3,11 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "./Follow.sol";
+import "./Like.sol";
 import "./MemeStorage.sol";
 import "./Post.sol";
 import "./UME.sol";
+import "./UserFactory.sol";
 import "./UserStorage.sol";
 
 contract UserInterface {
@@ -13,6 +15,7 @@ contract UserInterface {
   UME private umeToken;
   MemeStorage private memeStorage;
   UserStorage private userStorage;
+  UserFactory private userFactory;
 
   Post private post;
   Like private like;
@@ -30,94 +33,104 @@ contract UserInterface {
   }
 
   event NewUser(
-    address account,
-    string userName,
-    string userAddress
-  );
+    address indexed account,
+    bytes32 userName,
+    bytes32 userAddress);
   event ChangedUserName(
-    address account,
-    string userName
-  );
+    address indexed account,
+    bytes32 userName);
   event ChangedUserAddress(
-    address account,
-    string userAddress
-  );
-  event Followed(
-    address from,
-    address to
-  );
+    address indexed account,
+    bytes32 userAddress);
 
   constructor(
     UME _umeToken,
     MemeStorage _memeStorage,
     UserStorage _userStorage,
-    Follow _follow,
-    Post _post
+    Post _post,
+    Like _like,
+    Follow _follow
   ) public {
     umeToken = _umeToken;
     userStorage = _userStorage;
-    follow = _follow
     post = _post;
+    like = _like;
+    follow = _follow;
   }
 
   function newUser(
     address _account,
-    string memory _userName,
-    string memory _userAddress
+    bytes32 _userName,
+    bytes32 _userAddress
   ) public {
-    require(msg.sender==_account,
-            'Error: account must be account creator');
-    require(bytes(_userName).length>1 &&
-            bytes(_userName).length<=32,
-            'Error: userName must be between 2 & 32 characters');
-    require(bytes32(_userAddress)[0]==bytes1('@'),
-            'Error: first element of string must be "@"');
-    require(bytes(_userAddress).length>2 &&
-            bytes(_userAddress).length<=32,
-            'Error: userAddress must be between 2 & 32 characters');
-    require(userStorage.getAddr(_account)!=_account,
-            'Error: account already exists');
-    require(userStorage.usersByUserAddr(_userAddress)==address(0x0),
-            'Error: user address already exists');
+    require(
+      msg.sender==_account,
+      'Error: account must be account creator');
+    require(
+      _userName.length>1 &&
+      _userName.length<=32,
+      'Error: userName must be between 2 & 32 characters');
+    require(
+      _userAddress[0]==bytes1('@'),
+      'Error: first element of string must be "@"');
+    require(
+      _userAddress.length>2 &&
+      _userAddress.length<=32,
+      'Error: userAddress must be between 2 & 32 characters');
+    require(
+      userStorage.getAddr(_account)!=_account,
+      'Error: account already exists');
+    require(
+      userStorage.getAddr(_account)==address(0x0),
+      'Error: user address already exists');
 
-    userFactory.newUser(_account, bytes32(_userName), bytes32(_userAddress));
-    emit NewUser(account, userName, userAddress);
+    userFactory.newUser(_account, _userName, _userAddress);
+    emit NewUser(_account, _userName, _userAddress);
   }
   function changeUserName(
     address _account,
-    string memory _userName
+    bytes32 _userName
   ) public {
-    require(msg.sender==_account,
-            'Error: operator must be account owner');
-    require(userStorage.users(_account).name!=bytes32(_userName),
-            'Error: must be different username');
-    require(bytes(_userName).length>1 &&
-            bytes(_userName).length<=32,
-            'Error: userName must be between 2 & 32 characters');
-    require(userStorage.users(_account).id!=0,
-            'Error: must have an existing account');
+    require(
+      msg.sender==_account,
+      'Error: operator must be account owner');
+    require(
+      userStorage.getName(_account)!=_userName,
+      'Error: must be different username');
+    require(
+      _userName.length>1 &&
+      _userName.length<=32,
+      'Error: userName must be between 2 & 32 characters');
+    require(
+      userStorage.getId(_account)!=0,
+      'Error: must have an existing account');
 
-    userStorage.setUserName(_account, bytes32(_userName));
+    userStorage.setUserName(_account, _userName);
     emit ChangedUserName(_account, _userName);
   }
   function changeUserAddress(
     address _account,
-    string memory _userAddress
+    bytes32 _userAddress
   ) public {
-    require(msg.sender==_account,
-            'Error: operator must be account owner');
-    require(bytes(_userAddress[0])==bytes1('@'),
-            'Error: first element of string must be "@"');
-    require(bytes(_userAddress).length>2 &&
-            bytes(_userAddress).length<=32,
-            'Error: userAddress must be between 2 & 32 characters');
-    require(userStorage.getAddr(_account)!=_userAddress,
-            'Error: must be different user address');
-    require(userStorage.usersByUserAddr(_userAddress)==_account,
-            'Error: user address must exist at current address');
+    require(
+      msg.sender==_account,
+      'Error: operator must be account owner');
+    require(
+      _userAddress[0]==bytes1('@'),
+      'Error: first element of string must be "@"');
+    require(
+      _userAddress.length>2 &&
+      _userAddress.length<=32,
+      'Error: userAddress must be between 2 & 32 characters');
+    require(
+      userStorage.getUserAddr(_account)!=_userAddress,
+      'Error: must be different user address');
+    require(
+      userStorage.usersByUserAddr(_userAddress)==_account,
+      'Error: user address must exist at current address');
 
-    userStorage.setUserAddress(_account, bytes32(_userAddress));
-    emit ChangedUserAddress(_account, userAddress);
+    userStorage.setUserAddress(_account, _userAddress);
+    emit ChangedUserAddress(_account, _userAddress);
   }
 
   // Meme posting functionality
@@ -126,82 +139,110 @@ contract UserInterface {
     string memory _postText,
     address[] memory _tags,
     bytes32 _parentId,
-    bytes32 originId
+    bytes32 _originId
   ) public {
-    require(_account==msg.sender,
-            'Error: wrong account calling post');
-    require(bytes(_postText).length > 0,
-            'Error: meme must have text');
-    require(userStorage.getAddr(_account).addr!=address(0x0),
-            'Error: user doesn\'t have account');
-    require(memeStorage.getVisibilty(_parentId),
-            'Error: parent&origin must exist');
+    require(
+      _account==msg.sender,
+      'Error: wrong account calling post');
+    require(
+      bytes(_postText).length > 0,
+      'Error: meme must have text');
+    require(
+      userStorage.getAddr(_account)!=address(0x0),
+      'Error: user doesn\'t have account');
+    require(
+      memeStorage.getVisibility(_parentId)==true,
+      'Error: parent&origin must exist');
     // post new meme
-    post.newMeme(account, postText, tags, parentId, originId);
+    post.newMeme(_account, _postText, _tags, _parentId, _originId);
   }
   function rememe(
     address _account,
     bytes32 _memeId
   ) public {
-    require(_account==msg.sender,
-            'Error: wrong account calling post');
-    require(userStorage.getAddr(_account)!=address(0x0),
-            'Error: user doesn\'t have account');
+    require(
+      _account==msg.sender,
+      'Error: wrong account calling post');
+    require(
+      userStorage.getAddr(_account)!=address(0x0),
+      'Error: user doesn\'t have account');
     // repost meme
-    post.rememe(account, memeId);
+    post.rememe(_account, _memeId);
   }
   function quoteMeme(
     address _account,
     string memory _postText,
     address[] memory _tags,
-    uint _parentId,
-    uint _originId,
-    uint _memeId
+    bytes32 _parentId,
+    bytes32 _originId,
+    bytes32 _memeId
   ) public {
-    require(_account==msg.sender,
-            'Error: wrong account calling post');
-    require(bytes(_postText).length > 0,
-            'Error: meme must have text');
-    require(userStorage.getAddr(_account)!=address(0x0),
-            'Error: user doesn\'t have account');
-    require(memeStorage.getVisibilitiy(_parentId),
-            'Error: parent must exist');
-    post.quoteMeme(account, postText, tags, parentId, originId, memeId);
+    require(
+      _account==msg.sender,
+      'Error: wrong account calling post');
+    require(
+      bytes(_postText).length > 0,
+      'Error: meme must have text');
+    require(
+      userStorage.getAddr(_account)!=address(0x0),
+      'Error: user doesn\'t have account');
+    require(
+      memeStorage.getVisibility(_parentId),
+      'Error: parent must exist');
+    post.quoteMeme(_account, _postText, _tags, _parentId, _originId, _memeId);
   }
 
-  function deleteMeme(address account, uint memeId) public {
-    require(account==msg.sender, 'Error: only account can delete meme');
-    post.deleteMeme(account, memeId);
+  function deleteMeme(
+    address _account,
+    bytes32 _memeId
+  ) public {
+    require(
+      _account==msg.sender,
+      'Error: only account can delete meme');
+    post.deleteMeme(_memeId);
   }
 
 
   // like functions
-  function likeMeme(address account, uint memeId) public {
-     require(account!=usersByMeme[memeId], 'Error: cannot like one\'s own meme');
-     require(account==msg.sender, 'Error: liker must be operating account');
-     require(usersByMeme[memeId]!=address(0x0), 'Error: Meme liked must have address');
-     require(post.memeCount() > 0, 'Error: Meme must have id');
-
-     like.likeMeme(account, memeId);
-  }
-
-  function follow(
-    address accountFrom,
-    address accountTo
+  function likeMeme(
+    address _account,
+    bytes32 _memeId
   ) public {
-    require(accountFrom==msg.sender,
-            'Error: follower must be operating account');
-    require(accountFrom!=accountTo,
-            'Error: same account');
-    require(userStorage.getUserAddr(accountFrom).length>0 &&
-            userStorage.getUserAddr(accountTo).length>0,
-            'Error: both follower and followee must have accounts');
+     require(
+       _account!=userStorage.getAddr(_account),
+       'Error: cannot like one\'s own meme');
+     require(
+       _account==msg.sender,
+       'Error: liker must be operating account');
+     require(
+       userStorage.getAddr(_account)!=address(0x0),
+       'Error: Meme liked must have address');
+     require(
+       memeStorage.memeCount() > 0,
+       'Error: Meme must have id');
 
-    follow.follow(accountFrom, accountTo);
-    emit Followed(accountFrom, accountTo);
+     like.likeMeme(_account, _memeId);
   }
 
-  function _deleteUints(uint[] memory array, uint index) private returns(uint[] memory) {
+  function followUser(
+    address _from,
+    address _to
+  ) public {
+    require(
+      _from==msg.sender,
+      'Error: follower must be operating account');
+    require(
+      _from!=_to,
+      'Error: same account');
+    require(
+      userStorage.getUserAddr(_from).length>0 &&
+      userStorage.getUserAddr(_to).length>0,
+      'Error: both follower and followee must have accounts');
+
+    follow.follow(_from, _to);
+  }
+
+  function _deleteUints(uint[] memory array, uint index) private pure returns(uint[] memory) {
     uint[] memory _array = new uint[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];

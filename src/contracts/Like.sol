@@ -12,90 +12,110 @@ contract Like {
 
   address public interfaceSigner;
 
-  constructor(UME _umeToken) public {
+  event InterfaceSignerChanged(address indexed from, address indexed to);
+
+  constructor(
+    UME _umeToken,
+    MemeStorage _memeStorage
+  ) public {
     umeToken = _umeToken;
     memeStorage = _memeStorage;
     interfaceSigner = msg.sender;
   }
 
   // like functions
-  function likeMeme(address account, uint memeId) public {
-    require(msg.sender==interfaceSigner, 'Error: liker must be operating account');
-
-    bool firstLike = true;
-    bool unliked = false;
+  function likeMeme(
+    address _account,
+    bytes32 _memeId
+  ) public {
+    require(
+      msg.sender==interfaceSigner,
+      'Error: liker must be operating account');
+    address[] memory _likers = memeStorage.getLikers(_memeId);
+    uint _likeCount = _likers.length;
+    bool _firstLike = true;
+    bool _unliked = false;
     // remove like if already liked
-    for(uint i = 0; i < memes[memeId].likers.length; i++) {
-      if(account==memes[memeId].likers[i]) {
-        firstLike = false;
-        _unLike(account, memeId, i);
-        unliked = true;
+    for(uint i = 0; i < _likeCount; i++) {
+      if(_account==_likers[i]) {
+        _firstLike = false;
+        _unLike(_account, _memeId, _likers, i);
+        _unliked = true;
+        break;
       }
     } // check for double like minting
-    for(uint i = 0; i < memes[memeId].unlikers.length; i++) {
-      if(account==memes[memeId].unlikers[i] && unliked==false) {
-        firstLike = false;
-        _addLike(account, memeId, i, firstLike);
+    address[] memory _unlikers = memeStorage.getUnlikers(_memeId);
+    uint _unlikeCount = _unlikers.length;
+    for(uint i = 0; i < _unlikeCount; i++) {
+      if(_account==_unlikers[i] && _unliked==false) {
+        _firstLike = false;
+        _addLike(_account, _memeId, _likers, _unlikers, i, _firstLike);
         break;
       }
     }
-    if(firstLike==true && unliked==false) {
-      _addLike(account, memeId, 0, firstLike);
+    if(_firstLike==true && _unliked==false) {
+      _addLike(_account, _memeId, new address[](0), new address[](0), 0, _firstLike);
       // mint like token
-      umeToken.mintLike(account, memes[memeId].author /*, memes[memeId].hash*/ );
+      umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));
     }
   }
   // setter functions for Meme
-  function _addLike(address account, uint memeId, uint index, bool firstLike) private {
-    // fetch meme from blockchain
-    Meme memory _meme = memes[memeId];
-
-    if(firstLike==false) {
-      _meme.unlikers = _deleteAddress(_meme.unlikers, index);
+  function _addLike(
+    address _account,
+    bytes32 _memeId,
+    address[] memory _oldLikers,
+    address[] memory _unlikers,
+    uint _index,
+    bool _firstLike
+  ) private {
+    if(_firstLike==false) {
+      memeStorage.setUnlikers(_memeId, _deleteAddress(_unlikers, _index));
     }
-
+    uint _oldLikeCount = _oldLikers.length;
     // set memory to _meme.likers length plus one
-    address[] memory _likers = new address[](_meme.likers.length+1);
+    address[] memory _newLikers = new address[](_oldLikeCount+1);
 
     // populate address array with existing _meme.likers
-    for(uint i = 0; i < _meme.likers.length; i++) {
+    for(uint i = 0; i < _oldLikeCount; i++) {
       //require(account!=_meme.likers[i], 'Error: liker has already liked account');
-      _likers[i] = _meme.likers[i];
+      _newLikers[i] = _oldLikers[i];
     }
-    // increment meme's likes
-    _meme.likes++;
     // set _likers value to msg.sender at last slot of array
-    _likers[_likers.length-1] = account;
+    _newLikers[_oldLikeCount] = _account;
     // set likers field of _meme.likers to _likers
-    _meme.likers = _likers;
-    // set meme at memeId to _meme instance
-    memes[memeId] = _meme;
+    memeStorage.setLikers(_memeId, _newLikers);
   }
-  function _unLike(address account, uint memeId, uint index) private {
-    require(memes[memeId].likers.length > 0, 'Error, no likers in meme');
-    // fetch meme from blockchain
-    Meme memory _meme = memes[memeId];
-
+  function _unLike(
+    address _account,
+    bytes32 _memeId,
+    address[] memory _oldLikers,
+    uint _index
+  ) private {
+    require(
+      memeStorage.getLikeCount(_memeId)>0,
+      'Error, no likers in meme');
+    address[] memory _oldUnlikers = memeStorage.getUnlikers(_memeId);
     // delete liked index, moving all successive elements
-    _meme.likers = _deleteAddress(_meme.likers, index);
-    // decrement meme's likes
-    _meme.likes--;
+    memeStorage.setLikers(_memeId, _deleteAddress(_oldLikers, _index));
+    uint _oldUnlikeCount = _oldUnlikers.length;
     // set memory to _meme.unlikers length plus one
-    address[] memory _unlikers = new address[](_meme.unlikers.length+1);
+    address[] memory _newUnlikers = new address[](_oldUnlikeCount+1);
+
     // populate address array with existing _meme.unlikers
-    for(uint i = 0; i < _meme.unlikers.length; i++) {
-      _unlikers[i] = _meme.unlikers[i];
+    for(uint i = 0; i < _oldUnlikeCount; i++) {
+      _newUnlikers[i] = _oldUnlikers[i];
     }
     // set _unlikers value to msg.sender at last slot of array
-    _unlikers[_unlikers.length-1] = account;
+    _newUnlikers[_oldUnlikeCount] = _account;
     // set unlikers field of _meme.likers to _unlikers
-    _meme.unlikers = _unlikers;
-    // set meme at memeId to _meme instance
-    memes[memeId] = _meme;
+    memeStorage.setUnlikers(_memeId, _newUnlikers);
   }
 
   // helper functions
-  function _deleteAddress(address[] memory array, uint index) private returns(address[] memory) {
+  function _deleteAddress(
+    address[] memory array,
+    uint index
+  ) private pure returns(address[] memory) {
     address[] memory _array = new address[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];
@@ -108,10 +128,11 @@ contract Like {
 
   // set interfaceSigner role to User upon deployment
   function passInterfaceSigner(address _userInterface) public returns (bool) {
-    require(msg.sender == interfaceSigner, 'Error: only deployer can pass signer role');
-
+    require(
+      msg.sender == interfaceSigner,
+      'Error: only deployer can pass signer role');
     interfaceSigner = _userInterface;
-    emit PostCallerChanged(msg.sender, _userInterface);
+    emit InterfaceSignerChanged(msg.sender, _userInterface);
     return true;
   }
 }

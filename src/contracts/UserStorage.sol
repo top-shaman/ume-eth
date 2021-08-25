@@ -23,14 +23,14 @@ contract UserStorage {
     address addr; // address of user
     address[] followers; // addresses of followers
     address[] following; // addressses of following
-    uint[] posts; // memeIds of posts
+    bytes32[] posts; // memeIds of posts
   }
 
-  event FactorySignerChanged(address from, address to);
-  event InterfaceSignerChanged(address from, address to);
-  event PostSignerChanged(address from, address to);
-  event LikeSignerChanged(address from, address to);
-  event FollowSignerChanged(address from, address to);
+  event FactorySignerChanged(address indexed from, address indexed to);
+  event InterfaceSignerChanged(address indexed from, address indexed to);
+  event PostSignerChanged(address indexed from, address indexed to);
+  event LikeSignerChanged(address indexed from, address indexed to);
+  event FollowSignerChanged(address indexed from, address indexed to);
 
   constructor() public {
     factorySigner = msg.sender;
@@ -42,64 +42,92 @@ contract UserStorage {
 
 
   // Factory-Specific setters
-  function setUser(address _account, User _user) public {
-    require(msg.sender==factorySigner,
-            'Error: user factory must be signer');
+  function setUser(
+    address _account,
+    User memory _user
+  ) public {
+    require(
+      msg.sender==factorySigner,
+      'Error: user factory must be signer');
     users[_account] = _user;
-    usersByUserAddress[_user.userAddr] = _account;
+    usersByUserAddr[_user.userAddr] = _account;
   }
-  function setUser(address _account, User _user) public {
-    require(msg.sender==factorySigner,
-            'Error: user factory must be signer');
-    users[_account] = _user;
-    usersByUserAddress[_user.userAddr] = _account;
+  function setUsersByUserAddress(
+    bytes32 _userAddr,
+    address _account
+  ) public {
+    require(
+      msg.sender==factorySigner,
+      'Error: user factory must be signer');
+    usersByUserAddr[_userAddr] = _account;
   }
-  function setUsersByUserAddress(bytes32 _userAddr, address _account) public {
-    require(msg.sender==factorySigner,
-            'Error: user factory must be signer');
-    usersByUserAddress[_userAddr] = _account;
+  function setUsersByMeme(
+    bytes32 _memeId,
+    address _account
+  ) public {
+    require(
+      msg.sender==memeFactorySigner,
+      'Error: user factory must be signer');
+    usersByMeme[_memeId] = _account;
   }
   function deleteUser(address _account) public {
-    require(msg.sender==factorySigner,
-            'Error: user factory must be signer');
+    require(
+      msg.sender==factorySigner,
+      'Error: user factory must be signer');
     delete users[_account];
   }
   function increaseUserCount() public {
-    require(msg.sender==factorySigner,
-            'Error: user factory must be signer');
+    require(
+      msg.sender==factorySigner,
+      'Error: user factory must be signer');
     userCount++;
   }
   // Setters for interface only
-  function setUserName(address _account, bytes32 _userName) public {
-    require(msg.sender==interfaceSigner, 'Error: user factory must be signer');
+  function setUserName(
+    address _account,
+    bytes32 _userName
+  ) public {
+    require(
+      msg.sender==interfaceSigner,
+      'Error: user factory must be signer');
     users[_account].name= _userName;
   }
-  function setUserAddress(address _account, bytes32 _userAddress) public {
-    require(msg.sender==interfaceSigner, 'Error: user factory must be signer');
+  function setUserAddress(
+    address _account,
+    bytes32 _userAddress
+  ) public {
+    require(
+      msg.sender==interfaceSigner,
+      'Error: user factory must be signer');
     users[_account].userAddr = _userAddress;
     usersByUserAddr[_userAddress] = _account;
   }
 
   // Setters for all signers
-  function setUsersByMeme(bytes32 _memeId, address _account) public {
-    require(msg.sender==memeFactorySigner,
-            'Error: user factory must be signer');
-    usersByMeme[_memeId] = _account;
-  }
-
   // set post meme
-  function setPosts(address _account,
+  function setPosts(
+    address _account,
+    bytes32[] memory _posts
+  ) public {
+    users[_account].posts = _posts;
+  }
 
   // set follow
-  function setFollowers(address _account, address[] memory _followers) public {
+  function setFollowers(
+    address _account,
+    address[] memory _followers
+  ) public {
     users[_account].followers = _followers;
   }
-  function setFollowing(address _account, address[] memory _following) public {
+  function setFollowing(
+    address _account,
+    address[] memory _following
+  ) public {
     users[_account].following = _following;
   }
 
   // getter functions for UserStorage
-  function getUserCount() public returns(uint){
+  function getUserCount() public view returns(uint){
     return userCount;
   }
   function getId(address _account) public view returns(bytes32) {
@@ -115,7 +143,7 @@ contract UserStorage {
     return users[_account].addr;
   }
   function getFollowerCount(address _account) public view returns(uint) {
-    return users[_account].followerCount;
+    return users[_account].followers.length;
   }
   function getFollowers(address _account) public view returns(address[] memory) {
     return users[_account].followers;
@@ -124,7 +152,7 @@ contract UserStorage {
     return users[_account].followers[_index];
   }
   function getFollowingCount(address _account) public view returns(uint) {
-    return users[_account].followingCount;
+    return users[_account].following.length;
   }
   function getFollowing(address _account) public view returns(address[] memory) {
     return users[_account].following;
@@ -132,55 +160,54 @@ contract UserStorage {
   function getFollowingAt(address _account, uint _index) public view returns(address) {
     return users[_account].following[_index];
   }
-  function getFollowingCount(address _account) public view returns(uint) {
-    return users[_account].followingCount;
-  }
-  function getFollowing(address _account) public view returns(address[] memory) {
-    return users[_account].following;
-  }
   function getPostCount(address _account) public view returns (uint) {
     return users[_account].posts.length;
   }
-  function getPosts(address _account) public view returns (uint[] memory) {
+  function getPosts(address _account) public view returns (bytes32[] memory) {
     return users[_account].posts;
   }
 
   // pass signer roles
   function passFactorySigner(address _userFactory) public returns(bool){
-    require(msg.sender==factorySigner,
-            'Error: msg.sender must be factorySigner');
+    require(
+      msg.sender==factorySigner,
+      'Error: msg.sender must be factorySigner');
 
     factorySigner = _userFactory;
-    emit FactorySignerChanged(msg.sender, userFactory);
+    emit FactorySignerChanged(msg.sender, factorySigner);
     return true;
   }
   function passInterfaceSigner(address _userInterface) public returns(bool){
-    require(msg.sender==interfaceSigner,
-            'Error: msg.sender must be factorySigner');
+    require(
+      msg.sender==interfaceSigner,
+      'Error: msg.sender must be factorySigner');
 
     interfaceSigner = _userInterface;
     emit InterfaceSignerChanged(msg.sender, interfaceSigner);
     return true;
   }
   function passMemeFactorySigner(address _memeFactory) public returns(bool){
-    require(msg.sender==postSigner,
-            'Error: msg.sender must be memeFactorySigner');
+    require(
+      msg.sender==memeFactorySigner,
+      'Error: msg.sender must be memeFactorySigner');
 
     memeFactorySigner = _memeFactory;
     emit PostSignerChanged(msg.sender, memeFactorySigner);
     return true;
   }
   function passLikeSigner(address _likeSigner) public returns(bool){
-    require(msg.sender==likeSigner,
-            'Error: msg.sender must be likeSigner');
+    require(
+      msg.sender==likeSigner,
+      'Error: msg.sender must be likeSigner');
 
     likeSigner = _likeSigner;
     emit LikeSignerChanged(msg.sender, likeSigner);
     return true;
   }
   function passFollowSigner(address _followSigner) public returns(bool){
-    require(msg.sender==factorySigner,
-            'Error: msg.sender must be factorySigner');
+    require(
+      msg.sender==followSigner,
+      'Error: msg.sender must be factorySigner');
 
     followSigner = _followSigner;
     emit FollowSignerChanged(msg.sender, followSigner);

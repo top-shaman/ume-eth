@@ -17,6 +17,14 @@ const wait = s => {
 }
 
 var Post = artifacts.require("./Post.sol");
+var Like = artifacts.require("./Like.sol");
+var Follow = artifacts.require("./Follow.sol");
+
+var MemeFactory = artifacts.require("./MemeFactory.sol");
+var MemeStorage = artifacts.require("./MemeStorage.sol");
+var UserInterface = artifacts.require("./UserInterface.sol");
+var UserFactory = artifacts.require("./UserFactory.sol");
+var UserStorage = artifacts.require("./UserStorage.sol");
 var UME = artifacts.require("./UME.sol");
 var User = artifacts.require("./User.sol");
 var We = artifacts.require("./We.sol");
