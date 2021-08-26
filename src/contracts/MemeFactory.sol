@@ -13,7 +13,7 @@ contract MemeFactory {
   UserStorage private userStorage;
   bytes32 zeroBytes;
 
-  address private postSigner;
+  address public postSigner;
 /*
   // Meme structure
   struct Meme {
@@ -213,6 +213,9 @@ contract MemeFactory {
   }
 
 
+  function encode(uint num) public pure returns (bytes32) {
+    return keccak256(abi.encodePacked(num));
+  }
   // set signer roles
   function passPostSigner(address _post) public returns (bool) {
     require(

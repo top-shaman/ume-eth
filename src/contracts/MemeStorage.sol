@@ -3,13 +3,12 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 contract MemeStorage {
-  address factorySigner;
-  address interfaceSigner;
-  address postSigner;
-  address likeSigner;
+  address public factorySigner;
+  address public interfaceSigner;
+  address public postSigner;
+  address public likeSigner;
 
   uint public memeCount = 0;
-  bytes32 constant zeroBytes = keccak256(abi.encodePacked(uint(0)));
 
 
   // mapping of Memes
@@ -146,6 +145,50 @@ contract MemeStorage {
   }
   function getVisibility(bytes32 _memeId) public view returns(bool) {
     return memes[_memeId].isVisible;
+  }
+
+// encode uint for testing
+  function getEncodeLikeCount(uint _memeId) public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].likers.length;
+  }
+  function getEncodeLikers(uint _memeId) public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].likers;
+  }
+  function getEncodeUnlikers(uint _memeId) public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].unlikers;
+  }
+  function getEncodeRepostCount(uint _memeId) public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].reposts.length;
+  }
+  function getEncodeReposts(uint _memeId) public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].reposts;
+  }
+  function getEncodeQuotePostCount(uint _memeId) public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts.length;
+  }
+  function getEncodeQuotePosts(uint _memeId) public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts;
+  }
+  function getEncodeTags(uint _memeId) public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].tags;
+  }
+  function getEncodeResponseCount(uint _memeId) public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].responses.length;
+  }
+  function getEncodeResponses(uint _memeId) public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].responses;
+  }
+  function getEncodeParentId(uint _memeId) public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].parentId;
+  }
+  function getEncodeOriginId(uint _memeId) public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].originId;
+  }
+  function getEncodeAuthor(uint _memeId) public view returns(address) {
+    return memes[keccak256(abi.encodePacked(_memeId))].author;
+  }
+  function getEncodeVisibility(uint _memeId) public view returns(bool) {
+    return memes[keccak256(abi.encodePacked(_memeId))].isVisible;
   }
 
   // set caller role to User upon deployment

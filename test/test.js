@@ -22,27 +22,66 @@ var Follow = artifacts.require("./Follow.sol");
 
 var MemeFactory = artifacts.require("./MemeFactory.sol");
 var MemeStorage = artifacts.require("./MemeStorage.sol");
+
 var UserInterface = artifacts.require("./UserInterface.sol");
 var UserFactory = artifacts.require("./UserFactory.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
+
 var UME = artifacts.require("./UME.sol");
-var User = artifacts.require("./User.sol");
 var We = artifacts.require("./We.sol");
 
 require('chai')
   .use(require('chai-as-promised'))
   .should()
+var Web3 = require('web3')
+var Web3 = new Web3(Web3.givenProvider)
+
+const toBytes = async s => await web3.utils.fromAscii(s)
+const fromBytes = async b => await web3.utils.toAscii(b)
 
 contract('Post', ([deployer, user1, user2, user3, user4]) => {
-  let we, umeToken, post, user
+  let post, like, follow, memeFactory, memeStorage, interface, userFactory, userStorage, we, umeToken
 
   beforeEach(async () => {
     umeToken = await UME.new()
     we = await We.new(umeToken.address)
-    post = await Post.new(umeToken.address)
-    user = await User.new(umeToken.address, post.address)
+
+    memeStorage = await MemeStorage.new()
+    userStorage = await UserStorage.new()
+    memeFactory = await MemeFactory.new(umeToken.address, memeStorage.address, userStorage.address)
+    userFactory = await UserFactory.new(userStorage.address)
+
+    post = await Post.new(umeToken.address, memeFactory.address, memeStorage.address)
+    like = await Like.new(umeToken.address, memeStorage.address)
+    follow = await Follow.new(umeToken.address, userStorage.address)
+
+    interface = await UserInterface.new(umeToken.address, memeStorage.address, userStorage.address, userFactory.address, post.address, like.address, follow.address)
+
     await umeToken.passMinterRole(we.address, {from: deployer})
-    await post.passPostRole(user.address, {from: deployer})
+    await umeToken.passPostSignerRole(post.address, {from: deployer})
+    await umeToken.passLikeSignerRole(like.address, {from: deployer})
+    await umeToken.passFollowSignerRole(follow.address, {from: deployer})
+
+    await memeStorage.passFactorySigner(memeFactory.address, {from: deployer})
+    await userStorage.passMemeFactorySigner(memeFactory.address, {from: deployer})
+    await userStorage.passFactorySigner(userFactory.address, {from: deployer})
+
+    await memeStorage.passPostSigner(post.address)
+    await memeStorage.passLikeSigner(like.address)
+
+    await userStorage.passLikeSigner(like.address)
+    await userStorage.passFollowSigner(follow.address)
+
+    await memeStorage.passInterfaceSigner(interface.address)
+    await userStorage.passInterfaceSigner(interface.address)
+
+    await memeFactory.passPostSigner(post.address)
+
+    await userFactory.passInterfaceSigner(interface.address)
+
+    await post.passInterfaceSigner(interface.address)
+    await like.passInterfaceSigner(interface.address)
+    await follow.passInterfaceSigner(interface.address)
 
 
 
@@ -238,143 +277,229 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //      })
 //    })
 //  })
-  describe('testing Post functionality', () => {
+  describe('testing new structure functionality', () => {
     beforeEach(async () => {
-      await umeToken.passPostCallerRole(post.address, {from: deployer})
-      await umeToken.passUserCallerRole(user.address, {from: deployer})
-      await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
-      await user.newAccount(user2, 'user_2', '@user_2', {from: user2})
-      await user.newAccount(deployer, 'deployer', '@deployer', {from: deployer})
+      let un1 = web3.utils.fromAscii('user_1')
+      let un2 = web3.utils.fromAscii('user_2')
+      let dn = web3.utils.fromAscii('deployer')
+      let ua1 = web3.utils.fromAscii('@user_1')
+      let ua2 = web3.utils.fromAscii('@user_2')
+      let da = web3.utils.fromAscii('@deployer')
+
+      await interface.newUser(user1, un1, ua1, {from: user1})
+      await interface.newUser(user2, un2, ua2, {from: user2})
+      await interface.newUser(deployer, dn, da, {from: deployer})
+
+      let account1 = await userStorage.getUser(user1)
+      let account2 = await userStorage.getUser(user2)
     })
-//    describe('Posting meme', () => {
+//    describe('User functionality', () => {
 //      describe('success', () => {
-//        it('post meme', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1})
-//
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-//          expect(await post.memeCount().then(bal => bal.toString())).to.be.eq('1')
-//          expect(await user.usersByMeme(1)).to.be.eq(user1)
+//        it('3 accounts created from before statement', async () => {
+//          expect(await userStorage.userCount().then(elem => elem.toString())).to.be.eq('3')
 //        })
-//        it('post meme with tags', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [user2, deployer], 0, 0, {from: user1})
+//        it('account #1 and account #2 have different names', async () => {
+//          account1 = await userStorage.getUser(user1)
+//          account2 = await userStorage.getUser(user2)
 //
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('10')
-//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('3')
-//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('3')
+//          const id1 = account1.id;
+//          const id2 = account2.id;
+//          assert.equal(await account1.id, id1, 'id is correct')
+//          assert.equal(await account2.id, id2, 'id is correct')
+//          await account1.id.should.not.eq(id2)
+//          await account2.id.should.not.eq(id1)
 //        })
-//        it('no excess UME minted upon "dry" post', async () => { // with empty tag list & 0 for parentId and originId, no excess
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1})
+//        it('follow functionality', async () => {
+//          await interface.followUser(user1, user2, {from: user1})
 //
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('0')
-//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('0')
-//        })
-//        it('no UME minted from tagging self', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [user1], 0, 0, {from: user1})
+//          account1 = await userStorage.users(user1)
+//          account2 = await userStorage.users(user2)
 //
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-//        })
-//        it('respond works when parentId & originId are the same', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1})
-//          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2})
+//          // check follower/following list
+//          expect(await userStorage.getFollowers(user1).then(e => e)).to.deep.eq([])
+//          expect(await userStorage.getFollowing(user1).then(e => e)).to.deep.eq([user2])
+//          expect(await userStorage.getFollowers(user2).then(e => e)).to.deep.eq([user1])
+//          expect(await userStorage.getFollowing(user2).then(e => e)).to.deep.eq([])
 //
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
-//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
-//        })
-//        it('respond & curate work when parentId & originId are different', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-//          await user.newMeme(deployer /* , '0x67891011' */, 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
-//
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
-//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
-//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
-//        })
-//        it('user post count works', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-//          await user.newMeme(deployer /* , '0x5363635735'*/, 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
-//          await user.newMeme(user1/*, '0x064536476'*/, 'you heard me!', [], 3, 1, {from: user1}) // user1 post
-//
-//          expect(await user.getPosts(user1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['1','4'])
-//          expect(await user.getPosts(user2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2'])
-//          expect(await user.getPosts(deployer).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
-//        })
-//        it('delete meme works', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//          await user.deleteMeme(user1, 1, {from: user1})
-//
-//          const meme1 = await post.memes(1);
-//
-//          expect(await meme1.id.toNumber()).to.be.eq(1)
-//          expect(await meme1.time.toNumber()).to.be.eq(0)
-//          expect(await meme1.text).to.be.eq('')
-//          expect(await meme1.likes.toNumber()).to.be.eq(0)
-//          expect(await meme1.parentId.toNumber()).to.be.eq(0)
-//          expect(await meme1.originId.toNumber()).to.be.eq(0)
-//          expect(await meme1.author).to.be.eq(ETHER_ADDRESS)
-//          expect(await meme1.isVisible).to.be.eq(false)
-//
-//          expect(await post.getLikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getUnlikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getTags(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//
-//        })
-//        it('post meme tallies responses', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-//          await user.newMeme(deployer /* , '0x5363635735'*/, 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
-//          await user.newMeme(user1/*, '0x064536476'*/, 'you heard me!', [], 3, 1, {from: user1}) // user1 post
-//          await user.newMeme(deployer /* , '0x5363635735'*/, 'wait what?', [], 1, 1, {from: deployer}) // deployer responds to user2
-//
-//          expect(await post.getResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2','5'])
-//          expect(await post.getResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
-//          expect(await post.getResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//        })
-//        it('delete meme deletes response in parent', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//          await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-//          await user.newMeme(deployer /* , '0x5363635735'*/, 'what?', [], 2, 1, {from: deployer}) // deployer responds to user2
-//          await user.newMeme(user1/*, '0x064536476'*/, 'you heard me!', [], 3, 1, {from: user1}) // user1 post
-//          await user.newMeme(deployer /* , '0x5363635735'*/, 'wait what?', [], 1, 1, {from: deployer}) // deployer responds to user2
-//          await user.deleteMeme(user2, 2, {from: user2})
-//          await user.deleteMeme(deployer, 3, {from: deployer})
-//          await user.deleteMeme(deployer, 5, {from: deployer})
-//
-//          expect(await post.getResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-//          expect(await post.getResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          // check minting
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
 //        })
 //      })
 //      describe('failure', () => {
-//        it('doesn\'t post meme with wrong users', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        // creation
+//        it('can\'t create double account', async () => {
+//          await interface.newUser(user1, toBytes('user_3'), toBytes('@user_3'), {from: user1}).should.be.rejected
 //        })
-//        it('can\'t bypass to mint (ume)', async () => {
-//          await umeToken.mintPost(user1, 'hello world!', {from: user2}).should.be.rejectedWith(EVM_REVERT)
-//          await umeToken.mintPost(user2, 'hello world!', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        it('can\'t create redundant user address', async () => {
+//          await interface.newUser(user3, toBytes('user_3'), toBytes('@user_1'), {from: user3}).should.be.rejected
 //        })
-//        it('can\'t bypass to mint (post)', async () => {
-//          await post.newMeme(user1, 'hello world!', [], 0, 0, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-//          await post.newMeme(user2, 'hello world!', [], 0, 0, {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        it('can\'t create account for other address', async () => {
+//          await interface.newUser(user3, toBytes('user_3'), toBytes('@user_3'), {from: user2}).should.be.rejected
 //        })
-//        it('doesn\'t post meme with empty message', async () => {
-//          await post.newMeme(user1 /* , '0x012345' */, '', [], 0, 0, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        it('can\'t create user address without @', async () => {
+//          await interface.newUser(user3, toBytes('user_3'), toBytes('user_3'), {from: user3}).should.be.rejected
 //        })
-//        it('other user can\'t delete user\'s meme', async () => {
-//          await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1})
-//          await user.deleteMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//        // userAddress/userName change
+//        it('can\'t change user address for other address', async () => {
+//          await interface.changeUserAddress(user3, toBytes('@user_3'), {from: user2}).should.be.rejected
 //        })
-//        it('can\'t create meme with parentId greater than memeCount', async () => {
-//          await user.newMeme(user1, 'hello world!', [], 3, 0, {from: user1}).should.be.rejectedWith(EVM_REVERT)
-//          await user.newMeme(user1, 'hello world!', [], 0, 3, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        it('can\'t change userAddress to same user address', async () => {
+//          await interface.changeUserAddress(user2, toBytes('@user_2'), {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change userName to same username', async () => {
+//          await interface.changeUserName(user2, toBytes('user_2'), {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change userName to same username', async () => {
+//          await interface.changeUserName(user2, toBytes('user_2'), {from: user2}).should.be.rejected
+//        })
+//        it('can\'t change userAddress without account', async () => {
+//          await interface.changeUserAddress(user3, toBytes('@user_2'), {from: user3}).should.be.rejected
+//        })
+//        it('can\'t change userName without account', async () => {
+//          await interface.changeUserName(user3, toBytes('user_2'), {from: user3}).should.be.rejected
+//        })
+//        it('can\'t change userAddress without @ at beginning', async () => {
+//          await interface.changeUserName(user3, toBytes('user_3'), {from: user3}).should.be.rejected
+//        })
+//        // follow function
+//        it('can\'t double follow', async () => {
+//          await interface.followUser(user1, user2, {from: user1})
+//          await interface.followUser(user1, user2, {from: user1}).should.be.rejected
 //        })
 //      })
 //    })
+    describe('Posting meme', () => {
+      describe('success', () => {
+        it('post meme', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
+          const meme1 = await memeStorage.getEncodeId(1);
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('1')
+          expect(await userStorage.usersByMeme(meme1)).to.be.eq(user1)
+        })
+        /*
+        it('post meme with tags', async () => {
+          await interface.newMeme(user1, 'hello world!', [user2, deployer], interface.encode(0), interface.encode(0), {from: user1})
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('10')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('3')
+          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('3')
+        })
+        it('no excess UME minted upon "dry" post', async () => { // with empty tag list & 0 for parentId and originId, no excess
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('0')
+          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('0')
+        })
+        it('no UME minted from tagging self', async () => {
+          await interface.newMeme(user1, 'hello world!', [user1], interface.encode(0), interface.encode(0), {from: user1})
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+        })
+        it('respond works when parentId & originId are the same', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
+          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2})
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
+        })
+        it('respond & curate work when parentId & originId are different', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
+          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
+          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user2
+
+          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
+          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
+          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
+        })
+        it('user post count works', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
+          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
+          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user2
+          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
+
+          expect(await userStorage.getPosts(user1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['1','4'])
+          expect(await userStorage.getPosts(user2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2'])
+          expect(await userStorage.getPosts(deployer).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
+        })
+        it('delete meme works', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
+          await interface.deleteMeme(user1, interface.encode(1), {from: user1})
+
+          const meme1 = await memeStorage.memes(interface.encode(1));
+
+          expect(await meme1.id.toNumber()).to.be.eq(interface.encode(1))
+          expect(await meme1.time.toNumber()).to.be.eq(0)
+          expect(await meme1.text).to.be.eq('')
+          expect(await meme1.likes.toNumber()).to.be.eq(0)
+          expect(await meme1.parentId.toNumber()).to.be.eq(0)
+          expect(await meme1.originId.toNumber()).to.be.eq(0)
+          expect(await meme1.author).to.be.eq(ETHER_ADDRESS)
+          expect(await meme1.isVisible).to.be.eq(false)
+
+          expect(await memeStorage.getEncodeLikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeTags(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+
+        })
+        it('memeStorage.meme tallies responses', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
+          await interface.newMeme(user1, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
+          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user.
+          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
+          await interface.newMeme(deployer, 'wait what?', [], interface.encode(1), interface.encode(1), {from: deployer}) // deployer responds to user.
+
+          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2','5'])
+          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
+          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+        })
+        it('delete meme deletes response in parent', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
+          await interface.newMeme(user1, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
+          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user.
+          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
+          await interface.newMeme(deployer, 'wait what?', [], interface.encode(1), interface.encode(1), {from: deployer}) // deployer responds to user.
+          await userStorage.deleteMeme(user2, interface.encode(2), {from: user2})
+          await userStorage.deleteMeme(deployer, interface.encode(3), {from: deployer})
+          await userStorage.deleteMeme(deployer, interface.encode(5), {from: deployer})
+
+          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+        })
+      })
+      describe('failure', () => {
+        it('doesn\'t post meme with wrong users', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user2}).should.be.rejectedWith(EVM_REVERT)
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('can\'t bypass to mint (ume)', async () => {
+          await umeToken.mintPost(user1, 'hello world!', {from: user2}).should.be.rejectedWith(EVM_REVERT)
+          await umeToken.mintPost(user2, 'hello world!', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('can\'t bypass to mint (post)', async () => {
+          await post.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user2}).should.be.rejectedWith(EVM_REVERT)
+          await post.newMeme(user2, 'hello world!', [], interface.encode(0), interface.encode(0), {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('doesn\'t post meme with empty message', async () => {
+          await interface.newMeme(user1, '', [], interface.encode(0), interface.encode(0), {from: user1}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('other user can\'t delete user\'s meme', async () => {
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
+          await interface.deleteMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+        })
+        it('can\'t create meme with parentId greater than memeCount', async () => {
+          await interface.newMeme(user1, 'hello world!', [], 3, interface.encode(0), {from: user1}).should.be.rejectedWith(EVM_REVERT)
+          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), 3, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+        }) */
+      })
+    })
 //    describe('Liking meme', () => {
 //      beforeEach(async () => {
 //        /*await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
@@ -451,81 +576,5 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //        })
 //      })
 //    })
-//    describe('User functionality', () => {
-//      describe('success', () => {
-//        it('3 accounts created from before statement', async () => {
-//          expect(await user.userCount().then(elem => elem.toString())).to.be.eq('3')
-//        })
-//        it('account #1 has id #1 and account #2 has name #2', async () => {
-//          const account1 = await user.users(user1)
-//          const account2 = await user.users(user2)
-//          assert.equal(await account1.id.toNumber(), 1, 'id is correct')
-//          assert.equal(await account2.id.toNumber(), 2, 'id is correct')
-//        })
-//        it('follow functionality', async () => {
-//          await user.follow(user1, user2, {from: user1})
-//
-//          const account1 = await user.users(user1)
-//          const account2 = await user.users(user2)
-//
-//          //check follower/following counts
-//          assert.equal(await account1.followerCount.toNumber(), 0, 'acct1 followerCount is correct')
-//          assert.equal(await account1.followingCount.toNumber(), 1, 'acct1 followingCount is correct')
-//          assert.equal(await account2.followerCount.toNumber(), 1, 'acct2 followerCount is correct')
-//          assert.equal(await account2.followingCount.toNumber(), 0, 'acct2 followingCount is correct')
-//          // check follower/following list
-//
-//          expect(await user.getFollowers(user1).then(e => e)).to.deep.eq([])
-//          expect(await user.getFollowing(user1).then(e => e)).to.deep.eq([user2])
-//          expect(await user.getFollowers(user2).then(e => e)).to.deep.eq([user1])
-//          expect(await user.getFollowing(user2).then(e => e)).to.deep.eq([])
-//
-//          // check minting
-//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
-//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
-//        })
-//      })
-//      describe('failure', () => {
-//        it('can\'t double follow', async () => {
-//          await user.follow(user1, user2, {from: user1})
-//          await user.follow(user1, user2, {from: user1}).should.be.rejected
-//        })
-//        // creation
-//        it('can\'t create double account', async () => {
-//          await user.newAccount(user1, 'user_3', '@user_3', {from: user1}).should.be.rejected
-//        })
-//        it('can\'t create redundant user address', async () => {
-//          await user.newAccount(user3, 'user_3', '@user_1', {from: user3}).should.be.rejected
-//        })
-//        it('can\'t create account for other address', async () => {
-//          await user.newAccount(user3, 'user_3', '@user_3', {from: user2}).should.be.rejected
-//        })
-//        it('can\'t create user address without @', async () => {
-//          await user.newAccount(user3, 'user_3', 'user_3', {from: user3}).should.be.rejected
-//        })
-//        // userAddress/userName change
-//        it('can\'t change user address for other address', async () => {
-//          await user.changeUserAddress(user3, '@user_3', {from: user2}).should.be.rejected
-//        })
-//        it('can\'t change user address to same user address', async () => {
-//          await user.changeUserAddress(user2, '@user_2', {from: user2}).should.be.rejected
-//        })
-//        it('can\'t change username to same username', async () => {
-//          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
-//        })
-//        it('can\'t change username to same username', async () => {
-//          await user.changeUserName(user2, 'user_2', {from: user2}).should.be.rejected
-//        })
-//        it('can\'t change user address without account', async () => {
-//          await user.changeUserAddress(user3, '@user_2', {from: user3}).should.be.rejected
-//        })
-//        it('can\'t change username without account', async () => {
-//          await user.changeUserName(user3, 'user_2', {from: user3}).should.be.rejected
-//        })
-//        it('can\'t change user address without @ at beginning', async () => {
-//          await user.changeUserName(user3, 'user_3', {from: user3}).should.be.rejected
-//        })
-//      })
- //   })
   })
 })

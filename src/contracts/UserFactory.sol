@@ -8,7 +8,7 @@ contract UserFactory {
 
   UserStorage private userStorage;
 
-  address private signer;
+  address public signer;
 
   event NewUser(address account, bytes32 userName, bytes32 userAddr, uint time);
   event DeletedUser(bytes32 id, uint time);
@@ -36,12 +36,12 @@ contract UserFactory {
     bytes32 _userAddress
   ) public {
     require(
-      _account==signer,
+      msg.sender==signer,
       'Error: account must be interface');
     userStorage.increaseUserCount();
     // set user to account address
-    userStorage.setUser(_account, UserStorage.User(
-      keccak256(abi.encodePacked(userStorage.getUserCount())), // user id hashed through keccak
+    userStorage.setUser( _account, UserStorage.User(
+      keccak256(abi.encodePacked(userStorage.userCount())), // user id hashed through keccak
       _userName, // user name
       _userAddress, // user address
       block.timestamp, // user creation time
@@ -57,7 +57,7 @@ contract UserFactory {
     bool failSafe
   ) public {
     require(
-      _account==signer && failSafe==true,
+      msg.sender==signer && failSafe==true,
       'Error: account must be interface');
     require(
       userStorage.getAddr(_account)==_account,

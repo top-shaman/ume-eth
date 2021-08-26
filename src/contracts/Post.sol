@@ -12,7 +12,7 @@ contract Post {
   MemeFactory private memeFactory;
   MemeStorage private memeStorage;
 
-  address private interfaceSigner;
+  address public interfaceSigner;
   bytes32 zeroBytes;
 
   event InterfaceSignerChanged(address indexed from, address indexed to);

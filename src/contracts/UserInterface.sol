@@ -47,12 +47,14 @@ contract UserInterface {
     UME _umeToken,
     MemeStorage _memeStorage,
     UserStorage _userStorage,
+    UserFactory _userFactory,
     Post _post,
     Like _like,
     Follow _follow
   ) public {
     umeToken = _umeToken;
     userStorage = _userStorage;
+    userFactory = _userFactory;
     post = _post;
     like = _like;
     follow = _follow;
@@ -60,8 +62,8 @@ contract UserInterface {
 
   function newUser(
     address _account,
-    bytes32 _userName,
-    bytes32 _userAddress
+    bytes memory _userName,
+    bytes memory _userAddress
   ) public {
     require(
       msg.sender==_account,
@@ -84,18 +86,21 @@ contract UserInterface {
       userStorage.getAddr(_account)==address(0x0),
       'Error: user address already exists');
 
-    userFactory.newUser(_account, _userName, _userAddress);
-    emit NewUser(_account, _userName, _userAddress);
+    bytes32 _un = _bytesToBytes32(_userName);
+    bytes32 _ua = _bytesToBytes32(_userAddress);
+    userFactory.newUser(_account, _un, _ua);
+    emit NewUser(_account, _un, _ua);
   }
   function changeUserName(
     address _account,
-    bytes32 _userName
+    bytes memory _userName
   ) public {
+    bytes32 _un = _bytesToBytes32(_userName);
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
     require(
-      userStorage.getName(_account)!=_userName,
+      userStorage.getName(_account)!=_un,
       'Error: must be different username');
     require(
       _userName.length>1 &&
@@ -105,13 +110,14 @@ contract UserInterface {
       userStorage.getId(_account)!=0,
       'Error: must have an existing account');
 
-    userStorage.setUserName(_account, _userName);
-    emit ChangedUserName(_account, _userName);
+    userStorage.setUserName(_account, _un);
+    emit ChangedUserName(_account, _un);
   }
   function changeUserAddress(
     address _account,
-    bytes32 _userAddress
+    bytes memory _userAddress
   ) public {
+    bytes32 _ua = _bytesToBytes32(_userAddress);
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
@@ -123,14 +129,14 @@ contract UserInterface {
       _userAddress.length<=32,
       'Error: userAddress must be between 2 & 32 characters');
     require(
-      userStorage.getUserAddr(_account)!=_userAddress,
+      userStorage.getUserAddr(_account)!=_ua,
       'Error: must be different user address');
     require(
-      userStorage.usersByUserAddr(_userAddress)==_account,
+      userStorage.usersByUserAddr(_ua)==_account,
       'Error: user address must exist at current address');
 
-    userStorage.setUserAddress(_account, _userAddress);
-    emit ChangedUserAddress(_account, _userAddress);
+    userStorage.setUserAddress(_account, _ua);
+    emit ChangedUserAddress(_account, _ua);
   }
 
   // Meme posting functionality
@@ -241,7 +247,17 @@ contract UserInterface {
 
     follow.follow(_from, _to);
   }
+  // helper functions
+  function _bytesToBytes32(bytes memory source) public pure returns(bytes32 result) {
+    if(source.length==0) return 0x0;
+    assembly {
+      result := mload(add(source, 32))
+    }
+  }
 
+  function encode(uint num) public pure returns(bytes32) {
+    return keccak256(abi.encodePacked(num));
+  }
   function _deleteUints(uint[] memory array, uint index) private pure returns(uint[] memory) {
     uint[] memory _array = new uint[](array.length-1);
     for(uint i = 0; i < index; i++) {

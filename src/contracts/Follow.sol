@@ -9,7 +9,7 @@ contract Follow {
   UME private umeToken;
   UserStorage private userStorage;
 
-  address private interfaceSigner;
+  address public interfaceSigner;
 
   event FollowSignerChanged(address indexed from, address indexed to);
 

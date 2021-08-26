@@ -3,11 +3,11 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 contract UserStorage {
-  address factorySigner;
-  address memeFactorySigner;
-  address likeSigner;
-  address followSigner;
-  address interfaceSigner;
+  address public factorySigner;
+  address public memeFactorySigner;
+  address public likeSigner;
+  address public followSigner;
+  address public interfaceSigner;
 
   uint public userCount = 0;
 
@@ -127,8 +127,8 @@ contract UserStorage {
   }
 
   // getter functions for UserStorage
-  function getUserCount() public view returns(uint){
-    return userCount;
+  function getUser(address _account) public view returns(User memory){
+    return users[_account];
   }
   function getId(address _account) public view returns(bytes32) {
     return users[_account].id;

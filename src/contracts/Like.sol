@@ -7,8 +7,8 @@ import "./MemeStorage.sol";
 
 contract Like {
 
-  MemeStorage private memeStorage;
   UME private umeToken;
+  MemeStorage private memeStorage;
 
   address public interfaceSigner;
 
