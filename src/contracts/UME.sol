@@ -43,9 +43,9 @@ contract UME is ERC20 {
       'Error: wrong _account calling mint');
     //require(minter!=_account, 'Error: "we" cannot call mint');
     //require(bytes(_postHash).length > 0, 'Error: no post exists'); // check if post hash exists
-    require(
-      bytes(_postText).length > 0,
-      'Error: no text in post'); // check if there's text in post
+//    require(
+//      bytes(_postText).length > 0,
+//      'Error: no text in post'); // check if there's text in post
     // mint UME token for Posted
     _mint(address(_account), 8);
     // set event for minted Posted UME tokens
@@ -58,12 +58,12 @@ contract UME is ERC20 {
     require(
       likeSigner==msg.sender,
       'Error: wrong account calling mint');
-    require(
-      _from!=_to,
-      'Error: same account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot call mint');
+//    require(
+//      _from!=_to,
+//      'Error: same account');
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot call mint');
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
     // mint a LIKE token for liker
     _mint(address(_from), 2);
@@ -81,12 +81,12 @@ contract UME is ERC20 {
     require(
       memeFactorySigner==msg.sender,
       'Error: wrong account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot call mint');
-    require(
-      _from!=_to,
-      'Error: same account');
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot call mint');
+//    require(
+//      _from!=_to,
+//      'Error: same account');
     // mint a TAG token for tagger
     _mint(_from, 1);
     // set event for TAG token FROM
@@ -103,12 +103,12 @@ contract UME is ERC20 {
     require(
       followSigner==msg.sender,
       'Error: wrong account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot call mint');
-    require(
-      _from!=_to,
-      'Error: same account'); // doesn't mint tokens if tagged oneself
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot call mint');
+//    require(
+//      _from!=_to,
+//      'Error: same account'); // doesn't mint tokens if tagged oneself
     // mint a FOLLOW token for follower
     _mint(_from, 1);
     // set event for FOLLOW token FROM
@@ -125,12 +125,12 @@ contract UME is ERC20 {
     require(
       memeFactorySigner==msg.sender,
       'Error: wrong account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot call mint');
-    require(
-      _from!=_to,
-      'Error: same account');
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot call mint');
+//    require(
+//      _from!=_to,
+//      'Error: same account');
     // mint a RESPOND token for responder
     _mint(_from, 2);
     // set event for RESPOND token FROM
@@ -147,12 +147,12 @@ contract UME is ERC20 {
     require(
       memeFactorySigner==msg.sender,
       'Error: wrong account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot mint');
-    require(
-      _from!=_to,
-      'Error: same account'); // doesn't mint tokens if tagged oneself
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot mint');
+//    require(
+//      _from!=_to,
+//      'Error: same account'); // doesn't mint tokens if tagged oneself
     //require(bytes(_postHash).length > 0, 'Error: no post exists');
     // mint a CURATE token for curatee
     _mint(_from, 2);
@@ -170,10 +170,10 @@ contract UME is ERC20 {
     require(
       postSigner==msg.sender,
       'Error: wrong account');
-    require(
-      minter!=_from,
-      'Error: "we" cannot mint');
-    require(_from!=_to, 'Error: same account');
+//    require(
+//      minter!=_from,
+//      'Error: "we" cannot mint');
+//    require(_from!=_to, 'Error: same account');
     //mint REPOST token for reposter
     _mint(_from, 5);
     // set event for REPOST from
@@ -214,9 +214,9 @@ contract UME is ERC20 {
     require(
       msg.sender==boostSigner,
       'Error: burner must be boost-signer');
-    require(
-      minter!=_account,
-      'Error: "we" cannot call burn');
+//    require(
+//      minter!=_account,
+//      'Error: "we" cannot call burn');
     _burn(_account, _amount);
   }
   function passMinterRole(address _we) public returns (bool) {
