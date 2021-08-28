@@ -48,6 +48,8 @@ contract UserFactory {
       _account, // address of user
       new address[](0), // addresses of followers
       new address[](0), // addresses of following
+      new address[](0), // addresses of unfollowers
+      new address[](0), // addresses of unfollowing
       new bytes32[](0) // memeIds of posts
     ));
     emit NewUser(_account, _userName, _userAddress, block.timestamp);

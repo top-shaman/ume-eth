@@ -8,13 +8,16 @@ contract UME is ERC20 {
 
   // minter's address
   address public minter;
+  address public memeFactorySigner;
   address public postSigner;
   address public likeSigner;
   address public followSigner;
+  address public boostSigner;
 
   // minter role has changed to We
   event MinterChanged(address indexed from, address indexed to);
   event PostSignerChanged(address indexed from, address indexed to);
+  event MemeFactorySignerChanged(address indexed from, address indexed to);
   event LikeSignerChanged(address indexed from, address indexed to);
   event FollowSignerChanged(address indexed from, address indexed to);
   // minting events
@@ -24,8 +27,10 @@ contract UME is ERC20 {
     // assign minter & caller roles
     minter = msg.sender;
     postSigner = msg.sender;
+    memeFactorySigner = msg.sender;
     likeSigner = msg.sender;
     followSigner = msg.sender;
+    boostSigner = msg.sender;
   }
 
   function mintPost(
@@ -74,7 +79,7 @@ contract UME is ERC20 {
     address _to
   ) public { // 1:3 Tagger:Tagged
     require(
-      postSigner==msg.sender,
+      memeFactorySigner==msg.sender,
       'Error: wrong account');
     require(
       minter!=_from,
@@ -118,7 +123,7 @@ contract UME is ERC20 {
     address _to
   ) public { // 2:4 Responder:Responded
     require(
-      postSigner==msg.sender,
+      memeFactorySigner==msg.sender,
       'Error: wrong account');
     require(
       minter!=_from,
@@ -140,7 +145,7 @@ contract UME is ERC20 {
     address _to
   ) public { // 2:4 Responder:Responded
     require(
-      postSigner==msg.sender,
+      memeFactorySigner==msg.sender,
       'Error: wrong account');
     require(
       minter!=_from,
@@ -205,6 +210,15 @@ contract UME is ERC20 {
     }
   }
 */
+  function burn(address _account, uint _amount) public {
+    require(
+      msg.sender==boostSigner,
+      'Error: burner must be boost-signer');
+    require(
+      minter!=_account,
+      'Error: "we" cannot call burn');
+    _burn(_account, _amount);
+  }
   function passMinterRole(address _we) public returns (bool) {
     require(
       msg.sender==minter,
@@ -222,6 +236,14 @@ contract UME is ERC20 {
     emit PostSignerChanged(msg.sender, postSigner);
     return true;
   }
+  function passMemeFactorySignerRole(address _memeFactory) public returns (bool) {
+    require(
+      msg.sender==memeFactorySigner,
+      'Error, only deployer can pass memeFactory caller role');
+    memeFactorySigner= _memeFactory;
+    emit PostSignerChanged(msg.sender, memeFactorySigner);
+    return true;
+  }
   function passLikeSignerRole(address _like) public returns (bool) {
     require(
       msg.sender==likeSigner,
@@ -236,6 +258,14 @@ contract UME is ERC20 {
       'Error: only deployer can pass follow minter signer role');
     followSigner = _follow;
     emit FollowSignerChanged(msg.sender, followSigner);
+    return true;
+  }
+  function passBoostSignerRole(address _boost) public returns (bool) {
+    require(
+      msg.sender==boostSigner,
+      'Error: only deployer can pass boost signer role');
+    boostSigner = _boost;
+    emit FollowSignerChanged(msg.sender, boostSigner);
     return true;
   }
 }

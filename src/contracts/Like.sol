@@ -33,12 +33,12 @@ contract Like {
       'Error: liker must be operating account');
     address[] memory _likers = memeStorage.getLikers(_memeId);
     uint _likeCount = _likers.length;
-    bool _firstLike = true;
+    bool _alreadyLiked = false;
     bool _unliked = false;
     // remove like if already liked
     for(uint i = 0; i < _likeCount; i++) {
       if(_account==_likers[i]) {
-        _firstLike = false;
+        _alreadyLiked = true;
         _unLike(_account, _memeId, _likers, i);
         _unliked = true;
         break;
@@ -48,15 +48,18 @@ contract Like {
     uint _unlikeCount = _unlikers.length;
     for(uint i = 0; i < _unlikeCount; i++) {
       if(_account==_unlikers[i] && _unliked==false) {
-        _firstLike = false;
-        _addLike(_account, _memeId, _likers, _unlikers, i, _firstLike);
+        _alreadyLiked = true;
+        _addLike(_account, _memeId, _likers, _unlikers, i, _alreadyLiked);
         break;
       }
     }
-    if(_firstLike==true && _unliked==false) {
-      _addLike(_account, _memeId, new address[](0), new address[](0), 0, _firstLike);
+    if(_alreadyLiked==false && _unliked==false) {
+      _addLike(_account, _memeId, new address[](0), new address[](0), 0, _alreadyLiked);
       // mint like token
-      umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));
+      if(_account!=memeStorage.getAuthor(_memeId)) {
+        umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));
+        memeStorage.addBoost(_memeId, 5);
+      }
     }
   }
   // setter functions for Meme
@@ -66,9 +69,9 @@ contract Like {
     address[] memory _oldLikers,
     address[] memory _unlikers,
     uint _index,
-    bool _firstLike
+    bool _alreadyLiked
   ) private {
-    if(_firstLike==false) {
+    if(_alreadyLiked==true) {
       memeStorage.setUnlikers(_memeId, _deleteAddress(_unlikers, _index));
     }
     uint _oldLikeCount = _oldLikers.length;
@@ -93,7 +96,7 @@ contract Like {
   ) private {
     require(
       memeStorage.getLikeCount(_memeId)>0,
-      'Error, no likers in meme');
+      'Error: no likers in meme');
     address[] memory _oldUnlikers = memeStorage.getUnlikers(_memeId);
     // delete liked index, moving all successive elements
     memeStorage.setLikers(_memeId, _deleteAddress(_oldLikers, _index));

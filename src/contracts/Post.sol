@@ -46,14 +46,16 @@ contract Post {
 
   function rememe(
     address _account,
-    bytes32 _memeId
+    bytes32 _repostId
   ) public {
     require(
       msg.sender==interfaceSigner,
       'Error: poster must be operating account');
-    memeFactory.newMeme(_account, '', new address[](0), zeroBytes, zeroBytes, _memeId);
-    if(_account!=memeStorage.getAuthor(_memeId))
-      umeToken.mintRepost(_account, memeStorage.getAuthor(_memeId));
+    memeFactory.newMeme(_account, '', new address[](0), zeroBytes, zeroBytes, _repostId);
+    if(_account!=memeStorage.getAuthor(_repostId)) {
+      umeToken.mintRepost(_account, memeStorage.getAuthor(_repostId));
+      memeStorage.addBoost(_repostId, 8);
+    }
   }
   function quoteMeme(
     address _account,
@@ -67,8 +69,10 @@ contract Post {
       msg.sender==interfaceSigner,
       'Error: poster must be operating account');
     memeFactory.newMeme(_account, _memeText, _tags, _parentId, _originId, _repostId);
-    if(_account!=memeStorage.getAuthor(_repostId))
-      umeToken.mintRepost(_account, memeStorage.getAuthor(_parentId));
+    if(_account!=memeStorage.getAuthor(_repostId)) {
+      umeToken.mintRepost(_account, memeStorage.getAuthor(_repostId));
+      memeStorage.addBoost(_repostId, 8);
+    }
   }
 
   function deleteMeme(
@@ -77,7 +81,7 @@ contract Post {
     require(
       msg.sender==interfaceSigner,
       'Error: only interface signer can delete meme');
-    memeStorage.deleteMeme(_memeId);
+    memeFactory.deleteMeme(_memeId);
   }
 
   // set caller role to User upon deployment

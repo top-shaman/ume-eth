@@ -23,6 +23,8 @@ contract UserStorage {
     address addr; // address of user
     address[] followers; // addresses of followers
     address[] following; // addressses of following
+    address[] unfollowers; // addresses of followers
+    address[] unfollowing; // addressses of following
     bytes32[] posts; // memeIds of posts
   }
 
@@ -125,6 +127,18 @@ contract UserStorage {
   ) public {
     users[_account].following = _following;
   }
+  function setUnfollowers(
+    address _account,
+    address[] memory _unfollowers
+  ) public {
+    users[_account].unfollowers = _unfollowers;
+  }
+  function setUnfollowing(
+    address _account,
+    address[] memory _unfollowing
+  ) public {
+    users[_account].unfollowing = _unfollowing;
+  }
 
   // getter functions for UserStorage
   function getUser(address _account) public view returns(User memory){
@@ -159,6 +173,18 @@ contract UserStorage {
   }
   function getFollowingAt(address _account, uint _index) public view returns(address) {
     return users[_account].following[_index];
+  }
+  function getUnfollowerCount(address _account) public view returns(uint) {
+    return users[_account].unfollowers.length;
+  }
+  function getUnfollowers(address _account) public view returns(address[] memory) {
+    return users[_account].unfollowers;
+  }
+  function getUnfollowingCount(address _account) public view returns(uint) {
+    return users[_account].unfollowing.length;
+  }
+  function getUnfollowing(address _account) public view returns(address[] memory) {
+    return users[_account].unfollowing;
   }
   function getPostCount(address _account) public view returns (uint) {
     return users[_account].posts.length;

@@ -4,9 +4,10 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./Follow.sol";
 import "./Like.sol";
-import "./MemeStorage.sol";
 import "./Post.sol";
+import "./Boost.sol";
 import "./UME.sol";
+import "./MemeStorage.sol";
 import "./UserFactory.sol";
 import "./UserStorage.sol";
 
@@ -20,6 +21,9 @@ contract UserInterface {
   Post private post;
   Like private like;
   Follow private follow;
+  Boost private boost;
+
+  bytes32 zeroBytes;
 
   struct User {
     uint id; // user number in order
@@ -50,14 +54,17 @@ contract UserInterface {
     UserFactory _userFactory,
     Post _post,
     Like _like,
-    Follow _follow
+    Follow _follow,
+    Boost _boost
   ) public {
     umeToken = _umeToken;
+    memeStorage = _memeStorage;
     userStorage = _userStorage;
     userFactory = _userFactory;
     post = _post;
     like = _like;
     follow = _follow;
+    boost = _boost;
   }
 
   function newUser(
@@ -157,8 +164,9 @@ contract UserInterface {
       userStorage.getAddr(_account)!=address(0x0),
       'Error: user doesn\'t have account');
     require(
-      memeStorage.getVisibility(_parentId)==true,
-      'Error: parent&origin must exist');
+      (_parentId==zeroBytes && _originId==zeroBytes) ||
+      userStorage.usersByMeme(_parentId)!=address(0x0),
+      'Error: either parent&origin are zero or they must exist');
     // post new meme
     post.newMeme(_account, _postText, _tags, _parentId, _originId);
   }
@@ -172,6 +180,9 @@ contract UserInterface {
     require(
       userStorage.getAddr(_account)!=address(0x0),
       'Error: user doesn\'t have account');
+    require(
+      memeStorage.getVisibility(_memeId)==true,
+      'Error: reposted meme doesn\'t exist');
     // repost meme
     post.rememe(_account, _memeId);
   }
@@ -193,8 +204,12 @@ contract UserInterface {
       userStorage.getAddr(_account)!=address(0x0),
       'Error: user doesn\'t have account');
     require(
-      memeStorage.getVisibility(_parentId),
-      'Error: parent must exist');
+      (_parentId==zeroBytes && _originId==zeroBytes) ||
+      memeStorage.getVisibility(_parentId)==true,
+      'Error: either parent&origin are zero or they must exist');
+    require(
+      memeStorage.getVisibility(_memeId)==true,
+      'Error: repost must exist');
     post.quoteMeme(_account, _postText, _tags, _parentId, _originId, _memeId);
   }
 
@@ -215,17 +230,14 @@ contract UserInterface {
     bytes32 _memeId
   ) public {
      require(
-       _account!=userStorage.getAddr(_account),
-       'Error: cannot like one\'s own meme');
-     require(
        _account==msg.sender,
        'Error: liker must be operating account');
      require(
        userStorage.getAddr(_account)!=address(0x0),
        'Error: Meme liked must have address');
      require(
-       memeStorage.memeCount() > 0,
-       'Error: Meme must have id');
+       memeStorage.getAuthor(_memeId)!=address(0x0),
+       'Error: Meme must exist');
 
      like.likeMeme(_account, _memeId);
   }
@@ -241,12 +253,40 @@ contract UserInterface {
       _from!=_to,
       'Error: same account');
     require(
-      userStorage.getUserAddr(_from).length>0 &&
-      userStorage.getUserAddr(_to).length>0,
+      userStorage.getAddr(_from)!=address(0x0) &&
+      userStorage.getAddr(_to)!=address(0x0),
       'Error: both follower and followee must have accounts');
 
     follow.follow(_from, _to);
   }
+
+  function boostMeme(
+    address _account,
+    bytes32 _memeId,
+    uint _boostNumber
+  ) public {
+    require(
+      _account==msg.sender,
+      'Error: booster must be msg.sender');
+    require(
+      umeToken.balanceOf(_account)>=_boostNumber,
+      'Error: booster must have tokens in balance');
+    boost.boostCall(_account, _memeId, _boostNumber);
+  }
+  function unBoostMeme(
+    address _account,
+    bytes32 _memeId,
+    uint _boostNumber
+  ) public {
+    require(
+      _account==msg.sender,
+      'Error: booster must be msg.sender');
+    require(
+      umeToken.balanceOf(_account)>=_boostNumber,
+      'Error: booster must have tokens in balance');
+    boost.unBoostCall(_account, _memeId, _boostNumber);
+  }
+
   // helper functions
   function _bytesToBytes32(bytes memory source) public pure returns(bytes32 result) {
     if(source.length==0) return 0x0;
@@ -258,6 +298,7 @@ contract UserInterface {
   function encode(uint num) public pure returns(bytes32) {
     return keccak256(abi.encodePacked(num));
   }
+
   function _deleteUints(uint[] memory array, uint index) private pure returns(uint[] memory) {
     uint[] memory _array = new uint[](array.length-1);
     for(uint i = 0; i < index; i++) {

@@ -1,4 +1,5 @@
 const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000'
+const BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000'
 const EVM_REVERT = 'VM Exception while processing transaction: revert'
 const EVM_SENDER = 'Returned error: sender account not recognized'
 
@@ -19,6 +20,7 @@ const wait = s => {
 var Post = artifacts.require("./Post.sol");
 var Like = artifacts.require("./Like.sol");
 var Follow = artifacts.require("./Follow.sol");
+var Boost = artifacts.require("./Boost.sol");
 
 var MemeFactory = artifacts.require("./MemeFactory.sol");
 var MemeStorage = artifacts.require("./MemeStorage.sol");
@@ -39,7 +41,7 @@ var Web3 = new Web3(Web3.givenProvider)
 const toBytes = async s => await web3.utils.fromAscii(s)
 const fromBytes = async b => await web3.utils.toAscii(b)
 
-contract('Post', ([deployer, user1, user2, user3, user4]) => {
+contract('UME', ([deployer, user1, user2, user3, user4]) => {
   let post, like, follow, memeFactory, memeStorage, interface, userFactory, userStorage, we, umeToken
 
   beforeEach(async () => {
@@ -54,13 +56,16 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
     post = await Post.new(umeToken.address, memeFactory.address, memeStorage.address)
     like = await Like.new(umeToken.address, memeStorage.address)
     follow = await Follow.new(umeToken.address, userStorage.address)
+    boost = await Boost.new(umeToken.address, memeStorage.address) // to add more
 
-    interface = await UserInterface.new(umeToken.address, memeStorage.address, userStorage.address, userFactory.address, post.address, like.address, follow.address)
+    interface = await UserInterface.new(umeToken.address, memeStorage.address, userStorage.address, userFactory.address, post.address, like.address, follow.address, boost.address)
 
     await umeToken.passMinterRole(we.address, {from: deployer})
     await umeToken.passPostSignerRole(post.address, {from: deployer})
+    await umeToken.passMemeFactorySignerRole(memeFactory.address, {from: deployer})
     await umeToken.passLikeSignerRole(like.address, {from: deployer})
     await umeToken.passFollowSignerRole(follow.address, {from: deployer})
+    await umeToken.passBoostSignerRole(boost.address, {from: deployer})
 
     await memeStorage.passFactorySigner(memeFactory.address, {from: deployer})
     await userStorage.passMemeFactorySigner(memeFactory.address, {from: deployer})
@@ -68,6 +73,7 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 
     await memeStorage.passPostSigner(post.address)
     await memeStorage.passLikeSigner(like.address)
+    await memeStorage.passBoostSigner(boost.address)
 
     await userStorage.passLikeSigner(like.address)
     await userStorage.passFollowSigner(follow.address)
@@ -82,11 +88,10 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
     await post.passInterfaceSigner(interface.address)
     await like.passInterfaceSigner(interface.address)
     await follow.passInterfaceSigner(interface.address)
-
-
+    await boost.passInterfaceSigner(interface.address)
 
   })
-//  describe ('testing basic UME minting functionality', () => {
+//  describe ('testing basic UME minting functionality', () => { // made with previous build
 //    beforeEach(async () => {
 //      await umeToken.passPostCallerRole(user1, {from: deployer}) // for the sake of testing basic functionality, assign caller to user1
 //      await umeToken.passUserCallerRole(user1, {from: deployer}) // for the sake of testing basic functionality, assign caller to user1
@@ -325,9 +330,23 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
 //          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
 //        })
+//        it('unfollow functionality', async () => {
+//          await interface.followUser(user1, user2, {from: user1})
+//          await interface.followUser(user1, user2, {from: user1})
+//
+//          // check follower/following list
+//          expect(await userStorage.getFollowers(user1).then(e => e)).to.deep.eq([])
+//          expect(await userStorage.getFollowing(user1).then(e => e)).to.deep.eq([])
+//          expect(await userStorage.getFollowers(user2).then(e => e)).to.deep.eq([])
+//          expect(await userStorage.getFollowing(user2).then(e => e)).to.deep.eq([])
+//
+//          // check minting
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
+//        })
 //      })
 //      describe('failure', () => {
-//        // creation
+        // creation
 //        it('can\'t create double account', async () => {
 //          await interface.newUser(user1, toBytes('user_3'), toBytes('@user_3'), {from: user1}).should.be.rejected
 //        })
@@ -363,198 +382,298 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //          await interface.changeUserName(user3, toBytes('user_3'), {from: user3}).should.be.rejected
 //        })
 //        // follow function
-//        it('can\'t double follow', async () => {
-//          await interface.followUser(user1, user2, {from: user1})
-//          await interface.followUser(user1, user2, {from: user1}).should.be.rejected
+//        it('can\'t follow account that doesn\'t exist, or follow account from one that doesn\'t exist', async () => {
+//          await interface.followUser(user1, user4, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//          await interface.followUser(user4, user1, {from: user4}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//
+//      })
+//    })
+//    describe('Posting meme', () => {
+//      describe('success', () => {
+//        it('post meme', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
+//          const id = await interface.encode(1);
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+//          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('1')
+//
+//          expect(await memeStorage.getEncodeId(1)).to.be.eq(id)
+//        })
+//        it('post multiple memes', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
+//          await interface.newMeme(user2, 'hello world!', [], '0x0', '0x0', {from: user2})
+//          await interface.newMeme(deployer, 'hello world!', [], '0x0', '0x0', {from: deployer})
+//          const id1 = await interface.encode(1);
+//          const id2 = await interface.encode(2);
+//          const id3 = await interface.encode(3);
+//
+//          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('3')
+//
+//          expect(await memeStorage.getEncodeId(1)).to.be.eq(id1)
+//          expect(await memeStorage.getEncodeId(2)).to.be.eq(id2)
+//          expect(await memeStorage.getEncodeId(3)).to.be.eq(id3)
+//        })
+//        it('post meme with tags', async () => {
+//          await interface.newMeme(user1, 'hello world!', [user2, deployer], BYTES32, BYTES32, {from: user1})
+//          expect(await memeStorage.getEncodeTags(1)).to.deep.eq([user2, deployer])
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('10')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('3')
+//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('3')
+//        })
+//        it('no excess UME minted upon "dry" post', async () => { // with empty tag list & 0 for parentId and originId, no excess
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1})
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('0')
+//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('0')
+//        })
+//        it('no UME minted from tagging self', async () => {
+//          await interface.newMeme(user1, 'hello world!', [user1], BYTES32, BYTES32, {from: user1})
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+//        })
+//        it('respond works when parentId & originId are the same', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1})
+//          let id1 = await interface.encode(1).valueOf()
+//          await interface.newMeme(user2, 'what up?', [], id1, id1, {from: user2})
+//          let id2 = await interface.encode(2).valueOf()
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
+//        })
+//        it('respond & curate work when parentId & originId are different', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//          let id1 = await interface.encode(1)
+//          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//          let id2 = await interface.encode(2)
+//          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user2
+//
+//          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
+//          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
+//          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
+//        })
+//        it('post gets added to User', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
+//          let id1 = await interface.encode(1)
+//          expect(await userStorage.getPosts(user1)).to.deep.eq([id1])
+//        })
+//        it('user post count works', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//          let id1 = await interface.encode(1)
+//          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//          let id2 = await interface.encode(2)
+//          await interface.newMeme(deployer, 'what?', [], id2, id2, {from: deployer}) // deployer responds to user2
+//          let id3 = await interface.encode(3)
+//          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+//          let id4 = await interface.encode(4)
+//
+//          expect(await userStorage.getPosts(user1)).to.deep.eq([id1, id4])
+//          expect(await userStorage.getPosts(user2)).to.deep.eq([id2])
+//          expect(await userStorage.getPosts(deployer)).to.deep.eq([id3])
+//        })
+//        it('delete meme works', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//          const id1 = await interface.encode(1)
+//          await interface.deleteMeme(user1, id1, {from: user1})
+//
+//          const meme1 = await memeStorage.memes(id1);
+//          expect(await meme1.id).to.be.eq(BYTES32)
+//          expect(await meme1.time.toNumber()).to.be.eq(0)
+//          expect(await meme1.text).to.be.eq('')
+//          expect(await meme1.parentId).to.be.eq(BYTES32)
+//          expect(await meme1.originId).to.be.eq(BYTES32)
+//          expect(await meme1.author).to.be.eq(ETHER_ADDRESS)
+//          expect(await meme1.isVisible).to.be.eq(false)
+//
+//          expect(await memeStorage.getEncodeLikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeTags(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//
+//        })
+//        it('memeStorage.meme tallies responses', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//          const id1 = await interface.encode(1)
+//          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//          const id2 = await interface.encode(2)
+//          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
+//          const id3 = await interface.encode(3)
+//          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+//          const id4 = await interface.encode(4)
+//          await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
+//          const id5 = await interface.encode(5)
+//
+//          expect(await memeStorage.getEncodeResponses(1).then(elem => elem)).to.deep.eq([id2, id5])
+//          expect(await memeStorage.getEncodeResponses(2).then(elem => elem)).to.deep.eq([id3])
+//          expect(await memeStorage.getEncodeResponses(3).then(elem => elem)).to.deep.eq([id4])
+//          expect(await memeStorage.getEncodeResponses(4).then(elem => elem)).to.deep.eq([])
+//        })
+//        it('delete meme deletes response in parent', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//          const id1 = await interface.encode(1)
+//          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//          const id2 = await interface.encode(2)
+//          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
+//          const id3 = await interface.encode(3)
+//          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+//          const id4 = await interface.encode(4)
+//          await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
+//          const id5 = await interface.encode(5)
+//
+//          await interface.deleteMeme(user2, id2, {from: user2})
+//          await interface.deleteMeme(deployer, id3, {from: deployer})
+//          await interface.deleteMeme(deployer, id5, {from: deployer})
+//
+//          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
+//        })
+//      })
+//      describe('failure', () => {
+//        it('doesn\'t post meme with wrong users', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t bypass to mint (ume)', async () => {
+//          await umeToken.mintPost(user1, 'hello world!', {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//          await umeToken.mintPost(user2, 'hello world!', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t bypass to mint (post)', async () => {
+//          await post.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//          await post.newMeme(user2, 'hello world!', [], '0x0', '0x0', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('doesn\'t post meme with empty message', async () => {
+//          await interface.newMeme(user1, '', [], '0x0', '0x0', {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('other user can\'t delete user\'s meme', async () => {
+//          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
+//          const id1 = await interface.encode(1)
+//          await interface.deleteMeme(user1, id1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t create meme with parentId that doesn\'t exist', async () => {
+//          const id1 = await interface.encode(3)
+//          await interface.newMeme(user1, 'hello world!', [], id1, '0x0', {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t post meme from account that hasn\'t been created yet', async () => {
+//          await interface.newMeme(user3, 'hello world!', [], '0x0', '0x0', {from: user3}).should.be.rejectedWith(EVM_REVERT)
 //        })
 //      })
 //    })
-    describe('Posting meme', () => {
-      describe('success', () => {
-        it('post meme', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
-          const meme1 = await memeStorage.getEncodeId(1);
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('1')
-          expect(await userStorage.usersByMeme(meme1)).to.be.eq(user1)
-        })
-        /*
-        it('post meme with tags', async () => {
-          await interface.newMeme(user1, 'hello world!', [user2, deployer], interface.encode(0), interface.encode(0), {from: user1})
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('10')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('3')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('3')
-        })
-        it('no excess UME minted upon "dry" post', async () => { // with empty tag list & 0 for parentId and originId, no excess
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('0')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('0')
-        })
-        it('no UME minted from tagging self', async () => {
-          await interface.newMeme(user1, 'hello world!', [user1], interface.encode(0), interface.encode(0), {from: user1})
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-        })
-        it('respond works when parentId & originId are the same', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
-          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2})
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
-        })
-        it('respond & curate work when parentId & originId are different', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
-          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
-          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user2
-
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
-        })
-        it('user post count works', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
-          await interface.newMeme(user2, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
-          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user2
-          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
-
-          expect(await userStorage.getPosts(user1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['1','4'])
-          expect(await userStorage.getPosts(user2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2'])
-          expect(await userStorage.getPosts(deployer).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
-        })
-        it('delete meme works', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
-          await interface.deleteMeme(user1, interface.encode(1), {from: user1})
-
-          const meme1 = await memeStorage.memes(interface.encode(1));
-
-          expect(await meme1.id.toNumber()).to.be.eq(interface.encode(1))
-          expect(await meme1.time.toNumber()).to.be.eq(0)
-          expect(await meme1.text).to.be.eq('')
-          expect(await meme1.likes.toNumber()).to.be.eq(0)
-          expect(await meme1.parentId.toNumber()).to.be.eq(0)
-          expect(await meme1.originId.toNumber()).to.be.eq(0)
-          expect(await meme1.author).to.be.eq(ETHER_ADDRESS)
-          expect(await meme1.isVisible).to.be.eq(false)
-
-          expect(await memeStorage.getEncodeLikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeTags(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-
-        })
-        it('memeStorage.meme tallies responses', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
-          await interface.newMeme(user1, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
-          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user.
-          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
-          await interface.newMeme(deployer, 'wait what?', [], interface.encode(1), interface.encode(1), {from: deployer}) // deployer responds to user.
-
-          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq(['2','5'])
-          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq(['3'])
-          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-        })
-        it('delete meme deletes response in parent', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1}) // user1 post
-          await interface.newMeme(user1, 'what\'s up?', [], interface.encode(1), interface.encode(1), {from: user2}) // user2 responds to user1
-          await interface.newMeme(deployer, 'what?', [], interface.encode(2), interface.encode(1), {from: deployer}) // deployer responds to user.
-          await interface.newMeme(user1, 'you heard me!', [], interface.encode(3), interface.encode(1), {from: user1}) // user1 post
-          await interface.newMeme(deployer, 'wait what?', [], interface.encode(1), interface.encode(1), {from: deployer}) // deployer responds to user.
-          await userStorage.deleteMeme(user2, interface.encode(2), {from: user2})
-          await userStorage.deleteMeme(deployer, interface.encode(3), {from: deployer})
-          await userStorage.deleteMeme(deployer, interface.encode(5), {from: deployer})
-
-          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-        })
-      })
-      describe('failure', () => {
-        it('doesn\'t post meme with wrong users', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user2}).should.be.rejectedWith(EVM_REVERT)
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: deployer}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('can\'t bypass to mint (ume)', async () => {
-          await umeToken.mintPost(user1, 'hello world!', {from: user2}).should.be.rejectedWith(EVM_REVERT)
-          await umeToken.mintPost(user2, 'hello world!', {from: deployer}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('can\'t bypass to mint (post)', async () => {
-          await post.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user2}).should.be.rejectedWith(EVM_REVERT)
-          await post.newMeme(user2, 'hello world!', [], interface.encode(0), interface.encode(0), {from: deployer}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('doesn\'t post meme with empty message', async () => {
-          await interface.newMeme(user1, '', [], interface.encode(0), interface.encode(0), {from: user1}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('other user can\'t delete user\'s meme', async () => {
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), interface.encode(0), {from: user1})
-          await interface.deleteMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-        })
-        it('can\'t create meme with parentId greater than memeCount', async () => {
-          await interface.newMeme(user1, 'hello world!', [], 3, interface.encode(0), {from: user1}).should.be.rejectedWith(EVM_REVERT)
-          await interface.newMeme(user1, 'hello world!', [], interface.encode(0), 3, {from: user1}).should.be.rejectedWith(EVM_REVERT)
-        }) */
-      })
-    })
+//    describe('ReMeme functionality', () => {
+//      beforeEach(async () => {
+//        await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+//        const id1 = await interface.encode(1)
+//        await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//        const id2 = await interface.encode(2)
+//        await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
+//        const id3 = await interface.encode(3)
+//        await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+//        await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
+//      })
+//      describe('success', () => {
+//        it('rememe works', async () => {
+//          const id1 = await interface.encode(1)
+//          const id6 = await interface.encode(6)
+//
+//          await interface.rememe(deployer, id1, {from: deployer})
+//
+//          expect(await memeStorage.memeCount().then(e => e.toNumber())).to.be.eq(6)
+//          expect(await memeStorage.getText(id6).then(e => e.toString())).to.be.eq('')
+//          expect(await memeStorage.getRepostId(id6)).to.be.eq(id1)
+//          expect(await memeStorage.getReposts(id1)).to.deep.eq([id6])
+//        })
+//        it('quoteMeme works', async () => {
+//          const id1 = await interface.encode(1)
+//          const id6 = await interface.encode(6)
+//
+//          await interface.quoteMeme(deployer, 'this is so on point', [], '0x0', '0x0', id1, {from: deployer})
+//
+//          expect(await memeStorage.memeCount().then(e => e.toNumber())).to.be.eq(6)
+//          expect(await memeStorage.getText(id6).then(e => e.toString())).to.be.eq('this is so on point')
+//          expect(await memeStorage.getRepostId(id6)).to.be.eq(id1)
+//          expect(await memeStorage.getQuotePosts(id1)).to.deep.eq([id6])
+//        })
+//      })
+//      describe('failure', () => {
+//        it('can\'t rememe with account that doesn\'t exist', async () => {
+//          const id = await interface.encode(1)
+//          await interface.rememe(user4, id, {from: user4}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t quoteMeme with account that doesn\'t exist', async () => {
+//          const id = await interface.encode(1)
+//          await interface.quoteMeme(user4, 'so true', [], '0x0', '0x0', id, {from: user4}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t rememe meme that doesn\'t exist', async () => {
+//          const id = await interface.encode(7)
+//          await interface.rememe(user1, id, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('can\'t quoteMeme that doesn\'t exist', async () => {
+//          const id = await interface.encode(7)
+//          await interface.quoteMeme(user1, 'so true', [], '0x0', '0x0', id, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//      })
+//    })
 //    describe('Liking meme', () => {
 //      beforeEach(async () => {
-//        /*await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
-//        await user.newAccount(user2, 'user_2', '@user_2', {from: user2})
-//        await user.newAccount(deployer, 'deployer', '@deployer', {from: deployer})
-//        */
-//        await user.newMeme(user1 /* , '0x012345' */, 'hello world!', [], 0, 0, {from: user1}) // user1 post
-//        await user.newMeme(user2 /* , '0x67891011' */, 'what\'s up?', [], 1, 1, {from: user2}) // user2 responds to user1
-//        await user.newMeme(deployer /* , '0x67891011' */, 'what?', [user1, user2], 2, 1, {from: deployer}) // deployer responds to user2, tags user1 & user2
-//        await user.likeMeme(user2, 1, {from: user2}) //user2 likes meme id1
+//        //await user.newAccount(user1, 'user_1', '@user_1', {from: user1})
+//        //await user.newAccount(user2, 'user_2', '@user_2', {from: user2})
+//        //await user.newAccount(deployer, 'deployer', '@deployer', {from: deployer})
+//        const id1 = await interface.encode(1)
+//        const id2 = await interface.encode(2)
+//
+//        await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1}) // user1 post
+//        await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+//        await interface.newMeme(deployer, 'what?', [user1, user2], id2, id1, {from: deployer}) // deployer responds to user2, tags user1 & user2
 //      })
 //      describe('success', () => {
 //        it('like functionality', async () => {
-//          let meme1 = await post.memes(1)
-//          let meme2 = await post.memes(2)
-//          let meme3 = await post.memes(3)
-//          // checks resulting struct data
+//          const id1 = await interface.encode(1)
+//          const id2 = await interface.encode(2)
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 likes meme id1
 //          // checks likers
-//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
+//          expect(await memeStorage.getEncodeLikers(1).then(elem => elem)).to.deep.eq([user2])
 //          // checks taggs of third post
-//          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
+//          expect(await memeStorage.getEncodeTags(3).then(elem => elem)).to.deep.eq([user1, user2])
 //          // checks number of likes in first & 2nd post
-//          expect(await meme1.likes.toNumber()).to.be.eq(1)
-//          expect(await meme2.likes.toNumber()).to.be.eq(0)
+//          expect(await memeStorage.getEncodeLikeCount(1).then(e => e.toNumber())).to.be.eq(1)
+//          expect(await memeStorage.getEncodeLikeCount(2).then(e => e.toNumber())).to.be.eq(0)
 //
 //          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
 //          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
 //          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('14')
 //        })
 //        it('unlike functionality', async () => {
-//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
+//          const id1 = await interface.encode(1)
+//          const id2 = await interface.encode(2)
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 likes meme id1
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 should unlike meme id1
 //
-//          let meme1 = await post.memes(1)
 //          // likers list should have a deleted element
-//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([])
+//          expect(await memeStorage.getEncodeLikers(1).then(elem => elem)).to.deep.eq([])
 //          // unlikers list should have increased
-//          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([user2])
+//          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem)).to.deep.eq([user2])
 //          // likes should decrement
-//          expect(await meme1.likes.toNumber()).to.be.eq(0)
+//          expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(0)
 //          // balance should remain unchanged
 //          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
 //          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
 //        })
 //        it('like, unlike, like functionality', async () => {
-//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
-//          await user.likeMeme(user2, 1, {from: user2}) //user2 should unlike meme id1
+//          const id1 = await interface.encode(1)
+//          const id2 = await interface.encode(2)
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 likes meme id1
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 should unlike meme id1
+//          await interface.likeMeme(user2, id1, {from: user2}) //user2 should unlike meme id1
 //
-//          let meme1 = await post.memes(1)
-//
-//          expect(await post.getLikers(1).then(elem => elem)).to.deep.eq([user2])
-//          expect(await post.getUnlikers(1).then(elem => elem)).to.deep.eq([])
+//          expect(await memeStorage.getEncodeLikers(1).then(elem => elem)).to.deep.eq([user2])
+//          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem)).to.deep.eq([])
 //          // checks taggs of third post
-//          expect(await post.getTags(3).then(elem => elem)).to.deep.eq([user1, user2])
+//          expect(await memeStorage.getEncodeTags(3).then(elem => elem)).to.deep.eq([user1, user2])
 //          // checks number of likes in first & 2nd post
-//          expect(await meme1.likes.toNumber()).to.be.eq(1)
+//          expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(1)
 //
 //          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
 //          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
@@ -562,19 +681,105 @@ contract('Post', ([deployer, user1, user2, user3, user4]) => {
 //      })
 //      describe('failure', () => {
 //        it('wrong account shouldn\'t be able to like', async () => {
-//           await user.likeMeme(user1, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
-//           await user.likeMeme(deployer, 1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//          const id1 = await interface.encode(1)
+//          const id2 = await interface.encode(2)
+//          await interface.likeMeme(user1, id1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
+//          await interface.likeMeme(deployer, id1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
 //        })
-//        it('user shouldn\'t be able to call post.likeMeme', async () => {
-//          await post.likeMeme(user1, 1, {from: user1}).should.be.rejected
+//        it('user shouldn\'t be able to call interface.likeMeme', async () => {
+//          const id1 = await interface.encode(1)
+//          await interface.likeMeme(user1, id1, {from: user1}).should.be.rejected
 //        })
-//        it('post shouldn\'t be able to call post.likeMeme', async () => {
-//          await post.likeMeme(user1, 1, {from: post.address}).should.be.rejected
+//        it('post shouldn\'t be able to call interface.likeMeme', async () => {
+//          const id1 = await interface.encode(1)
+//          await interface.likeMeme(user1, id1, {from: post.address}).should.be.rejected
 //        })
 //        it('user shouldn\'t be able to like memes that don\'t exist', async () => {
-//          await user.likeMeme(user1, 4, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//          const id1 = await interface.encode(4)
+//          await interface.likeMeme(user1, id1, {from: user1}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//        it('only registered user can like meme', async () => {
+//          const id1 = await interface.encode(1)
+//          await interface.likeMeme(user4, id1, {from: user4}).should.be.rejectedWith(EVM_REVERT)
+//        })
+//      })
+//    })
+    describe('Boost', () => {
+      describe('success', () => {
+        it('liking memes boosts', async () => {
+          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+          const id1 = await interface.encode(1)
+          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+          const id2 = await interface.encode(2)
+          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
+          const id3 = await interface.encode(3)
+          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+          const id4 = await interface.encode(4)
+          await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
+          const id5 = await interface.encode(5)
+
+          await interface.likeMeme(user1, id3, {from: user1})
+          await interface.likeMeme(deployer, id4, {from: deployer})
+          await interface.likeMeme(user1, id5, {from: user1})
+          await interface.likeMeme(deployer, id5, {from: deployer})
+
+          expect(await memeStorage.getBoost(id1).then(e => e.toNumber())).to.be.eq(16)
+          expect(await memeStorage.getBoost(id2).then(e => e.toNumber())).to.be.eq(4)
+          expect(await memeStorage.getBoost(id3).then(e => e.toNumber())).to.be.eq(9)
+          expect(await memeStorage.getBoost(id4).then(e => e.toNumber())).to.be.eq(5)
+          expect(await memeStorage.getBoost(id5).then(e => e.toNumber())).to.be.eq(5)
+        })
+        it('boost & unBoost works', async () => {
+          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
+          const id1 = await interface.encode(1)
+          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+          const id2 = await interface.encode(2)
+          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
+          const id3 = await interface.encode(3)
+          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
+          const id4 = await interface.encode(4)
+          await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
+          const id5 = await interface.encode(5)
+
+          await interface.likeMeme(user1, id3, {from: user1})
+          await interface.likeMeme(deployer, id4, {from: deployer})
+          await interface.likeMeme(user1, id5, {from: user1})
+          await interface.likeMeme(deployer, id5, {from: deployer})
+
+          await umeToken.balanceOf(user1).then(e => console.log(e.toNumber()))
+
+          await interface.boostMeme(user1, id2, 5, {from: user1})
+          await interface.unBoostMeme(user1, id4, 5, {from: user1})
+          await interface.unBoostMeme(user1, id5, 5,  {from: user1})
+
+          await umeToken.balanceOf(user1).then(e => console.log(e.toNumber()))
+
+          expect(await memeStorage.getBoost(id1).then(e => e.toNumber())).to.be.eq(16)
+          expect(await memeStorage.getBoost(id2).then(e => e.toNumber())).to.be.eq(9)
+          expect(await memeStorage.getBoost(id3).then(e => e.toNumber())).to.be.eq(9)
+          expect(await memeStorage.getBoost(id4).then(e => e.toNumber())).to.be.eq(0)
+          expect(await memeStorage.getBoost(id5).then(e => e.toNumber())).to.be.eq(0)
+
+        })
+      })
+      describe('failure', () => {
+      })
+    })
+//    describe('Scaling', () => {
+//      describe('Posting', () => {
+//        describe('Success', () => {
+//          it('can post one thousand memes', async () => {
+//            let id;
+//            for (let i = 0; i < 1000; i++) {
+//              id = interface.encode(i)
+//              await interface.newMeme(user1, 'test' + i, [], '0x0', '0x0', {from: user1})
+//            }
+//            expect(await memeStorage.memeCount().then(e => e.toNumber())).to.be.eq(10000)
+//            expect(await umeStorage.balanceOf(user1).then(e => e.toNumber())).to.be.eq(80000)
+//          })
 //        })
 //      })
 //    })
   })
 })
+

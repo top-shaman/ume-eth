@@ -1,6 +1,7 @@
 var Post = artifacts.require("./Post.sol");
 var Like = artifacts.require("./Like.sol");
 var Follow = artifacts.require("./Follow.sol");
+var Boost = artifacts.require("./Boost.sol");
 
 var MemeFactory = artifacts.require("./MemeFactory.sol");
 var MemeStorage = artifacts.require("./MemeStorage.sol");
@@ -37,15 +38,18 @@ module.exports = async function(deployer) {
   const like = await Like.deployed()
   await deployer.deploy(Follow, UME.address, UserStorage.address)
   const follow = await Follow.deployed()
+  await deployer.deploy(Boost, UME.address, MemeStorage.address) // to add more
+  const boost = await Boost.deployed()
 
   // deploy interface
-  await deployer.deploy(UserInterface, UME.address, MemeStorage.address, UserStorage.address, UserFactory.address, Post.address, Like.address, Follow.address)
+  await deployer.deploy(UserInterface, UME.address, MemeStorage.address, UserStorage.address, UserFactory.address, Post.address, Like.address, Follow.address, Boost.address)
   const userInterface = await UserInterface.deployed()
 
   // pass minter role
   await umeToken.passMinterRole(we.address)
   // pass minter signing roles to post, like & follow
   await umeToken.passPostSignerRole(post.address)
+  await umeToken.passMemeFactorySignerRole(memeFactory.address)
   await umeToken.passLikeSignerRole(like.address)
   await umeToken.passFollowSignerRole(follow.address)
   // pass storage signer role -> factory
@@ -55,6 +59,7 @@ module.exports = async function(deployer) {
   // pass meme storage signer role -> interface functions
   await memeStorage.passPostSigner(post.address)
   await memeStorage.passLikeSigner(like.address)
+  await memeStorage.passBoostSigner(boost.address)
   // pass user storage signer role -> interface functions
   await userStorage.passLikeSigner(like.address)
   await userStorage.passFollowSigner(follow.address)
@@ -70,4 +75,5 @@ module.exports = async function(deployer) {
   await post.passInterfaceSigner(userInterface.address)
   await like.passInterfaceSigner(userInterface.address)
   await follow.passInterfaceSigner(userInterface.address)
+  await boost.passInterfaceSigner(userInterface.address)
 }

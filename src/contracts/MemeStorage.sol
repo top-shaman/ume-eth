@@ -7,6 +7,7 @@ contract MemeStorage {
   address public interfaceSigner;
   address public postSigner;
   address public likeSigner;
+  address public boostSigner;
 
   uint public memeCount = 0;
 
@@ -19,7 +20,7 @@ contract MemeStorage {
     bytes32 id; // number in all of timeline
     uint time; // time of post
     string text; // text of Meme
-    uint boost; // boost value
+    uint boosts; // boost value
     address[] likers; // list of addresses of likers
     address[] unlikers; // list of addresses that have unliked
     bytes32[] reposts; // list of ids that have reposted
@@ -37,13 +38,14 @@ contract MemeStorage {
   event InterfaceSignerChanged(address indexed from, address indexed to);
   event PostSignerChanged(address indexed from, address indexed to);
   event LikeSignerChanged(address indexed from, address indexed to);
-  event RepostSignerChanged(address indexed from, address indexed to);
+  event BoostSignerChanged(address indexed from, address indexed to);
 
   constructor() public {
     factorySigner = msg.sender;
     interfaceSigner = msg.sender;
     postSigner = msg.sender;
     likeSigner = msg.sender;
+    boostSigner = msg.sender;
   }
 
   // Factory-Specific setters
@@ -81,6 +83,25 @@ contract MemeStorage {
     memes[_memeId].responses = _responses;
   }
 
+  function setReposts(
+    bytes32 _memeId,
+    bytes32[] memory _reposts
+  ) public {
+    require(
+      msg.sender==factorySigner,
+      'Error: msg.sender must be factorySigner');
+    memes[_memeId].reposts = _reposts;
+  }
+  function setQuotePosts(
+    bytes32 _memeId,
+    bytes32[] memory _quotePosts
+  ) public {
+    require(
+      msg.sender==factorySigner,
+      'Error: msg.sender must be factorySigner');
+    memes[_memeId].quotePosts = _quotePosts;
+  }
+
   function setLikers(
     bytes32 _memeId,
     address[] memory _likers
@@ -100,12 +121,41 @@ contract MemeStorage {
     memes[_memeId].unlikers = _unlikers;
   }
 
+  function addBoost(
+    bytes32 _memeId,
+    uint _boosts
+  ) public {
+    require(
+      msg.sender==boostSigner ||
+      msg.sender==likeSigner ||
+      msg.sender==postSigner ||
+      msg.sender==factorySigner,
+      'Error: msg.sender must be like, post, or boost signer');
+    memes[_memeId].boosts += _boosts;
+  }
+  function subtractBoost(
+    bytes32 _memeId,
+    uint _boosts
+  ) public {
+    require(
+      msg.sender==boostSigner,
+      'Error: msg.sender must be like, post, or boost signer');
+    memes[_memeId].boosts -= _boosts;
+  }
+
   // getter functions for Meme
   function getMemeCount() public view returns(uint) {
     return memeCount;
   }
+
+  function getText(bytes32 _memeId) public view returns(string memory) {
+    return memes[_memeId].text;
+  }
   function getLikeCount(bytes32 _memeId) public view returns(uint) {
     return memes[_memeId].likers.length;
+  }
+  function getBoost(bytes32 _memeId) public view returns(uint) {
+    return memes[_memeId].boosts;
   }
   function getLikers(bytes32 _memeId) public view returns(address[] memory) {
     return memes[_memeId].likers;
@@ -140,6 +190,9 @@ contract MemeStorage {
   function getOriginId(bytes32 _memeId) public view returns(bytes32) {
     return memes[_memeId].originId;
   }
+  function getRepostId(bytes32 _memeId) public view returns(bytes32) {
+    return memes[_memeId].repostId;
+  }
   function getAuthor(bytes32 _memeId) public view returns(address) {
     return memes[_memeId].author;
   }
@@ -148,6 +201,9 @@ contract MemeStorage {
   }
 
 // encode uint for testing
+  function getEncodeId(uint _memeId) public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].id;
+  }
   function getEncodeLikeCount(uint _memeId) public view returns(uint) {
     return memes[keccak256(abi.encodePacked(_memeId))].likers.length;
   }
@@ -226,6 +282,15 @@ contract MemeStorage {
 
     likeSigner = _like;
     emit LikeSignerChanged(msg.sender, likeSigner);
+    return true;
+  }
+  function passBoostSigner(address _boost) public returns (bool) {
+    require(
+      msg.sender == boostSigner,
+      'Error: msg.sender must be likeSigner');
+
+    boostSigner = _boost;
+    emit BoostSignerChanged(msg.sender, boostSigner);
     return true;
   }
 }
