@@ -2,8 +2,8 @@
   "name": "uMe",
   "version": "0.1.0",
   "description": "decentralized micro-blogging",
-  "author": "myssynglynx@protonmail.com",
-  "homepage": "https://github.com/myssynglynx/ume",
+  "author": "topshaman@protonmail.com",
+  "homepage": "https://github.com/top-shaman/ume-eth",
   "dependencies": {
     "@babel/core": "7.11.0",
     "@babel/preset-env": "7.11.0",

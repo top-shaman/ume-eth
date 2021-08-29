@@ -1,0 +1,44 @@
+.SearchBar input {
+  display: flex;
+  margin: 0.4rem 0.5rem 0.4rem auto;
+  height: 2rem;
+  padding: 1rem 1rem 1.05rem 1rem;
+  border-radius: 1rem;
+  box-shadow: none;
+  outline: none;
+  border-width: 0;
+  color: #CCDDDD;
+  font-family: Avenir;
+  font-weight: 500;
+  background-color: #666677;
+  transition: box-shadow 0.3s ease 0s;
+}
+.SearchBar input:focus,
+.SearchBar input:active {
+  border-radius: 1rem;
+  caret-color: lightgray;
+  background-color: #282c34;
+  box-shadow: 0 0 0 0.1rem #00CC89;
+  color: #BBDDDD;
+  transition: box-shadow 0.3s ease 0s;
+}
+
+.SearchBar_input:-webkit-autofill,
+.SearchBar_input:-webkit-autofill:hover,
+.SearchBar_input:-webkit-autofill::first-line,
+.SearchBar_input:-webkit-autofill:focus,
+.SearchBar_input:-webkit-autofill:active {
+  border-radius: 1rem;
+  caret-color: lightgray;
+  background-color: #282c34;
+  -webkit-background-color: #282c34;
+  box-shadow: 0 0 0 0.1rem #00CC89;
+  transition: background-color 5000s ease-in-out 0s;
+  color: lightgray;
+  -webkit-text-fill-color: lightgray;
+  font-family: Avenir;
+  font-weight: 500;
+}
+.SearchBar ::placeholder {
+  color: #CCCDCD;
+}

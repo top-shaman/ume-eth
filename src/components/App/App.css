@@ -1,0 +1,161 @@
+html {
+  font-family: sans-serif;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+div#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  width: 100%;
+}
+.App {
+  text-align: center;
+  display: inline-flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  background-color: #282c34;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+
+.App-header {
+  justify-content: left;
+  display: flex;
+  flex-direction: column;
+  border-right: 0.05rem solid #AAAAAA;
+  max-width:10rem;
+  /* align-items: center;
+  justify-content: center;
+  */
+  font-size: 2rem;
+  color: white;
+}
+.App-subheader {
+  display: inline-flex;
+  align-items: center;
+  width:100%;
+  padding: 0;
+  border-bottom: 0.05rem solid #AAAAAA;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.App-body {
+  flex-direction: column;
+  width: 100%;
+  color: lightgrey;
+}
+section.App-subheader {
+  border: none;
+}
+
+section#title.App-subheader {
+  justify-content: flex-start;
+  margin: 0 1.5rem 0 1.5rem;
+  width: 100%;
+  border: none;
+  font-family: 'MuseoModerno', sans-sarif;
+  font-size: 1.8rem;
+  font-weight: 400;
+}
+section#searchBar.App-subheader {
+  justify-content: right;
+  flex-direction: row-reverse;
+  margin: 0;
+  width: auto;
+}
+
+ul {
+  list-style: none;
+}
+.App-subheader p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.6rem auto 0.6rem auto;
+  padding: 0.4rem;
+  transition: background-color 0.2s ease-in-out 0s;
+  border-radius: 1rem;
+}
+.App-subheader p:hover {
+  background-color: #222222;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swell1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
+.App-subheader a {
+  justify-content: center;
+}
+.App-subheader a:link {
+  color: #00CC89;
+  transition: color 0.125s ease-in-out 0s;
+  text-decoration: none;
+}
+.App-subheader a:hover {
+  color: #00CC89;
+  text-decoration: none;
+}
+.App-subheader a:visited {
+  color: #00CC89;
+  text-decoration: none;
+}
+.App-subheader a:active {
+  color: lightgrey;
+  animation-name: swell2;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+
+
+@keyframes swell1 {
+  from {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(0.96);
+  }
+  66% {
+    transform: scale(1.02);
+    filter: blur(0.5px);
+  }
+  to {
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+@keyframes swell2 {
+  from {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(0.98);
+  }
+  66% {
+    transform: scale(1.03);
+    filter: blur(0.5px);
+  }
+  to {
+    transform: scale(1);
+    filter: blur(0[x);
+  }
+}
+@keyframes rever {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
