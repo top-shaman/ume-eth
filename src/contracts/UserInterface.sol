@@ -295,7 +295,7 @@ contract UserInterface {
     }
   }
 
-  function encode(uint num) public pure returns(bytes32) {
+  function encode(uint num) public view returns(bytes32) {
     return keccak256(abi.encodePacked(num));
   }
 

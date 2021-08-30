@@ -4,7 +4,8 @@ nav.navbar {
   display: flex;
   flex-direction: column;
   font-size: 1rem;
-  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
 }
 
 img.logo{
@@ -102,6 +103,6 @@ small#pages {
     filter: blur(1px);
   }
   to {
-    filter: blur(0.3px);
+    filter: blur(0px);
   }
 }

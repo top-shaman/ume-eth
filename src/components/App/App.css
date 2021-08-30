@@ -4,6 +4,7 @@ html {
   width: 100%;
   height: 100%;
   font-family: 'Montserrat Alternates', sans-serif;
+  overflow: hidden;
 }
 div#root {
   height: 100%;
@@ -11,6 +12,12 @@ div#root {
 body {
   margin: 0;
   width: 100%;
+  overflow: hidden;
+}
+body > div {
+  height: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 .App {
   text-align: center;
@@ -45,6 +52,7 @@ body {
   width:100%;
   padding: 0;
   border-bottom: 0.05rem solid #AAAAAA;
+  position: relative;
 }
 
 .App-link {
@@ -76,8 +84,13 @@ section#searchBar.App-subheader {
   width: auto;
 }
 
-ul {
-  list-style: none;
+p {
+  font-family: 'Quicksand', sans-serif;
+  color: #00CC89;
+}
+small {
+  justify-content: center;
+  margin: 0 auto;
 }
 .App-subheader p {
   display: flex;

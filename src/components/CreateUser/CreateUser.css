@@ -1,0 +1,113 @@
+div.CreateUser {
+  margin: 0 auto;
+
+}
+.CreateUser img {
+  opacity: 1;
+  margin: 1rem auto;
+  max-width: 20rem;
+  /*
+  animation-name: fade-blur;
+  animation-timing-function: ease-in-out;
+  animation-duration: 5s;
+  animation-delay: 4s;
+  animation-fill-mode: forwards;
+  */
+}
+/*
+.CreateUser img:hover {
+  animation-name: bobble;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1.5s;
+}
+*/
+p {
+  line-height: 0.8rem;
+}
+p#title {
+  opacity: 0;
+  font-size: 5rem;
+  line-height: 4rem;
+  font-family: 'MuseoModerno', sans-serif;
+  margin: 2rem auto 1rem auto;
+  animation-name: fade;
+  animation-timing-function: ease-in-out;
+  animation-duration: 3s;
+  animation-delay: 2.5s;
+  animation-fill-mode: forwards;
+}
+
+p.CreateUser1 {
+  opacity: 0;
+  animation-name: fade;
+  animation-timing-function: ease-in-out;
+  animation-duration: 3s;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+p.CreateUser2  {
+  opacity: 0;
+  animation-name: fade;
+  animation-timing-function: ease-in-out;
+  animation-duration: 3s;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+}
+p.CreateUser3  {
+  opacity: 0;
+  animation-name: fade;
+  animation-timing-function: ease-in-out;
+  animation-duration: 3s;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
+}
+p.CreateUser4  {
+  opacity: 0;
+  animation-name: fade;
+  animation-timing-function: ease-in-out;
+  animation-duration: 3s;
+  animation-delay: 6.5s;
+  animation-fill-mode: forwards;
+}
+
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    animation-play-state: paused;
+  }
+}
+@keyframes fade-blur {
+  from {
+    filter: blur(10px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0px);
+    opacity: 1;
+    animation-play-state: paused;
+  }
+}
+@keyframes bobble {
+  from {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(0.95);
+  }
+  40% {
+    transform: scale(1.02);
+  }
+  60% {
+    transform: scale(0.98);
+  }
+  80% {
+    transform: scale(1.01);
+  }
+  to {
+    transform: scale(1);
+  }
+}

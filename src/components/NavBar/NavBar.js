@@ -20,7 +20,7 @@ class NavBar extends Component {
             />
           </a>
         </small>
-        <small id="pages">
+        <small id="pages" className="home">
           <a
             className="home"
             href="#home"
@@ -28,21 +28,22 @@ class NavBar extends Component {
             Home
           </a>
         </small>
-        <a
-          className="profile"
-          href="#profile"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-        </a>
-        <ul className="navbar">
-          <li className="nav-item">
-            <section className="text-secondary">
-              <h4 id="account">
-              </h4>
-            </section>
-          </li>
-        </ul>
+        <small id="pages" className="home">
+          <a
+            className="profile"
+            href="#profile"
+          >
+            Profile
+          </a>
+        </small>
+        <small id="pages" className="notifications">
+          <a
+            className="notifications"
+            href="#notifications"
+          >
+            Explore
+          </a>
+        </small>
       </nav>
     );
   }
