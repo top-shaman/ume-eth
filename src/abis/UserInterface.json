@@ -49347,10 +49347,16 @@
       "links": {},
       "address": "0x4DfA05Bbe4E78ceabd95065a47b5e083d268A94F",
       "transactionHash": "0x16e53f7bdf85c819c04c3f69f76860c7f8c057ad60853028a615afc878234434"
+    },
+    "1630356194580": {
+      "events": {},
+      "links": {},
+      "address": "0x2aa918a9C0B714A2e90794f5d1D4379245C41587",
+      "transactionHash": "0x265da6c3ef2804a9d4b9e2ad7152a079ab3c3ad2e114782387675638fc104f54"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-08-30T06:05:19.338Z",
+  "updatedAt": "2021-08-30T20:47:39.182Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

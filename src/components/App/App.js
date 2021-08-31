@@ -18,12 +18,35 @@ import UME from '../../abis/UME.json'
 const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 class App extends Component {
-  async UNSAFE_componentWillMount() {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      account: '',
+      ume: null,
+      memes: [],
+      loadingContract: true,
+      walletConnected: false,
+      registered: false
+    }
+
+  }
+
+
+  async componentDidMount() {
     await this.loadWeb3()
     await this.loadContracts()
+    // automatically emit account updates
+    window.ethereum.on('accountsChanged', accounts => {
+      console.log('account change detected')
+      this.loadContracts()
+    })
   }
-  async componentDidMount() {
-    setInterval(() => this.loadContracts(), 1000)
+  async componentDidUpdate() {
+    if(!this.state.walletConnected) {
+      setInterval(async () => await this.loadWeb3(), 3000)
+    }
   }
 
   async loadWeb3() {
@@ -36,7 +59,7 @@ class App extends Component {
           if(e.code === 4001) {
             console.log('Please connect to MetaMask.')
           } else {
-            throw ethErrors.provider.unauthorized()
+            console.error(e)
           }
         })
     } else if(window.web3) {
@@ -45,8 +68,6 @@ class App extends Component {
       window.alert('Non-Ethereum browser detected. You should consider trying Metamask!')
     }
   }
-
-
 
   async loadContracts() {
     const web3 = window.web3
@@ -63,8 +84,6 @@ class App extends Component {
       const userStorage = new web3.eth.Contract(UserStorage.abi, interfaceNetData.address)
       const uInterface = new web3.eth.Contract(UserInterface.abi, userStorageNetData.address)
       const memeStorage = new web3.eth.Contract(MemeStorage.abi, memeStorageNetData.address)
-
-
       // app state from BlockChain
       this.setState({
         ume,
@@ -72,9 +91,6 @@ class App extends Component {
         uInterface,
         memeStorage
       })
-
-
-
       let memeCount = await memeStorage.methods.memeCount().call()
       console.log(memeCount)
       //const memeCount = await memeStorage.methods
@@ -82,7 +98,7 @@ class App extends Component {
       //console.log(memeCount)
       //this.setState({ memeCount })
       this.setState({
-        loading: false
+        loadingContract: false
       })
       //if(userStorage.methods.getAddr(this.state.account).call({from:this.state.account}) != ETHER_ADDRESS) {
      // }
@@ -92,20 +108,9 @@ class App extends Component {
     }
   }
 
-  constructor(props) {
-    super(props)
-
-
-    this.state = {
-      account: '',
-      ume: null,
-      memes: [],
-      loading: true,
-      registered: false
-    }
-  }
 
   render() {
+
     return (
       <div className="App">
         { this.state.registered
@@ -113,7 +118,7 @@ class App extends Component {
               <div className="App-header">
                 <NavBar
                   account={this.state.account}
-                  loading={this.state.loading}
+                  loading={this.state.loadingContract}
                 />
               </div>
               <div className="App-body">
@@ -137,7 +142,7 @@ class App extends Component {
                   memeStorage={this.state.memeStorage}
                   memeCount={this.state.memeCount}
                   uInterface={this.state.uInterface}
-                  loading={this.state.loading}
+                  loading={this.state.loadingContract}
                 />
               </div>
             </div>
