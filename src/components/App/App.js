@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Web3 from 'web3'
 import { ethErrors, serializeError } from 'eth-rpc-errors'
 import Identicon from 'identicon.js'
@@ -6,6 +6,7 @@ import './App.css';
 import NavBar from '../NavBar/NavBar'
 import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
+import Enter from '../Enter/Enter'
 import CreateUser from '../CreateUser/CreateUser'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -17,7 +18,7 @@ import UME from '../../abis/UME.json'
 
 const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-class App extends Component {
+class App extends React.Component {
 
   constructor(props) {
     super(props)
@@ -28,11 +29,17 @@ class App extends Component {
       memes: [],
       loadingContract: true,
       walletConnected: false,
-      registered: false
+      registered: false,
+      entered: false
     }
+
+    this.handleEntered = this.handleEntered.bind(this)
 
   }
 
+  handleEntered(hasEntered) {
+    this.setState({ entered: hasEntered })
+  }
 
   async componentDidMount() {
     await this.loadWeb3()
@@ -42,9 +49,13 @@ class App extends Component {
       console.log('account change detected')
       this.loadContracts()
     })
+    const checkEntered = localStorage.getItem('hasEntered')
+    if(checkEntered)
+      this.setState({ entered: true })
   }
   async componentDidUpdate() {
     if(!this.state.walletConnected) {
+      localStorage.clear()
       setInterval(async () => await this.loadWeb3(), 3000)
     }
   }
@@ -125,7 +136,7 @@ class App extends Component {
                 <div className="App-subheader">
                   <section className="App-subheader" id="title">
                     <a href="#home">
-                      <p>
+                      <p id="subheader">
                         uMe
                       </p>
                     </a>
@@ -146,9 +157,17 @@ class App extends Component {
                 />
               </div>
             </div>
-            : <CreateUser
-                account={this.state.account}
-              />
+            : this.state.entered
+              ? <CreateUser
+                  account={this.state.account}
+                  hasEntered={this.state.entered}
+                / >
+              : this.state.account===undefined
+                ? <p className="NoWallet" id="p1">Please connect MetaMask Wallet</p>
+                : <Enter
+                    account={this.state.account}
+                    hasEntered={this.handleEntered}
+                  />
         }
       </div>
     );

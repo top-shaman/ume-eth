@@ -1,86 +1,108 @@
-div.CreateUser {
+div#CreateUser {
+  margin: auto;
+}
+div#box.CreateUser {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto 8rem auto;
+  border-radius: 3rem;
+  box-shadow: 0 0 0 0.1rem #00CC89;
+  width: 20rem;
+  height: auto;
+}
+div#CreateUser p#title {
   margin: 0 auto;
-
-}
-.CreateUser img {
-  opacity: 0;
-  margin: 1rem auto;
-  max-width: 20rem;
-
-  animation-name: fade-blur;
-  animation-timing-function: ease-in-out;
-  animation-duration: 5s;
-  animation-delay: 3.2s;
-  animation-fill-mode: forwards;
-
-}
-
-p {
-  line-height: 0.8rem;
-}
-p#title {
-  opacity: 0;
-  font-size: 5rem;
-  line-height: 4rem;
+  opacity: 1;
   font-family: 'MuseoModerno', sans-serif;
-  margin: 2rem auto 1rem auto;
-  animation-name: fade-blur;
-  animation-timing-function: ease-in-out;
-  animation-duration: 3s;
-  animation-delay: 2.5s;
-  animation-fill-mode: forwards;
+  font-weight: 400;
+  font-size: 4.5rem;
 }
 
-p.CreateUser1 {
-  opacity: 0;
-  animation-name: fade;
-  animation-timing-function: ease-in-out;
-  animation-duration: 3s;
-  animation-delay: 0s;
-  animation-fill-mode: forwards;
-}
-p.CreateUser2  {
-  opacity: 0;
-  animation-name: fade;
-  animation-timing-function: ease-in-out;
-  animation-duration: 3s;
-  animation-delay: 0.5s;
-  animation-fill-mode: forwards;
-}
-p.CreateUser3  {
-  opacity: 0;
-  animation-name: fade;
-  animation-timing-function: ease-in-out;
-  animation-duration: 3s;
-  animation-delay: 1s;
-  animation-fill-mode: forwards;
-}
-p.CreateUser4  {
-  opacity: 0;
-  animation-name: fade;
-  animation-timing-function: ease-in-out;
-  animation-duration: 3s;
-  animation-delay: 6.5s;
-  animation-fill-mode: forwards;
+img#profile-pic-auto{
+  margin-top: 3rem;
+  border: 0;
+  border-radius: 100%;
+  box-shadow: 0 0 0 0.1rem #00CC89;
 }
 
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-    animation-play-state: paused;
-  }
+form.CreateUser {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem 2rem 2rem;
+  justify-content: center;
 }
-@keyframes fade-blur {
-  from {
-    filter: blur(10px);
-    opacity: 0;
-  }
-  to {
-    filter: blur(0px);
-    opacity: 1;
-    animation-play-state: paused;
-  }
+
+p#description.CreateUser {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight: 300;
+}
+p.CreateUser {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  justify-content: center;
+}
+p#field.CreateUser {
+  justify-content: center;
+  margin: 0;
+}
+p#button.CreateUser {
+  justify-self: center;
+  margin: 0 auto;
+}
+input#submit {
+  justify-content: center;
+  margin: 1.5rem auto 1rem auto;
+  font-size: 0.9rem;
+}
+p.CreateUser label {
+  margin: 1rem auto 0.05rem 0.7rem;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.CreateUser input {
+  display: flex;
+  margin: 0.2rem;
+  padding: 0.7rem 1rem 0.7rem 1rem;
+  border-radius: 1rem;
+  outline: none;
+  box-shadow: none;
+  border-width: 0;
+  font-size: 1rem;
+  font-family: 'Quicksand', sans-serif;
+  color: #CCDDDD;
+  background-color: #666677;
+}
+.CreateUser input::placeholder {
+  font-family: 'Quicksand', sans-serif;
+  font-style: oblique;
+  font-weight: 200;
+  font-size: 0.7rem;
+  color: #CCCDCD;
+  margin: 0 0.2rem;
+}
+.CreateUser input:focus,
+.CreateUser input:active {
+  border-radius: 1rem;
+  caret-color: lightgray;
+  background-color: #282c34;
+  color: #BBDDDD;
+}
+.CreateUser input:-webkit-autofill,
+.CreateUser input:-webkit-autofill:hover,
+.CreateUser input:-webkit-autofill::first-line,
+.CreateUser input:-webkit-autofill:focus,
+.CreateUser input:-webkit-autofill:active {
+  border-radius: 1rem;
+  caret-color: lightgray;
+  background-color: #282c34;
+  -webkit-background-color: #282c34;
+  box-shadow: 0 0 0 0.1rem #00CC89;
+  transition: background-color 5000s ease-in-out 0s;
+  color: lightgray;
+  -webkit-text-fill-color: lightgray;
+  font-family: Avenir;
+  font-weight: 500;
 }

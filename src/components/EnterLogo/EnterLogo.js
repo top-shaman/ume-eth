@@ -1,5 +1,5 @@
 import react, {Component} from 'react'
-import logo from '../../resources/UME-green-bright-cropped-720px.png'
+import logo from '../../resources/UME-green-bright-cropped.png'
 import './EnterLogo.css'
 
 

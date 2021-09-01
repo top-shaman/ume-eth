@@ -102,7 +102,7 @@ small {
   border-radius: 1rem;
 }
 .App-subheader p:hover {
-  background-color: #222222;
+  background-color: #1D1F22;
   transition: background-color 0.2s ease-in-out 0s;
   animation-name: swell1;
   animation-duration: 0.33s;
@@ -131,6 +131,14 @@ small {
   animation-timing-function: ease-in-out;
 }
 
+p.NoWallet {
+  margin: auto;
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  transition: opacity 3s ease-in-out;
+}
 
 @keyframes swell1 {
   from {
@@ -164,11 +172,12 @@ small {
     filter: blur(0[x);
   }
 }
-@keyframes rever {
+
+@keyframes fade-in {
   from {
-    transform: scale(0.9);
+    opacity: 0;
   }
   to {
-    transform: scale(1);
+    opacity: 1;
   }
 }

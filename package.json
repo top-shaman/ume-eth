@@ -39,6 +39,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "gh-pages": "^2.2.0"
   }
 }

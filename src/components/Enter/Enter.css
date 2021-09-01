@@ -1,0 +1,52 @@
+div.Enter {
+  margin: auto;
+}
+article.Enter {
+  margin: 0 auto 10rem auto;
+}
+img.Enter {
+  opacity: 0;
+  margin: 1rem auto;
+  max-width: 20rem;
+}
+
+p.Enter {
+  line-height: 0.8rem;
+}
+
+p#title.Enter {
+  opacity: 0;
+  font-size: 5rem;
+  line-height: 4rem;
+  font-family: 'MuseoModerno', sans-serif;
+  margin: 2rem auto 1rem auto;
+}
+
+p#p1.Enter {
+  opacity: 0;
+}
+p#p2.Enter {
+  opacity: 0;
+}
+p#p3.Enter {
+  opacity: 0;
+}
+p#p4.Enter {
+  opacity: 0;
+}
+
+p.NoWallet {
+  opacity: 0;
+  animation-name: fade-in;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
