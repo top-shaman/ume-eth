@@ -1,12 +1,15 @@
 import React from 'react'
 import Identicon from 'identicon.js'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import Web3 from 'web3'
 import './CreateUser.css'
+import { ethErrors, serializeError } from 'eth-rpc-errors'
 
 function easeInOut (t, b, c) {
   if ((t /= 1 / 2) < 1) return c / 2 * t * t + b;
   return -c / 2 * ((--t) * (t - 2) - 1) + b;
 }
+const toBytes = string => Web3.utils.fromAscii(string)
 
 class CreateUser extends React.Component {
   constructor(props) {
@@ -22,7 +25,7 @@ class CreateUser extends React.Component {
       usernameFocused: false,
       addressFocused: false,
       submitText: 'please set username & address',
-      submitReady: true,
+      submitReady: false,
       registered: false
     }
     this.handleUsernameChange = this.handleUsernameChange.bind(this)
@@ -207,10 +210,14 @@ class CreateUser extends React.Component {
   }
 
   async registerUser(e) {
-    if(this.state.submitText) {
-
-      // use fromAscii functions to assign User to data
-
+    const username = toBytes(this.state.username)
+    const address = toBytes('@' + this.state.address)
+    console.log(username)
+    console.log(address)
+    console.log(this.state.account)
+    if(this.state.submitReady) {
+      await this.props.interface.methods.newUser(
+        this.state.account, username, address).send({from: this.state.account})
     }
   }
 
