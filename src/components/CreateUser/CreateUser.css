@@ -18,8 +18,7 @@ div#CreateUser p#title {
   font-size: 4.5rem;
 }
 
-img#profile-pic-auto{
-  margin-top: 3rem;
+img#profile-pic.CreateUser {
   border: 0;
   border-radius: 100%;
   box-shadow: 0 0 0 0.1rem #00CC89;
@@ -32,6 +31,19 @@ form.CreateUser {
   justify-content: center;
 }
 
+p#username.CreateUser {
+  margin: 1.2rem 1.5rem 1rem 1.5rem;
+  word-wrap: break-word;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #CCDDCC;
+}
+p#address.CreateUser {
+  margin: 0.5rem auto 0 auto;
+  font-weight: 500;
+  font-family: 'Avenir', sans-serif;
+  color: #CCDDCC;
+}
 p#description.CreateUser {
   font-family: 'Montserrat Alternates', sans-serif;
   font-weight: 300;
@@ -54,15 +66,26 @@ input#submit {
   justify-content: center;
   margin: 1.5rem auto 1rem auto;
   font-size: 0.9rem;
+  background-color: #333334;
 }
 p.CreateUser label {
   margin: 1rem auto 0.05rem 0.7rem;
   font-family: 'Montserrat Alternates', sans-serif;
   font-size: 1rem;
-  font-weight: 300;
+  font-weight: 400;
+}
+#button.CreateUser input {
+  display: flex;
+  padding: 0.7rem 1rem 0.7rem 1rem;
+  border-radius: 1rem;
+  outline: none;
+  box-shadow: none;
+  border-width: 0;
+  font-family: 'Quicksand', sans-serif;
+  color: #CCDDDD;
 }
 
-.CreateUser input {
+#field.CreateUser input {
   display: flex;
   margin: 0.2rem;
   padding: 0.7rem 1rem 0.7rem 1rem;
@@ -70,12 +93,12 @@ p.CreateUser label {
   outline: none;
   box-shadow: none;
   border-width: 0;
-  font-size: 1rem;
+  font-size: rem;
   font-family: 'Quicksand', sans-serif;
   color: #CCDDDD;
   background-color: #666677;
 }
-.CreateUser input::placeholder {
+#field.CreateUser input::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-style: oblique;
   font-weight: 200;
@@ -83,18 +106,26 @@ p.CreateUser label {
   color: #CCCDCD;
   margin: 0 0.2rem;
 }
-.CreateUser input:focus,
-.CreateUser input:active {
+#AddressInput.CreateUser input {
+  background: url('../../resources/at-white.svg') no-repeat scroll 7px 7px;
+}
+p#subtext.CreateUser {
+  font-family: Avenir;
+  font-weight: 200;
+  font-size: 0.8rem;
+}
+#field.CreateUser input:focus,
+#field.CreateUser input:active {
   border-radius: 1rem;
   caret-color: lightgray;
   background-color: #282c34;
   color: #BBDDDD;
 }
-.CreateUser input:-webkit-autofill,
-.CreateUser input:-webkit-autofill:hover,
-.CreateUser input:-webkit-autofill::first-line,
-.CreateUser input:-webkit-autofill:focus,
-.CreateUser input:-webkit-autofill:active {
+#field.CreateUser input:-webkit-autofill,
+#field.CreateUser input:-webkit-autofill:hover,
+#field.CreateUser input:-webkit-autofill::first-line,
+#field.CreateUser input:-webkit-autofill:focus,
+#field.CreateUser input:-webkit-autofill:active {
   border-radius: 1rem;
   caret-color: lightgray;
   background-color: #282c34;

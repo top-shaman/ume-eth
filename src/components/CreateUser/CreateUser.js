@@ -14,15 +14,24 @@ class CreateUser extends React.Component {
 
     this.state = {
       account: this.props.account,
+      interface: this.props.interface,
       username: '',
       address: '',
       usernameFlag: false,
-      addressFlag: '',
+      addressFlag: false,
+      usernameFocused: false,
+      addressFocused: false,
       submitText: 'please set username & address',
+      submitReady: true,
       registered: false
     }
     this.handleUsernameChange = this.handleUsernameChange.bind(this)
     this.handleAddressChange = this.handleAddressChange.bind(this)
+    this.handleUsernameFocus = this.handleUsernameFocus.bind(this)
+    this.handleAddressFocus = this.handleAddressFocus.bind(this)
+    this.handleUsernameBlur = this.handleUsernameBlur.bind(this)
+    this.handleAddressBlur = this.handleAddressBlur.bind(this)
+    this.registerUser = this.registerUser.bind(this)
   }
 
   componentDidMount() {
@@ -31,6 +40,7 @@ class CreateUser extends React.Component {
   componentDidUpdate() {
     this.checkUsername()
     this.checkAddress()
+    this.checkSubmit()
   }
 
   componentWillUnmount() {
@@ -44,19 +54,48 @@ class CreateUser extends React.Component {
     e.preventDefault()
     this.setState({ address: e.target.value })
   }
+  handleUsernameFocus(e) {
+    e.preventDefault()
+    this.setState({ usernameFocused: true })
+  }
+  handleAddressFocus(e) {
+    e.preventDefault()
+    this.setState({ addressFocused: true })
+  }
+  handleUsernameBlur(e) {
+    e.preventDefault()
+    this.setState({ usernameFocused: false })
+  }
+  handleAddressBlur(e) {
+    e.preventDefault()
+    this.setState({ addressFocused: false })
+  }
 
   checkUsername() {
     // valid characters
-    const usernameRegex = /[^A-Za-z0-9_\s-]/g
+    const usernameRegex = /[^A-Za-z0-9_\s,'":?!%&*()+=/^><-]/g
+    const letterRegex = /[^A-Za-z]/g
     const checkUsername = this.state.username.search(usernameRegex)
-    const invalidFlag = 'only letters, numbers, underscores, spaces, hyphens are valid'
+    const checkFirstLetter = this.state.username.search(letterRegex)
+    const invalidFlag = 'invalid character used'
+    const firstFlag = 'first character must be letter'
     const lengthFlag = 'must be at least 2 characters'
-    if(checkUsername > -1 && !this.state.usernameFlag)
-      this.setState({ usernameFlag: invalidFlag })
-    else if (checkUsername < 0 && this.state.usernameFlag===invalidFlag)
-      this.setState({ usernameFlag: false})
-    // box color functions
     const inputBox = document.querySelector('input#UsernameInput.CreateUser')
+    // check characters
+    if(checkUsername > -1 && this.state.usernameFlag.length===undefined) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
+      this.setState({ usernameFlag: invalidFlag })
+    } else if (checkUsername < 0 && this.state.usernameFlag===invalidFlag)
+      this.setState({ usernameFlag: false})
+    // check first character
+    if(checkFirstLetter===0 && this.state.usernameFlag.length===undefined) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
+      this.setState({ usernameFlag: firstFlag })
+    } else if(checkFirstLetter < 0 && this.state.usernameFlag===firstFlag) {
+      this.setState({ usernameFlag: false })
+    }
+
+    // check length
     if(this.state.username.length > 0 && this.state.username.length < 2 &&
        !this.state.usernameFlag) {
       this.setState({ usernameFlag: lengthFlag })
@@ -64,12 +103,29 @@ class CreateUser extends React.Component {
     } else if(this.state.username.length > 0 && this.state.username.length < 2 &&
        this.state.usernameFlag) {
       inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
-    } else if (this.state.username.length > 1 && this.state.usernameFlag==lengthFlag) {
+    } else if(this.state.username.length > 1 && this.state.usernameFlag==lengthFlag) {
       this.setState({ usernameFlag: false })
       inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
-    } else {
+    } // check if focused
+    else if(this.state.username.length > 0 && !this.state.usernameFocused &&
+            !this.state.usernameFlag) {
+      this.setState({ usernameFocused: true })
+      inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+      inputBox.style.backgroundColor = '#282c34'
+    } else if(this.state.username.length > 0 && this.state.usernameFocused &&
+              !this.state.usernameFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+      inputBox.style.backgroundColor = '#282c34'
+    } else if(this.state.username.length === 0 && this.state.usernameFocused &&
+              !this.state.usernameFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #BBAA00'
+      inputBox.style.backgroundColor = '#666677'
+    } else if(this.state.username.length === 0 && !this.state.usernameFocused &&
+              !this.state.usernameFlag) {
       inputBox.style.boxShadow = 'none'
       inputBox.style.backgroundColor = '#666677'
+    } else if(this.state.usernameFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
     }
   }
   checkAddress() {
@@ -78,12 +134,14 @@ class CreateUser extends React.Component {
     const checkAddress = this.state.address.search(addressRegex)
     const invalidFlag = 'only letters, numbers, underscores are valid'
     const lengthFlag = 'must be at least 2 characters'
-    if(checkAddress > -1 && !this.state.addressFlag)
-      this.setState({ addressFlag: invalidFlag })
-    else if (checkAddress < 0 && this.state.addressFlag===invalidFlag)
-      this.setState({ addressFlag: false})
-    // box color functions
     const inputBox = document.querySelector('input#AddressInput.CreateUser')
+    // character check
+    if(checkAddress > -1 && this.state.addressFlag.length===undefined) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
+      this.setState({ addressFlag: invalidFlag })
+    } else if (checkAddress < 0 && this.state.addressFlag===invalidFlag)
+      this.setState({ addressFlag: false})
+    // length check functions
     if(this.state.address.length > 0 && this.state.address.length < 2 &&
        !this.state.addressFlag) {
       this.setState({ addressFlag: lengthFlag })
@@ -94,9 +152,65 @@ class CreateUser extends React.Component {
     } else if (this.state.address.length > 1 && this.state.addressFlag==lengthFlag) {
       this.setState({ addressFlag: false })
       inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
-    } else {
+    } // check if focused
+    else if(this.state.address.length > 0 && !this.state.addressFocused &&
+            !this.state.addressFlag) {
+      this.setState({ addressFocused: true })
+      inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+      inputBox.style.backgroundColor = '#282c34'
+    } else if(this.state.address.length > 0 && this.state.addressFocused &&
+              !this.state.addressFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+      inputBox.style.backgroundColor = '#282c34'
+    } else if(this.state.address.length === 0 && this.state.addressFocused &&
+              !this.state.addressFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #BBAA00'
+      inputBox.style.backgroundColor = '#666677'
+    } else if(this.state.address.length === 0 && !this.state.addressFocused &&
+              !this.state.addressFlag) {
       inputBox.style.boxShadow = 'none'
       inputBox.style.backgroundColor = '#666677'
+    } else if(this.state.addressFlag) {
+      inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
+    }
+  }
+  checkSubmit() {
+    const submit = document.querySelector('.CreateUser input#submit')
+    const ready = 'Create Account'
+    const noneReady = 'please set username & address'
+    if(this.state.usernameFlag.length===undefined &&
+       this.state.addressFlag.length===undefined &&
+       (this.state.username.length!==0 && this.state.address.length!==0) &&
+       this.state.submitText!==ready) {
+      this.setState({
+        submitText: ready,
+        submitReady: true
+      })
+      submit.style.backgroundColor = '#00CC89'
+      submit.style.color = '#FFFFFF'
+      submit.style.cursor = 'pointer'
+    } else if(((this.state.usernameFlag.length && this.state.address.length) ||
+              (this.state.username.length && this.state.addressFlag.length) ||
+              (this.state.usernameFlag.length && this.state.address.length===0) ||
+              (this.state.username.length===0 && this.state.addressFlag.length) ||
+              this.state.username.length===0 || this.state.address.length===0 ||
+              (this.state.username.length===0 && this.state.address.length===0)) &&
+              this.state.submitText!==noneReady) {
+      this.setState({
+        submitText: noneReady,
+        submitReady: false
+      })
+      submit.style.backgroundColor = '#333334'
+      submit.style.color = '#FFFFFF'
+      submit.style.cursor = 'default'
+    }
+  }
+
+  async registerUser(e) {
+    if(this.state.submitText) {
+
+      // use fromAscii functions to assign User to data
+
     }
   }
 
@@ -134,8 +248,10 @@ class CreateUser extends React.Component {
           <div className="CreateUser" id="profile-pic">
             <ProfilePic id="ProfilePic" account={this.props.account} hasEntered={this.props.hasEntered}/>
           </div>
-          <p className="CreateUser" id="address">{this.state.address}</p>
-          <form className="CreateUser">
+          <p className="CreateUser" id="address">
+            {this.state.address ? '@' + this.state.address : ''}
+          </p>
+          <form className="CreateUser" >
             <p className="CreateUser" id="field">
               <label for="UserName">username: </label>
               <input
@@ -146,6 +262,9 @@ class CreateUser extends React.Component {
                 maxLength="32"
                 placeholder="must be between 2 and 32 characters"
                 onChange={this.handleUsernameChange}
+                onFocus={this.handleUsernameFocus}
+                onBlur={this.handleUsernameBlur}
+                autocomplete="off"
                 required
               />
               <p className="CreateUser" id="subtext">
@@ -162,6 +281,9 @@ class CreateUser extends React.Component {
                 maxLength="31"
                 placeholder="must be between 2 and 31 characters"
                 onChange={this.handleAddressChange}
+                onFocus={this.handleAddressFocus}
+                onBlur={this.handleAddressBlur}
+                autocomplete="off"
                 required
               />
               <p className="CreateUser" id="subtext">
@@ -169,7 +291,12 @@ class CreateUser extends React.Component {
               </p>
             </p>
             <p className="CreateUser" id="button">
-              <input type="submit" value={this.state.submitText} id="submit"/>
+              <input
+                type="button"
+                value={this.state.submitText}
+                id="submit"
+                onClick={this.registerUser}
+              />
             </p>
           </form>
         </div>

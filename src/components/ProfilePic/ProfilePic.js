@@ -17,10 +17,10 @@ class ProfilePic extends React.Component {
       <div id="profilePic">
           { this.state.hasPic
             ? <img
-                className="CreateUser" id="profile-pic-user"
+                className="CreateUser" id="profile-pic"
               />
             : <img
-                className="CreateUser" id="profile-pic-auto"
+                className="CreateUser" id="profile-pic"
                 width="120"
                 height="120"
                 src={`data:image/png;base64,${

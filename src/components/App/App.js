@@ -25,6 +25,9 @@ class App extends React.Component {
 
     this.state = {
       account: '',
+      uInterface: null,
+      uStorage: null,
+      memeStorage: null,
       ume: null,
       memes: [],
       loadingContract: true,
@@ -54,7 +57,8 @@ class App extends React.Component {
       this.setState({ entered: true })
   }
   async componentDidUpdate() {
-    if(!this.state.walletConnected) {
+    if(this.state.account===undefined) {
+      console.log(this.state.account)
       localStorage.clear()
       setInterval(async () => await this.loadWeb3(), 3000)
     }
@@ -124,50 +128,51 @@ class App extends React.Component {
 
     return (
       <div className="App">
-        { this.state.registered
-          ? <div className="App">
-              <div className="App-header">
-                <NavBar
-                  account={this.state.account}
-                  loading={this.state.loadingContract}
-                />
-              </div>
-              <div className="App-body">
-                <div className="App-subheader">
-                  <section className="App-subheader" id="title">
-                    <a href="#home">
-                      <p id="subheader">
-                        uMe
-                      </p>
-                    </a>
-                  </section>
-                  <section className="App-subheader" id="searchBar">
-                    <SearchBar
-                      userStorage={this.state.userStorage}
-                      memeStorage={this.state.memeStorage}
-                    />
-                  </section>
-                </div>
-                <Timeline
-                  account={this.state.account}
-                  memeStorage={this.state.memeStorage}
-                  memeCount={this.state.memeCount}
-                  uInterface={this.state.uInterface}
-                  loading={this.state.loadingContract}
-                />
-              </div>
-            </div>
-            : this.state.entered
-              ? <CreateUser
-                  account={this.state.account}
-                  hasEntered={this.state.entered}
-                / >
-              : this.state.account===undefined
-                ? <p className="NoWallet" id="p1">Please connect MetaMask Wallet</p>
-                : <Enter
+        { this.state.account!==undefined
+          ? this.state.registered
+            ? <div className="App">
+                <div className="App-header">
+                  <NavBar
                     account={this.state.account}
-                    hasEntered={this.handleEntered}
+                    loading={this.state.loadingContract}
                   />
+                </div>
+                <div className="App-body">
+                  <div className="App-subheader">
+                    <section className="App-subheader" id="title">
+                      <a href="#home">
+                        <p id="subheader">
+                          uMe
+                        </p>
+                      </a>
+                    </section>
+                    <section className="App-subheader" id="searchBar">
+                      <SearchBar
+                        userStorage={this.state.userStorage}
+                        memeStorage={this.state.memeStorage}
+                      />
+                    </section>
+                  </div>
+                  <Timeline
+                    account={this.state.account}
+                    memeStorage={this.state.memeStorage}
+                    memeCount={this.state.memeCount}
+                    uInterface={this.state.uInterface}
+                    loading={this.state.loadingContract}
+                  />
+                </div>
+              </div>
+          : this.state.entered
+            ? <CreateUser
+                account={this.state.account}
+                hasEntered={this.state.entered}
+                interface={this.state.uInterface}
+                / >
+            : <Enter
+                account={this.state.account}
+                hasEntered={this.handleEntered}
+              />
+          : <p className="NoWallet" id="p1">Please connect MetaMask Wallet</p>
         }
       </div>
     );
