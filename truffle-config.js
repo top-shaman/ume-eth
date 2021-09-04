@@ -1,3 +1,6 @@
+const HDWalletProvider = require('truffle-hdwallet-provider-privkey');
+const privateKeys = process.env.PRIVATE_KEYS || ""
+
 module.exports = {
   networks: {
     development: {

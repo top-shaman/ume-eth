@@ -141,6 +141,14 @@ contract UserStorage {
   }
 
   // getter functions for UserStorage
+  function userExists(address _account) public view returns(bool) {
+    if(users[_account].addr!=address(0x0)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   function getUser(address _account) public view returns(User memory){
     return users[_account];
   }

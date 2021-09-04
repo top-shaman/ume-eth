@@ -1,0 +1,55 @@
+div.CreateMeme-background {
+  z-index: 8;
+  display:block;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #AABBBB;
+  opacity: 0.2;
+  transition: opacity 0.1s
+}
+div.CreateMeme-container {
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  margin-top: -12rem;
+  margin-left: -12rem;
+  width: 24rem;
+  padding: 1.5rem 1.5rem;
+  border-radius: 1.5rem;
+  display: flex;
+  background-color: #282c34;
+  opacity: 1;
+  flex-direction: column;
+}
+
+section.CreateMeme-head {
+  border-bottom: 0.1rem solid #667777;
+  width: 100%;
+}
+section.CreateMeme-body {
+  margin: 0.2rem;
+  color: #CCDDCC;
+}
+textarea#meme.meme-text {
+  border: none;
+  outline: none;
+  width: 22rem;
+  caret-color: #667777;
+  box-shadow: none;
+  background-color: #282c34;
+  color: #CCDDCC;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  max-height: 30rem;
+  resize: none;
+  overflow: visible;
+}
+textarea#meme.meme-text::placeholder {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+}

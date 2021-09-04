@@ -1,9 +1,10 @@
 nav.navbar {
-  min-width: 8rem;
+  min-width: 10rem;
   height: 100%;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
+
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
 }
@@ -19,6 +20,34 @@ img.logo{
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
+p.meme {
+  display: block;
+  min-width: 4.6rem;
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  background-color: #00CC89;
+  padding: 0.5rem 2rem;
+  margin: 1rem;
+  border-radius: 3rem;
+  transition: background-color 0.2s ease-in-out 0s;
+}
+p.meme:hover {
+  background-color: #00AB79;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swellNav1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
+p.meme:active {
+  background-color: #00CC89;
+  transition: background-color 0.2 ease-in-out 0s;
+  animation-name: swellNav2;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+
 .navbar small{
   transition: background-color 0.2s ease-in-out 0s;
   width: min-content;
@@ -26,7 +55,7 @@ img.logo{
   border-radius: 1rem;
 }
 .navbar small:hover {
-  background-color: #222222;
+  background-color: #1D1F22;
   transition: background-color 0.2s ease-in-out 0s;
   animation-name: swellNav1;
   animation-duration: 0.33s;

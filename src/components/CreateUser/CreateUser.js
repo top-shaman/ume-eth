@@ -216,8 +216,9 @@ class CreateUser extends React.Component {
     console.log(address)
     console.log(this.state.account)
     if(this.state.submitReady) {
-      await this.props.interface.methods.newUser(
-        this.state.account, username, address).send({from: this.state.account})
+      await this.props.interface.methods.newUser(this.state.account, username, address)
+        .send({from: this.state.account})
+      window.location.reload()
     }
   }
 
@@ -249,7 +250,7 @@ class CreateUser extends React.Component {
         <p className="CreateUser" id="description">
           Create username & address to begin
         </p>
-        <p classname="CreateUser" id="title">uMe</p>
+        <p className="CreateUser" id="title">uMe</p>
         <div className="CreateUser" id="box">
           <p className="CreateUser" id="username">{this.state.username}</p>
           <div className="CreateUser" id="profile-pic">
@@ -260,7 +261,7 @@ class CreateUser extends React.Component {
           </p>
           <form className="CreateUser" >
             <p className="CreateUser" id="field">
-              <label for="UserName">username: </label>
+              <label htmlFor="UserName">username: </label>
               <input
                 id="UsernameInput"
                 name="Username"
@@ -271,15 +272,15 @@ class CreateUser extends React.Component {
                 onChange={this.handleUsernameChange}
                 onFocus={this.handleUsernameFocus}
                 onBlur={this.handleUsernameBlur}
-                autocomplete="off"
+                autoComplete="off"
                 required
               />
-              <p className="CreateUser" id="subtext">
+              <span className="CreateUser" id="subtext">
                 {this.state.usernameFlag}
-              </p>
+              </span>
             </p>
             <p className="CreateUser" id="field">
-              <label for="UserAddress">address: </label>
+              <label htmlFor="UserAddress">address: </label>
               <input
                 id="AddressInput"
                 name="UserAddress"
@@ -290,12 +291,12 @@ class CreateUser extends React.Component {
                 onChange={this.handleAddressChange}
                 onFocus={this.handleAddressFocus}
                 onBlur={this.handleAddressBlur}
-                autocomplete="off"
+                autoComplete="off"
                 required
               />
-              <p className="CreateUser" id="subtext">
+              <span className="CreateUser" id="subtext">
                 {this.state.addressFlag}
-              </p>
+              </span>
             </p>
             <p className="CreateUser" id="button">
               <input

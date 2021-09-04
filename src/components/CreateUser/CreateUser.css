@@ -97,6 +97,7 @@ p.CreateUser label {
   font-family: 'Quicksand', sans-serif;
   color: #CCDDDD;
   background-color: #666677;
+  transition: box-shadow 0.5s ease-in-out;
 }
 #field.CreateUser input::placeholder {
   font-family: 'Quicksand', sans-serif;
@@ -109,7 +110,7 @@ p.CreateUser label {
 #AddressInput.CreateUser input {
   background: url('../../resources/at-white.svg') no-repeat scroll 7px 7px;
 }
-p#subtext.CreateUser {
+span#subtext.CreateUser {
   font-family: Avenir;
   font-weight: 200;
   font-size: 0.8rem;
@@ -120,6 +121,7 @@ p#subtext.CreateUser {
   caret-color: lightgray;
   background-color: #282c34;
   color: #BBDDDD;
+  transition: box-shadow 0.5s ease-in-out;
 }
 #field.CreateUser input:-webkit-autofill,
 #field.CreateUser input:-webkit-autofill:hover,
@@ -136,4 +138,5 @@ p#subtext.CreateUser {
   -webkit-text-fill-color: lightgray;
   font-family: Avenir;
   font-weight: 500;
+  transition: box-shadow 0.5s ease-in-out;
 }

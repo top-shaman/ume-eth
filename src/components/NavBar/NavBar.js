@@ -4,9 +4,27 @@ import logo from "../../resources/UME-green-96px.png"
 
 
 class NavBar extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      creatingMeme: false
+    }
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  async handleClick(e) {
+    e.preventDefault()
+    await this.setState({ creatingMeme: true })
+    this.props.handleMeme(await this.state.creatingMeme)
+    //console.log(await this.state.creatingMeme)
+  }
+
   render() {
     return (
-      <nav className="navbar">
+      <nav className="navbar" handleMeme={this.state.creatingMeme}>
         <small className="navbar" id="logo">
           <a
             className="logo"
@@ -20,7 +38,7 @@ class NavBar extends Component {
             />
           </a>
         </small>
-        <small id="pages" className="home">
+        <small id="pages" className="link">
           <a
             className="home"
             href="#home"
@@ -28,7 +46,7 @@ class NavBar extends Component {
             Home
           </a>
         </small>
-        <small id="pages" className="home">
+        <small id="pages" className="link">
           <a
             className="profile"
             href="#profile"
@@ -36,14 +54,21 @@ class NavBar extends Component {
             Profile
           </a>
         </small>
-        <small id="pages" className="notifications">
+        <small id="pages" className="link">
           <a
-            className="notifications"
-            href="#notifications"
+            className="settings"
+            href="#settings"
           >
-            Explore
+            Settings
           </a>
         </small>
+        <p
+          className="meme"
+          onClick={this.handleClick}
+        >
+
+          <span>Meme</span>
+        </p>
       </nav>
     );
   }
