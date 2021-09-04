@@ -18,7 +18,7 @@ div#CreateUser p#title {
   font-size: 4.5rem;
 }
 
-img#profile-pic.CreateUser {
+.CreateUser img#profile-pic {
   border: 0;
   border-radius: 100%;
   box-shadow: 0 0 0 0.1rem #00CC89;

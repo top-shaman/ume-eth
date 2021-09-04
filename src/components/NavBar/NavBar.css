@@ -43,9 +43,6 @@ p.meme:hover {
 p.meme:active {
   background-color: #00CC89;
   transition: background-color 0.2 ease-in-out 0s;
-  animation-name: swellNav2;
-  animation-duration: 0.2s;
-  animation-timing-function: ease-in-out;
 }
 
 .navbar small{

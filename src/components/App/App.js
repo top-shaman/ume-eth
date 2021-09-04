@@ -9,6 +9,7 @@ import Timeline from '../Timeline/Timeline'
 import Enter from '../Enter/Enter'
 import CreateUser from '../CreateUser/CreateUser'
 import CreateMeme from '../CreateMeme/CreateMeme'
+import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
 
 import UserInterface from '../../abis/UserInterface.json'
 import UserFactory from '../../abis/UserFactory.json'
@@ -19,10 +20,6 @@ import UME from '../../abis/UME.json'
 
 const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-export function easeInOut (t, b, c) {
-  if ((t /= 1 / 2) < 1) return c / 2 * t * t + b;
-  return -c / 2 * ((--t) * (t - 2) - 1) + b;
-}
 
 class App extends React.Component {
 
@@ -43,6 +40,7 @@ class App extends React.Component {
 
     this.handleEntered = this.handleEntered.bind(this)
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
+    this.handleExitMeme = this.handleExitMeme.bind(this)
   }
 
   handleEntered(hasEntered) {
@@ -50,13 +48,16 @@ class App extends React.Component {
   }
   handleCreateMeme(handleMeme) {
     this.setState({ creatingMeme: handleMeme })
-    this.blur('div.App-header', 100)
-    this.blur('div.App-body', 100)
-    console.log(this.state.creatingMeme)
+    bobble()
+    blur('div.App-header', 500)
+    blur('div.App-body', 500)
+  }
+  handleExitMeme(handleExitMeme) {
+    this.setState({ creatingMeme: handleExitMeme })
   }
 
   async componentDidMount() {
-    this.fadeIn('.App', 2000)
+    blurToFadeIn('.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       console.log('first load')
@@ -76,6 +77,7 @@ class App extends React.Component {
   }
   async componentWillUnmount() {
     window.clearInterval()
+    fadeOut('.App', 1500)
   }
 
   async request() {
@@ -174,44 +176,6 @@ class App extends React.Component {
     //this.loadContracts()
   }
 
-  fadeIn(element, duration) {
-    const elements = document.querySelectorAll(element)
-    let start = performance.now()
-    requestAnimationFrame(function animation(time) {
-      let fractionOfTime = (time - start) / duration
-      if (fractionOfTime > 1) fractionOfTime = 1
-      let progress = easeInOut(fractionOfTime, 0, 1)
-      elements.forEach(e => {
-        e.style.opacity = progress
-        e.style.filter = 'blur(' + (3/progress - 3) + 'px)'
-      })
-      if (fractionOfTime < 1) requestAnimationFrame(animation)
-    })
-  }
-  fadeOut(element, duration) {
-    const elements = document.querySelectorAll(element)
-    let start = performance.now()
-    requestAnimationFrame(function animation(time) {
-      let fractionOfTime = (time - start) / duration
-      if (fractionOfTime > 1) fractionOfTime = 1
-      let progress = easeInOut(fractionOfTime, 1, -1)
-      elements.forEach(e => e.style.opacity = progress)
-      if (fractionOfTime < 1) requestAnimationFrame(animation)
-    })
-  }
-  blur(element, duration) {
-    const elements = document.querySelectorAll(element)
-    let start = performance.now()
-    requestAnimationFrame(function animation(time) {
-      let fractionOfTime = (time - start) / duration
-      if (fractionOfTime > 1) fractionOfTime = 1
-      let progress = easeInOut(fractionOfTime, 0, 1)
-      elements.forEach(e => {
-        e.style.filter = 'blur(' + (4 * progress) + 'px)'
-      })
-      if (fractionOfTime < 1) requestAnimationFrame(animation)
-    })
-  }
 
   render() {
 
@@ -221,7 +185,11 @@ class App extends React.Component {
           ? this.state.registered
             ? <div className="App">
                 { this.state.creatingMeme
-                  ? <CreateMeme /> : ''
+                  ? <CreateMeme
+                      account={this.state.account}
+                      handleExitMeme={this.handleExitMeme}
+                    />
+                  : ''
                 }
                 <div className="App-header">
                   <NavBar

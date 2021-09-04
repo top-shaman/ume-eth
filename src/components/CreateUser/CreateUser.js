@@ -1,14 +1,11 @@
 import React from 'react'
 import Identicon from 'identicon.js'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import { fadeIn, fadeOut } from '../../resources/Libraries/Animation'
 import Web3 from 'web3'
 import './CreateUser.css'
 import { ethErrors, serializeError } from 'eth-rpc-errors'
 
-function easeInOut (t, b, c) {
-  if ((t /= 1 / 2) < 1) return c / 2 * t * t + b;
-  return -c / 2 * ((--t) * (t - 2) - 1) + b;
-}
 const toBytes = string => Web3.utils.fromAscii(string)
 
 class CreateUser extends React.Component {
@@ -38,7 +35,7 @@ class CreateUser extends React.Component {
   }
 
   componentDidMount() {
-    this.fadeIn('div#CreateUser', 1500)
+    fadeIn('div#CreateUser', 1500)
   }
   componentDidUpdate() {
     this.checkUsername()
@@ -47,7 +44,7 @@ class CreateUser extends React.Component {
   }
 
   componentWillUnmount() {
-    this.fadeOut('div#CreateUser', 1500)
+    fadeOut('div#CreateUser', 1500)
   }
   handleUsernameChange(e) {
     e.preventDefault()
@@ -222,28 +219,6 @@ class CreateUser extends React.Component {
     }
   }
 
-  fadeIn(element, duration) {
-    const elements = document.querySelectorAll(element)
-    let start = performance.now()
-    requestAnimationFrame(function animation(time) {
-      let fractionOfTime = (time - start) / duration
-      if (fractionOfTime > 1) fractionOfTime = 1
-      let progress = easeInOut(fractionOfTime, 0, 1)
-      elements.forEach(e => e.style.opacity = progress)
-      if (fractionOfTime < 1) requestAnimationFrame(animation)
-    })
-  }
-  fadeOut(element, duration) {
-    const elements = document.querySelectorAll(element)
-    let start = performance.now()
-    requestAnimationFrame(function animation(time) {
-      let fractionOfTime = (time - start) / duration
-      if (fractionOfTime > 1) fractionOfTime = 1
-      let progress = easeInOut(fractionOfTime, 1, -1)
-      elements.forEach(e => e.style.opacity = progress)
-      if (fractionOfTime < 1) requestAnimationFrame(animation)
-    })
-  }
   render() {
     return(
       <div id="CreateUser">
