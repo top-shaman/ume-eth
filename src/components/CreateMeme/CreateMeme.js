@@ -2,6 +2,7 @@ import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { fadeIn, fadeOut, partialFadeIn, partialFadeOut, unBlur } from '../../resources/Libraries/Animation'
 import './CreateMeme.css'
+import X from '../../resources/X-white.svg'
 import autosize from 'autosize'
 
 class CreateMeme extends React.Component {
@@ -10,19 +11,31 @@ class CreateMeme extends React.Component {
 
     this.state = {
       creatingMeme: true,
+      interface: this.props.interface,
       memeText: '',
       validMeme: false
     }
 
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
-    this.handleBgClick = this.handleBgClick.bind(this)
+    this.handleCloseClick = this.handleCloseClick.bind(this)
   }
+
   componentDidMount() {
     fadeIn('div.CreateMeme-container', 333)
     partialFadeIn('div.CreateMeme-background', 100, 0.2)
-    if(localStorage.getItem('memeText'))
-      this.setState({ memeText: localStorage.getItem('memeText') })
+    const storage = localStorage.getItem('memeText')
+    if(storage && !storage.match(/\s/g)) {
+      const buttonText = document.querySelector('p#memeButton.CreateMeme')
+      const memeButton = document.querySelector('p#memeButton.CreateMeme')
+      this.setState({
+        memeText: localStorage.getItem('memeText'),
+        validMeme: true
+      })
+      memeButton.style.backgroundColor = '#00CC89'
+      memeButton.style.cursor = 'pointer'
+      buttonText.style.color = '#FFFFFF'
+    }
     this.textarea.focus()
     autosize(this.textarea)
   }
@@ -30,19 +43,46 @@ class CreateMeme extends React.Component {
   async handleTextChange(e) {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
-    await this.checkIfValid(e.target.value)
     const text = await this.state.memeText
-    if(text.match(/\s/g))
+    const buttonText = document.querySelector('p#memeButton.CreateMeme')
+    const memeButton = document.querySelector('p#memeButton.CreateMeme')
+    if(text.match(/\s/g)) {
       this.setState({ validMeme: text.length!==text.match(/\s/g).length })
-    else if(text.length>0)
+      memeButton.style.cursor = 'default'
+      memeButton.style.backgroundColor = '#334646'
+      buttonText.style.color = '#AABBAA'
+    } else if(text.length>0) {
+      memeButton.style.cursor = 'pointer'
+      memeButton.style.backgroundColor = '#00CC89'
+      buttonText.style.backgroundColor = '#FFFFFF'
       this.setState({ validMeme: true })
-    console.log(this.state.validMeme)
+    } else if(e.target.value==='') {
+      memeButton.style.cursor = 'default'
+      memeButton.style.backgroundColor = '#334646'
+      buttonText.style.color = '#AABBAA'
+      this.setState({ validMeme: false })
+    }
+    if(this.state.validMeme) {
+      memeButton.style.cursor = 'pointer'
+      memeButton.style.backgroundColor = '#00CC89'
+      buttonText.style.color = '#FFFFFF'
+    }
   }
-  handleMemeClick(e) {
-    if(this.state.validMeme)
-    console.log('meme button click')
+  async handleMemeClick(e) {
+    const textarea = document.querySelector('textarea#meme.meme-text')
+    const tags = []
+    if(this.state.validMeme) {
+      console.log('meme button click')
+      console.log(this.state.memeText)
+      this.state.interface.methods.newMeme(
+        this.props.account,
+        this.state.memeText,
+        tags, '0x0', '0x0')
+      .send({from: this.props.account})
+      this.handleCloseClick(e)
+    }
   }
-  async handleBgClick(e) {
+  async handleCloseClick(e) {
     console.log('bg click')
     localStorage.setItem('memeText', this.state.memeText)
     fadeOut('div.CreateMeme-container', 500)
@@ -55,14 +95,19 @@ class CreateMeme extends React.Component {
     }, 500)
   }
 
-  checkIfValid(text) {
-  }
 
   render() {
     return(
       <div id="CreateMeme" handleExitMeme={this.handleExitMeme}>
         <div className="CreateMeme-container">
           <section className="CreateMeme-head">
+            <img
+              id="x"
+              className="close"
+              src={X}
+              width="11px"
+              onClick={this.handleCloseClick}
+            />
           </section>
           <section className="CreateMeme-body">
             <div className="CreateMeme-profilePic">
@@ -101,7 +146,7 @@ class CreateMeme extends React.Component {
         </div>
         <div
           className="CreateMeme-background"
-          onClick={this.handleBgClick}
+          onClick={this.handleCloseClick}
         >
         </div>
       </div>
