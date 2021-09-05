@@ -42,7 +42,7 @@ class CreateMeme extends React.Component {
 
   async handleTextChange(e) {
     e.preventDefault()
-    this.setState({ memeText: e.target.value })
+    this.setState({ memeText: await e.target.value })
     const text = await this.state.memeText
     const buttonText = document.querySelector('p#memeButton.CreateMeme')
     const memeButton = document.querySelector('p#memeButton.CreateMeme')
@@ -80,6 +80,7 @@ class CreateMeme extends React.Component {
         tags, '0x0', '0x0')
       .send({from: this.props.account})
       this.handleCloseClick(e)
+      localStorage.clear()
     }
   }
   async handleCloseClick(e) {
@@ -98,7 +99,7 @@ class CreateMeme extends React.Component {
 
   render() {
     return(
-      <div id="CreateMeme" handleExitMeme={this.handleExitMeme}>
+      <div id="CreateMeme" >
         <div className="CreateMeme-container">
           <section className="CreateMeme-head">
             <img

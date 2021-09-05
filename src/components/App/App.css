@@ -15,11 +15,18 @@ body {
   width: 100%;
   overflow: hidden;
 }
+/*
 body > div {
   height: 100%;
   overflow: scroll;
   -webkit-overflow-scrolling: touch;
 }
+head > div {
+  height: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+*/
 .App {
   text-align: center;
   display: inline-flex;
@@ -34,25 +41,33 @@ body > div {
   pointer-events: none;
 }
 
-
+/*
 .App-header {
   justify-content: left;
   display: flex;
   flex-direction: column;
-  border-right: 0.05rem solid #AAAAAA;
-  /* align-items: center;
-  justify-content: center;
-  */
+  height: 100%;
   font-size: 2rem;
   color: white;
+  position: -webkit-sticky;
+  position: sticky;
+  top:0px;
 }
-.App-subheader {
+*/
+div.App-header {
+  border-right: 0.05rem solid #AAAAAA;
+}
+div.App-subheader {
   display: inline-flex;
+  justify-content: space-between;
   align-items: center;
-  width:100%;
+  position: sticky;
+  position: -webkit-sticky;
   padding: 0;
   border-bottom: 0.05rem solid #AAAAAA;
-  position: relative;
+  background-color: #282c34;
+  top:0;
+  width: 100%;
 }
 
 .App-link {
@@ -60,18 +75,19 @@ body > div {
 }
 
 .App-body {
+  position: relative;
   flex-direction: column;
   width: 100%;
   color: lightgrey;
+  overflow: scroll;
 }
 section.App-subheader {
   border: none;
 }
 
 section#title.App-subheader {
-  justify-content: flex-start;
+  justify-content: center;
   margin: 0 1rem 0 1rem;
-  width: 100%;
   border: none;
   font-family: 'MuseoModerno', sans-sarif;
   font-size: 2.15rem;
@@ -80,8 +96,6 @@ section#title.App-subheader {
 section#searchBar.App-subheader {
   justify-content: right;
   flex-direction: row-reverse;
-  margin: 0;
-  width: auto;
 }
 
 p {

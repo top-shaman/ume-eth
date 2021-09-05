@@ -33,14 +33,16 @@ class App extends React.Component {
       ume: null,
       memes: [],
       loading: true,
-      walletRequest: false,
       registered: false,
       entered: false
     }
 
+    this.timeline = React.createRef()
+
     this.handleEntered = this.handleEntered.bind(this)
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleExitMeme = this.handleExitMeme.bind(this)
+    this.handleRefresh = this.handleRefresh.bind(this)
   }
 
   handleEntered(hasEntered) {
@@ -54,6 +56,9 @@ class App extends React.Component {
   }
   handleExitMeme(handleExitMeme) {
     this.setState({ creatingMeme: handleExitMeme })
+  }
+  handleRefresh(e) {
+    this.timeline.updateTimeline()
   }
 
   async componentDidMount() {
@@ -69,8 +74,10 @@ class App extends React.Component {
     }
     // automatically emit account updates
     const checkEntered = localStorage.getItem('hasEntered')
-    if(checkEntered)
+    if(checkEntered) {
       this.setState({ entered: true })
+      localStorage.clear()
+    }
     if(window.ethereum) {
       this.listen()
     }
@@ -106,11 +113,10 @@ class App extends React.Component {
         this.loadContracts()
       }
     })
-    window.ethereum.on('chainChanged', change => {
+    window.ethereum.on('message', message => {
       console.log('chain change detected')
-      this.loadContracts(
-      window.location.reload()
-    )})
+      this.loadContracts()
+    })
   }
   async loadWeb3() {
     if(window.ethereum) {
@@ -153,6 +159,7 @@ class App extends React.Component {
       const userCount = await userStorage.methods.userCount().call()
       console.log('user count: ' + userCount)
       await this.loadProfile()
+      if(this.state.registered) await this.timeline.loadTimeline()
       this.setState({
         loading: false
       })
@@ -176,9 +183,7 @@ class App extends React.Component {
     //this.loadContracts()
   }
 
-
   render() {
-
     return (
       <div className="App">
         { this.state.account!==undefined
@@ -197,6 +202,7 @@ class App extends React.Component {
                     account={this.state.account}
                     loading={this.state.loadingContract}
                     handleMeme={this.handleCreateMeme}
+                    handleRefresh={this.handleRefresh}
                   />
                 </div>
                 <div className="App-body">
@@ -222,6 +228,7 @@ class App extends React.Component {
                     memeCount={this.state.memeCount}
                     interface={this.state.interface}
                     loading={this.state.loading}
+                    ref={Ref => this.timeline=Ref}
                   />
                 </div>
               </div>

@@ -1,1 +1,45 @@
+div#meme-container.Meme {
+  display: flex;
+  flex-direction: row;
+  background-color: #1D1F22;
+  border-bottom: 0.05rem solid #AAAAAA;
+  border-right: 0.05rem solid #AAAAAA;
+  width: 80%;
+}
+div#meme-body.Meme {
+  display: flex;
+  flex-direction: column;
+}
+div#meme-header.Meme {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0.4rem;
+  align-items: flex-end;
+}
+.Meme img#profile-pic {
+  width: 3rem;
+  height: auto;
+  border-radius: 100%;
+  margin: 0.4rem;
+}
 
+p#meme-text.Meme{
+  display: flex;
+  margin: 0 1.2rem 0 0.4rem;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.84rem;
+  color: #CCDDCC;
+  justify-content: flex-start;
+}
+a.Meme {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin: 0 0.3rem 0 0;
+}
+span.Meme {
+  font-family: 'Avenir', sans-serif;
+  font-size: 0.65rem;
+  margin: 0 0.3rem;
+  color: #667777;
+}

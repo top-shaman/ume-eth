@@ -12,23 +12,30 @@ class NavBar extends Component {
       creatingMeme: false
     }
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleMemeClick = this.handleMemeClick.bind(this)
+    this.handleRefreshClick = this.handleRefreshClick.bind(this)
   }
 
-  async handleClick(e) {
+  async handleMemeClick(e) {
     e.preventDefault()
     await this.setState({ creatingMeme: true })
     this.props.handleMeme(await this.state.creatingMeme)
     //console.log(await this.state.creatingMeme)
   }
+  async handleRefreshClick(e) {
+    this.props.handleRefresh(e)
+  }
 
   render() {
     return (
-      <nav className="navbar" handleMeme={this.state.creatingMeme}>
+      <nav
+        className="navbar"
+      >
         <small className="navbar" id="logo">
           <a
             className="logo"
             href="#home"
+            onClick={this.handleRefreshClick}
           >
             <img
               className="logo"
@@ -64,7 +71,7 @@ class NavBar extends Component {
         </small>
         <p
           className="meme"
-          onClick={this.handleClick}
+          onClick={this.handleMemeClick}
         >
 
           <span>Meme</span>
