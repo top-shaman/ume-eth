@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import "./NavBar.css"
 import logo from "../../resources/UME-green-96px.png"
+import { blurToFadeIn, fadeOut } from '../../resources/Libraries/Animation'
 
 
 class NavBar extends Component {
@@ -14,6 +15,13 @@ class NavBar extends Component {
 
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
+  }
+
+  componentDidMount() {
+//    blurToFadeIn('div.navbar', 1500)
+  }
+  componentWillUnmount() {
+//    fadeOut('div.navbar', 1500)
   }
 
   async handleMemeClick(e) {

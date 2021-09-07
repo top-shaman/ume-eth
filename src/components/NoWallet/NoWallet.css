@@ -1,0 +1,10 @@
+div.NoWallet {
+  margin: auto;
+}
+.NoWallet p#p1 {
+  font-size: 1.4rem;
+  opacity: 0;
+}
+.NoWallet p#p2{
+  opacity: 0;
+}

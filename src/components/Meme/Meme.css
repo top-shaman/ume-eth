@@ -43,3 +43,7 @@ span.Meme {
   margin: 0 0.3rem;
   color: #667777;
 }
+.Timeline div#loader-memes p {
+  width: 80%;
+  transition: opacity 0.5s;
+}

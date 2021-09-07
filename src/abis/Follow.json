@@ -24997,10 +24997,36 @@
       "links": {},
       "address": "0x9ac8B6A537dAcb8680eDDb3C9a85831d66c67A1d",
       "transactionHash": "0xfcbe0121dd3c2adffcc1a0a09fd9b7d19ab639e09779ba307f2f717880d66c7a"
+    },
+    "1630965032062": {
+      "events": {
+        "0x317b209d0dca6ddb6667f7c47d488a9708cc0e7befa4cde41a104b125a1d9ef6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "FollowSignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x928bd4d7A91511576Cc4970d16aE024c9acCC545",
+      "transactionHash": "0xf5124f30aa19929d87ec2493c530c0d98c4825386f4e2f8db63abecc0d2f9a30"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-04T21:19:45.230Z",
+  "updatedAt": "2021-09-06T22:02:44.100Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

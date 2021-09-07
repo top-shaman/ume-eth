@@ -1,15 +1,12 @@
 import React from 'react'
 import Web3 from 'web3'
-import { ethErrors, serializeError } from 'eth-rpc-errors'
-import Identicon from 'identicon.js'
+import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
 import './App.css';
-import NavBar from '../NavBar/NavBar'
-import SearchBar from '../SearchBar/SearchBar'
-import Timeline from '../Timeline/Timeline'
+import Main from '../Main/Main'
 import Enter from '../Enter/Enter'
 import CreateUser from '../CreateUser/CreateUser'
 import CreateMeme from '../CreateMeme/CreateMeme'
-import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
+import NoWallet from '../NoWallet/NoWallet'
 
 import UserInterface from '../../abis/UserInterface.json'
 import UserFactory from '../../abis/UserFactory.json'
@@ -17,8 +14,6 @@ import UserStorage from '../../abis/UserStorage.json'
 import MemeFactory from '../../abis/MemeFactory.json'
 import MemeStorage from '../../abis/MemeStorage.json'
 import UME from '../../abis/UME.json'
-
-const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 
 class App extends React.Component {
@@ -32,45 +27,40 @@ class App extends React.Component {
       memeStorage: null,
       ume: null,
       memes: [],
-      loading: true,
+      contractLoading: true,
       registered: false,
-      entered: false
+      entered: false,
+      creatingMeme: false
     }
-
-    this.timeline = React.createRef()
 
     this.handleEntered = this.handleEntered.bind(this)
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleExitMeme = this.handleExitMeme.bind(this)
-    this.handleRefresh = this.handleRefresh.bind(this)
   }
 
   handleEntered(hasEntered) {
     this.setState({ entered: hasEntered })
   }
-  handleCreateMeme(handleMeme) {
-    this.setState({ creatingMeme: handleMeme })
-    bobble()
-    blur('div.App-header', 500)
-    blur('div.App-body', 500)
-  }
   handleExitMeme(handleExitMeme) {
     this.setState({ creatingMeme: handleExitMeme })
   }
-  handleRefresh(e) {
-    this.timeline.updateTimeline()
+  handleCreateMeme(handleCreateMeme) {
+    this.setState({ creatingMeme: handleCreateMeme })
   }
 
   async componentDidMount() {
+    console.log('mount')
     blurToFadeIn('.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       console.log('first load')
       await this.loadWeb3()
       await this.loadContracts()
+      /*
       setInterval(() => {
         this.loadContracts()
       }, 5000)
+      */
     }
     // automatically emit account updates
     const checkEntered = localStorage.getItem('hasEntered')
@@ -79,7 +69,7 @@ class App extends React.Component {
       localStorage.clear()
     }
     if(window.ethereum) {
-      this.listen()
+      this.chainListen()
     }
   }
   async componentWillUnmount() {
@@ -99,7 +89,7 @@ class App extends React.Component {
         }
       })
   }
-  listen() {
+  chainListen() {
     window.ethereum.on('accountsChanged', account => {
       console.log('account change detected ' + account)
       if (this.state.account!==undefined) {
@@ -118,13 +108,11 @@ class App extends React.Component {
       this.loadContracts()
     })
   }
+
   async loadWeb3() {
     if(window.ethereum) {
       window.web3 = new Web3(window.ethereum)
-      //await window.ethereum.enable()
-      //if(!this.state.account) this.listen()
       this.request()
-      //
     } else if(window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
     } else {
@@ -158,11 +146,8 @@ class App extends React.Component {
       console.log('meme count: ' + memeCount)
       const userCount = await userStorage.methods.userCount().call()
       console.log('user count: ' + userCount)
+      this.setState({ contractLoading: false })
       await this.loadProfile()
-      if(this.state.registered) await this.timeline.loadTimeline()
-      this.setState({
-        loading: false
-      })
     }
     else {
       window.alert('UME not deployed to detected network')
@@ -170,17 +155,20 @@ class App extends React.Component {
   }
 
   async loadProfile() {
-    if(await this.profileExists()) {
+    const profileExists = async () => {
+      if(this.state.account!==undefined)
+        return await this.state.userStorage.methods.userExists(this.state.account).call()
+    }
+    if(await profileExists()) {
+      console.log('account exists')
       this.setState({ registered: true })
-      //this.loadContracts()
+    } else if(window.ethereum) {
+      this.setState({ registered: false })
+      console.log('wallet not connected')
+    } else if(await profileExists()===false) {
+      this.setState({ registered: false })
+      console.log('account doesn\'t exist')
     }
-    else this.setState({ registerd: false })
-  }
-  async profileExists() {
-    if(this.state.account!==undefined) {
-      return await this.state.userStorage.methods.userExists(this.state.account).call()
-    }
-    //this.loadContracts()
   }
 
   render() {
@@ -197,55 +185,27 @@ class App extends React.Component {
                     />
                   : ''
                 }
-                <div className="App-header">
-                  <NavBar
-                    account={this.state.account}
-                    loading={this.state.loadingContract}
-                    handleMeme={this.handleCreateMeme}
-                    handleRefresh={this.handleRefresh}
-                  />
-                </div>
-                <div className="App-body">
-                  <div className="App-subheader">
-                    <section className="App-subheader" id="title">
-                      <a href="#home">
-                        <p id="subheader">
-                          uMe
-                        </p>
-                      </a>
-                    </section>
-                    <section className="App-subheader" id="searchBar">
-                      <SearchBar
-                        userStorage={this.state.userStorage}
-                        memeStorage={this.state.memeStorage}
-                      />
-                    </section>
-                  </div>
-                  <Timeline
-                    account={this.state.account}
-                    userStorage={this.state.userStorage}
-                    memeStorage={this.state.memeStorage}
-                    memeCount={this.state.memeCount}
-                    interface={this.state.interface}
-                    loading={this.state.loading}
-                    ref={Ref => this.timeline=Ref}
-                  />
-                </div>
+                <Main
+                  account={this.state.account}
+                  userStorage={this.state.userStorage}
+                  memeStorage={this.state.memeStorage}
+                  interface={this.state.interface}
+                  memeCount={this.state.memeCount}
+                  contractLoading={this.state.contractLoading}
+                  handleCreateMeme={this.handleCreateMeme}
+                />
               </div>
-          : this.state.entered
-            ? <CreateUser
-                account={this.state.account}
-                hasEntered={this.state.entered}
-                interface={this.state.interface}
-                / >
-            : <Enter
-                account={this.state.account}
-                hasEntered={this.handleEntered}
-              />
-              : <div className="NoWallet">
-                  <p className="NoWallet" id="p1">Please connect MetaMask Wallet</p>
-                  <p className="NoWallet" id="p2">(You may have to refresh page)</p>
-                </div>
+            : this.state.entered
+              ? <CreateUser
+                  account={this.state.account}
+                  hasEntered={this.state.entered}
+                  interface={this.state.interface}
+                  / >
+              : <Enter
+                  account={this.state.account}
+                  hasEntered={this.handleEntered}
+                />
+          : <NoWallet />
         }
       </div>
     );

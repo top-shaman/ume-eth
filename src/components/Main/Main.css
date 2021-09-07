@@ -1,0 +1,150 @@
+.Main {
+  text-align: center;
+  display: inline-flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  background-color: #282c34;
+}
+
+.Main-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+div.Main-header {
+  border-right: 0.05rem solid #AAAAAA;
+}
+div.Main-subheader {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  position: -webkit-sticky;
+  padding: 0;
+  border-bottom: 0.05rem solid #AAAAAA;
+  background-color: #282c34;
+  top:0;
+  width: 100%;
+  z-index: 6;
+}
+
+.Main-link {
+  color: #61dafb;
+}
+
+.Main-body {
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+  color: lightgrey;
+  overflow: scroll;
+}
+.Main-subheader section {
+  border: none;
+}
+
+.Main-subheader section#title {
+  justify-content: center;
+  margin: 0 1rem 0 1rem;
+  border: none;
+  font-family: 'MuseoModerno', sans-sarif;
+  font-size: 2.15rem;
+  font-weight: 400;
+}
+.Main-subheader section#searchBar {
+  justify-content: right;
+  flex-direction: row-reverse;
+}
+
+p {
+  font-family: 'Quicksand', sans-serif;
+  color: #00CC89;
+}
+small {
+  justify-content: center;
+  margin: 0 auto;
+}
+.Main-subheader p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'MuseoModerno', sans-serif;
+  margin: 0.6rem auto 0.6rem auto;
+  padding: 0.25rem 0.4rem;
+  transition: background-color 0.2s ease-in-out 0s;
+  border-radius: 1rem;
+}
+.Main-subheader p:hover {
+  background-color: #1D1F22;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swell1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
+.Main-subheader a {
+  justify-content: center;
+}
+.Main-subheader a:link {
+  color: #00CC89;
+  transition: color 0.125s ease-in-out 0s;
+  text-decoration: none;
+}
+.Main-subheader a:hover {
+  color: #00CC89;
+  text-decoration: none;
+}
+.Main-subheader a:visited {
+  color: #00CC89;
+  text-decoration: none;
+}
+.Main-subheader a:active {
+  color: lightgrey;
+  animation-name: swell2;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes swell1 {
+  from {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(0.96);
+  }
+  66% {
+    transform: scale(1.02);
+    filter: blur(0.5px);
+  }
+  to {
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+@keyframes swell2 {
+  from {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(0.98);
+  }
+  66% {
+    transform: scale(1.03);
+    filter: blur(0.5px);
+  }
+  to {
+    transform: scale(1);
+    filter: blur(0[x);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}

@@ -101,11 +101,9 @@ small#pages {
   }
   66% {
     transform: scale(1.01);
-    filter: blur(0.5px);
   }
   to {
     transform: scale(1);
-    filter: blur(0px);
   }
 }
 @keyframes swellNav2 {
@@ -117,11 +115,9 @@ small#pages {
   }
   66% {
     transform: scale(1.02);
-    filter: blur(0.3px);
   }
   to {
     transform: scale(1);
-    filter: blur(0px);
   }
 }
 @keyframes blurExtra {

@@ -29,7 +29,6 @@ class Meme extends Component {
     }
   }
   componentDidMount() {
-    //fadeIn('div#meme-container.Meme', 1200)
   }
   render() {
     return(
