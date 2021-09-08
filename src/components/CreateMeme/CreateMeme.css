@@ -1,4 +1,4 @@
-div.CreateMeme-background {
+.CreateMeme div#background {
   z-index: 8;
   display:block;
   position: fixed;
@@ -6,7 +6,7 @@ div.CreateMeme-background {
   height: 100%;
   background-color: #AABBBB;
 }
-div.CreateMeme-container {
+.CreateMeme div#container {
   z-index: 10;
   align-items: center;
   justify-content: center;
@@ -22,50 +22,87 @@ div.CreateMeme-container {
   opacity: 1;
   flex-direction: column;
 }
-div.CreateMeme-textBox {
+.CreateMeme form#form {
+  position: relative;
+}
+.CreateMeme form#form div#text-box {
+  position:relative;
   border-bottom: 0.05rem solid #667777;
-  width:inherit;
+  margin: 0.4rem 0.2rem 0.2rem 0;
+  width: 22rem;
+  min-height: 7.5rem;
 }
 
-section.CreateMeme-head {
+.CreateMeme section#head {
   border-bottom: 0.05rem solid #667777;
   width: 100%;
 }
-section.CreateMeme-body {
+.CreateMeme section#body {
   display: flex;
   flex-direction: row;
   width: 25.75rem;
   color: #CCDDCC;
 }
-.CreateMeme-profilePic img#profile-pic {
+.CreateMeme img#profile-pic {
   width: 3rem;
   height: auto;
   border-radius: 100%;
   margin: 0.4rem 0.4rem;
   transform: translateX(-0.3rem);
 }
-textarea#meme.meme-text {
+.CreateMeme textarea#meme-text {
   border: none;
   outline: none;
+  position: absolute;
   width: 22rem;
+  background: rgb(0,0,0,0);
   caret-color: #667777;
   box-shadow: none;
-  background-color: #282c34;
+  color: rgb(0,0,0,0);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  max-height: 30rem;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  resize: none;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:10;
+  overflow: visible;
+}
+.CreateMeme div#text-box p#text-box {
+  position: absolute;
+  justify-content: flex-start;
+  border: none;
+  box-shadow: none;
   color: #CCDDCC;
   font-family: 'Quicksand', sans-serif;
   font-size: 1.2rem;
   font-weight: 500;
-  margin: 0.4rem 0.2rem 0.2rem 0;
+  margin:0;
+  padding: 0;
+  width: 22rem;
+  text-align: start;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:8;
   max-height: 30rem;
-  resize: none;
-  overflow: visible;
 }
-textarea#meme.meme-text::placeholder {
+.CreateMeme p#text-box span {
+  display: block;
+  margin: 0 auto 0 0;
+  word-wrap: inherit;
+  white-space: break-spaces;
+}
+.CreateMeme textarea#meme-text::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
 }
 
-p#memeButton.CreateMeme {
+.CreateMeme p#meme-button {
   justify-content: center;
   width: 4.5rem;
   margin: 0.4rem 0.7rem 0.15rem auto;

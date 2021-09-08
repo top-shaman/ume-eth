@@ -1,7 +1,7 @@
-div#CreateUser {
+div#container.CreateUser {
   margin: auto;
 }
-div#box.CreateUser {
+div#box {
   display: flex;
   flex-direction: column;
   margin: 0 auto 8rem auto;
@@ -10,7 +10,7 @@ div#box.CreateUser {
   width: 20rem;
   height: auto;
 }
-div#CreateUser p#title {
+.CreateUser p#title {
   margin: 0 auto;
   opacity: 1;
   font-family: 'MuseoModerno', sans-serif;
@@ -24,57 +24,57 @@ div#CreateUser p#title {
   box-shadow: 0 0 0 0.1rem #00CC89;
 }
 
-form.CreateUser {
+.CreateUser form#CreateUser{
   display: flex;
   flex-direction: column;
   padding: 1rem 2rem 2rem 2rem;
   justify-content: center;
 }
 
-p#username.CreateUser {
+.CreateUser p#username {
   margin: 1.2rem 1.5rem 1rem 1.5rem;
   word-wrap: break-word;
   font-size: 1.4rem;
   font-weight: 800;
   color: #CCDDCC;
 }
-p#address.CreateUser {
+.CreateUser p#address {
   margin: 0.5rem auto 0 auto;
   font-weight: 500;
   font-family: 'Avenir', sans-serif;
   color: #CCDDCC;
 }
-p#description.CreateUser {
+.CreateUser p#description {
   font-family: 'Montserrat Alternates', sans-serif;
   font-weight: 300;
 }
-p.CreateUser {
+.CreateUser p {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   justify-content: center;
 }
-p#field.CreateUser {
+.CreateUser p#field {
   justify-content: center;
   margin: 0;
 }
-p#button.CreateUser {
+.CreateUser p#button {
   justify-self: center;
   margin: 0 auto;
 }
-input#submit {
+.CreateUser input#submit {
   justify-content: center;
   margin: 1.5rem auto 1rem auto;
   font-size: 0.9rem;
   background-color: #333334;
 }
-p.CreateUser label {
+.CreateUser p label {
   margin: 1rem auto 0.05rem 0.7rem;
   font-family: 'Montserrat Alternates', sans-serif;
   font-size: 1rem;
   font-weight: 400;
 }
-#button.CreateUser input {
+.CreateUser #button input {
   display: flex;
   padding: 0.7rem 1rem 0.7rem 1rem;
   border-radius: 1rem;
@@ -85,7 +85,7 @@ p.CreateUser label {
   color: #CCDDDD;
 }
 
-#field.CreateUser input {
+.CreateUser p#field input {
   display: flex;
   margin: 0.2rem;
   padding: 0.7rem 1rem 0.7rem 1rem;
@@ -99,7 +99,7 @@ p.CreateUser label {
   background-color: #666677;
   transition: box-shadow 0.5s ease-in-out;
 }
-#field.CreateUser input::placeholder {
+.CreateUser #field input::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-style: oblique;
   font-weight: 200;
@@ -107,27 +107,27 @@ p.CreateUser label {
   color: #CCCDCD;
   margin: 0 0.2rem;
 }
-#AddressInput.CreateUser input {
+.CreateUser input#AddressInput {
   background: url('../../resources/at-white.svg') no-repeat scroll 7px 7px;
 }
-span#subtext.CreateUser {
+.CreateUser span#subtext {
   font-family: Avenir;
   font-weight: 200;
   font-size: 0.8rem;
 }
-#field.CreateUser input:focus,
-#field.CreateUser input:active {
+.CreateUser p#field input:focus,
+.CreateUser p#field input:active {
   border-radius: 1rem;
   caret-color: lightgray;
   background-color: #282c34;
   color: #BBDDDD;
   transition: box-shadow 0.5s ease-in-out;
 }
-#field.CreateUser input:-webkit-autofill,
-#field.CreateUser input:-webkit-autofill:hover,
-#field.CreateUser input:-webkit-autofill::first-line,
-#field.CreateUser input:-webkit-autofill:focus,
-#field.CreateUser input:-webkit-autofill:active {
+.CreateUser p#field input:-webkit-autofill,
+.CreateUser p#field input:-webkit-autofill:hover,
+.CreateUser p#field input:-webkit-autofill::first-line,
+.CreateUser p#field input:-webkit-autofill:focus,
+.CreateUser p#field input:-webkit-autofill:active {
   border-radius: 1rem;
   caret-color: lightgray;
   background-color: #282c34;

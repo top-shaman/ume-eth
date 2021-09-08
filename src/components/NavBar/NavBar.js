@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import "./NavBar.css"
 import logo from "../../resources/UME-green-96px.png"
-import { blurToFadeIn, fadeOut } from '../../resources/Libraries/Animation'
 
 
 class NavBar extends Component {
@@ -17,18 +16,11 @@ class NavBar extends Component {
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
   }
 
-  componentDidMount() {
-//    blurToFadeIn('div.navbar', 1500)
-  }
-  componentWillUnmount() {
-//    fadeOut('div.navbar', 1500)
-  }
 
   async handleMemeClick(e) {
     e.preventDefault()
     await this.setState({ creatingMeme: true })
     this.props.handleMeme(await this.state.creatingMeme)
-    //console.log(await this.state.creatingMeme)
   }
   async handleRefreshClick(e) {
     this.props.handleRefresh(e)
@@ -46,7 +38,7 @@ class NavBar extends Component {
             onClick={this.handleRefreshClick}
           >
             <img
-              className="logo"
+              id="logo"
               src={logo}
               alt="logo"
               width="60"

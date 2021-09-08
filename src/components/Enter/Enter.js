@@ -20,12 +20,12 @@ class Enter extends React.Component {
   }
 
   componentDidMount() {
-    fadeIn('p#p1', 3000)
-    setTimeout(() => fadeIn('p#p2', 3000), 500)
-    setTimeout(() => fadeIn('p#p3', 3000), 1000)
-    setTimeout(() => lightBlurToFadeIn('p#title.Enter', 3000), 2500)
-    setTimeout(() => lightBlurToFadeIn('img.Enter', 5000), 3200)
-    setTimeout(() => fadeIn('p#p4', 3000), 6500)
+    fadeIn('.Enter p#p1', 3000)
+    setTimeout(() => fadeIn('.Enter p#p2', 3000), 500)
+    setTimeout(() => fadeIn('.Enter p#p3', 3000), 1000)
+    setTimeout(() => lightBlurToFadeIn('.Enter p#title', 3000), 2500)
+    setTimeout(() => lightBlurToFadeIn('.Enter img', 5000), 3200)
+    setTimeout(() => fadeIn('.Enter p#p4', 3000), 6500)
   }
   componentWillUnmount() {
     fadeOut('img.Enter', 1500)
@@ -43,8 +43,8 @@ class Enter extends React.Component {
   }
   handleClick(e) {
     e.preventDefault()
-    expandToFadeOut('img.Enter', 2000)
-    fadeOut('div.fade-box', 1000)
+    expandToFadeOut('.Enter img', 2000)
+    fadeOut('.Enter div#fade-box', 1000)
     setTimeout(() => {
       this.setState({ entered: true })
       this.props.hasEntered(this.state.entered)
@@ -56,22 +56,21 @@ class Enter extends React.Component {
     return(
       <div className="Enter" id="Enter">
          <article className="Enter">
-            <div className="fade-box">
-              <p className="Enter" id="p1">Hello,</p>
-              <p className="Enter" id="p2">{this.props.account + ' !'}</p>
-              <p className="Enter" id="p3">Welcome... to</p>
-              <p className="Enter" id="title">uMe</p>
+            <div id="fade-box">
+              <p id="p1">Hello,</p>
+              <p id="p2">{this.props.account + ' !'}</p>
+              <p id="p3">Welcome... to</p>
+              <p id="title">uMe</p>
             </div>
             <img
               id="logo"
-              className="Enter"
               src={Logo}
               onMouseOver={this.handleMouseOver}
               onMouseLeave={this.handleMouseLeave}
               onClick={this.handleClick}
             />
-            <div className="fade-box">
-              <p className="Enter" id="p4">(Click logo to get started)</p>
+            <div id="fade-box">
+              <p id="p4">(Click logo to get started)</p>
             </div>
           </article>
       </div>

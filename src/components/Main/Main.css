@@ -1,4 +1,4 @@
-.Main {
+div.Main {
   text-align: center;
   display: inline-flex;
   flex-direction: row;
@@ -7,15 +7,15 @@
   background-color: #282c34;
 }
 
-.Main-logo {
+.Main div#logo {
   height: 40vmin;
   pointer-events: none;
 }
 
-div.Main-header {
+.Main div#header {
   border-right: 0.05rem solid #AAAAAA;
 }
-div.Main-subheader {
+.Main div#subheader {
   display: inline-flex;
   justify-content: space-between;
   align-items: center;
@@ -29,22 +29,22 @@ div.Main-subheader {
   z-index: 6;
 }
 
-.Main-link {
+.Main div#link {
   color: #61dafb;
 }
 
-.Main-body {
+div#body.Main {
   position: relative;
   flex-direction: column;
   width: 100%;
   color: lightgrey;
-  overflow: scroll;
+  overflow: auto;
 }
-.Main-subheader section {
+.Main div#subheader section {
   border: none;
 }
 
-.Main-subheader section#title {
+.Main div#subheader section#title {
   justify-content: center;
   margin: 0 1rem 0 1rem;
   border: none;
@@ -52,7 +52,7 @@ div.Main-subheader {
   font-size: 2.15rem;
   font-weight: 400;
 }
-.Main-subheader section#searchBar {
+.Main div#subheader section#searchBar {
   justify-content: right;
   flex-direction: row-reverse;
 }
@@ -65,8 +65,10 @@ small {
   justify-content: center;
   margin: 0 auto;
 }
-.Main-subheader p {
+.Main div#subheader p {
+
   display: flex;
+
   align-items: center;
   justify-content: center;
   font-family: 'MuseoModerno', sans-serif;
@@ -75,30 +77,30 @@ small {
   transition: background-color 0.2s ease-in-out 0s;
   border-radius: 1rem;
 }
-.Main-subheader p:hover {
+.Main div#subheader p:hover {
   background-color: #1D1F22;
   transition: background-color 0.2s ease-in-out 0s;
   animation-name: swell1;
   animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
-.Main-subheader a {
+.Main div#subheader a {
   justify-content: center;
 }
-.Main-subheader a:link {
+.Main div#subheader a:link {
   color: #00CC89;
   transition: color 0.125s ease-in-out 0s;
   text-decoration: none;
 }
-.Main-subheader a:hover {
+.Main div#subheader a:hover {
   color: #00CC89;
   text-decoration: none;
 }
-.Main-subheader a:visited {
+.Main div#subheader a:visited {
   color: #00CC89;
   text-decoration: none;
 }
-.Main-subheader a:active {
+.Main div#subheader a:active {
   color: lightgrey;
   animation-name: swell2;
   animation-duration: 0.2s;

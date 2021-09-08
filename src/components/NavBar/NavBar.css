@@ -13,18 +13,18 @@ nav.navbar {
   font-weight: 700;
 }
 
-img.logo{
+.navbar img#logo {
   font-size: 1rem;
   color: #00CC89;
   margin: 0.2rem auto 0.2rem auto;
   padding: 0.63rem 0.7rem 0.4rem 0.7rem;
 }
-.logo img:active {
+.navbar img#logo:active {
   animation-name: blurExtra;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
 }
-p.meme {
+.navbar p{
   display: block;
   font-size: 1.5rem;
   color: #FFFFFF;
@@ -34,7 +34,7 @@ p.meme {
   border-radius: 3rem;
   transition: background-color 0.2s ease-in-out 0s;
 }
-p.meme:hover {
+.navbar p:hover {
   background-color: #00AB79;
   color: #FFFFFF;
   cursor: pointer;
@@ -43,7 +43,7 @@ p.meme:hover {
   animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
-p.meme:active {
+.navbar p:active {
   background-color: #00CC89;
   transition: background-color 0.2 ease-in-out 0s;
 }
@@ -65,10 +65,10 @@ p.meme:active {
   animation-duration: 0.2s;
   animation-timing-function: ease-in-out;
 }
-small#logo {
+.navbar small#logo {
   margin: 0.35rem auto;
 }
-small#pages {
+.navbar small#pages {
   font-size: 1.2rem;
   padding: 0.6rem;
 }

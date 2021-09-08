@@ -35,7 +35,7 @@ class CreateUser extends React.Component {
   }
 
   componentDidMount() {
-    fadeIn('div#CreateUser', 1500)
+    fadeIn('div#container.CreateUser', 1500)
   }
   componentDidUpdate() {
     this.checkUsername()
@@ -44,7 +44,7 @@ class CreateUser extends React.Component {
   }
 
   componentWillUnmount() {
-    fadeOut('div#CreateUser', 1500)
+    fadeOut('div#container.CreateUser', 1500)
   }
   handleUsernameChange(e) {
     e.preventDefault()
@@ -80,7 +80,7 @@ class CreateUser extends React.Component {
     const invalidFlag = 'invalid character used'
     const firstFlag = 'first character must be letter'
     const lengthFlag = 'must be at least 2 characters'
-    const inputBox = document.querySelector('input#UsernameInput.CreateUser')
+    const inputBox = document.querySelector('.CreateUser input#UsernameInput')
     // check characters
     if(checkUsername > -1 && this.state.usernameFlag.length===undefined) {
       inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
@@ -134,7 +134,7 @@ class CreateUser extends React.Component {
     const checkAddress = this.state.address.search(addressRegex)
     const invalidFlag = 'only letters, numbers, underscores are valid'
     const lengthFlag = 'must be at least 2 characters'
-    const inputBox = document.querySelector('input#AddressInput.CreateUser')
+    const inputBox = document.querySelector('.CreateUser input#AddressInput')
     // character check
     if(checkAddress > -1 && this.state.addressFlag.length===undefined) {
       inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
@@ -209,9 +209,7 @@ class CreateUser extends React.Component {
   async registerUser(e) {
     const username = toBytes(this.state.username)
     const address = toBytes('@' + this.state.address)
-    console.log(username)
-    console.log(address)
-    console.log(this.state.account)
+    console.log(username + ' ' + address + ' submitted')
     if(this.state.submitReady) {
       await this.props.interface.methods.newUser(this.state.account, username, address)
         .send({from: this.state.account})
@@ -219,28 +217,28 @@ class CreateUser extends React.Component {
     }
   }
 
+
   render() {
     return(
-      <div id="CreateUser">
-        <p className="CreateUser" id="description">
+      <div id="container" className="CreateUser">
+        <p id="description">
           Create username & address to begin
         </p>
-        <p className="CreateUser" id="title">uMe</p>
-        <div className="CreateUser" id="box">
-          <p className="CreateUser" id="username">{this.state.username}</p>
-          <div className="CreateUser" id="profile-pic">
+        <p id="title">uMe</p>
+        <div id="box">
+          <p id="username">{this.state.username}</p>
+          <div id="profile-pic">
             <ProfilePic id="ProfilePic" account={this.props.account} hasEntered={this.props.hasEntered}/>
           </div>
-          <p className="CreateUser" id="address">
+          <p id="address">
             {this.state.address ? '@' + this.state.address : ''}
           </p>
-          <form className="CreateUser" >
+          <form className="CreateUser" id="CreateUser">
             <p className="CreateUser" id="field">
               <label htmlFor="UserName">username: </label>
               <input
                 id="UsernameInput"
                 name="Username"
-                className="CreateUser"
                 type="text"
                 maxLength="32"
                 placeholder="must be between 2 and 32 characters"
@@ -250,7 +248,7 @@ class CreateUser extends React.Component {
                 autoComplete="off"
                 required
               />
-              <span className="CreateUser" id="subtext">
+              <span id="subtext">
                 {this.state.usernameFlag}
               </span>
             </p>
@@ -259,7 +257,6 @@ class CreateUser extends React.Component {
               <input
                 id="AddressInput"
                 name="UserAddress"
-                className="CreateUser"
                 type="text"
                 maxLength="31"
                 placeholder="must be between 2 and 31 characters"
@@ -269,11 +266,11 @@ class CreateUser extends React.Component {
                 autoComplete="off"
                 required
               />
-              <span className="CreateUser" id="subtext">
+              <span id="subtext">
                 {this.state.addressFlag}
               </span>
             </p>
-            <p className="CreateUser" id="button">
+            <p id="button">
               <input
                 type="button"
                 value={this.state.submitText}

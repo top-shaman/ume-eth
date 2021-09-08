@@ -55,15 +55,15 @@ class Main extends React.Component {
   render() {
     return(
       <div className="Main">
-        <div className="Main-header">
+        <div id="header">
           <NavBar
             account={this.state.account}
             handleMeme={this.handleCreateMeme}
             handleRefresh={this.handleRefresh}
           />
         </div>
-        <div className="Main-body">
-          <div className="Main-subheader">
+        <div className="Main" id="body">
+          <div id="subheader">
             <section id="title">
               <a href="#home">
                 <p id="subheader">

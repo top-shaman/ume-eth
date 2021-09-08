@@ -89,7 +89,7 @@ class Timeline extends React.Component {
       this.props.handleLoading(this.state.timelineLoading)
     }
     else {
-      return "No memes uploaded yet"
+      this.setState({ timelineLoading: false })
     }
   }
   renderTimeline() {
@@ -142,9 +142,13 @@ class Timeline extends React.Component {
                 <p>Loading...</p>
                 {this.state.oldMemesHTML}
               </div>
-          : <div id="loaded">
-            {this.state.memesHTML}
-            </div>
+          : this.state.memeCount> 0
+            ? <div id="loaded">
+                {this.state.memesHTML}
+              </div>
+            : <div id="loaded">
+                <p>No memes loaded yet!</p>
+              </div>
         }
       </div>
     );

@@ -4,17 +4,17 @@ div.Enter {
 article.Enter {
   margin: 0 auto 10rem auto;
 }
-img.Enter {
+.Enter img {
   opacity: 0;
   margin: 1rem auto;
   max-width: 20rem;
 }
 
-p.Enter {
+.Enter p {
   line-height: 0.8rem;
 }
 
-p#title.Enter {
+.Enter p#title{
   opacity: 0;
   font-size: 5rem;
   line-height: 4rem;
@@ -22,24 +22,17 @@ p#title.Enter {
   margin: 2rem auto 1rem auto;
 }
 
-p#p1.Enter {
+.Enter p#p1 {
   opacity: 0;
 }
-p#p2.Enter {
+.Enter p#p2 {
   opacity: 0;
 }
-p#p3.Enter {
+.Enter p#p3 {
   opacity: 0;
 }
-p#p4.Enter {
+.Enter p#p4 {
   opacity: 0;
-}
-
-p.NoWallet {
-  opacity: 0;
-  animation-name: fade-in;
-  animation-duration: 3s;
-  animation-fill-mode: forwards;
 }
 
 @keyframes fade-in {

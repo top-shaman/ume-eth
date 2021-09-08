@@ -181,6 +181,7 @@ class App extends React.Component {
                   ? <CreateMeme
                       account={this.state.account}
                       handleExitMeme={this.handleExitMeme}
+                      userStorage={this.state.userStorage}
                       interface={this.state.interface}
                     />
                   : ''
