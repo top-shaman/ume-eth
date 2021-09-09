@@ -45,7 +45,6 @@ class CreateMeme extends React.Component {
     }
     this.textarea.focus()
     autosize(this.textarea)
-    console.log("rerender")
   }
 
   async handleTextChange(e) {
@@ -80,12 +79,8 @@ class CreateMeme extends React.Component {
       buttonText.style.color = '#FFFFFF'
     }
     // change color of text if special sequence
-    const formattedText = []
-    this.setState({ visibleText: this.state.memeText})
-    console.log(await this.isolatePlain())
-    console.log(await this.isolateEmpty())
-    console.log(await this.isolateAt())
-    console.log(await this.isolateHash())
+    const formattedText = await this.formatText()
+    this.setState({ visibleText: formattedText})
 
   }
   async handleMemeClick(e) {
@@ -114,21 +109,53 @@ class CreateMeme extends React.Component {
   }
 
   async isolatePlain() {
-    const regex = /(?<![@#]\w*)([^@#]|[@#](?!\w))+/g
+    const regex = /([^@#](?=\w){0,31})(?<![@#]\w{0,31})([^@#]|([@#](?!\w)))*/g
     //const regex = /(?<![@#]\w*)[^@#]*/g
-    return this.state.memeText.match(regex)
-  }
-  async isolateEmpty() {
-    const regex = /[@#]\W/g
-    return this.state.memeText.match(regex)
+    const plainMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      plainMap.push([regex.lastIndex-exec[0].length, exec[0], 'plain'])
+    }
+    return plainMap
   }
   async isolateAt() {
-    const regex = /@\w+/g
-    return this.state.memeText.match(regex)
+    const regex = /@\w{1,31}/g
+    const atMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      atMap.push([regex.lastIndex-exec[0].length, exec[0], 'at'])
+    }
+    return atMap
   }
   async isolateHash() {
-    const regex = /#\w+/g
-    return this.state.memeText.match(regex)
+    const regex = /#\w{1,31}/g
+    const hashMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      hashMap.push([regex.lastIndex-exec[0].length, exec[0], 'hash'])
+    }
+    return hashMap
+  }
+  async formatText() {
+    let plainMap = await this.isolatePlain(),
+        atMap = await this.isolateAt(),
+        hashMap = await this.isolateHash(),
+        combined = [],
+        formatted = []
+    combined = plainMap.concat(atMap, hashMap)
+      .sort((a,b) => a[0]-b[0])
+    if(combined!==null) {
+      combined.forEach(elem => {
+        if(elem[2]==='plain')
+          formatted.push(<span id="plain">{elem[1]}</span>)
+        else if(elem[2]==='at')
+          formatted.push(<span id="at">{elem[1]}</span>)
+        else if(elem[2]==='hash')
+          formatted.push(<span id="hash">{elem[1]}</span>)
+      })
+    }
+    console.log(formatted)
+    return formatted
   }
   async compileTags() {
     const memeText = this.state.memeText,
@@ -178,7 +205,6 @@ class CreateMeme extends React.Component {
                 <p
                   id="meme-button"
                   onClick={this.handleMemeClick}
-
                 >
                   Meme
                 </p>

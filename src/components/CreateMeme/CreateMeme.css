@@ -92,11 +92,22 @@
   max-height: 30rem;
 }
 .CreateMeme p#text-box span {
-  display: block;
   margin: 0 auto 0 0;
-  word-wrap: inherit;
+  color: #CCDDCC;
+  word-wrap: break-word;
   white-space: break-spaces;
 }
+
+.CreateMeme p#text-box span#plain {
+  color: #CCDDCC;
+}
+.CreateMeme p#text-box span#at {
+  color: #00CC89;
+}
+.CreateMeme p#text-box span#hash {
+  color: #00CC89;
+}
+
 .CreateMeme textarea#meme-text::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
