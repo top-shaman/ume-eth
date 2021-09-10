@@ -6,11 +6,11 @@ div#meme-container.Meme {
   border-right: 0.05rem solid #AAAAAA;
   width: 80%;
 }
-div#meme-body.Meme {
+.Meme div#meme-body {
   display: flex;
   flex-direction: column;
 }
-div#meme-header.Meme {
+.Meme div#meme-header {
   display: flex;
   flex-direction: row;
   margin: 0.5rem 0.4rem;
@@ -23,23 +23,63 @@ div#meme-header.Meme {
   margin: 0.4rem;
 }
 
-p#meme-text.Meme{
+.Meme p#meme-text {
   display: flex;
   margin: 0 1.2rem 0 0.4rem;
+  padding: 0;
   font-family: 'Arial', sans-serif;
   font-size: 0.84rem;
+  font-weight: 500;
   color: #CCDDCC;
   justify-content: flex-start;
+  border: none;
+  box-shadow: none;
+  max-width: 22rem;
+  text-align: start;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:8;
+  max-height: 30rem;
 }
-a.Meme {
+.Meme p#meme-text span {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 500;
+  word-wrap: break-word;
+  white-space: break-spaces;
+}
+
+.Meme p#meme-text span#plain {
+  color: #CCDDCC;
+  margin: 0;
+}
+.Meme p#meme-text a#at,
+.Meme p#meme-text a#hash {
+  margin: 0;
+  color: #00CC89;
+  text-decoration: none;
+}
+
+.Meme p#meme-text a#at:hover,
+.Meme p#meme-text a#hash:hover {
+  color: #00CC89;
+  text-decoration: underline;
+}
+
+.Meme a#username {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
+  color: #CCDDCC;
   font-size: 0.9rem;
   margin: 0 0.3rem 0 0;
+  text-decoration: none;
 }
-span.Meme {
+.Meme a#username:hover {
+  text-decoration: underline;
+}
+.Meme span {
   font-family: 'Avenir', sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   margin: 0 0.3rem;
   color: #667777;
 }

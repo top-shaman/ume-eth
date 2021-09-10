@@ -84,6 +84,13 @@ small {
   animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
+.Main div#subheader p:active {
+  background-color: #1D1F22;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swell2;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
 .Main div#subheader a {
   justify-content: center;
 }
@@ -136,7 +143,7 @@ small {
   }
   to {
     transform: scale(1);
-    filter: blur(0[x);
+    filter: blur(0px);
   }
 }
 

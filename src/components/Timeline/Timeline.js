@@ -1,5 +1,6 @@
 import React from 'react'
 import Meme from "../Meme/Meme"
+import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
 import "./Timeline.css"
 
 
@@ -22,13 +23,6 @@ class Timeline extends React.Component {
   }
   handleLoading(e) {
     console.log('check')
-  }
-  // helper functions
-  async toBytes32(s) {
-    return await window.web3.utils.fromAscii(s)
-  }
-  async fromBytes32(b) {
-    return await window.web3.utils.toUtf8(b)
   }
   async componentDidMount() {
     await this.loadTimeline()
@@ -58,10 +52,10 @@ class Timeline extends React.Component {
         const meme = {
           id: memeId,
           username: await this.props.userStorage.methods.users(tempMeme.author).call()
-            .then(e => this.fromBytes32(e.name))
+            .then(e => fromBytes(e.name))
             .then(e => e.toString()),
           address: await this.props.userStorage.methods.users(tempMeme.author).call()
-            .then(e => this.fromBytes32(e.userAddr))
+            .then(e => fromBytes(e.userAddr))
             .then(e => e.toString()),
           text: tempMeme.text,
           time: new Date(tempMeme.time * 1000).toLocaleString(),

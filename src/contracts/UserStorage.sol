@@ -149,6 +149,14 @@ contract UserStorage {
       return false;
     }
   }
+  function userAddressExists(bytes32 _userAddress) public view returns(bool) {
+    if(usersByUserAddr[_userAddress]!=address(0x0)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
   function getUser(address _account) public view returns(User memory){
     return users[_account];
   }

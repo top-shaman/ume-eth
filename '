@@ -1,7 +1,7 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { fadeIn, fadeOut, partialFadeIn, partialFadeOut, unBlur } from '../../resources/Libraries/Animation'
-import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { toBytes } from '../../resources/Libraries/Helpers'
 import './CreateMeme.css'
 import X from '../../resources/X-white.svg'
 import autosize from 'autosize'
@@ -16,9 +16,6 @@ class CreateMeme extends React.Component {
       interface: this.props.interface,
       memeText: '',
       visibleText: '',
-      parentId: '0x0',
-      originId: '0x0',
-      repostId: '0x0',
       validMeme: false
     }
 
@@ -90,11 +87,12 @@ class CreateMeme extends React.Component {
   async handleMemeClick(e) {
     const textarea = document.querySelector('.CreateMeme textarea#meme-text')
     if(this.state.validMeme) {
-      const tags = await this.validAts()
+      const tags = [] //await this.validAts()
+      await this.validAts()
       this.state.interface.methods.newMeme(
         this.props.account,
         this.state.memeText,
-        await tags, this.state.parentId, this.state.originId)
+        tags, '0x0', '0x0')
       .send({from: this.props.account})
       this.handleCloseClick(e)
       localStorage.clear()
@@ -112,11 +110,38 @@ class CreateMeme extends React.Component {
     }, 500)
   }
 
+  async isolatePlain() {
+    const regex = /((([^@#](?=\w)*)|([@#](?!\w))))(?<!(([@]\w{1,31})|([#]\w+)))([^@#]|([@#](?!\w)))*/g
+    //const regex = /(?<![@#]\w{0,31})[^@#]{0,31}/g
+    const plainMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      plainMap.push([regex.lastIndex-exec[0].length, exec[0], 'plain'])
+    }
+    return plainMap
+  }
+  async isolateAt() {
+    const regex = /@\w{1,31}/g
+    const atMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      atMap.push([regex.lastIndex-exec[0].length, exec[0], 'at'])
+    }
+    return atMap
+  }
+  async isolateHash() {
+    const regex = /#\w+/g
+    const hashMap = []
+    let exec
+    while((exec = regex.exec(this.state.memeText)) !== null) {
+      hashMap.push([regex.lastIndex-exec[0].length, exec[0], 'hash'])
+    }
+    return hashMap
+  }
   async formatText() {
-    let text = this.state.memeText,
-        plainMap = await isolatePlain(text),
-        atMap = await isolateAt(text),
-        hashMap = await isolateHash(text),
+    let plainMap = await this.isolatePlain(),
+        atMap = await this.isolateAt(),
+        hashMap = await this.isolateHash(),
         combined = [],
         formatted = []
     combined = plainMap.concat(atMap, hashMap)
@@ -136,28 +161,27 @@ class CreateMeme extends React.Component {
     return formatted
   }
   async validAts() {
-    let ats = [],
-        validAts = [],
-        tempMap = await isolateAt(this.state.memeText)
+    const ats = [],
+          validAts = [],
+          tempMap = await this.isolateAt()
     if(tempMap.length!==null) tempMap.forEach(elem => ats.push(elem[1]))
+    console.log(ats)
     if(ats.length>0) {
-      for(let i = 0; i < ats.length; i++) {
-        let elem32 = await this.toBytes32(ats[i])
-        if(await this.state.userStorage.methods.userAddressExists(elem32).call()) {
-          let address = await this.state.userStorage.methods.usersByUserAddr(elem32).call()
-          validAts.push(address)
-        }
-      }
-      return validAts
+      ats.forEach(async elem => {
+        let elem32 = await this.toBytes32(elem)
+        console.log(elem32)
+        //if(await this.state.userStorage.methods.userAddressExists(elem32).call())
+          //validAts.push(elem32)
+      })
     }
-    return []
+    console.log(validAts)
+    //return validAts
   }
 
   async toBytes32(text) {
     const textBytes = await toBytes(text)
     return await this.state.interface.methods.bytesToBytes32(textBytes).call()
   }
-
   render() {
     return(
       <div className="CreateMeme" id="CreateMeme" >

@@ -93,8 +93,8 @@ contract UserInterface {
       userStorage.getAddr(_account)==address(0x0),
       'Error: user address already exists');
 
-    bytes32 _un = _bytesToBytes32(_userName);
-    bytes32 _ua = _bytesToBytes32(_userAddress);
+    bytes32 _un = bytesToBytes32(_userName);
+    bytes32 _ua = bytesToBytes32(_userAddress);
     userFactory.newUser(_account, _un, _ua);
     emit NewUser(_account, _un, _ua);
   }
@@ -102,7 +102,7 @@ contract UserInterface {
     address _account,
     bytes memory _userName
   ) public {
-    bytes32 _un = _bytesToBytes32(_userName);
+    bytes32 _un = bytesToBytes32(_userName);
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
@@ -124,7 +124,7 @@ contract UserInterface {
     address _account,
     bytes memory _userAddress
   ) public {
-    bytes32 _ua = _bytesToBytes32(_userAddress);
+    bytes32 _ua = bytesToBytes32(_userAddress);
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
@@ -288,7 +288,7 @@ contract UserInterface {
   }
 
   // helper functions
-  function _bytesToBytes32(bytes memory source) public pure returns(bytes32 result) {
+  function bytesToBytes32(bytes memory source) public pure returns(bytes32 result) {
     if(source.length==0) return 0x0;
     assembly {
       result := mload(add(source, 32))
