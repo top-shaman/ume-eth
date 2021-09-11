@@ -2,6 +2,7 @@ import React from 'react'
 import NavBar from '../NavBar/NavBar'
 import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
+import Profile from '../Profile/Profile'
 import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
 import './Main.css'
 
@@ -15,14 +16,20 @@ class Main extends React.Component {
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeCount: this.props.memeCount,
-      timelineLoading: true
+      timelineLoading: true,
+      profileLoading: true,
+      focusPage: 'timeline'
     }
 
     this.timeline = React.createRef()
+    this.profile = React.createRef()
 
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
+    this.handleToTimeline = this.handleToTimeline.bind(this)
+    this.handleProfileLoad = this.handleProfileLoad.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
   }
 
   componentDidMount() {
@@ -42,14 +49,47 @@ class Main extends React.Component {
     blur('div.App-body', 500)
   }
   handleRefresh(e) {
-    this.timeline.loadTimeline()
+    e.preventDefault()
+    if(this.state.focusPage==='timeline') {
+      this.timeline.loadTimeline()
+    } else if(this.state.focusPage==='profile') {
+      this.profile.loadProfile()
+    }
+  }
+  handleToTimeline(e) {
+    e.preventDefault()
+    if(this.state.focusPage!=='timeline') {
+      this.setState({
+        timelineLoading: true,
+        focusPage: 'timeline'
+      })
+    } else {
+      this.timeline.loadTimeline()
+    }
   }
   handleTimelineLoad(timelineLoading) {
     this.setState({ timelineLoading })
   }
-
-  async loadTimeline() {
-    this.timeline.loadTimeline()
+  handleProfileLoad(profileLoading) {
+    this.setState({ profileLoading })
+  }
+  async handleToProfile(e) {
+    if(e==='navbar') {
+      e = [await this.state.userStorage.methods.getName(this.props.account).call(),
+          await this.state.userStorage.methods.getUserAddr(this.props.account).call(),
+          await this.state.account]
+    }
+    if(this.state.focusPage!=='profile') {
+      this.setState({
+        timelineLoading: true,
+        focusPage: 'profile',
+        profileUsername: e[0],
+        profileAddress: e[1],
+        profileAccount: e[2]
+      })
+    } else {
+      this.profile.loadProfile()
+    }
   }
 
   render() {
@@ -60,6 +100,8 @@ class Main extends React.Component {
             account={this.state.account}
             handleMeme={this.handleCreateMeme}
             handleRefresh={this.handleRefresh}
+            handleToTimeline={this.handleToTimeline}
+            handleToProfile={this.handleToProfile}
           />
         </div>
         <div className="Main" id="body">
@@ -78,16 +120,35 @@ class Main extends React.Component {
               />
             </section>
           </div>
-          <Timeline
-            account={this.state.account}
-            userStorage={this.state.userStorage}
-            memeStorage={this.state.memeStorage}
-            memeCount={this.state.memeCount}
-            interface={this.state.interface}
-            timelineLoading={this.state.timelineLoading}
-            handleLoading={this.handleTimelineLoad}
-            ref={Ref => this.timeline=Ref}
-          />
+          { this.state.focusPage==='timeline'
+            ? <Timeline
+                account={this.state.account}
+                userStorage={this.state.userStorage}
+                memeStorage={this.state.memeStorage}
+                memeCount={this.state.memeCount}
+                interface={this.state.interface}
+                timelineLoading={this.state.timelineLoading}
+                handleLoading={this.handleTimelineLoad}
+                handleToProfile={this.handleToProfile}
+                ref={Ref => this.timeline=Ref}
+              />
+            : this.state.focusPage==='profile'
+              ? <Profile
+                  account={this.state.account}
+                  userStorage={this.state.userStorage}
+                  memeStorage={this.state.memeStorage}
+                  memeCount={this.state.memeCount}
+                  interface={this.state.interface}
+                  profileLoading={this.state.profileLoading}
+                  handleLoading={this.handleProfileLoad}
+                  handleToProfile={this.handleToProfile}
+                  profileUsername={this.state.profileUsername}
+                  profileAddress={this.state.profileAddress}
+                  profileAccount={this.state.profileAccount}
+                  ref={Ref => this.profile=Ref}
+                />
+              : this.state.setState({focusPage: 'timeline'})
+          }
         </div>
       </div>
     )

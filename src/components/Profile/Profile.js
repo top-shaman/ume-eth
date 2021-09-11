@@ -1,22 +1,25 @@
 import React from 'react'
 import Meme from "../Meme/Meme"
 import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
-import "./Timeline.css"
+import "./Profile.css"
 
 
-class Timeline extends React.Component {
+class Profile extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      account: '',
+      userAccount: this.props.account,
+      profileAccount: this.props.profileAccount,
+      username: this.props.profileUsername,
+      address: this.props.profileAddress,
       ume: null,
       memes: [],
       memesHTML: [],
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
-      userStorage: this.props.memeStorage,
-      memeCount: null,
-      timelineLoading: true,
+      userStorage: this.props.userStorage,
+      userMemeCount: null,
+      profileLoading: true,
       firstLoad: true
     }
 
@@ -26,32 +29,33 @@ class Timeline extends React.Component {
     //console.log('check')
   }
   async componentDidMount() {
-    await this.loadTimeline()
+    await this.loadProfile()
     this.interval = setInterval(async () => {
       this.setState({ firstLoad: false })
-      await this.loadTimeline()
+      await this.loadProfile()
     }, 10000)
   }
   componentWillUnmount() {
     clearInterval(this.interval)
   }
   handleToProfile(e) {
-    this.props.handleToProfile(e)
+    this.props.handleToProfile('navbar')
   }
 
-  async loadTimeline() {
-    console.log('load timeline ' + new Date().toTimeString())
-    const memeCount = await this.props.memeStorage.methods.memeCount().call()
-    const countDifference = await memeCount - this.state.memeCount
-    if(await memeCount > this.state.memeCount) {
+  async loadProfile() {
+    console.log('load profile ' + new Date().toTimeString())
+    const userMemes = await this.state.userStorage.methods.getPosts(this.state.profileAccount).call()
+    const userMemeCount = userMemes.length
+    console.log(userMemeCount)
+    const countDifference = await userMemeCount - this.state.userMemeCount
+    if(await userMemeCount > this.state.userMemeCount) {
       this.setState({
-        memeCount,
-        timelineLoading: true
+        userMemeCount,
+        profileLoading: true
       })
       const tempMemes = this.state.memes
-      for(let i = memeCount - countDifference + 1; i <= memeCount; i++) {
-        const memeId = await this.props.interface.methods
-          .encode(i).call()
+      for(let i = userMemeCount - countDifference + 1; i <= userMemeCount; i++) {
+        const memeId = userMemes[i-1]
         const tempMeme = await this.props.memeStorage.methods.memes(memeId).call()
         const meme = {
           memeId: memeId,
@@ -87,16 +91,16 @@ class Timeline extends React.Component {
       if(!this.state.firstLoad) {
         this.setState({ memesHTML: this.state.oldMemesHTML })
       }
-      this.renderTimeline()
-      this.props.handleLoading(this.state.timelineLoading)
+      this.renderProfile()
+      this.props.handleLoading(this.state.profileLoading)
     }
     else {
-      this.setState({ timelineLoading: false })
+      this.setState({ profileLoading: false })
     }
   }
-  renderTimeline() {
+  renderProfile() {
     let memesHTML = []
-    for(let i = 1; i <= this.state.memeCount; i++) {
+    for(let i = 1; i <= this.state.userMemeCount; i++) {
       const meme = this.state.memes[i-1]
       memesHTML.unshift(
         <Meme
@@ -136,7 +140,7 @@ class Timeline extends React.Component {
     }
     this.setState({
       memesHTML,
-      timelineLoading: false
+      profileLoading: false
     })
     if(this.state.firstLoad) {
       this.compileRenderedMemes()
@@ -144,7 +148,7 @@ class Timeline extends React.Component {
   }
   compileRenderedMemes() {
     let temp = []
-    for(let i = 1; i <= this.state.memeCount; i++) {
+    for(let i = 1; i <= this.state.userMemeCount; i++) {
       const meme = this.state.memes[i-1]
       temp.unshift(
         <Meme
@@ -171,10 +175,10 @@ class Timeline extends React.Component {
           renderOrder={meme.renderOrder}
           alreadyRendered={true}
           handleToProfile={this.handleToProfile}
+          zIndex="5"
           interface={this.props.interface}
           memeStorage={this.props.memeStorage}
           userAccount={this.props.account}
-          zIndex="5"
         />
       )
     }
@@ -183,9 +187,9 @@ class Timeline extends React.Component {
 
   render() {
     return(
-      <div className="Timeline">
-        { this.state.timelineLoading
-          ? this.state.memeCount===null
+      <div className="Profile">
+        { this.state.profileLoading
+          ? this.state.userMemeCount===null
             ? <div id="loader">
                 <p>Loading...</p>
               </div>
@@ -193,7 +197,7 @@ class Timeline extends React.Component {
                 <p>Loading...</p>
                 {this.state.oldMemesHTML}
               </div>
-          : this.state.memeCount> 0
+          : this.state.userMemeCount> 0
             ? <div id="loaded">
                 {this.state.memesHTML}
               </div>
@@ -206,4 +210,4 @@ class Timeline extends React.Component {
   }
 }
 
-export default Timeline
+export default Profile

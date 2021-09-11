@@ -14,6 +14,8 @@ class NavBar extends Component {
 
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
+    this.handleHomeClick = this.handleHomeClick.bind(this)
+    this.handleProfileClick = this.handleProfileClick.bind(this)
   }
 
 
@@ -24,6 +26,12 @@ class NavBar extends Component {
   }
   async handleRefreshClick(e) {
     this.props.handleRefresh(e)
+  }
+  async handleHomeClick(e) {
+    this.props.handleToTimeline(e)
+  }
+  async handleProfileClick(e) {
+    this.props.handleToProfile('navbar')
   }
 
   render() {
@@ -49,6 +57,7 @@ class NavBar extends Component {
           <a
             className="home"
             href="#home"
+            onClick={this.handleHomeClick}
           >
             Home
           </a>
@@ -57,6 +66,7 @@ class NavBar extends Component {
           <a
             className="profile"
             href="#profile"
+            onClick={this.handleProfileClick}
           >
             Profile
           </a>

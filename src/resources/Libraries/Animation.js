@@ -142,3 +142,17 @@ export function expandToFadeOut(element, duration) {
     if(fractionOfTime < 1) requestAnimationFrame(animation)
   })
 }
+export function zipUp(element, duration) {
+  const elements = document.querySelectorAll(element)
+  let start = performance.now()
+  requestAnimationFrame(function animation(time) {
+    let fractionOfTime = (time - start) / duration
+
+    if(fractionOfTime > 1) fractionOfTime = 1
+    let progress = easeInOut(fractionOfTime, 0, 1)
+    elements.forEach(e => {
+      e.style.transform = 'translate(0px, ' + (10/progress-10) + 'px)'
+    })
+    if(fractionOfTime < 1) requestAnimationFrame(animation)
+  })
+}
