@@ -23,7 +23,6 @@ class Profile extends React.Component {
       firstLoad: true
     }
 
-    clearInterval(this.intervalProfile)
     this.handleToProfile = this.handleToProfile.bind(this)
   }
   handleLoading(e) {
@@ -42,20 +41,31 @@ class Profile extends React.Component {
   }
   handleToProfile(e) {
     this.props.handleToProfile(e)
+    /*
+    this.setState({
+      memes: [],
+      memesHTML: [],
+      oldMemesHTML: [],
+      userMemeCount: null,
+      profileLoading: true
+    })
+    */
+    //this.loadProfile()
   }
 
   async loadProfile() {
     console.log(this.state.userAccount)
     console.log(this.state.profileAccount)
     console.log('load profile ' + new Date().toTimeString())
-    const memeStorage = this.props.memeStorage,
-          userStorage = this.props.userStorage
+    const memeStorage = this.state.memeStorage,
+          userStorage = this.state.userStorage
     const userMemes = await userStorage.methods.getPosts(this.state.profileAccount).call()
     const userMemeCount = await userMemes.length
     const countDifference = await userMemeCount - await this.state.userMemeCount
     if(await userMemeCount > this.state.userMemeCount) {
       this.setState({
-        userMemeCount
+        userMemeCount,
+        profileLoading: true
       })
       for(let i = userMemeCount - countDifference + 1; i <= userMemeCount; i++) {
         const memeId = userMemes[i-1]
@@ -98,13 +108,17 @@ class Profile extends React.Component {
       this.props.handleLoading(this.state.profileLoading)
     }
     else {
-      this.setState({ profileLoading: false })
+      this.setState({
+        profileLoading: false
+      })
     }
   }
   async renderProfile() {
     let memesHTML = []
-    for(let i = 1; i <= this.state.userMemeCount; i++) {
-      const meme = this.state.memes[i-1]
+    const memes = this.state.memes,
+          userMemeCount = this.state.userMemeCount
+    for(let i = 1; i <= userMemeCount; i++) {
+      const meme = memes[i-1]
       memesHTML.unshift(
         <Meme
           key={i}
@@ -151,8 +165,10 @@ class Profile extends React.Component {
   }
   compileRenderedMemes() {
     let temp = []
-    for(let i = 1; i <= this.state.userMemeCount; i++) {
-      const meme = this.state.memes[i-1]
+    const memes = this.state.memes,
+          userMemeCount = this.state.userMemeCount
+    for(let i = 1; i <= userMemeCount; i++) {
+      const meme = memes[i-1]
       temp.unshift(
         <Meme
           key={i}

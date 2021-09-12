@@ -19,8 +19,9 @@ class Main extends React.Component {
       memeCount: this.props.memeCount,
       userMemeCount: this.props.userMemeCount,
       timelineFormat: 'time',
-      timelineLoading: true,
-      profileLoading: true,
+      timelineLoading: false,
+      profileLoading: false,
+      reload: false,
       focusPage: 'timeline'
     }
 
@@ -32,7 +33,9 @@ class Main extends React.Component {
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
     this.handleToTimeline = this.handleToTimeline.bind(this)
     this.handleProfileLoad = this.handleProfileLoad.bind(this)
-    this.handleToProfile = this.handleToProfile.bind(this)
+    this.handleToProfileNavbar = this.handleToProfileNavbar.bind(this)
+    this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
+    this.handleToProfileProfile = this.handleToProfileProfile.bind(this)
   }
 
   async componentDidMount() {
@@ -45,19 +48,20 @@ class Main extends React.Component {
     this.setState({
       profileUsername: await this.state.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
       profileAddress: await this.state.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
-      profileAccount: this.state.account
+      profileAccount: this.state.account,
     })
     if(localStorage.getItem('focusPage')==='profile') {
-      const profile = localStorage.getItem('pageInfo').split(',')
-      if(profile.length===3) {
-        this.setState({
-          timelineLoading: true,
-          profileLoading: true,
-          focusPage: 'profile',
-          profileUsername: profile[0],
-          profileAddress: profile[1],
-          profileAccount: profile[2]
-        })
+      if(localStorage.getItem('pageInfo').split(',').length===3){
+        const profile = localStorage.getItem('pageInfo').split(',')
+        if(profile.length===3) {
+          this.setState({
+            profileLoading: true,
+            focusPage: 'profile',
+            profileUsername: profile[0],
+            profileAddress: profile[1],
+            profileAccount: profile[2]
+          })
+        }
       }
     }
   }
@@ -81,7 +85,11 @@ class Main extends React.Component {
     }
   }
   handleTimelineLoad(timelineLoading) {
-    this.setState({ timelineLoading })
+    this.setState({
+      timelineLoading: timelineLoading[0],
+      timelineLoading: timelineLoading[1]
+    })
+    console.log('timeline loading: ' + timelineLoading)
   }
   async handleToTimeline(e) {
     e.preventDefault()
@@ -89,15 +97,39 @@ class Main extends React.Component {
       focusPage: 'timeline',
       timelineFormat: localStorage.getItem('pageInfo')
     })
+    console.log('timeline loading: ' + this.state.timelineLoading)
   }
   handleProfileLoad(profileLoading) {
-    this.setState({ profileLoading })
+    this.setState({
+      profileLoading: profileLoading
+    })
+    console.log('profile loading: ' + profileLoading)
   }
-  async handleToProfile(e) {
+  async handleToProfileNavbar(e) {
+    console.log('profile loading: ' + this.state.profileLoading)
+    if(this.state.profileAccount!==this.state.account) {
       this.setState({
-        focusPage: 'profile'
+        profileUsername: await this.state.userStorage.methods.getName(this.state.account).call().then(e => fromBytes(e)),
+        profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call().then(e => fromBytes(e)),
+        profileAccount: this.state.account
       })
+    }
+    this.setState({
+      focusPage: 'profile'
+    })
+  }
+  async handleToProfileTimeline(e) {
+    this.setState({
+      profileUsername: e[0],
+      profileAddress: e[1],
+      profileAccount: e[2]
+    })
+    this.setState({
+      focusPage: 'profile',
+    })
+  }
       // check if loading User's profile from Navbar
+      /*
       if(e==='navbar') {
         // check if loading profile from other profile
         if(this.state.profileAccount!==this.state.account ||
@@ -129,6 +161,8 @@ class Main extends React.Component {
         localStorage.setItem('pageInfo', e)
         //window.location.reload()
       }
+      */
+  handleToProfileProfile(e) {
   }
 
   render() {
@@ -140,7 +174,7 @@ class Main extends React.Component {
             handleMeme={this.handleCreateMeme}
             handleRefresh={this.handleRefresh}
             handleToTimeline={this.handleToTimeline}
-            handleToProfile={this.handleToProfile}
+            handleToProfile={this.handleToProfileNavbar}
           />
         </div>
         <div className="Main" id="body">
@@ -159,7 +193,7 @@ class Main extends React.Component {
               />
             </section>
           </div>
-          { this.state.focusPage==='timeline'
+          { this.state.focusPage==='timeline' //&& !this.state.reload
             ? <Timeline
                 account={this.state.account}
                 userStorage={this.state.userStorage}
@@ -168,10 +202,10 @@ class Main extends React.Component {
                 interface={this.state.interface}
                 timelineLoading={this.state.timelineLoading}
                 handleLoading={this.handleTimelineLoad}
-                handleToProfile={this.handleToProfile}
+                handleToProfile={this.handleToProfileTimeline}
                 ref={Ref => this.timeline=Ref}
               />
-            : this.state.focusPage==='profile'
+            : this.state.focusPage==='profile' //&& !this.state.reload
               ? <Profile
                   account={this.state.account}
                   userStorage={this.state.userStorage}
@@ -180,7 +214,7 @@ class Main extends React.Component {
                   interface={this.state.interface}
                   profileLoading={this.state.profileLoading}
                   handleLoading={this.handleProfileLoad}
-                  handleToProfile={this.handleToProfile}
+                  handleToProfile={this.handleToProfileProfile}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
                   profileAccount={this.state.profileAccount}

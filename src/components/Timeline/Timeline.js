@@ -20,7 +20,6 @@ class Timeline extends React.Component {
       firstLoad: true
     }
 
-    clearInterval(this.intervalTimeline)
     this.handleToProfile = this.handleToProfile.bind(this)
   }
   handleLoading(e) {
@@ -43,21 +42,22 @@ class Timeline extends React.Component {
 
   async loadTimeline() {
     console.log('load timeline ' + new Date().toTimeString())
-    const memeCount = await this.props.memeStorage.methods.memeCount().call()
-    const countDifference = await memeCount - await this.state.memeCount
     const userStorage = await this.props.userStorage,
           memeStorage = await this.props.memeStorage,
           uInterface = await this.props.interface
+    const memeCount = await memeStorage.methods.memeCount().call()
+    const countDifference = await memeCount - await this.state.memeCount
     if(await memeCount > this.state.memeCount) {
       this.setState({
-        memeCount
+        memeCount,
+        timelineLoading: true
       })
       for(let i = memeCount - countDifference + 1; i <= memeCount; i++) {
         const memeId = await uInterface.methods
           .encode(i).call()
         const tempMeme = await memeStorage.methods.memes(memeId).call()
         const meme = {
-          memeId: memeId,
+          memeId: await memeId,
           username: await userStorage.methods.users(tempMeme.author).call()
             .then(e => fromBytes(e.name))
             .then(e => e.toString()),
@@ -94,14 +94,18 @@ class Timeline extends React.Component {
       await this.props.handleLoading(this.state.timelineLoading)
     }
     else {
-      this.setState({ timelineLoading: false })
+      this.setState({
+        timelineLoading: false,
+      })
     }
   }
   async renderTimeline() {
     let memesHTML = []
-    if(this.state.memeCount!==null) {
-      for(let i = 1; i <= this.state.memeCount; i++) {
-        const meme = this.state.memes[i-1]
+    const memes = this.state.memes,
+          memeCount = this.state.memeCount
+    if(memeCount!==null) {
+      for(let i = 1; i <= memeCount; i++) {
+        const meme = memes[i-1]
         memesHTML.unshift(
           <Meme
             key={i}
@@ -149,8 +153,10 @@ class Timeline extends React.Component {
   }
   async compileRenderedMemes() {
     let temp = []
-    for(let i = 1; i <= this.state.memeCount; i++) {
-      const meme = this.state.memes[i-1]
+    const memes = this.state.memes,
+          memeCount = this.state.memeCount
+    for(let i = 1; i <= memeCount; i++) {
+      const meme = memes[i-1]
       temp.unshift(
         <Meme
           key={i}
