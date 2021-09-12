@@ -5,6 +5,7 @@ import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
 import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
 import './Main.css'
+import {fromBytes} from '../../resources/Libraries/Helpers'
 
 class Main extends React.Component {
   constructor(props) {
@@ -16,6 +17,8 @@ class Main extends React.Component {
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeCount: this.props.memeCount,
+      userMemeCount: this.props.userMemeCount,
+      timelineFormat: 'time',
       timelineLoading: true,
       profileLoading: true,
       focusPage: 'timeline'
@@ -32,10 +35,31 @@ class Main extends React.Component {
     this.handleToProfile = this.handleToProfile.bind(this)
   }
 
-  componentDidMount() {
-    blurToFadeIn('.Main-subheader', 2000)
-    blurToFadeIn('.Main-header', 2000)
-    blurToFadeIn('div.Timeline', 2000)
+  async componentDidMount() {
+    if(localStorage.getItem('hasLoaded')!=='true') {
+      //blurToFadeIn('.Main #subheader', 2000)
+      //blurToFadeIn('.Main #header', 2000)
+      //blurToFadeIn('div.Timeline', 2000)
+      localStorage.setItem('hasLoaded', 'true')
+    }
+    this.setState({
+      profileUsername: await this.state.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
+      profileAddress: await this.state.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
+      profileAccount: this.state.account
+    })
+    if(localStorage.getItem('focusPage')==='profile') {
+      const profile = localStorage.getItem('pageInfo').split(',')
+      if(profile.length===3) {
+        this.setState({
+          timelineLoading: true,
+          profileLoading: true,
+          focusPage: 'profile',
+          profileUsername: profile[0],
+          profileAddress: profile[1],
+          profileAccount: profile[2]
+        })
+      }
+    }
   }
   componentWillUnmount() {
     window.clearInterval()
@@ -45,51 +69,66 @@ class Main extends React.Component {
     this.setState({ creatingMeme: handleMeme })
     this.props.handleCreateMeme(handleMeme)
     //bobble()
-    blur('div.App-header', 500)
-    blur('div.App-body', 500)
+    blur('.Main div#header', 500)
+    blur('.Main div#body', 500)
   }
-  handleRefresh(e) {
+  async handleRefresh(e) {
     e.preventDefault()
     if(this.state.focusPage==='timeline') {
-      this.timeline.loadTimeline()
+      await this.timeline.loadTimeline()
     } else if(this.state.focusPage==='profile') {
-      this.profile.loadProfile()
-    }
-  }
-  handleToTimeline(e) {
-    e.preventDefault()
-    if(this.state.focusPage!=='timeline') {
-      this.setState({
-        timelineLoading: true,
-        focusPage: 'timeline'
-      })
-    } else {
-      this.timeline.loadTimeline()
+      await this.profile.loadProfile()
     }
   }
   handleTimelineLoad(timelineLoading) {
     this.setState({ timelineLoading })
   }
+  async handleToTimeline(e) {
+    e.preventDefault()
+    this.setState({
+      focusPage: 'timeline',
+      timelineFormat: localStorage.getItem('pageInfo')
+    })
+  }
   handleProfileLoad(profileLoading) {
     this.setState({ profileLoading })
   }
   async handleToProfile(e) {
-    if(e==='navbar') {
-      e = [await this.state.userStorage.methods.getName(this.props.account).call(),
-          await this.state.userStorage.methods.getUserAddr(this.props.account).call(),
-          await this.state.account]
-    }
-    if(this.state.focusPage!=='profile') {
       this.setState({
-        timelineLoading: true,
-        focusPage: 'profile',
-        profileUsername: e[0],
-        profileAddress: e[1],
-        profileAccount: e[2]
+        focusPage: 'profile'
       })
-    } else {
-      this.profile.loadProfile()
-    }
+      // check if loading User's profile from Navbar
+      if(e==='navbar') {
+        // check if loading profile from other profile
+        if(this.state.profileAccount!==this.state.account ||
+           localStorage.getItem('pageInfo')==='user') {
+          e = [await this.state.userStorage.methods.getName(this.state.account).call().then(e => fromBytes(e)),
+               await this.state.userStorage.methods.getUserAddr(this.state.account).call().then(e => fromBytes(e)),
+               this.state.account]
+          this.setState({
+            profileUsername: e[0],
+            profileAddress: e[1],
+            profileAccount: e[2],
+            profileLoading: true
+          })
+          localStorage.setItem('focusPage', 'profile')
+          localStorage.setItem('pageInfo', e)
+          this.profile.loadProfile()
+          //window.location.reload()
+        }
+      // check if loading a profile from profile
+      } else if(//this.state.focusPage==='profile' &&
+                e.toString().split(',').length===3 &&
+                this.state.profileAccount!==e[2]) {
+        this.setState({
+          profileUsername: e[0],
+          profileAddress: e[1],
+          profileAccount: e[2]
+        })
+        localStorage.setItem('focusPage', 'profile')
+        localStorage.setItem('pageInfo', e)
+        //window.location.reload()
+      }
   }
 
   render() {
@@ -137,7 +176,7 @@ class Main extends React.Component {
                   account={this.state.account}
                   userStorage={this.state.userStorage}
                   memeStorage={this.state.memeStorage}
-                  memeCount={this.state.memeCount}
+                  userMemeCount={this.state.userMemeCount}
                   interface={this.state.interface}
                   profileLoading={this.state.profileLoading}
                   handleLoading={this.handleProfileLoad}
@@ -147,7 +186,7 @@ class Main extends React.Component {
                   profileAccount={this.state.profileAccount}
                   ref={Ref => this.profile=Ref}
                 />
-              : this.state.setState({focusPage: 'timeline'})
+                : ''
           }
         </div>
       </div>

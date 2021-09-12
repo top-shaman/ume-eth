@@ -104,8 +104,8 @@ class CreateMeme extends React.Component {
     localStorage.setItem('memeText', this.state.memeText)
     fadeOut('.CreateMeme div#container', 500)
     partialFadeOut('.CreateMeme div#background', 333, 0.2)
-    unBlur('div.App-header', 500)
-    unBlur('div.App-body', 500)
+    unBlur('.Main div#header', 500)
+    unBlur('.Main div#body', 500)
     setTimeout(async () => {
       await this.setState({ creatingMeme: false })
       this.props.handleExitMeme(await this.state.creatingMeme)

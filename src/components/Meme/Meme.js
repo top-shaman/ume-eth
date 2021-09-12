@@ -62,7 +62,6 @@ class Meme extends Component {
     this.setState({
       userHasLiked: userHasLiked.includes(this.props.userAccount)
     })
-    console.log(this.state.userHasLiked)
   }
   handleButtonClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
@@ -75,6 +74,8 @@ class Meme extends Component {
       this.state.address,
       this.state.author
     ])
+    localStorage.setItem('focusPage', 'profile')
+    localStorage.setItem('pageInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
   }
   async likeClick() {
     console.log('accessing account: ' + this.props.userAccount)

@@ -23,59 +23,62 @@ class Profile extends React.Component {
       firstLoad: true
     }
 
+    clearInterval(this.intervalProfile)
     this.handleToProfile = this.handleToProfile.bind(this)
   }
   handleLoading(e) {
     //console.log('check')
   }
   async componentDidMount() {
+    clearInterval(this.intervalProfile)
     await this.loadProfile()
-    this.interval = setInterval(async () => {
+    this.intervalProfile = setInterval(async () => {
       this.setState({ firstLoad: false })
       await this.loadProfile()
     }, 10000)
   }
-  componentWillUnmount() {
-    clearInterval(this.interval)
+  async componentWillUnmount() {
+    clearInterval(this.intervalProfile)
   }
   handleToProfile(e) {
-    this.props.handleToProfile('navbar')
+    this.props.handleToProfile(e)
   }
 
   async loadProfile() {
+    console.log(this.state.userAccount)
+    console.log(this.state.profileAccount)
     console.log('load profile ' + new Date().toTimeString())
-    const userMemes = await this.state.userStorage.methods.getPosts(this.state.profileAccount).call()
-    const userMemeCount = userMemes.length
-    console.log(userMemeCount)
-    const countDifference = await userMemeCount - this.state.userMemeCount
+    const memeStorage = this.props.memeStorage,
+          userStorage = this.props.userStorage
+    const userMemes = await userStorage.methods.getPosts(this.state.profileAccount).call()
+    const userMemeCount = await userMemes.length
+    const countDifference = await userMemeCount - await this.state.userMemeCount
     if(await userMemeCount > this.state.userMemeCount) {
       this.setState({
-        userMemeCount,
-        profileLoading: true
+        userMemeCount
       })
-      const tempMemes = this.state.memes
       for(let i = userMemeCount - countDifference + 1; i <= userMemeCount; i++) {
         const memeId = userMemes[i-1]
-        const tempMeme = await this.props.memeStorage.methods.memes(memeId).call()
+        const tempMeme = await memeStorage.methods.memes(memeId).call()
         const meme = {
           memeId: memeId,
-          username: await this.props.userStorage.methods.users(tempMeme.author).call()
+          username: await userStorage.methods.users(tempMeme.author).call()
             .then(e => fromBytes(e.name))
             .then(e => e.toString()),
-          address: await this.props.userStorage.methods.users(tempMeme.author).call()
+          address: await userStorage.methods.users(tempMeme.author).call()
             .then(e => fromBytes(e.userAddr))
             .then(e => e.toString()),
           text: tempMeme.text,
           time: new Date(tempMeme.time * 1000).toLocaleString(),
           boosts: tempMeme.boosts,
-          likes: await this.props.memeStorage.methods.getLikeCount(memeId).call(),
-          likers: await this.props.memeStorage.methods.getLikers(memeId).call(),
-          rememeCount: await this.props.memeStorage.methods.getRepostCount(memeId).call(),
-          rememes: await this.props.memeStorage.methods.getReposts(memeId).call(),
-          quoteCount: await this.props.memeStorage.methods.getQuotePostCount(memeId).call(),
-          quoteMemes: await this.props.memeStorage.methods.getQuotePosts(memeId).call(),
-          responses: await this.props.memeStorage.methods.getResponses(memeId).call(),
-          tags: await this.props.memeStorage.methods.getTags(memeId).call(),
+          likes: await memeStorage.methods.getLikeCount(memeId).call(),
+          likers: await memeStorage.methods.getLikers(memeId).call(),
+          rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
+          rememes: await memeStorage.methods.getReposts(memeId).call(),
+          quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
+          quoteMemes: await memeStorage.methods.getQuotePosts(memeId).call(),
+          responses: await memeStorage.methods.getResponses(memeId).call(),
+          tags: await memeStorage.methods.getTags(memeId).call(),
           repostId: tempMeme.repostId,
           parentId: tempMeme.parentId,
           originId: tempMeme.originId,
@@ -88,17 +91,17 @@ class Profile extends React.Component {
         })
       }
 
-      if(!this.state.firstLoad) {
+      if(!this.state.firstLoad)
         this.setState({ memesHTML: this.state.oldMemesHTML })
-      }
-      this.renderProfile()
+      if(this.state.userMemeCount!==null)
+        await this.renderProfile().catch(e => console.error(e))
       this.props.handleLoading(this.state.profileLoading)
     }
     else {
       this.setState({ profileLoading: false })
     }
   }
-  renderProfile() {
+  async renderProfile() {
     let memesHTML = []
     for(let i = 1; i <= this.state.userMemeCount; i++) {
       const meme = this.state.memes[i-1]

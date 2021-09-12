@@ -126,6 +126,27 @@ export function bobble(element, duration) {
     else elements.forEach(e => e.style.transform = 'scale(' + 1 + ')')
   })
 }
+export function clickBobble(element, duration) {
+  duration = duration / 3
+  let start = performance.now()
+  const elements = document.querySelectorAll(element)
+  let phase = 0
+  let progress
+  requestAnimationFrame(function animate(time) {
+    let fractionOfTime = (time - start) / duration
+    if (fractionOfTime > 1 && phase < 6) {
+      fractionOfTime = 0
+      start = performance.now()
+      phase++
+    } else if (fractionOfTime > 1) fractionOfTime = 1
+    if(phase===0) progress = easeInOut(fractionOfTime, 1, -0.02)
+    else if(phase===1) progress = easeInOut(fractionOfTime, 0.98, 0.05)
+    else if(phase===2) progress = easeInOut(fractionOfTime, 1.03, -0.03)
+    elements.forEach(e => e.style.transform = 'scale(' + progress + ')')
+    if (fractionOfTime < 1) requestAnimationFrame(animate)
+    else elements.forEach(e => e.style.transform = 'scale(' + 1 + ')')
+  })
+}
 export function expandToFadeOut(element, duration) {
   const elements = document.querySelectorAll(element)
   let start = performance.now()

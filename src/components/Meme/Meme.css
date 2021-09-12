@@ -171,11 +171,6 @@ div.Meme {
   margin-right: 3rem;
 }
 
-.Timeline div#loader-memes p {
-  width: 80%;
-  transition: opacity 0.5s;
-}
-
 @keyframes reply-in {
   from {
     filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(85deg);

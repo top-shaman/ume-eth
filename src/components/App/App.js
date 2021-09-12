@@ -50,12 +50,13 @@ class App extends React.Component {
 
   async componentDidMount() {
     console.log('mount')
-    blurToFadeIn('.App', 2000)
+    if(localStorage.getItem('hasLoaded')!=='true')
+      blurToFadeIn('.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       console.log('first load')
-      await this.loadWeb3()
-      await this.loadContracts()
+      await this.loadWeb3().catch(e => console.error(e))
+      await this.loadContracts().catch(e => console.error(e))
       /*
       setInterval(() => {
         this.loadContracts()
@@ -66,7 +67,6 @@ class App extends React.Component {
     const checkEntered = localStorage.getItem('hasEntered')
     if(checkEntered) {
       this.setState({ entered: true })
-      localStorage.clear()
     }
     if(window.ethereum) {
       this.chainListen()
@@ -96,16 +96,16 @@ class App extends React.Component {
         console.log('account disconnected')
         this.setState({ registered: false })
         localStorage.clear()
-        this.loadContracts()
+        this.loadContracts().catch(e => console.error(e))
         this.request()
       } else if (this.state.account===undefined) { // account works
         console.log('account connected')
-        this.loadContracts()
+        this.loadContracts().catch(e => console.error(e))
       }
     })
     window.ethereum.on('message', message => {
       console.log('chain change detected')
-      this.loadContracts()
+      this.loadContracts().catch(e => console.error(e))
     })
   }
 
@@ -144,17 +144,23 @@ class App extends React.Component {
       })
       let memeCount = await memeStorage.methods.memeCount().call()
       console.log('meme count: ' + memeCount)
+      const userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length)
+      this.setState({
+        memeCount,
+        userMemeCount
+      })
+      console.log('user meme count: ' + userMemeCount)
       const userCount = await userStorage.methods.userCount().call()
       console.log('user count: ' + userCount)
       this.setState({ contractLoading: false })
-      await this.loadProfile()
+      await this.loadAccount().catch(e => console.error(e))
     }
     else {
       window.alert('UME not deployed to detected network')
     }
   }
 
-  async loadProfile() {
+  async loadAccount() {
     const profileExists = async () => {
       if(this.state.account!==undefined)
         return await this.state.userStorage.methods.userExists(this.state.account).call()
@@ -192,6 +198,7 @@ class App extends React.Component {
                   memeStorage={this.state.memeStorage}
                   interface={this.state.interface}
                   memeCount={this.state.memeCount}
+                  userMemeCount={this.state.userMemeCount}
                   contractLoading={this.state.contractLoading}
                   handleCreateMeme={this.handleCreateMeme}
                 />
