@@ -22,7 +22,8 @@ class Main extends React.Component {
       timelineLoading: false,
       profileLoading: false,
       reload: false,
-      focusPage: 'timeline'
+      focusPage: 'timeline',
+      atBottom: false
     }
 
     this.timeline = React.createRef()
@@ -32,10 +33,11 @@ class Main extends React.Component {
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
     this.handleToTimeline = this.handleToTimeline.bind(this)
-    this.handleProfileLoad = this.handleProfileLoad.bind(this)
-    this.handleToProfileNavbar = this.handleToProfileNavbar.bind(this)
-    this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
-    this.handleToProfileProfile = this.handleToProfileProfile.bind(this)
+    //this.handleProfileLoad = this.handleProfileLoad.bind(this)
+    //this.handleToProfileNavbar = this.handleToProfileNavbar.bind(this)
+    //this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
+    //this.handleToProfileProfile = this.handleToProfileProfile.bind(this)
+    this.handleScroll = this.handleScroll.bind(this)
   }
 
   async componentDidMount() {
@@ -49,7 +51,11 @@ class Main extends React.Component {
       profileUsername: await this.state.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
       profileAddress: await this.state.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
       profileAccount: this.state.account,
+      userStorage: this.props.userStorage,
+      memeStorage: this.props.memeStorage,
+      interface: this.props.interface,
     })
+    /*
     if(localStorage.getItem('focusPage')==='profile') {
       if(localStorage.getItem('pageInfo').split(',').length===3){
         const profile = localStorage.getItem('pageInfo').split(',')
@@ -63,7 +69,7 @@ class Main extends React.Component {
           })
         }
       }
-    }
+    }*/
   }
   componentWillUnmount() {
     window.clearInterval()
@@ -86,8 +92,8 @@ class Main extends React.Component {
   }
   handleTimelineLoad(timelineLoading) {
     this.setState({
-      timelineLoading: timelineLoading[0],
-      timelineLoading: timelineLoading[1]
+      timelineLoading: timelineLoading
+
     })
     console.log('timeline loading: ' + timelineLoading)
   }
@@ -99,6 +105,7 @@ class Main extends React.Component {
     })
     console.log('timeline loading: ' + this.state.timelineLoading)
   }
+  /*
   handleProfileLoad(profileLoading) {
     this.setState({
       profileLoading: profileLoading
@@ -165,6 +172,12 @@ class Main extends React.Component {
   handleToProfileProfile(e) {
   }
 
+  handleScroll(e) {
+    if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight) {
+      this.setState({ atBottom: true })
+    }
+    else this.setState({ atBottom: false })
+  }
   render() {
     return(
       <div className="Main">
@@ -177,7 +190,7 @@ class Main extends React.Component {
             handleToProfile={this.handleToProfileNavbar}
           />
         </div>
-        <div className="Main" id="body">
+        <div className="Main" id="body" onScroll={this.handleScroll}>
           <div id="subheader">
             <section id="title">
               <a href="#home">
@@ -203,6 +216,7 @@ class Main extends React.Component {
                 timelineLoading={this.state.timelineLoading}
                 handleLoading={this.handleTimelineLoad}
                 handleToProfile={this.handleToProfileTimeline}
+                atBottom={this.state.atBottom}
                 ref={Ref => this.timeline=Ref}
               />
             : this.state.focusPage==='profile' //&& !this.state.reload

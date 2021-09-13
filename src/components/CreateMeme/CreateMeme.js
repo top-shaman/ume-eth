@@ -51,6 +51,10 @@ class CreateMeme extends React.Component {
     autosize(this.textarea)
   }
 
+  componentWillUnmount() {
+    this.mounted = false
+  }
+
   async handleTextChange(e) {
     e.preventDefault()
     this.setState({ memeText: e.target.value })

@@ -53,7 +53,7 @@ class Meme extends Component {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ', 600)
       }, this.state.renderOrder * 20)
-      this.setState({ alreadyRendered: true })
+      //this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered===true) {
       this.div.style.opacity = 1
     }
@@ -82,6 +82,7 @@ class Meme extends Component {
     console.log('memeId: ' + this.state.memeId)
     await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
+    /*
     if(!this.state.userHasLiked) {
       this.setState({
         likes: this.state.likes++,
@@ -92,6 +93,7 @@ class Meme extends Component {
       likes: this.state.likes--,
       userHasLiked: false
     })
+    */
   }
 
   async formatText() {
@@ -119,6 +121,7 @@ class Meme extends Component {
   }
 
   render() {
+    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
     return(
       <div className="Meme" id={this.state.memeId} ref={Ref => this.div=Ref}>
         <a
@@ -156,8 +159,8 @@ class Meme extends Component {
             </p>
             <p className="rememe" id="rememe-button" onClick={this.handleButtonClick}>
               <img className="rememe" src={ReMeme} id="rememe" width="13px" height="13px"/>
-              <span className="rememe" id="like-count">
-                {parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)}
+              <span className="rememe" id="rememe-count">
+                {rememeCountTotal}
               </span>
             </p>
             <p className="upvote" id="upvote-button" onClick={this.handleButtonClick}>

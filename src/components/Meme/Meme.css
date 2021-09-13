@@ -9,7 +9,8 @@ div.Meme {
 }
 .Meme div#meme-body {
   display: flex;
-  width: 100%;
+  min-width: 24.2rem;
+  max-width: 100%;
   flex-direction: column;
 }
 .Meme div#meme-header {
@@ -60,6 +61,8 @@ div.Meme {
 .Meme p#meme-text span#plain {
   color: #CCDDCC;
   margin: 0;
+  word-wrap: break-spaces;
+  width: inherit;
 }
 .Meme p#meme-text a#at,
 .Meme p#meme-text a#hash {
@@ -96,6 +99,9 @@ div.Meme {
 .Meme div#meme-footer p {
   margin: 0.15rem 2rem 0.15rem 0.15rem;
   padding: 0.2rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  min-width: 2rem;
   border-radius: 1rem;
   position: relative;
   filter: invert(0.4);

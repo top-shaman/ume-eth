@@ -31,10 +31,12 @@ class Profile extends React.Component {
   async componentDidMount() {
     clearInterval(this.intervalProfile)
     await this.loadProfile()
-    this.intervalProfile = setInterval(async () => {
-      this.setState({ firstLoad: false })
-      await this.loadProfile()
-    }, 10000)
+    if(this.state.firstLoad) {
+      this.intervalProfile = setInterval(async () => {
+        this.setState({ firstLoad: false })
+        await this.loadProfile()
+      }, 10000)
+    }
   }
   async componentWillUnmount() {
     clearInterval(this.intervalProfile)
@@ -54,30 +56,29 @@ class Profile extends React.Component {
   }
 
   async loadProfile() {
-    console.log(this.state.userAccount)
-    console.log(this.state.profileAccount)
     console.log('load profile ' + new Date().toTimeString())
-    const memeStorage = this.state.memeStorage,
-          userStorage = this.state.userStorage
-    const userMemes = await userStorage.methods.getPosts(this.state.profileAccount).call()
-    const userMemeCount = await userMemes.length
+    const memeStorage = await this.props.memeStorage,
+          userStorage = await this.props.userStorage,
+          userMemes = await userStorage.methods.getPosts(this.state.profileAccount).call(),
+          userMemeCount = await userMemes.length
     const countDifference = await userMemeCount - await this.state.userMemeCount
-    if(await userMemeCount > this.state.userMemeCount) {
+    if(await userMemeCount > userMemes.length) {
       this.setState({
-        userMemeCount,
-        profileLoading: true
+        userMemeCount
       })
       for(let i = userMemeCount - countDifference + 1; i <= userMemeCount; i++) {
         const memeId = userMemes[i-1]
         const tempMeme = await memeStorage.methods.memes(memeId).call()
+        const username = await userStorage.methods.users(tempMeme.author).call()
+            .then(e => fromBytes(e.name))
+            .then(e => e.toString())
+        const address = await userStorage.methods.users(tempMeme.author).call()
+            .then(e => fromBytes(e.userAddr))
+            .then(e => e.toString())
         const meme = {
           memeId: memeId,
-          username: await userStorage.methods.users(tempMeme.author).call()
-            .then(e => fromBytes(e.name))
-            .then(e => e.toString()),
-          address: await userStorage.methods.users(tempMeme.author).call()
-            .then(e => fromBytes(e.userAddr))
-            .then(e => e.toString()),
+          username: username,
+          address: address,
           text: tempMeme.text,
           time: new Date(tempMeme.time * 1000).toLocaleString(),
           boosts: tempMeme.boosts,
@@ -172,7 +173,7 @@ class Profile extends React.Component {
       temp.unshift(
         <Meme
           key={i}
-          memes={meme.memeId}
+          memeId={meme.memeId}
           username={meme.username}
           address={meme.address}
           text={meme.text}
@@ -180,7 +181,7 @@ class Profile extends React.Component {
           boosts={meme.boosts}
           likes={meme.likes}
           likers={meme.likers}
-          rememe={meme.rememeCount}
+          rememeCount={meme.rememeCount}
           rememe={meme.rememes}
           quoteCount={meme.quoteCount}
           quoteMemes={meme.quoteMemes}
