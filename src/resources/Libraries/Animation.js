@@ -154,8 +154,8 @@ export function expandToFadeOut(element, duration) {
     let fractionOfTime = (time - start) / duration
 
     if(fractionOfTime > 1) fractionOfTime = 1
-    let progress1 = easeInOut(fractionOfTime, 1, 49)
-    let progress2 = easeInOut(fractionOfTime, 1, -1)
+    let progress1 = easeInOut(fractionOfTime, 1, 49),
+        progress2 = easeInOut(fractionOfTime, 1, -1)
     elements.forEach(e => {
       e.style.transform = 'scale(' + progress1 + ')'
       e.style.opacity = progress2
@@ -173,6 +173,22 @@ export function zipUp(element, duration) {
     let progress = easeInOut(fractionOfTime, 0, 1)
     elements.forEach(e => {
       e.style.transform = 'translate(0px, ' + (10/progress-10) + 'px)'
+    })
+    if(fractionOfTime < 1) requestAnimationFrame(animation)
+  })
+}
+
+export function filterOut(element, brightnessStart, brightnessEnd, hue, duration) {
+  const elements = document.querySelectorAll(element)
+  let start = performance.now()
+  requestAnimationFrame(function animation(time) {
+    let fractionOfTime = (time - start) / duration
+
+    if(fractionOfTime > 1) fractionOfTime = 1
+    let progress1= easeInOut(fractionOfTime, brightnessStart, brightnessEnd-brightnessStart),
+        progress2= easeInOut(fractionOfTime, 10000, -10000)
+    elements.forEach(e => {
+      e.style.filter = 'invert(0) sepia(1) brightness(' + progress1 + ') saturate(' + progress2 + '%) hue-rotate(' + hue + 'deg)';
     })
     if(fractionOfTime < 1) requestAnimationFrame(animation)
   })

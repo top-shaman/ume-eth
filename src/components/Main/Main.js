@@ -84,9 +84,10 @@ class Main extends React.Component {
   }
   async handleRefresh(e) {
     e.preventDefault()
-    if(this.state.focusPage==='timeline') {
-      await this.timeline.loadTimeline()
-    } else if(this.state.focusPage==='profile') {
+    if(this.state.focusPage==='timeline' && !this.state.timelineLoading) {
+      await this.timeline.loadNewMemes()
+      await this.timeline.refreshMemes()
+    } else if(this.state.focusPage==='profile' && !this.state.profileLoading) {
       await this.profile.loadProfile()
     }
   }
@@ -173,7 +174,7 @@ class Main extends React.Component {
   }
 
   handleScroll(e) {
-    if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight) {
+    if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight+150) {
       this.setState({ atBottom: true })
     }
     else this.setState({ atBottom: false })

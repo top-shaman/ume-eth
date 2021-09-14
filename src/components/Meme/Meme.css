@@ -47,13 +47,14 @@ div.Meme {
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
-  z-index:8;
+  z-index: 3;
   max-height: 30rem;
 }
 .Meme p#meme-text span {
   font-family: 'Arial', sans-serif;
   font-size: 0.84rem;
   font-weight: 500;
+  margin: 0;
   word-wrap: break-word;
   white-space: break-spaces;
 }
@@ -111,9 +112,11 @@ div.Meme {
 }
 
 .Meme p#reply-button {
+  /*
   animation-name: reply-out;
   animation-duration: 0.4s;
   animation-timing-function: ease-out;
+  */
 }
 .Meme p#reply-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
@@ -123,9 +126,11 @@ div.Meme {
   cursor: pointer;
 }
 .Meme p#like-button {
+  /*
   animation-name: like-out;
   animation-duration: 0.4s;
   animation-timing-function: ease-out;
+  */
 }
 .Meme p#like-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
@@ -135,9 +140,11 @@ div.Meme {
   cursor: pointer;
 }
 .Meme p#rememe-button {
+  /*
   animation-name: rememe-out;
   animation-duration: 0.4s;
   animation-timing-function: ease-out;
+  */
 }
 .Meme p#rememe-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
@@ -148,9 +155,11 @@ div.Meme {
 }
 .Meme p#upvote-button {
   margin: 0.15rem 4rem 0.15rem 0.15rem;
+  /*
   animation-name: upvote-out;
   animation-duration: 0.4444s;
   animation-timing-function: ease-out;
+  */
 }
 .Meme p#upvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
@@ -161,9 +170,11 @@ div.Meme {
 }
 .Meme p#downvote-button {
   animation-name: downvote-out;
+  /*
   animation-duration: 0.4s;
   animation-timing-function: ease-out;
   transform: rotate(180deg);
+  */
 }
 .Meme p#downvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);

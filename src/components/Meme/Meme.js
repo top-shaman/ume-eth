@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bobble } from '../../resources/Libraries/Animation'
+import { fadeIn, zipUp, bobble, filterOut } from '../../resources/Libraries/Animation'
 import "./Meme.css"
 
 import Reply from '../../resources/reply.svg'
@@ -43,8 +43,11 @@ class Meme extends Component {
     this.div = React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
+    this.handleMouseOver = this.handleMouseOver.bind(this)
+    this.handleMouseLeave = this.handleMouseLeave.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
   }
+  // lifecycle functions
   async componentDidMount() {
     if(this.state.alreadyRendered===false) {
       this.div.style.zIndex = 0
@@ -52,20 +55,60 @@ class Meme extends Component {
       setTimeout(() => {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ', 600)
-      }, this.state.renderOrder * 20)
+      }, 0 )
       //this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered===true) {
       this.div.style.opacity = 1
     }
     this.formatText()
     const userHasLiked = await this.props.memeStorage.methods.getLikers(this.props.memeId).call()
-    this.setState({
-      userHasLiked: userHasLiked.includes(this.props.userAccount)
-    })
+    this.mounted = true
+    //this.setState({
+      //userHasLiked: userHasLiked.includes(this.props.userAccount)
+    //})
   }
+  async componentWillUnmount() {
+    this.mounted = false
+  }
+
+  //event handlers
   handleButtonClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
-    if(e.target.className==='like') this.likeClick()
+    if(e.target.className==='reply') {
+    } else if(e.target.className==='like') {
+      this.likeClick()
+    } else if(e.target.className==='rememe') {
+    } else if(e.target.className==='upvote') {
+    } else if(e.target.className==='downvote') {
+    }
+  }
+  handleMouseOver(e) {
+  }
+  handleMouseLeave(e) {
+    let brightnessStart, hue, elementName,
+        brightnessEnd = 0.6
+    if(e.target.className==='reply') {
+      brightnessStart = 0.43
+      hue = 85
+      elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+    } else if(e.target.className==='like') {
+      brightnessStart = 0.4
+      hue = 285
+      elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
+    } else if(e.target.className==='rememe') {
+      brightnessStart = 0.4
+      hue = 140
+      elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
+    } else if(e.target.className==='upvote') {
+      brightnessStart = 0.43
+      hue = 310
+      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
+    } else if(e.target.className==='downvote') {
+      brightnessStart = 0.43
+      hue = 180
+      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
+    }
+    filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
   handleProfileClick(e) {
     e.preventDefault()
@@ -149,24 +192,54 @@ class Meme extends Component {
             </p>
           </div>
           <div id="meme-footer">
-            <p className="reply" id="reply-button" onClick={this.handleButtonClick}>
+            <p
+              className="reply"
+              id="reply-button"
+              onClick={this.handleButtonClick}
+              onMouseOver={this.handleMouseOver}
+              onMouseLeave={this.handleMouseLeave}
+            >
               <img className="reply" src={Reply} id="reply" width="13px" height="13px"/>
               <span className="reply" id="reply-count">{this.state.responses.length}</span>
             </p>
-            <p className="like" id="like-button" onClick={this.handleButtonClick}>
+            <p
+              className="like"
+              id="like-button"
+              onClick={this.handleButtonClick}
+              onMouseOver={this.handleMouseOver}
+              onMouseLeave={this.handleMouseLeave}
+            >
               <img className="like" src={Like} id="like" width="13px" height="13px"/>
               <span className="like" id="like-count">{this.state.likes}</span>
             </p>
-            <p className="rememe" id="rememe-button" onClick={this.handleButtonClick}>
+            <p
+              className="rememe"
+              id="rememe-button"
+              onClick={this.handleButtonClick}
+              onMouseOver={this.handleMouseOver}
+              onMouseLeave={this.handleMouseLeave}
+            >
               <img className="rememe" src={ReMeme} id="rememe" width="13px" height="13px"/>
               <span className="rememe" id="rememe-count">
                 {rememeCountTotal}
               </span>
             </p>
-            <p className="upvote" id="upvote-button" onClick={this.handleButtonClick}>
+            <p
+              className="upvote"
+              id="upvote-button"
+              onClick={this.handleButtonClick}
+              onMouseOver={this.handleMouseOver}
+              onMouseLeave={this.handleMouseLeave}
+            >
               <img className="upvote" src={Arrow} id="upvote" width="13px" height="13px"/>
             </p>
-            <p className="downvote" id="downvote-button" onClick={this.handleButtonClick}>
+            <p
+              className="downvote"
+              id="downvote-button"
+              onClick={this.handleButtonClick}
+              onMouseOver={this.handleMouseOver}
+              onMouseLeave={this.handleMouseLeave}
+            >
               <img className="downvote" src={Arrow} id="downvote" width="13px" height="13px"/>
             </p>
           </div>

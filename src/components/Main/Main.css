@@ -27,7 +27,7 @@ div.Main {
   background-color: #282c34;
   top:0;
   width: 100%;
-  z-index: 6;
+  z-index: 8;
 }
 
 .Main div#link {
