@@ -33,9 +33,9 @@ class Main extends React.Component {
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
     this.handleToTimeline = this.handleToTimeline.bind(this)
-    //this.handleProfileLoad = this.handleProfileLoad.bind(this)
+    this.handleProfileLoad = this.handleProfileLoad.bind(this)
     //this.handleToProfileNavbar = this.handleToProfileNavbar.bind(this)
-    //this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
+    this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
     //this.handleToProfileProfile = this.handleToProfileProfile.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
   }
@@ -106,13 +106,14 @@ class Main extends React.Component {
     })
     console.log('timeline loading: ' + this.state.timelineLoading)
   }
-  /*
+
   handleProfileLoad(profileLoading) {
     this.setState({
       profileLoading: profileLoading
     })
     console.log('profile loading: ' + profileLoading)
   }
+  /*
   async handleToProfileNavbar(e) {
     console.log('profile loading: ' + this.state.profileLoading)
     if(this.state.profileAccount!==this.state.account) {
@@ -126,6 +127,7 @@ class Main extends React.Component {
       focusPage: 'profile'
     })
   }
+  */
   async handleToProfileTimeline(e) {
     this.setState({
       profileUsername: e[0],
@@ -233,6 +235,7 @@ class Main extends React.Component {
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
                   profileAccount={this.state.profileAccount}
+                  atBottom={this.state.atBottom}
                   ref={Ref => this.profile=Ref}
                 />
                 : ''

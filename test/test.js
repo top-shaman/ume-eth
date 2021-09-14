@@ -294,14 +294,17 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
       await interface.newUser(user1, un1, ua1, {from: user1})
       await interface.newUser(user2, un2, ua2, {from: user2})
       await interface.newUser(deployer, dn, da, {from: deployer})
+      await interface.newUser(user3, un2, ua2, {from: user3})
 
       let account1 = await userStorage.getUser(user1)
       let account2 = await userStorage.getUser(user2)
+      let account3 = await userStorage.getUser(deployer)
+      let account4 = await userStorage.getUser(user3)
     })
     describe('User functionality', () => {
       describe('success', () => {
-        it('3 accounts created from before statement', async () => {
-          expect(await userStorage.userCount().then(elem => elem.toString())).to.be.eq('3')
+        it('4 accounts created from before statement', async () => {
+          expect(await userStorage.userCount().then(elem => elem.toString())).to.be.eq('4')
         })
         it('account #1 and account #2 have different names', async () => {
           account1 = await userStorage.getUser(user1)
@@ -557,7 +560,7 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.newMeme(user1, 'hello world!', [], id1, '0x0', {from: user1}).should.be.rejectedWith(EVM_REVERT)
         })
         it('can\'t post meme from account that hasn\'t been created yet', async () => {
-          await interface.newMeme(user3, 'hello world!', [], '0x0', '0x0', {from: user3}).should.be.rejectedWith(EVM_REVERT)
+          await interface.newMeme(user4, 'hello world!', [], '0x0', '0x0', {from: user4}).should.be.rejectedWith(EVM_REVERT)
         })
       })
     })
@@ -677,6 +680,24 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
           expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
         })
+        it('like tallies multiple users', async () => {
+          const id1 = await interface.encode(1)
+          await interface.likeMeme(user2, id1, {from: user2}) //user2 likes meme id1
+          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+          await interface.likeMeme(user3, id1, {from: user3}) //user3 likes meme id1
+          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+          await interface.likeMeme(deployer, id1, {from: deployer}) //deployer likes meme id1
+          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+
+          expect(await memeStorage.getEncodeLikers(1).then(elem => elem)).to.deep.eq([user2, user3, deployer])
+          expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem)).to.deep.eq([])
+          // checks taggs of third post
+          expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(3)
+
+          //expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+          //expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+
+        })
       })
       describe('failure', () => {
         it('wrong account shouldn\'t be able to like', async () => {
@@ -685,9 +706,9 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.likeMeme(user1, id1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
           await interface.likeMeme(deployer, id1, {from: user2}).should.be.rejectedWith(EVM_REVERT)
         })
-        it('user shouldn\'t be able to call interface.likeMeme', async () => {
+        it('user shouldn\'t be able to call like.likeMeme', async () => {
           const id1 = await interface.encode(1)
-          await interface.likeMeme(user1, id1, {from: user1}).should.be.rejected
+          await like.likeMeme(user1, id1, {from: user1}).should.be.rejected
         })
         it('post shouldn\'t be able to call interface.likeMeme', async () => {
           const id1 = await interface.encode(1)

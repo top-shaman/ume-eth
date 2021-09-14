@@ -54,7 +54,8 @@ contract Like {
       }
     }
     if(_alreadyLiked==false && _unliked==false) {
-      _addLike(_account, _memeId, new address[](0), new address[](0), 0, _alreadyLiked);
+      // might have to set new address[](0) for likers & unlikers
+      _addLike(_account, _memeId, _likers, _unlikers, 0, _alreadyLiked);
       // mint like token
       if(_account!=memeStorage.getAuthor(_memeId)) {
         umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));

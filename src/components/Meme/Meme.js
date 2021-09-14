@@ -32,7 +32,7 @@ class Meme extends Component {
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
-      visibleText: null,
+      visibleText: this.props.text,
       renderOrder: this.props.renderOrder,
       alreadyRendered: this.props.alreadyRendered,
       interface: this.props.interface,
@@ -50,7 +50,7 @@ class Meme extends Component {
   // lifecycle functions
   async componentDidMount() {
     if(this.state.alreadyRendered===false) {
-      this.div.style.zIndex = 0
+      //this.div.style.zIndex = 0
       this.div.style.opacity = 0
       setTimeout(() => {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
@@ -60,9 +60,9 @@ class Meme extends Component {
     } else if(this.state.alreadyRendered===true) {
       this.div.style.opacity = 1
     }
-    this.formatText()
-    const userHasLiked = await this.props.memeStorage.methods.getLikers(this.props.memeId).call()
     this.mounted = true
+    await this.formatText()
+    //const userHasLiked = await this.props.memeStorage.methods.getLikers(this.props.memeId).call()
     //this.setState({
       //userHasLiked: userHasLiked.includes(this.props.userAccount)
     //})
@@ -81,6 +81,7 @@ class Meme extends Component {
     } else if(e.target.className==='upvote') {
     } else if(e.target.className==='downvote') {
     }
+    this.props.handleRefresh(e)
   }
   handleMouseOver(e) {
   }
@@ -117,8 +118,8 @@ class Meme extends Component {
       this.state.address,
       this.state.author
     ])
-    localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('pageInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    //localStorage.setItem('focusPage', 'profile')
+    //localStorage.setItem('pageInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
   }
   async likeClick() {
     console.log('accessing account: ' + this.props.userAccount)
