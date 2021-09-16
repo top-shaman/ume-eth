@@ -157,10 +157,9 @@ class App extends React.Component {
       console.log('user meme count: ' + userMemeCount)
       const userCount = await userStorage.methods.userCount().call()
       console.log('user count: ' + userCount)
-      this.setState({
-        contractLoading: false
-      })
+      this.setState({ memeIdsByBoost })
 
+      this.setState({ contractLoading: false })
       console.log(this.state.contractLoading)
       await this.loadAccount().catch(e => console.error(e))
     }
@@ -185,16 +184,14 @@ class App extends React.Component {
       console.log('account doesn\'t exist')
     }
   }
-  /*
-  async compileMemesByBoost() {
+  async compileMemesByBoost(interface, memeStorage) {
     const memeIdsByBoost = []
-    for(let i; i < this.state.memeCount; i++) {
-      const memeId = await this.state.interface.methods.encode(i).call()
-      memeIdsByBoost.push(await this.state.memeStorage.getBoost(memeId))
+    for(let i; i < memeCount; i++) {
+      const memeId = await interface.methods.encode(i).call()
+      memeIdsByBoost.push(await memeStorage.getBoost(memeId))
     }
     return memeIdsByBoost
   }
-  */
 
   render() {
     return (

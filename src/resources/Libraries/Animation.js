@@ -123,7 +123,7 @@ export function bobble(element, duration) {
     else if(phase===6) progress = easeInOut(fractionOfTime, 1.002, -0.002)
     elements.forEach(e => e.style.transform = 'scale(' + progress + ')')
     if (fractionOfTime < 1) requestAnimationFrame(animate)
-    else elements.forEach(e => e.style.transform = 'scale(' + 1 + ')')
+    else elements.forEach(e => e.style.transform = 'scale(1)')
   })
 }
 export function clickBobble(element, duration) {

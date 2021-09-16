@@ -35,7 +35,7 @@ class Main extends React.Component {
     this.handleToTimeline = this.handleToTimeline.bind(this)
     this.handleProfileLoad = this.handleProfileLoad.bind(this)
     //this.handleToProfileNavbar = this.handleToProfileNavbar.bind(this)
-    this.handleToProfileTimeline = this.handleToProfileTimeline.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
     //this.handleToProfileProfile = this.handleToProfileProfile.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
   }
@@ -48,9 +48,9 @@ class Main extends React.Component {
       localStorage.setItem('hasLoaded', 'true')
     }
     this.setState({
-      profileUsername: await this.state.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
-      profileAddress: await this.state.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
-      profileAccount: this.state.account,
+      profileUsername: await this.props.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
+      profileAddress: await this.props.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
+      profileAccount: this.props.account,
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
@@ -92,19 +92,18 @@ class Main extends React.Component {
     }
   }
   handleTimelineLoad(timelineLoading) {
-    this.setState({
-      timelineLoading: timelineLoading
-
-    })
+    this.setState({ timelineLoading: timelineLoading })
     console.log('timeline loading: ' + timelineLoading)
   }
   async handleToTimeline(e) {
     e.preventDefault()
-    this.setState({
-      focusPage: 'timeline',
-      timelineFormat: localStorage.getItem('pageInfo')
-    })
-    console.log('timeline loading: ' + this.state.timelineLoading)
+    if(!this.state.timelineLoading) {
+      this.setState({
+        focusPage: 'timeline',
+        timelineFormat: localStorage.getItem('pageInfo')
+      })
+      console.log('timeline loading: ' + this.state.timelineLoading)
+    }
   }
 
   handleProfileLoad(profileLoading) {
@@ -128,15 +127,30 @@ class Main extends React.Component {
     })
   }
   */
-  async handleToProfileTimeline(e) {
-    this.setState({
-      profileUsername: e[0],
-      profileAddress: e[1],
-      profileAccount: e[2]
-    })
-    this.setState({
-      focusPage: 'profile',
-    })
+  async handleToProfile(e) {
+    console.log('CLICK')
+    if(!this.state.timelineLoading) {
+      if(e!=='user') {
+        this.setState({
+          profileUsername: e[0],
+          profileAddress: e[1],
+          profileAccount: e[2]
+        })
+      } else if(e==='user') {
+        if(this.state.focusPage==='profile' && this.state.account!==this.state.profileAccount) {
+          this.setState({
+            profileUsername: await this.state.userStorage.methods.getName(this.state.account).call(),
+            profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call(),
+            profileAccount: this.state.account,
+            profileLoading: true,
+            focusPage: null,
+          })
+        }
+      }
+      this.setState({
+        focusPage: 'profile',
+      })
+    }
   }
       // check if loading User's profile from Navbar
       /*
@@ -190,7 +204,7 @@ class Main extends React.Component {
             handleMeme={this.handleCreateMeme}
             handleRefresh={this.handleRefresh}
             handleToTimeline={this.handleToTimeline}
-            handleToProfile={this.handleToProfileNavbar}
+            handleToProfile={this.handleToProfile}
           />
         </div>
         <div className="Main" id="body" onScroll={this.handleScroll}>
@@ -216,9 +230,11 @@ class Main extends React.Component {
                 memeStorage={this.state.memeStorage}
                 memeCount={this.state.memeCount}
                 interface={this.state.interface}
+                memeIdsByBoost={this.props.memeIdsByBoost}
                 timelineLoading={this.state.timelineLoading}
                 handleLoading={this.handleTimelineLoad}
-                handleToProfile={this.handleToProfileTimeline}
+                contractLoading={this.props.contractLoading}
+                handleToProfile={this.handleToProfile}
                 atBottom={this.state.atBottom}
                 ref={Ref => this.timeline=Ref}
               />
@@ -231,6 +247,7 @@ class Main extends React.Component {
                   interface={this.state.interface}
                   profileLoading={this.state.profileLoading}
                   handleLoading={this.handleProfileLoad}
+                  contractLoading={this.props.contractLoading}
                   handleToProfile={this.handleToProfileProfile}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}

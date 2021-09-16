@@ -10,7 +10,7 @@ contract MemeStorage {
   address public boostSigner;
 
   uint public memeCount = 0;
-
+  bytes32[] memeIds;
 
   // mapping of Memes
   mapping(bytes32 => Meme) public memes; // memeId to meme map
@@ -57,6 +57,7 @@ contract MemeStorage {
       msg.sender==factorySigner,
       'Error: msg.sender must be memeFactory to create meme');
     memes[_memeId] = _meme;
+    memeIds.push(_memeId);
   }
   function deleteMeme(bytes32 _memeId) public {
     require(
@@ -245,6 +246,9 @@ contract MemeStorage {
   }
   function getEncodeVisibility(uint _memeId) public view returns(bool) {
     return memes[keccak256(abi.encodePacked(_memeId))].isVisible;
+  }
+  function getEncodedIds() public view returns(bytes32[] memory) {
+    return memeIds;
   }
 
   // set caller role to User upon deployment

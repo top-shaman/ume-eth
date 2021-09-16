@@ -1,7 +1,8 @@
-.Timeline div#loader-memes p {
+.Timeline div#loader p,
+.Timeline div#loader-memes p,
+.Timeline div#loaded p {
   opacity: 1;
   align-items: flex-start;
   width: 80%;
-  z-index: 8;
 }
 

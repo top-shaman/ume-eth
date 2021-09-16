@@ -1,4 +1,6 @@
-.Profile div#loader-memes p {
+.Profile div#loader p,
+.Profile div#loader-memes p,
+.Profile div#loaded p {
   width: 80%;
   transition: opacity 0.5s;
 }

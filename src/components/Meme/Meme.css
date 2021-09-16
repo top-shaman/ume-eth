@@ -12,6 +12,7 @@ div.Meme {
   min-width: 24.2rem;
   max-width: 100%;
   flex-direction: column;
+  overflow-wrap: break-word;
 }
 .Meme div#meme-header {
   display: flex;
@@ -47,7 +48,7 @@ div.Meme {
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
-  z-index: 3;
+  word-break: break-all;
   max-height: 30rem;
 }
 .Meme p#meme-text span {
@@ -62,6 +63,7 @@ div.Meme {
 .Meme p#meme-text span#plain {
   color: #CCDDCC;
   margin: 0;
+  overflow-wrap: break-word;
   word-wrap: break-spaces;
   width: inherit;
 }
@@ -124,13 +126,20 @@ div.Meme {
   animation-duration: 0.8s;
   animation-timing-function: ease-in-out;
   cursor: pointer;
+  animation-fill-mode: forwards;
 }
-.Meme p#like-button {
+.Meme p#like-button-liked.like {
+  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
+}
+.Meme p#like-button-liked:hover {
   /*
-  animation-name: like-out;
-  animation-duration: 0.4s;
-  animation-timing-function: ease-out;
+  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
+  animation-name: like-in;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
   */
+  cursor: pointer;
 }
 .Meme p#like-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
@@ -138,6 +147,7 @@ div.Meme {
   animation-duration: 0.8s;
   animation-timing-function: ease-in-out;
   cursor: pointer;
+  animation-fill-mode: forwards;
 }
 .Meme p#rememe-button {
   /*
@@ -152,6 +162,7 @@ div.Meme {
   animation-duration: 0.8s;
   animation-timing-function: ease-in-out;
   cursor: pointer;
+  animation-fill-mode: forwards;
 }
 .Meme p#upvote-button {
   margin: 0.15rem 4rem 0.15rem 0.15rem;
@@ -167,6 +178,7 @@ div.Meme {
   animation-duration: 0.8s;
   animation-timing-function: ease-in-out;
   cursor: pointer;
+  animation-fill-mode: forwards;
 }
 .Meme p#downvote-button {
   animation-name: downvote-out;
@@ -182,6 +194,7 @@ div.Meme {
   animation-duration: 0.8s;
   animation-timing-function: ease-in-out;
   cursor: pointer;
+  animation-fill-mode: forwards;
 }
 .Meme img#upvote-button,
 .Meme img#downvote-button {

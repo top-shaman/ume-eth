@@ -11,6 +11,8 @@ class Timeline extends React.Component {
       account: '',
       ume: null,
       memes: [],
+      oldMemes: [],
+      memeIdsByBoost: [],
       oldMemesHTML: [],
       memesHTML: [],
       interface: this.props.interface,
@@ -19,10 +21,11 @@ class Timeline extends React.Component {
       memeCount: null,
       memesToRender: 50,
       memesNotRendered: null,
-      memesRendered: 0,
-      timelineLoading: false,
+      memesRendered: null,
+      timelineLoading: true,
+      contractLoading: this.props.contractLoading,
       loadingBottom: false,
-      // refreshing: false,
+      refreshing: false,
       firstLoad: true,
       sortStyle: 'boost'
     }
@@ -36,16 +39,22 @@ class Timeline extends React.Component {
       await this.loadTimeline()
       this.intervalTimeline = setInterval(async () => {
         //this.setState({ firstLoad: false })
-        if(!this.props.atBottom && !this.state.firstLoad && !this.state.loadingBottom){
+        if(!this.state.firstLoad && !this.state.loadingBottom){
           await this.loadNewMemes()
           await this.refreshMemes()
-        }
-        else if (this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottm) {
-          await this.loadOldMemes()
         }
       }, 10000)
     }
     this.mounted = true
+  }
+  componentDidUpdate() {
+    if(this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottom) {
+      setTimeout(async () => {
+        if(this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottom) {
+          await this.loadOldMemes()
+        }
+      }, 200)
+    }
   }
   componentWillUnmount() {
     clearInterval(this.intervalTimeline)
@@ -58,24 +67,34 @@ class Timeline extends React.Component {
   }
   handleRefresh(e) {
     e.preventDefault()
-    console.log('CHECK')
-    setTimeout(() => this.refreshMemes(), 2000)
+    setTimeout(() => this.refreshMemes(), 1000)
   }
 
   // to be invoked upon page load
   async loadTimeline() {
     console.log('timeline: Try Load Timeline')
-    if(!this.state.timelineLoading) {
+    if(this.state.firstLoad) {
+      this.setState({ timelineLoading: true })
       console.log('load timeline ' + new Date().toTimeString())
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
             uInterface = await this.props.interface,
-            memes = await this.state.memes,
             memeCount = await memeStorage.methods.memeCount().call()
       let memesToRender = await this.state.memesToRender,
           memesNotRendered = memeCount - memesToRender,
           totalMemesRendered = 0,
-          memesRendered = 0
+          memesRendered = 0,
+          memeIds
+      //await memeIds.forEach(async e => console.log(await memeStorage.methods.getBoost(e).call()))
+      //console.log(memeIds)
+      //this.state.memeIdsByBoost.forEach(async a => {
+        //console.log(await memeStorage.methods.getText(a).call())
+      //})
+      if(this.state.sortStyle==='time') {
+        memeIds = await this.compileMemesByTime()
+      } else if(this.state.sortStyle==='boost') {
+        memeIds = await this.compileMemesByBoost(memeCount)
+      }
 
       if(memeCount>memesToRender) {
         memesNotRendered = memeCount - memesToRender
@@ -86,15 +105,12 @@ class Timeline extends React.Component {
 
       if(this.state.firstLoad) {
         this.setState({
-          timelineLoading: true,
           memeCount,
           memesNotRendered
         })
-        for(let i = 1; i <= memesToRender; i++) {
-          const adjustment = memesNotRendered + i
-          const memeId = await uInterface.methods
-            .encode(adjustment).call().catch(e => console.error(e))
-          const meme = await this.populateMeme(memeId, i, memeStorage, userStorage)
+        for(let i = 0; i < memesToRender; i++) {
+          const memeId = memeIds[i+memesNotRendered],
+                meme = await this.populateMeme(memeId, memeStorage, userStorage)
           this.setState({
             memes: [...this.state.memes, meme],
           })
@@ -127,30 +143,57 @@ class Timeline extends React.Component {
   //loads new memes above rendered section
   async loadNewMemes() {
     console.log('timeline: Try Loading New Memes')
-    if(!this.state.firstLoad && !this.state.loadingBottom && !this.props.atBottom) {
+    if(!this.state.firstLoad && !this.state.loadingBottom && !this.state.refreshing) {
       console.log('loading new memes' + new Date().toTimeString())
-      const userStorage = await this.props.userStorage,
-            memeStorage = await this.props.memeStorage,
-            uInterface = await this.props.interface,
-            memes = await this.state.memes,
-            memeCount = await memeStorage.methods.memeCount().call()
-      let memesToRender = await this.state.memesToRender,
-          memesNotRendered = await this.state.memesNotRendered,
-          totalMemesRendered = await this.state.memesRendered,
-          memesRendered = 0
-      const countDifference = await memeCount - await this.state.memeCount
-      memesNotRendered += countDifference
+      const memeCount = await this.state.memeStorage.methods.memeCount().call(),
+            countDifference =  await memeCount - this.state.memeCount,
+            oldMemes = this.state.oldMemes
+
       if(countDifference>0) {
-        memesToRender = countDifference
+        this.setState({ timelineLoading: true })
+        const userStorage = await this.props.userStorage,
+              memeStorage = await this.props.memeStorage,
+              uInterface = await this.props.interface
+        let memesToRender = await this.state.memesToRender,
+            memesNotRendered = await this.state.memesNotRendered,
+            totalMemesRendered = await this.state.memesRendered,
+            memesRendered = 0,
+            oldMemeIds = [],
+            newMemeIds = [],
+            memeIds
+
+        if(this.state.sortStyle==='time') {
+          memeIds = await this.compileMemesByTime()
+        } else if(this.state.sortStyle==='boost') {
+          memeIds = await this.compileMemesByBoost(memeCount)
+        }
+        /*
+        const oldMemeIds = []
+        oldMemes.forEach(e => oldMemeIds.push(e.id))
+        newMemeIds = oldMemeIds.filter(e => {
+          return !memeIds.includes(e)
+        })
+        */
+        for(let i = 0; i < oldMemes.length; i++) {
+          oldMemeIds.push(oldMemes[i].memeId)
+        }
+        let index = memeIds.indexOf(oldMemeIds[0])
+        if(index!==-1) {
+          newMemeIds = memeIds.slice(index).filter(e =>
+            !oldMemeIds.includes(e)
+          )
+        } else if(index===-1) {
+          index = memeIds.indexOf(oldMemes[oldMemes.length-1].memeId)
+          newMemeIds = memeIds.slice(index)
+        }
+        memesNotRendered += newMemeIds.length //countDifference
         this.setState({
-          timelineLoading: true,
           memeCount
         })
-        for(let i = 1; i <= countDifference; i++) {
-          const adjustment = memeCount - countDifference + i
-          const memeId = await uInterface.methods
-            .encode(adjustment).call().catch(e => console.error(e))
-          const meme = await this.populateMeme(memeId, i, memeStorage, userStorage)
+        for(let i = 0; i < newMemeIds.length; i++) {//countDifference; i++) {
+          const memeId = newMemeIds[i]//memeCount - countDifference + i]
+          console.log('meme Id: ' + memeId)
+          const meme = await this.populateMeme(memeId, memeStorage, userStorage)
           this.setState({
             memes: [...this.state.memes, meme],
           })
@@ -183,17 +226,25 @@ class Timeline extends React.Component {
   // loads old memes below timeline section
   async loadOldMemes() {
     console.log('timeline: Try Load Old Memes')
-    if(!this.state.firstLoad && this.props.atBottom && this.state.loadingBottom && !this.state.refreshing) {
+    if(!this.state.firstLoad && this.props.atBottom && !this.state.loadingBottom && !this.state.refreshing) {
+      this.setState({ loadingBottom: true })
       console.log('load old memes ' + new Date().toTimeString())
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
             uInterface = await this.props.interface,
-            memes = await this.state.memes,
-            memeCount = await this.state.memeCount
+            memeCount = await memeStorage.methods.memeCount().call()
       let memesToRender = await this.state.memesToRender,
           memesNotRendered = await this.state.memesNotRendered,
           totalMemesRendered = await this.state.memesRendered,
-          memesRendered = 0
+          memesRendered = 0,
+          memeIds //= await memeStorage.methods.getEncodedIds().call()
+
+      if(this.state.sortStyle==='time') {
+        memeIds = await this.compileMemesByTime()
+      } else if(this.state.sortStyle==='boost') {
+        memeIds = await this.compileMemesByBoost(memeCount)
+      }
+      console.log(memeIds)
 
       if(memesNotRendered-memesToRender <= 0) {
         memesToRender = memesNotRendered
@@ -202,14 +253,12 @@ class Timeline extends React.Component {
       if(memesToRender!==0) {
         this.setState({
           timelineLoading: true,
-          loadingBottom: true,
           memeCount
         })
-        for(let i = 1; i <= memesToRender; i++) {
-          const adjustment = memesNotRendered - memesToRender + i
-          const memeId = await uInterface.methods
-            .encode(adjustment).call().catch(e => console.error(e))
-          const meme = await this.populateMeme(memeId, i, memeStorage, userStorage)
+        for(let i = 0; i < memesToRender; i++) {
+          let memeId = memeIds[memesNotRendered-memesToRender +i]
+
+          const meme = await this.populateMeme(memeId, memeStorage, userStorage)
           this.setState({
             memes: [...this.state.memes, meme],
           })
@@ -243,7 +292,7 @@ class Timeline extends React.Component {
 
   async refreshMemes() {
     console.log('timeline: Try Refresh Memes')
-    if(!this.state.timelineLoading) {
+    if(!this.state.timelineLoading && !this.state.loadingBottom && !this.state.refreshing) {
     console.log('refreshing memes ' + new Date().toTimeString())
       let loadedMemes = this.state.memes
       this.setState({
@@ -261,8 +310,9 @@ class Timeline extends React.Component {
           e.responses = newResponses
         }
         if(e.likes!==newLikers.length) {
-          e.likes = await this.props.memeStorage.methods.getLikeCount(e.memeId).call()
+          e.likes = newLikers.length
           e.likers = newLikers
+          e.userHasLiked = e.likers.includes(this.props.account)
         }
         if(e.rememeCount!==newRememes.length){
           e.rememeCount = newRememes.length
@@ -291,7 +341,7 @@ class Timeline extends React.Component {
   }
 
   // helper functions
-  async populateMeme(memeId, count, memeStorage, userStorage) {
+  async populateMeme(memeId, memeStorage, userStorage) {
     const tempMeme = await memeStorage.methods.memes(memeId).call()
     const username = await userStorage.methods.users(tempMeme.author).call()
         .then(e => fromBytes(e.name))
@@ -299,6 +349,7 @@ class Timeline extends React.Component {
     const address = await userStorage.methods.users(tempMeme.author).call()
         .then(e => fromBytes(e.userAddr))
         .then(e => e.toString())
+    const likers = await memeStorage.methods.getLikers(memeId).call()
     return {
       memeId: await memeId,
       username: await username,
@@ -306,8 +357,8 @@ class Timeline extends React.Component {
       text: await tempMeme.text,
       time: new Date(tempMeme.time * 1000).toLocaleString(),
       boosts: await tempMeme.boosts,
-      likes: await memeStorage.methods.getLikeCount(memeId).call(),
-      likers: await memeStorage.methods.getLikers(memeId).call(),
+      likes: await likers.length,
+      likers: await likers,
       rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
       rememes: await memeStorage.methods.getReposts(memeId).call(),
       quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
@@ -320,7 +371,8 @@ class Timeline extends React.Component {
       author: await tempMeme.author,
       isVisible: await tempMeme.isVisible,
       //renderOrder: 0,
-      alreadyRendered: false
+      alreadyRendered: false,
+      userHasLiked: await likers.includes(this.props.account)
     }
   }
 
@@ -330,15 +382,15 @@ class Timeline extends React.Component {
       //    memesToRender = this.state.memesToRender,
           totalMemesRendered = this.state.memesRendered,
           memeCount = this.state.memeCount
-    if(memeCount!==null) {
+    if(memeCount>0) {
       let meme
-      for(let i = 1; i <= totalMemesRendered+memesRendered; i++) {
-        meme = tempMemes[i-1]
+      for(let i = 0; i < totalMemesRendered+memesRendered; i++) {
+        meme = tempMemes[i]
         //add Meme component to temporary array
         if(meme.isVisible) {
           tempMemesHTML.unshift(
             <Meme
-              key={i}
+              key={i+1}
               memeId={meme.memeId}
               username={meme.username}
               address={meme.address}
@@ -369,16 +421,18 @@ class Timeline extends React.Component {
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userAccount={this.props.account}
+              userHasLiked={meme.userHasLiked}
             />
           )
         }
-        tempMemes[i-1].alreadyRendered = true
+        tempMemes[i].alreadyRendered = true
         //tempMemes[i-1].renderOrder = 0
       }
     }
     this.setState({
       memesHTML: tempMemesHTML,
-      memes: tempMemes
+      memes: tempMemes,
+      oldMemes: tempMemes
     })
     // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
     await this.compileRenderedMemes(memesRendered)
@@ -388,12 +442,12 @@ class Timeline extends React.Component {
           memes = this.state.memes,
         //  memesToRender = this.state.memesToRender,
           totalMemesRendered = this.state.memesRendered
-    for(let i = 1; i <= totalMemesRendered+memesRendered; i++) {
-      const meme = memes[i-1]
+    for(let i = 0; i < totalMemesRendered+memesRendered; i++) {
+      const meme = memes[i]
       if(meme.isVisible) {
         tempMemesHTML.unshift(
           <Meme
-            key={i}
+            key={i+1}
             memeId={meme.memeId}
             username={meme.username}
             address={meme.address}
@@ -420,51 +474,96 @@ class Timeline extends React.Component {
             interface={this.props.interface}
             memeStorage={this.props.memeStorage}
             userAccount={this.props.account}
+            userhasLiked={meme.userHasLiked}
           />
         )
       }
     }
+    const alreadyRendered = tempMemesHTML.slice(0, totalMemesRendered)
+    const newRender = tempMemesHTML.slice(totalMemesRendered)
     this.setState({
-      oldMemesHTML: tempMemesHTML,
+      oldMemesHTML: tempMemesHTML
     })
+  }
+  async compileMemesByTime() {
+    const memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+    return memeIds
+  }
+  async compileMemesByBoost(memeCount) {
+    const boostMap = [],
+          memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+    for(let i = 0; i < memeCount; i++) {
+      const meme = await this.state.memeStorage.methods.memes(memeIds[i]).call()
+      boostMap.push([meme.boosts, memeIds[i], meme.time])
+    }
+    boostMap.sort((a,b) => parseInt(a[0]) - parseInt(b[0]))
+
+    /*
+    const boosts = [],
+          noBoosts = []
+    boostMap.forEach(e => {
+      if(parseInt(e[0])>0) boosts.push(e[1])
+    })
+    boostMap.forEach(e => {
+      if(parseInt(e[0])===0) noBoosts.push(e[1])
+    })
+    const noBoostsSorted = noBoosts.sort((a,b) => parseInt(a[2])-parseInt(b[2]))
+    const memeIdsByBoost = noBoostsSorted.concat(boosts)
+    /*const memeIdsByBoost = []
+    boostMap.forEach(e => memeIdsByBoost.push(e[1]))
+    */
+    const memeIdsByBoost = []
+    boostMap.forEach(e => memeIdsByBoost.push(e[1]))
+/*
+    this.setState({
+      memeIdsByBoost
+    })
+    */
+    //console.log(boostMap)
+    return memeIdsByBoost
   }
   sortToStyle(style) {
     if(style==='time') {
       this.setState({
         memes: this.state.memes.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
       })
-    } else if(style=='boost') {
+      return
+    } else if(style==='boost') {
       this.setState({
-        memes: this.state.memes.sort((a,b) => a.boosts - b.boosts)
+        memes: this.state.memes.sort((a,b) =>
+          a.boosts - b.boosts)
       })
     }
   }
-
 
   render() {
     return(
       <div className="Timeline">
         { this.state.timelineLoading
-          ? this.state.memeCount===null
+          ? this.state.memeCount===null && !this.state.refreshing
             ? <div id="loader">
                 <p>Loading...</p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldMemesHTML}
-                  <p>Loading...</p>
-
+                  <p>Loading...<br/></p>
                 </div>
               : <div id="loader-memes">
                   <p>Loading...</p>
                   {this.state.oldMemesHTML}
                 </div>
-          : this.state.memeCount> 0
-            ? <div id="loaded">
-                {this.state.memesHTML}
-              </div>
+          : this.state.memeCount > 0
+            ? this.state.memesNotRendered===0
+              ? <div id="loaded">
+                  {this.state.memesHTML}
+                  <p>All memes loaded!<br/></p>
+                </div>
+              : <div id="loaded">
+                  {this.state.memesHTML}
+                </div>
             : <div id="loaded">
-                <p>No memes loaded yet!</p>
+                <p>No memes yet!</p>
               </div>
         }
       </div>

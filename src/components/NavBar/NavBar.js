@@ -15,7 +15,7 @@ class NavBar extends Component {
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
     this.handleHomeClick = this.handleHomeClick.bind(this)
-    //this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleProfileClick = this.handleProfileClick.bind(this)
   }
 
 
@@ -30,15 +30,13 @@ class NavBar extends Component {
   async handleHomeClick(e) {
     this.props.handleToTimeline(e)
     localStorage.setItem('focusPage', 'timeline')
-    localStorage.setItem('pageInfo', 'time')
+    localStorage.setItem('pageInfo', 'boost')
   }
-  /*
   async handleProfileClick(e) {
-    this.props.handleToProfile('navbar')
+    this.props.handleToProfile('user')
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('pageInfo', 'user')
+    //localStorage.setItem('pageInfo', 'user')
   }
-  */
   render() {
     return (
       <nav
