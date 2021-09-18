@@ -73,6 +73,7 @@ class Meme extends Component {
   handleButtonClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
     if(e.target.className==='reply') {
+      this.replyClick()
     } else if(e.target.className==='like') {
       this.likeClick()
     } else if(e.target.className==='rememe') {
@@ -134,6 +135,16 @@ class Meme extends Component {
     ])
     //localStorage.setItem('focusPage', 'profile')
     //localStorage.setItem('pageInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+  }
+  async replyClick() {
+    this.props.handleReply(
+      [ this.state.username,
+        this.state.address,
+        this.state.author,
+        this.state.text,
+        this.state.memeId
+      ]
+    )
   }
   async likeClick() {
     console.log('accessing account: ' + this.props.userAccount)

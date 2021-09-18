@@ -1,0 +1,135 @@
+.Reply div#background {
+  z-index: 8;
+  display:block;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #AABBBB;
+}
+.Reply div#container {
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  margin-top: -13.375rem;
+  margin-left: -13.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  display: flex;
+  background-color: #282c34;
+  opacity: 1;
+  flex-direction: column;
+}
+.Reply form#form {
+  position: relative;
+}
+.Reply form#form div#text-box {
+  position:relative;
+  border-bottom: 0.05rem solid #667777;
+  margin: 0.4rem 0.2rem 0.2rem 0;
+  width: 22rem;
+  min-height: 7.5rem;
+}
+
+.Reply section#head {
+  border-bottom: 0.05rem solid #667777;
+  width: 100%;
+}
+.Reply section#body {
+  display: flex;
+  flex-direction: row;
+  width: 25.75rem;
+  color: #CCDDCC;
+}
+.Reply section#body img#profile-pic {
+  transform: translateX(-0.3rem);
+  width: 3rem;
+  height: auto;
+  border-radius: 100%;
+  justify-content: center;
+  margin: 0 auto;
+}
+.Reply textarea#meme-text {
+  border: none;
+  outline: none;
+  position: absolute;
+  width: 22rem;
+  background: rgb(0,0,0,0);
+  caret-color: #667777;
+  box-shadow: none;
+  color: rgb(0,0,0,0);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  max-height: 30rem;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  resize: none;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:10;
+  overflow: visible;
+}
+.Reply div#text-box p#text-box {
+  position: absolute;
+  justify-content: flex-start;
+  border: none;
+  box-shadow: none;
+  color: #CCDDCC;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin:0;
+  padding: 0;
+  width: 22rem;
+  text-align: start;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:8;
+  max-height: 30rem;
+}
+.Reply p#text-box span {
+  margin: 0 auto 0 0;
+  color: #CCDDCC;
+  word-wrap: break-word;
+  white-space: break-spaces;
+}
+
+.Reply p#text-box span#plain {
+  color: #CCDDCC;
+}
+.Reply p#text-box span#at {
+  color: #00CC89;
+}
+.Reply p#text-box span#hash {
+  color: #00CC89;
+}
+
+.Reply textarea#meme-text::placeholder {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+}
+
+.Reply p#meme-button {
+  justify-content: center;
+  width: 4.5rem;
+  margin: 0.4rem 0.7rem 0.15rem auto;
+  font-size: 0.85rem;
+  font-weight: 800;
+  background-color: #334646;
+  color: #AABBAA;
+  padding: 0.35rem 0.4rem 0.4rem 0.4rem;
+  border-radius: 2rem;
+  transition: background-color 0.15s;
+}
+
+img#x.close {
+  padding: 0.3rem;
+  margin-right: 100%;
+  filter: brightness(20%) invert(1);
+  cursor: pointer;
+}

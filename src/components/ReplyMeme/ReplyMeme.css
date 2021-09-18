@@ -1,0 +1,143 @@
+div.ReplyMeme {
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto 0 0;
+  max-width: 100%;
+}
+.ReplyMeme div#meme-body {
+  display: flex;
+  min-width: inherit;
+  max-width: 100%;
+  flex-direction: column;
+  overflow-wrap: break-word;
+}
+.ReplyMeme div#meme-header {
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem 0.4rem 0.1rem 0;
+  align-items: flex-end;
+}
+.ReplyMeme div#meme-footer {
+  display: flex;
+  flex-direction: row;
+  margin: 0.2rem 10rem 0.2rem 0.4rem;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+.ReplyMeme img#profile-pic {
+}
+
+.ReplyMeme p#meme-text {
+  display: flex;
+  margin: 0 1.2rem 0 0rem;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #CCDDCC;
+  justify-content: flex-start;
+  border: none;
+  box-shadow: none;
+  text-align: start;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  word-break: break-all;
+  max-height: 30rem;
+}
+.ReplyMeme p#meme-text span {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin: 0;
+  word-wrap: break-word;
+  white-space: break-spaces;
+}
+
+.ReplyMeme p#meme-text span#plain {
+  color: #CCDDCC;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-spaces;
+  width: inherit;
+}
+.ReplyMeme p#meme-text a#at,
+.ReplyMeme p#meme-text a#hash {
+  margin: 0;
+  color: #00CC89;
+  text-decoration: none;
+}
+.ReplyMeme p#meme-text a#at:hover,
+.ReplyMeme p#meme-text a#hash:hover {
+  color: #00CC89;
+  text-decoration: underline;
+}
+
+.ReplyMeme a#username {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  color: #CCDDCC;
+  font-size: 0.9rem;
+  margin: 0 0.3rem 0 0;
+  text-decoration: none;
+}
+.ReplyMeme span {
+  font-family: 'Avenir', sans-serif;
+  font-size: 0.7rem;
+  margin: 0 0.3rem;
+  color: #667777;
+}
+.ReplyMeme div#meme-footer p span {
+  color: #FFFFFF;
+}
+.ReplyMeme div#meme-footer p {
+  margin: 0.15rem 2rem 0.15rem 0.15rem;
+  padding: 0.2rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  min-width: 2rem;
+  border-radius: 1rem;
+  position: relative;
+  filter: invert(0.4);
+}
+.ReplyMeme p span {
+  margin: 0 0.1rem 0 0.4rem;
+}
+.ReplyMeme p {
+  margin: auto auto 0 0;
+}
+.ReplyMeme p#replying {
+  margin: auto auto 0 0;
+}
+.ReplyMeme p span#replying{
+  height: auto;
+  margin: 0;
+}
+.ReplyMeme p span#parent {
+  height: auto;
+  color: #00CC89;
+  margin: 0;
+}
+.ReplyMeme div.vl {
+  border-left: 0.1rem solid #667777;
+  margin: 0 auto;
+  width: 0;
+  min-height: 1.5rem;
+  top: 0%;
+}
+.ReplyMeme div#parentProfilePic {
+  transform: translateX(-0.3rem);
+  margin: 0.4rem 0.4rem 0 0;
+}
+.ReplyMeme div#parentProfilePic div#profilePic {
+  margin: 0 auto;
+  height: 3rem;
+  justify-content: center;
+}
+.ReplyMeme div#parentProfilePic div#profilePic img#profile-pic.ProfilePic {
+  width: 3rem;
+  height: auto;
+  border-radius: 100%;
+  position: relative;
+  margin: 0 auto;
+  justify-content: center;
+}

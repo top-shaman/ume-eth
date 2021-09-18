@@ -6,6 +6,7 @@ import Main from '../Main/Main'
 import Enter from '../Enter/Enter'
 import CreateUser from '../CreateUser/CreateUser'
 import CreateMeme from '../CreateMeme/CreateMeme'
+import Reply from '../Reply/Reply'
 import NoWallet from '../NoWallet/NoWallet'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -30,22 +31,31 @@ class App extends React.Component {
       contractLoading: true,
       registered: false,
       entered: false,
-      creatingMeme: false
+      creatingMeme: false,
+      replying: false
     }
 
     this.handleEntered = this.handleEntered.bind(this)
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
-    this.handleExitMeme = this.handleExitMeme.bind(this)
+    this.handleReply = this.handleReply.bind(this)
+    this.handleExitCreate = this.handleExitCreate.bind(this)
+    this.handleExitReply = this.handleExitReply.bind(this)
   }
 
-  handleEntered(hasEntered) {
-    this.setState({ entered: hasEntered })
+  handleEntered(entered) {
+    this.setState({ entered })
   }
-  handleExitMeme(handleExitMeme) {
-    this.setState({ creatingMeme: handleExitMeme })
+  handleCreateMeme(creatingMeme) {
+    this.setState({ creatingMeme })
   }
-  handleCreateMeme(handleCreateMeme) {
-    this.setState({ creatingMeme: handleCreateMeme })
+  handleReply(replying) {
+    this.setState({ replying })
+  }
+  handleExitCreate(creatingMeme) {
+    this.setState({ creatingMeme })
+  }
+  handleExitReply(replying) {
+    this.setState({ replying })
   }
 
   async componentDidMount() {
@@ -202,13 +212,26 @@ class App extends React.Component {
         { this.state.account!==undefined
           ? this.state.registered
             ? <div className="App">
-                { this.state.creatingMeme
-                  ? <CreateMeme
-                      account={this.state.account}
-                      handleExitMeme={this.handleExitMeme}
-                      userStorage={this.state.userStorage}
-                      interface={this.state.interface}
-                    />
+                { this.state.creatingMeme || this.state.replying
+                  ? !this.state.replying
+                    ? <CreateMeme
+                        account={this.state.account}
+                        handleExitCreate={this.handleExitCreate}
+                        userStorage={this.state.userStorage}
+                        interface={this.state.interface}
+                      />
+                    : <Reply
+                        account={this.state.account}
+                        username={this.state.replying[0]}
+                        address={this.state.replying[1]}
+                        author={this.state.replying[2]}
+                        text={this.state.replying[3]}
+                        memeId={this.state.replying[4]}
+                        handleExitReply={this.handleExitReply}
+                        userStorage={this.state.userStorage}
+                        memeStorage={this.state.memeStorage}
+                        interface={this.state.interface}
+                      />
                   : ''
                 }
                 <Main
@@ -221,6 +244,7 @@ class App extends React.Component {
                   memeIdsByBoost={this.state.memeIdsByBoost}
                   contractLoading={this.state.contractLoading}
                   handleCreateMeme={this.handleCreateMeme}
+                  handleReply={this.handleReply}
                 />
               </div>
             : this.state.entered

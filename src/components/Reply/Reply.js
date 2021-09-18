@@ -1,18 +1,26 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import ReplyMeme from '../ReplyMeme/ReplyMeme'
 import { fadeIn, fadeOut, partialFadeIn, partialFadeOut, unBlur } from '../../resources/Libraries/Animation'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import './CreateMeme.css'
+import './Reply.css'
 import X from '../../resources/X-white.svg'
 import autosize from 'autosize'
 
-class CreateMeme extends React.Component {
+class Reply extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      creatingMeme: true,
+      replying: true,
+      account: this.props.account,
+      parentUsername: this.props.username,
+      parentAddress: this.props.address,
+      parentAuthor: this.props.author,
+      parentText: this.props.text,
+      memeId: this.props.memeId,
       userStorage: this.props.userStorage,
+      memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeText: '',
       visibleText: '',
@@ -27,17 +35,18 @@ class CreateMeme extends React.Component {
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
+    this.handleReply = this.handleReply.bind(this)
   }
 
   componentDidMount() {
-    const textBox = document.querySelector('.CreateMeme div#text-box')
+    const textBox = document.querySelector('.Reply div#text-box')
     const storage = localStorage.getItem('memeText')
     //this.textarea.style.height = textBox.clientHeight + 'px'
-    fadeIn('.CreateMeme div#container', 333)
-    partialFadeIn('.CreateMeme div#background', 100, 0.2)
+    fadeIn('.Reply div#container', 333)
+    partialFadeIn('.Reply div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
-      const buttonText = document.querySelector('.CreateMeme p#meme-button'),
-            memeButton = document.querySelector('.CreateMeme p#meme-button')
+      const buttonText = document.querySelector('.Reply p#meme-button'),
+            memeButton = document.querySelector('.Reply p#meme-button')
       this.setState({
         memeText: localStorage.getItem('memeText'),
         visibleText: localStorage.getItem('memeText'),
@@ -59,10 +68,10 @@ class CreateMeme extends React.Component {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
     const text = await e.target.value,
-          buttonText = document.querySelector('.CreateMeme p#meme-button'),
-          memeButton = document.querySelector('.CreateMeme p#meme-button'),
-          textBox = document.querySelector('.CreateMeme div#text-box'),
-          textarea = document.querySelector('.CreateMeme textarea#meme-text')
+          buttonText = document.querySelector('.Reply p#meme-button'),
+          memeButton = document.querySelector('.Reply p#meme-button'),
+          textBox = document.querySelector('.Reply div#text-box'),
+          textarea = document.querySelector('.Reply textarea#meme-text')
     textBox.style.height = textarea.clientHeight + 'px'
     // check text validity
     if(text.match(/\s/g)) {
@@ -92,7 +101,7 @@ class CreateMeme extends React.Component {
 
   }
   async handleMemeClick(e) {
-    const textarea = document.querySelector('.CreateMeme textarea#meme-text')
+    const textarea = document.querySelector('.Reply textarea#meme-text')
     if(this.state.validMeme) {
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -106,14 +115,17 @@ class CreateMeme extends React.Component {
   }
   async handleCloseClick(e) {
     localStorage.setItem('memeText', this.state.memeText)
-    fadeOut('.CreateMeme div#container', 500)
-    partialFadeOut('.CreateMeme div#background', 333, 0.2)
+    fadeOut('.Reply div#container', 500)
+    partialFadeOut('.Reply div#background', 333, 0.2)
     unBlur('.Main div#header', 500)
     unBlur('.Main div#body', 500)
     setTimeout(async () => {
-      await this.setState({ creatingMeme: false })
-      this.props.handleExitCreate(await this.state.creatingMeme)
+      await this.setState({ replying: false })
+      this.props.handleExitReply(await this.state.replying)
     }, 500)
+  }
+  handleReply(e) {
+    //console.log(e)
   }
 
   async formatText() {
@@ -130,7 +142,7 @@ class CreateMeme extends React.Component {
       combined.forEach(elem => {
         if(elem[2]==='plain')
           formatted.push(<span key={i} id="plain">{elem[1]}</span>)
-        else if(elem[2]==='at')
+       else if(elem[2]==='at')
           formatted.push(<span key={i} id="at">{elem[1]}</span>)
         else if(elem[2]==='hash')
           formatted.push(<span key={i} id="hash">{elem[1]}</span>)
@@ -164,7 +176,7 @@ class CreateMeme extends React.Component {
 
   render() {
     return(
-      <div className="CreateMeme" id="CreateMeme" >
+      <div className="Reply" id="Reply" >
         <div id="container">
           <section id="head">
             <img
@@ -175,11 +187,19 @@ class CreateMeme extends React.Component {
               onClick={this.handleCloseClick}
             />
           </section>
+          <ReplyMeme
+            username={this.state.parentUsername}
+            address={this.state.parentAddress}
+            author={this.state.parentAuthor}
+            text={this.state.parentText}
+            memeId={this.state.memeId}
+            memeStorage={this.state.memeStorage}
+          />
           <section id="body">
             <div id="profilePic">
               <ProfilePic
                 id="profilePic"
-                account={this.props.account}
+                account={this.state.account}
               />
             </div>
             <form id="form">
@@ -189,7 +209,7 @@ class CreateMeme extends React.Component {
                   id="meme-text"
                   type="text"
                   autoComplete="off"
-                  placeholder="What's the meme"
+                  placeholder="Meme your reply"
                   rows="5"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}
@@ -204,7 +224,7 @@ class CreateMeme extends React.Component {
                   id="meme-button"
                   onClick={this.handleMemeClick}
                 >
-                  Meme
+                  Reply
                 </p>
               </div>
             </form>
@@ -221,4 +241,4 @@ class CreateMeme extends React.Component {
 
 }
 
-export default CreateMeme
+export default Reply

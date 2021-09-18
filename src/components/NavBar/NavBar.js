@@ -22,7 +22,7 @@ class NavBar extends Component {
   async handleMemeClick(e) {
     e.preventDefault()
     await this.setState({ creatingMeme: true })
-    this.props.handleMeme(await this.state.creatingMeme)
+    this.props.handleCreateMeme(await this.state.creatingMeme)
   }
   async handleRefreshClick(e) {
     this.props.handleRefresh(e)

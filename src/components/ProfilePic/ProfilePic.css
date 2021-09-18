@@ -2,3 +2,6 @@ img#profilePic {
   width: inherit;
   margin: 0;
 }
+div#profilePic {
+  margin: 0;
+}
