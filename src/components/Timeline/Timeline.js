@@ -31,8 +31,11 @@ class Timeline extends React.Component {
     }
 
     this.handleToProfile = this.handleToProfile.bind(this)
+    this.handleToThread = this.handleToThread.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleOverMeme = this.handleOverMeme.bind(this)
+    this.handleOverButton = this.handleOverButton.bind(this)
   }
   async componentDidMount() {
     clearInterval(this.intervalTimeline)
@@ -66,12 +69,22 @@ class Timeline extends React.Component {
       this.props.handleToProfile(e)
     }
   }
+  handleToThread(e) {
+    if(!this.state.timelineLoading) {
+      this.props.handleToThread(e)
+    }
+  }
+
   handleRefresh(e) {
     e.preventDefault()
     setTimeout(() => this.refreshMemes(), 1000)
   }
   handleReply(e) {
     this.props.handleReply(e)
+  }
+  handleOverMeme(e) {
+  }
+  handleOverButton(e) {
   }
 
   // to be invoked upon page load
@@ -373,7 +386,7 @@ class Timeline extends React.Component {
       isVisible: await tempMeme.isVisible,
       //renderOrder: 0,
       alreadyRendered: false,
-      userHasLiked: await likers.includes(this.props.account)
+      userHasLiked: await likers.includes(this.props.account),
     }
   }
 
@@ -420,6 +433,9 @@ class Timeline extends React.Component {
               handleToProfile={this.handleToProfile}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
+              handleOverMeme={this.handleOverMeme}
+              handleOverButton={this.handleOverButton}
+              handleToThread={this.handleToThread}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userAccount={this.props.account}
@@ -474,6 +490,9 @@ class Timeline extends React.Component {
             handleToProfile={this.handleToProfile}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
+            handleOverMeme={this.handleOverMeme}
+            handleOverButton={this.handleOverButton}
+            handleToThread={this.handleToThread}
             interface={this.props.interface}
             memeStorage={this.props.memeStorage}
             userAccount={this.props.account}

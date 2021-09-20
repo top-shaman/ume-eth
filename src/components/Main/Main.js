@@ -3,6 +3,7 @@ import NavBar from '../NavBar/NavBar'
 import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
+import Thread from '../Thread/Thread'
 import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
 import './Main.css'
 import {fromBytes} from '../../resources/Libraries/Helpers'
@@ -18,9 +19,10 @@ class Main extends React.Component {
       interface: this.props.interface,
       memeCount: this.props.memeCount,
       userMemeCount: this.props.userMemeCount,
-      timelineFormat: 'time',
+      timelineFormat: 'boost',
       timelineLoading: false,
       profileLoading: false,
+      threadLoading: false,
       reload: false,
       focusPage: 'timeline',
       atBottom: false
@@ -28,6 +30,7 @@ class Main extends React.Component {
 
     this.timeline = React.createRef()
     this.profile = React.createRef()
+    this.thread = React.createRef()
 
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
@@ -36,6 +39,8 @@ class Main extends React.Component {
     this.handleToTimeline = this.handleToTimeline.bind(this)
     this.handleProfileLoad = this.handleProfileLoad.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
+    this.handleThreadLoad = this.handleThreadLoad.bind(this)
+    this.handleToThread = this.handleToThread.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
   }
 
@@ -46,10 +51,33 @@ class Main extends React.Component {
       //blurToFadeIn('div.Timeline', 2000)
       localStorage.setItem('hasLoaded', 'true')
     }
+    /*
+    if(localStorage.getItem('focusPage')==='profile') {
+      const profile = localStorage.getItem('pageInfo')
+      console.log(profile)
+      if(profile==='user') {
+        this.setState({
+          profileUsername: await this.props.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
+          profileAddress: await this.props.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
+          profileAccount: this.props.account,
+          focusPage: 'profile'
+        })
+      } else if(profile.split(',').length===3) {
+        this.setState({
+          profileUsername: profile.split(',')[0],
+          profileAddress: profile.split(',')[1],
+          profileAccount: profile.split(',')[2],
+          focusPage: 'profile'
+        })
+      }
+    }
+    */
     this.setState({
       profileUsername: await this.props.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
       profileAddress: await this.props.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
-      profileAccount: this.props.account,
+      profileAccount: this.props.account
+    })
+    this.setState({
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
@@ -90,23 +118,30 @@ class Main extends React.Component {
   }
   async handleRefresh(e) {
     e.preventDefault()
-    if(this.state.focusPage==='timeline' && !this.state.timelineLoading) {
+    if(this.state.focusPage==='timeline' && !this.state.timelineLoading && !this.state.threadLoading) {
       await this.timeline.loadNewMemes()
       await this.timeline.refreshMemes()
-    } else if(this.state.focusPage==='profile' && !this.state.profileLoading) {
-      await this.profile.loadProfile()
+    } else if(this.state.focusPage==='profile' && !this.state.profileLoading && !this.state.threadLoading) {
+      await this.profile.loadNewMemes()
+      await this.profile.refreshMemes()
+    } else if(this.state.focusPage==='thread' && !this.state.timelineLoading && !this.state.profileLoading) {
+      await this.thread.loadNewMemes()
+      await this.thread.refreshMemes()
     }
+
   }
   handleTimelineLoad(timelineLoading) {
-    this.setState({ timelineLoading: timelineLoading })
+    this.setState({ timelineLoading })
     console.log('timeline loading: ' + timelineLoading)
   }
   async handleToTimeline(e) {
     e.preventDefault()
+    console.log(localStorage.getItem('focusPage'))
+    console.log(localStorage.getItem('timelineSort'))
     if(!this.state.timelineLoading) {
       this.setState({
         focusPage: 'timeline',
-        timelineFormat: localStorage.getItem('pageInfo')
+        timelineFormat: localStorage.getItem('timelineSort')
       })
       console.log('timeline loading: ' + this.state.timelineLoading)
     }
@@ -114,12 +149,11 @@ class Main extends React.Component {
 
   handleProfileLoad(profileLoading) {
     this.setState({
-      profileLoading: profileLoading
+      profileLoading
     })
     console.log('profile loading: ' + profileLoading)
   }
   async handleToProfile(e) {
-    console.log('CLICK')
     if(!this.state.timelineLoading) {
       if(e!=='user') {
         this.setState({
@@ -132,7 +166,7 @@ class Main extends React.Component {
           this.setState({
             profileUsername: await this.state.userStorage.methods.getName(this.state.account).call(),
             profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call(),
-            profileAccount: this.state.account,
+            profileAccount: this.props.account,
             profileLoading: true,
             focusPage: null,
           })
@@ -142,6 +176,39 @@ class Main extends React.Component {
         focusPage: 'profile',
       })
     }
+  }
+  handleThreadLoad(threadLoading) {
+    this.setState({
+      threadLoading
+    })
+    console.log('thread loading: ' + threadLoading)
+  }
+  handleToThread(e) {
+    this.setState({
+      memeId: e[0],
+      memeUsername: e[1],
+      memeAddress: e[2],
+      text: e[3],
+      time: e[4],
+      responses: e[5],
+      likes: e[6],
+      likers: e[7],
+      rememeCount: e[8],
+      rememes: e[9],
+      quoteCount: e[10],
+      quoteMemes: e[11],
+      repostId: e[12],
+      parentId: e[13],
+      originId: e[14],
+      author: e[15],
+      isVisible: e[16],
+      visibleText: e[17],
+      userHasLiked: e[18],
+      interface: this.state.interface,
+      memeStorage: this.state.memeStorage,
+      userAccount: this.state.account,
+      focusPage: 'thread'
+    })
   }
 
   handleScroll(e) {
@@ -190,6 +257,7 @@ class Main extends React.Component {
                 handleLoading={this.handleTimelineLoad}
                 contractLoading={this.props.contractLoading}
                 handleToProfile={this.handleToProfile}
+                handleToThread={this.handleToThread}
                 handleReply={this.handleReply}
                 atBottom={this.state.atBottom}
                 ref={Ref => this.timeline=Ref}
@@ -204,7 +272,8 @@ class Main extends React.Component {
                   profileLoading={this.state.profileLoading}
                   handleLoading={this.handleProfileLoad}
                   contractLoading={this.props.contractLoading}
-                  handleToProfile={this.handleToProfileProfile}
+                  handleToProfile={this.handleToProfile}
+                  handleToThread={this.handleToThread}
                   handleReply={this.handleReply}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
@@ -212,7 +281,45 @@ class Main extends React.Component {
                   atBottom={this.state.atBottom}
                   ref={Ref => this.profile=Ref}
                 />
-                : ''
+                : this.state.focusPage==='thread'
+                  ? <Thread
+                      account={this.state.account}
+                      userStorage={this.state.userStorage}
+                      memeStorage={this.state.memeStorage}
+                      userMemeCount={this.state.userMemeCount}
+                      interface={this.state.interface}
+                      profileLoading={this.state.profileLoading}
+                      handleLoading={this.handleProfileLoad}
+                      contractLoading={this.props.contractLoading}
+                      handleToProfile={this.handleToProfile}
+                      handleToThread={this.handleToThread}
+                      handleReply={this.handleReply}
+                      atBottom={this.state.atBottom}
+                      ref={Ref => this.thread=Ref}
+                      memeId={this.state.memeId}
+                      memeUsername={this.state.memeUsername}
+                      memeAddress={this.state.memeAddress}
+                      text={this.state.text}
+                      time={this.state.time}
+                      responses={this.state.responses}
+                      likes={this.state.likes}
+                      likers={this.state.likers}
+                      rememeCount={this.state.rememeCount}
+                      rememes={this.state.rememes}
+                      quoteCount={this.state.quoteCount}
+                      quoteMemes={this.state.quoteMemes}
+                      repostId={this.state.repostId}
+                      parentId={this.state.parentId}
+                      originId={this.state.originId}
+                      author={this.state.author}
+                      isVisible={this.state.isVisible}
+                      visibleText={this.state.visibleText}
+                      userHasLiked={this.state.userHasLiked}
+                      interface={this.state.interface}
+                      memeStorage={this.state.memeStorage}
+                      userAccount={this.state.account}
+                    />
+                  : ''
           }
         </div>
       </div>

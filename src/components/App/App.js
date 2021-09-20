@@ -227,6 +227,7 @@ class App extends React.Component {
                         author={this.state.replying[2]}
                         text={this.state.replying[3]}
                         memeId={this.state.replying[4]}
+                        parentId={this.state.replying[5]}
                         handleExitReply={this.handleExitReply}
                         userStorage={this.state.userStorage}
                         memeStorage={this.state.memeStorage}

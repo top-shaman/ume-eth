@@ -28,14 +28,14 @@ class NavBar extends Component {
     this.props.handleRefresh(e)
   }
   async handleHomeClick(e) {
-    this.props.handleToTimeline(e)
     localStorage.setItem('focusPage', 'timeline')
-    localStorage.setItem('pageInfo', 'boost')
+    localStorage.setItem('timelineSort', 'boost')
+    this.props.handleToTimeline(e)
   }
   async handleProfileClick(e) {
-    this.props.handleToProfile('user')
     localStorage.setItem('focusPage', 'profile')
-    //localStorage.setItem('pageInfo', 'user')
+    localStorage.setItem('userInfo', 'user')
+    this.props.handleToProfile('user')
   }
   render() {
     return (

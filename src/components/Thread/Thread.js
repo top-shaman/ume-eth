@@ -1,54 +1,69 @@
 import React from 'react'
 import Meme from "../Meme/Meme"
 import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
-import "./Profile.css"
+import "./Thread.css"
 
 
-class Profile extends React.Component {
+class Thread extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      userAccount: this.props.account,
-      profileAccount: this.props.profileAccount,
-      username: this.props.profileUsername,
-      address: this.props.profileAddress,
+      account: '',
       ume: null,
       memes: [],
-      memeIds: [],
       oldMemes: [],
       oldMemesHTML: [],
       memesHTML: [],
+      memeId: this.props.memeId,
+      memeUsername: this.props.memeUsername,
+      memeAddress: this.props.memeAddress,
+      text: this.props.text,
+      time: this.props.time,
+      responses: this.props.responses,
+      likes: this.props.likes,
+      likers: this.props.likers,
+      rememeCount: this.props.rememeCount,
+      rememes: this.props.rememes,
+      quoteCount: this.props.quoteCount,
+      quoteMemes: this.props.quoteMemes,
+      repostId: this.props.repostId,
+      parentId: this.props.parentId,
+      originId: this.props.originId,
+      author: this.props.author,
+      isVisible: this.props.isVisible,
+      visibleText: this.props.visibleText,
+      userHasLiked: this.props.userHasLiked,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
-      userStorage: this.props.userStorage,
-      userMemeCount: null,
+      userAccount: this.props.account,
+      focusPage: 'thread',
+      memeCount: null,
       memesToRender: 50,
       memesNotRendered: null,
-      memesRendered: 0,
-      profileLoading: false,
+      memesRendered: null,
+      threadLoading: false,
+      contractLoading: this.props.contractLoading,
+      loadingBottom: false,
       refreshing: false,
       allMemesLoaded: false,
       firstLoad: true,
-      sortStyle: 'time'
+      sortStyle: 'boost'
     }
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
+    this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleOverButton = this.handleOverButton.bind(this)
   }
   async componentDidMount() {
-    console.log(this.state.userAccount)
-    console.log(this.state.profileAccount)
-    console.log(this.state.address)
-    console.log(this.state.username)
-    clearInterval(this.intervalProfile)
+    clearInterval(this.intervalThread)
     if(this.state.firstLoad) {
-      await this.loadProfile()
-      this.intervalProfile = setInterval(async () => {
+      await this.loadThread()
+      this.intervalThread = setInterval(async () => {
         //this.setState({ firstLoad: false })
-        if(!this.state.firstLoad && !this.state.loadingBottom) {
+        if(!this.state.firstLoad && !this.state.loadingBottom){
           await this.loadNewMemes()
           await this.refreshMemes()
         }
@@ -65,17 +80,17 @@ class Profile extends React.Component {
       }, 200)
     }
   }
-  async componentWillUnmount() {
-    clearInterval(this.intervalProfile)
+  componentWillUnmount() {
+    clearInterval(this.intervalThread)
     this.mounted = false
   }
   handleToProfile(e) {
-    if(!this.state.profileLoading) {
+    if(!this.state.threadLoading) {
       this.props.handleToProfile(e)
     }
   }
   handleToThread(e) {
-    if(!this.state.profileLoading) {
+    if(!this.state.threadLoading) {
       this.props.handleToThread(e)
     }
   }
@@ -91,15 +106,15 @@ class Profile extends React.Component {
   handleOverButton(e) {
   }
 
-  async loadProfile() {
-    console.log('profile: Try Load Profile')
+  // to be invoked upon page load
+  async loadThread() {
+    console.log('thread: Try Load Thread')
     if(this.state.firstLoad) {
-      this.setState({ profileLoading: true })
-      console.log('load profile ' + new Date().toTimeString())
+      this.setState({ threadLoading: true })
+      console.log('load thread ' + new Date().toTimeString())
 
+      // compile all meme id's
       let memeIds
-
-      // compile memes
       if(this.state.sortStyle==='time') {
         memeIds = await this.compileMemesByTime()
       } else if(this.state.sortStyle==='boost') {
@@ -108,75 +123,82 @@ class Profile extends React.Component {
 
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
-            userMemeCount = await memeIds.length,
+            memeCount = memeIds.length,
             newMemes = []
-      let memesToRender = await this.state.memesToRender,
-          memesNotRendered = userMemeCount - memesToRender,
+      let memesToRender = this.state.memesToRender,
+          memesNotRendered = memeCount - memesToRender,
           memesRendered = 0,
           memesInQueue = 0
 
-      // determine memes to queue
-      if(userMemeCount>memesToRender) {
-        memesNotRendered = userMemeCount - memesToRender
-      } else if(userMemeCount<=memesToRender) {
-        memesToRender = userMemeCount
+      // set queue data to safe values
+      if(memeCount>memesToRender) {
+        memesNotRendered = memeCount - memesToRender
+      } else if(memeCount<=memesToRender) {
+        memesToRender = memeCount
         memesNotRendered = 0
       }
 
       if(this.state.firstLoad) {
         this.setState({
-          userMemeCount,
+          memeCount,
           memesNotRendered,
           memeIds
         })
-        // compile & populate queued Memes
         for(let i = 0; i < memesToRender; i++) {
           const memeId = memeIds[memesNotRendered + i],
                 meme = await this.populateMeme(memeId, memeStorage, userStorage)
           newMemes.push(meme)
           memesInQueue++
         }
+
+        //set new memes to state, sort to current sort style
+        this.setState({ memes: newMemes })
+        if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
+
         this.setState({
-          memes: newMemes,
           memesHTML: this.state.oldMemesHTML
         })
-        await this.renderProfile(memesInQueue).catch(e => console.error(e))
+        // render memes to HTML & store in oldMemesHTML for refresh
+        await this.renderThread(memesInQueue).catch(e => console.error(e))
         memesRendered += memesInQueue
         //console.log('first load: ' + this.state.firstLoad)
         this.setState({
           memesNotRendered,
           memesRendered,
-          profileLoading: false,
+          threadLoading: false,
           firstLoad: false
         })
         if(memesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
-        //console.log('total memes: ' + userMemeCount)
+        //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.profileLoading)
+        await this.props.handleLoading(this.state.threadLoading)
       }
       else {
         this.setState({
-          profileLoading: false,
+          threadLoading: false,
         })
       }
     }
   }
+
+  // Thread by Time sort
+
   //loads new memes above rendered section
   async loadNewMemes() {
-    console.log('timeline: Try Loading New Memes')
+    console.log('thread: Try Loading New Memes')
     if(!this.state.firstLoad && !this.state.loadingBottom && !this.state.refreshing) {
       console.log('loading new memes' + new Date().toTimeString())
       // compile all memes, including new memes
       const memeIds = await this.compileMemesByTime(),
-            userMemeCount = await memeIds.length,
-            countDifference =  await userMemeCount - this.state.memeCount
+            memeCount = await memeIds.length,
+            countDifference =  await memeCount - this.state.memeCount
       // see if there are any new memes, i.e. if countDifference greater than 0
       if(countDifference>0) {
         //begin loading if conditional met
-        this.setState({ timelineLoading: true })
+        this.setState({ threadLoading: true })
         const userStorage = await this.props.userStorage,
               memeStorage = await this.props.memeStorage,
               uInterface = await this.props.interface
@@ -189,12 +211,12 @@ class Profile extends React.Component {
         // add new memes to total of memes not yet rendered
         memesNotRendered += countDifference
         this.setState({
-          userMemeCount,
+          memeCount,
           memeIds
         })
         // populate new memes
         for(let i = 0; i < countDifference; i++) {
-          const memeId = memeIds[userMemeCount - countDifference + i]
+          const memeId = memeIds[memeCount - countDifference + i]
           //console.log('meme Id: ' + memeId)
           const meme = await this.populateMeme(memeId, memeStorage, userStorage)
           newMemes.push(meme)
@@ -208,7 +230,7 @@ class Profile extends React.Component {
           memesHTML: this.state.oldMemesHTML
         })
         // render new HTML
-        await this.renderProfile(memesInQueue).catch(e => console.error(e))
+        await this.renderThread(memesInQueue).catch(e => console.error(e))
         // update queue values
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
@@ -218,24 +240,24 @@ class Profile extends React.Component {
             memeIds: memeIds,
             memesNotRendered,
             memesRendered,
-            timelineLoading: false
+            threadLoading: false
           })
         }, 200)
-        //console.log('total memes: ' + userMemeCount)
+        //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.timelineLoading)
+        await this.props.handleLoading(this.state.threadLoading)
       }
       else {
         this.setState({
-          timelineLoading: false,
+          threadLoading: false,
         })
       }
     }
   }
-  // loads old memes below timeline section
+  // loads old memes below thread section
   async loadOldMemes() {
-    console.log('timeline: Try Load Old Memes')
+    console.log('thread: Try Load Old Memes')
     if(!this.state.firstLoad && this.props.atBottom && !this.state.loadingBottom && !this.state.refreshing) {
       this.setState({ loadingBottom: true })
       console.log('load old memes ' + new Date().toTimeString())
@@ -243,7 +265,7 @@ class Profile extends React.Component {
             memeStorage = await this.props.memeStorage,
             uInterface = await this.props.interface,
             memeIds = await this.state.memeIds,
-            userMemeCount = await memeIds.length,
+            memeCount = await memeIds.length,
             newMemes = []
       let memesToRender = await this.state.memesToRender,
           memesNotRendered = await this.state.memesNotRendered,
@@ -260,8 +282,8 @@ class Profile extends React.Component {
 
       if(memesToRender!==0) {
         this.setState({
-          timelineLoading: true,
-          userMemeCount
+          threadLoading: true,
+          memeCount
         })
         for(let i = 0; i < memesToRender; i++) {
           const memeId = memeIds[memesNotRendered-memesToRender + i],
@@ -278,39 +300,41 @@ class Profile extends React.Component {
         this.setState({
           memesHTML: this.state.oldMemesHTML
         })
-        await this.renderProfile(memesInQueue).catch(e => console.error(e))
+        await this.renderThread(memesInQueue).catch(e => console.error(e))
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
         this.setState({
           memesNotRendered,
           memesRendered,
-          timelineLoading: false,
+          threadLoading: false,
           loadingBottom: false
         })
         if(memesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
-        //console.log('total memes: ' + userMemeCount)
+        //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.timelineLoading)
+        await this.props.handleLoading(this.state.threadLoading)
       }
       else {
         this.setState({
-          timelineLoading: false,
+          threadLoading: false,
           loadingBottom: false
         })
       }
     }
   }
   async refreshMemes() {
-    if(!this.state.profileLoading && !this.state.loadingBottom&& !this.state.refreshing) {
+    console.log('thread: Try Refresh Memes')
+    if(!this.state.threadLoading && !this.state.loadingBottom && !this.state.refreshing) {
     console.log('refreshing memes ' + new Date().toTimeString())
+      let loadedMemes = this.state.memes
       this.setState({
-        profileLoading: true,
+        threadLoading: true,
         refreshing: true
       })
-      let loadedMemes = this.state.memes
+
       loadedMemes.forEach(async e => {
         const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
         const newLikers = await this.props.memeStorage.methods.getLikers(e.memeId).call()
@@ -341,9 +365,9 @@ class Profile extends React.Component {
 
       this.sortToStyle(this.state.sortStyle)
       this.setState({ memesHTML: this.state.oldMemesHTML })
-      await this.renderProfile(0).catch(e => console.error(e))
+      await this.renderThread(0).catch(e => console.error(e))
       this.setState({
-        profileLoading: false,
+        threadLoading: false,
         refreshing: false
       })
     }
@@ -366,8 +390,8 @@ class Profile extends React.Component {
       text: await tempMeme.text,
       time: new Date(tempMeme.time * 1000).toLocaleString(),
       boosts: await tempMeme.boosts,
-      likes: await memeStorage.methods.getLikeCount(memeId).call(),
-      likers: likers,
+      likes: await likers.length,
+      likers: await likers,
       rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
       rememes: await memeStorage.methods.getReposts(memeId).call(),
       quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
@@ -381,19 +405,19 @@ class Profile extends React.Component {
       isVisible: await tempMeme.isVisible,
       //renderOrder: 0,
       alreadyRendered: false,
-      userHasLiked: await likers.includes(this.props.account)
+      userHasLiked: await likers.includes(this.props.account),
     }
   }
 
-  async renderProfile(memesRendered) {
+  async renderThread(memesInQueue) {
     const tempMemesHTML = [],
           tempMemes = this.state.memes,
       //    memesToRender = this.state.memesToRender,
-          totalMemesRendered = this.state.memesRendered,
-          userMemeCount = this.state.userMemeCount
-    if(userMemeCount>0) {
+          memesRendered = this.state.memesRendered,
+          memeCount = this.state.memeCount
+    if(memeCount>0) {
       let meme
-      for(let i = 0; i < totalMemesRendered+memesRendered; i++) {
+      for(let i = 0; i < memesRendered+memesInQueue; i++) {
         meme = tempMemes[i]
         //add Meme component to temporary array
         if(meme.isVisible) {
@@ -426,11 +450,11 @@ class Profile extends React.Component {
                   : false
               }
               handleToProfile={this.handleToProfile}
+              handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
-              handleToThread={this.handleToThread}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userAccount={this.props.account}
@@ -445,21 +469,22 @@ class Profile extends React.Component {
     this.setState({
       memesHTML: tempMemesHTML,
       memes: tempMemes
+//      oldMemes: tempMemes
     })
     // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
-    await this.compileRenderedMemes(memesRendered)
+    await this.compileRenderedMemes(memesInQueue)
   }
-  async compileRenderedMemes(memesRendered) {
+  async compileRenderedMemes(memesInQueue) {
     const tempMemesHTML = [],
           memes = this.state.memes,
         //  memesToRender = this.state.memesToRender,
-          totalMemesRendered = this.state.memesRendered
-    for(let i = 0; i < totalMemesRendered+memesRendered; i++) {
+          memesRendered = this.state.memesRendered
+    for(let i = 0; i < memesRendered+memesInQueue; i++) {
       const meme = memes[i]
       if(meme.isVisible) {
         tempMemesHTML.unshift(
           <Meme
-            key={i}
+            key={i+1}
             memeId={meme.memeId}
             username={meme.username}
             address={meme.address}
@@ -482,40 +507,63 @@ class Profile extends React.Component {
       //      renderOrder={meme.renderOrder}
             alreadyRendered={true}
             handleToProfile={this.handleToProfile}
+            handleToThread={this.handleToThread}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
             handleOverMeme={this.handleOverMeme}
             handleOverButton={this.handleOverButton}
-            handleToThread={this.handleToThread}
             interface={this.props.interface}
             memeStorage={this.props.memeStorage}
             userAccount={this.props.account}
+            userhasLiked={meme.userHasLiked}
           />
         )
       }
     }
+    /*
+    const alreadyRendered = tempMemesHTML.slice(0, memesRendered)
+    const newRender = tempMemesHTML.slice(memesRendered)
+    */
     this.setState({
       oldMemesHTML: tempMemesHTML
     })
   }
 
   async compileMemesByTime() {
-    const memeIds = [...await this.state.userStorage.methods.getPosts(this.state.profileAccount).call()]
+    const memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
     return memeIds
   }
   async compileMemesByBoost() {
     const boostMap = [],
-          memeIds = [...await this.state.userStorage.methods.getPosts(this.state.profileAccount).call()]
+          memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
     for(let i = 0; i < memeIds.length; i++) {
-      boostMap.push([await this.state.memeStorage.methods.getBoost(memeIds[i]).call(), memeIds[i]])
+      const meme = await this.state.memeStorage.methods.memes(memeIds[i]).call()
+      boostMap.push([meme.boosts, memeIds[i], meme.time])
     }
     boostMap.sort((a,b) => parseInt(a[0]) - parseInt(b[0]))
+
+    /*
+    const boosts = [],
+          noBoosts = []
+    boostMap.forEach(e => {
+      if(parseInt(e[0])>0) boosts.push(e[1])
+    })
+    boostMap.forEach(e => {
+      if(parseInt(e[0])===0) noBoosts.push(e[1])
+    })
+    const noBoostsSorted = noBoosts.sort((a,b) => parseInt(a[2])-parseInt(b[2]))
+    const memeIdsByBoost = noBoostsSorted.concat(boosts)
+    /*const memeIdsByBoost = []
+    boostMap.forEach(e => memeIdsByBoost.push(e[1]))
+    */
     const memeIdsByBoost = []
     boostMap.forEach(e => memeIdsByBoost.push(e[1]))
-
+/*
     this.setState({
       memeIdsByBoost
     })
+    */
+    //console.log(boostMap)
     return memeIdsByBoost
   }
   sortToStyle(style) {
@@ -523,17 +571,19 @@ class Profile extends React.Component {
       this.setState({
         memes: this.state.memes.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
       })
-    } else if(style=='boost') {
+    } else if(style==='boost') {
       this.setState({
-        memes: this.state.memes.sort((a,b) => a.boosts - b.boosts)
+        memes: this.state.memes.sort((a,b) =>
+          a.boosts - b.boosts)
       })
     }
   }
+
   render() {
     return(
-      <div className="Profile">
-        { this.state.profileLoading
-          ? this.state.userMemeCount===null && !this.state.refreshing
+      <div className="Thread">
+        { this.state.threadLoading
+          ? this.state.memeCount===null && !this.state.refreshing
             ? <div id="loader">
                 <p>Loading...</p>
               </div>
@@ -546,7 +596,7 @@ class Profile extends React.Component {
                   <p>Loading...</p>
                   {this.state.oldMemesHTML}
                 </div>
-          : this.state.userMemeCount> 0
+          : this.state.memeCount > 0
             ? this.state.allMemesLoaded
               ? <div id="loaded">
                   {this.state.memesHTML}
@@ -564,4 +614,4 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile
+export default Thread

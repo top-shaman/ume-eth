@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bobble, clickBobble, filterOut } from '../../resources/Libraries/Animation'
+import { fadeIn, zipUp, bobble, clickBobble, filterIn, filterOut, bgColorChange } from '../../resources/Libraries/Animation'
 import "./Meme.css"
 
 import Reply from '../../resources/reply.svg'
@@ -39,18 +39,26 @@ class Meme extends Component {
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
       userAccount: this.props.userAccount,
-      userHasLiked: this.props.userHasLiked
+      userHasLiked: this.props.userHasLiked,
     }
     this.div = React.createRef()
+    this.reply = React.createRef()
+    this.like = React.createRef()
+    this.rememe = React.createRef()
+    this.upvote = React.createRef()
+    this.downvote= React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
-    this.handleMouseOver = this.handleMouseOver.bind(this)
-    this.handleMouseLeave = this.handleMouseLeave.bind(this)
+    this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
+    this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleMemeClick = this.handleMemeClick.bind(this)
+    this.handleOverMeme = this.handleOverMeme.bind(this)
+    this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
-    if(this.state.alreadyRendered===false) {
+    if(!this.state.alreadyRendered) {
       //this.div.style.zIndex = 0
       this.div.style.opacity = 0
       setTimeout(() => {
@@ -58,7 +66,7 @@ class Meme extends Component {
         zipUp('div#\\3' + this.state.memeId + ' ', 600)
       }, 0 )
       //this.setState({ alreadyRendered: true })
-    } else if(this.state.alreadyRendered===true) {
+    } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
     this.mounted = true
@@ -74,6 +82,10 @@ class Meme extends Component {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
     if(e.target.className==='reply') {
       this.replyClick()
+      console.log('memeId: ' + this.state.memeId)
+      console.log('parentId: ' + this.state.parentId)
+      console.log('originId: ' + this.state.originId)
+
     } else if(e.target.className==='like') {
       this.likeClick()
     } else if(e.target.className==='rememe') {
@@ -82,15 +94,48 @@ class Meme extends Component {
     }
     this.props.handleRefresh(e)
   }
-  handleMouseOver(e) {
-    if(e.target.className==='like') {
-      if(e.target.id==='like-button-liked') {
-        let elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
+  handleButtonMouseOver(e) {
+    let brightnessEnd, hue, elementName,
+        brightnessStart = 0.7
+    if(e.target.className==='reply' &&
+      this.reply.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg)') {
+      brightnessEnd = 0.43
+      hue = 85
+      elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
+    } else if(e.target.className==='like') {
+      if(e.target.id==='like-button' &&
+        this.like.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)') {
+        brightnessEnd = 0.4
+        hue = 285
+        elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
+        filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
+      } else if(e.target.id==='like-button-liked') {
+        elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
         bobble(elementName, 500)
       }
+    } else if(e.target.className==='rememe' &&
+              this.rememe.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(140deg)') {
+      brightnessEnd = 0.4
+      hue = 140
+      elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
+      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
+    } else if(e.target.className==='upvote' &&
+              this.upvote.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg)') {
+      brightnessEnd = 0.43
+      hue = 310
+      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
+      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
+    } else if(e.target.className==='downvote' &&
+              this.downvote.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg)') {
+      brightnessEnd = 0.43
+      hue = 180
+      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
+      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
+    this.props.handleOverButton(this.div.style.filter)
   }
-  handleMouseLeave(e) {
+  handleButtonMouseLeave(e) {
     let brightnessStart, hue, elementName,
         brightnessEnd = 0.6
     if(e.target.className==='reply') {
@@ -99,7 +144,7 @@ class Meme extends Component {
       elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
       filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
     } else if(e.target.className==='like') {
-      if(e.target.id==='like-button') {
+      if(e.target.id==='like-button' || e.target.id==='like' || e.target.id==='like-count') {
         brightnessStart = 0.4
         hue = 285
         elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
@@ -133,16 +178,58 @@ class Meme extends Component {
       this.state.address,
       this.state.author
     ])
-    //localStorage.setItem('focusPage', 'profile')
-    //localStorage.setItem('pageInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    localStorage.setItem('focusPage', 'profile')
+    localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
   }
+  handleMemeClick(e) {
+    e.preventDefault()
+    this.props.handleToThread([
+      this.state.memeId,
+      this.state.username,
+      this.state.address,
+      this.state.text,
+      this.state.time,
+      this.state.responses,
+      this.state.likes,
+      this.state.likers,
+      this.state.rememeCount,
+      this.state.rememes,
+      this.state.quoteCount,
+      this.state.quoteMemes,
+      this.state.repostId,
+      this.state.parentId,
+      this.state.originId,
+      this.state.author,
+      this.state.isVisible,
+      this.state.visibleText,
+      this.state.userHasLiked
+    ])
+  }
+
+  handleOverMeme(e) {
+    e.preventDefault()
+    const element = 'div#\\3' + this.state.memeId
+    if(this.div.style.backgroundColor!=='#313131') {
+      bgColorChange(element, '1D1F22', '313131',  500)
+    } else if(this.div.style.backgroundColor==='#313131') {
+      document.querySelector(element).style.backgroundColor = '#313131'
+    }
+    this.props.handleOverMeme(this.div.style.backgroundColor)
+  }
+  handleLeaveMeme(e) {
+    e.preventDefault()
+    const elementName = 'div#\\3' + this.state.memeId
+    bgColorChange(elementName, '313131', '1D1F22',  500)
+  }
+
   async replyClick() {
     this.props.handleReply(
       [ this.state.username,
         this.state.address,
         this.state.author,
         this.state.text,
-        this.state.memeId
+        this.state.memeId,
+        this.state.parentId
       ]
     )
   }
@@ -197,14 +284,23 @@ class Meme extends Component {
   render() {
     const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
     return(
-      <div className="Meme" id={this.state.memeId} ref={Ref => this.div=Ref}>
-        <a
-          id="profilePic"
-          href={`/${this.state.address.slice(1)}`}
-          onClick={this.handleProfileClick}
-        >
-          <ProfilePic account={this.state.author} id="Meme"/>
-        </a>
+      <div
+        className="Meme"
+        id={this.state.memeId}
+        ref={Ref => this.div=Ref}
+        onClick={this.handleMemeClick}
+        onMouseEnter={this.handleOverMeme}
+        onMouseLeave={this.handleLeaveMeme}
+      >
+        <section id="profilePic">
+          <a
+            id="profilePic"
+            href={`/${this.state.address.slice(1)}`}
+            onClick={this.handleProfileClick}
+          >
+            <ProfilePic account={this.state.author} id="Meme"/>
+          </a>
+        </section>
         <div id="meme-body">
           <div id="meme-header">
             <a
@@ -227,8 +323,9 @@ class Meme extends Component {
               className="reply"
               id="reply-button"
               onClick={this.handleButtonClick}
-              onMouseOver={this.handleMouseOver}
-              onMouseLeave={this.handleMouseLeave}
+              onMouseEnter={this.handleButtonMouseOver}
+              onMouseLeave={this.handleButtonMouseLeave}
+              ref={Ref => this.reply=Ref}
             >
               <img className="reply" src={Reply} id="reply" width="13px" height="13px"/>
               <span className="reply" id="reply-count">{this.state.responses.length}</span>
@@ -238,8 +335,8 @@ class Meme extends Component {
                   className="like"
                   id="like-button-liked"
                   onClick={this.handleButtonClick}
-                  onMouseOver={this.handleMouseOver}
-                  onMouseLeave={this.handleMouseLeave}
+                  onMouseEnter={this.handleButtonMouseOver}
+                  onMouseLeave={this.handleButtonMouseLeave}
                 >
                   <img className="like" src={Liked} id="like" width="13px" height="13px"/>
                   <span className="like" id="like-count">{this.state.likes}</span>
@@ -248,8 +345,9 @@ class Meme extends Component {
                   className="like"
                   id="like-button"
                   onClick={this.handleButtonClick}
-                  onMouseOver={this.handleMouseOver}
-                  onMouseLeave={this.handleMouseLeave}
+                  onMouseEnter={this.handleButtonMouseOver}
+                  onMouseLeave={this.handleButtonMouseLeave}
+                  ref={Ref => this.like=Ref}
                 >
                   <img className="like" src={Like} id="like" width="13px" height="13px"/>
                   <span className="like" id="like-count">{this.state.likes}</span>
@@ -259,8 +357,9 @@ class Meme extends Component {
               className="rememe"
               id="rememe-button"
               onClick={this.handleButtonClick}
-              onMouseOver={this.handleMouseOver}
-              onMouseLeave={this.handleMouseLeave}
+              onMouseEnter={this.handleButtonMouseOver}
+              onMouseLeave={this.handleButtonMouseLeave}
+              ref={Ref => this.rememe=Ref}
             >
               <img className="rememe" src={ReMeme} id="rememe" width="13px" height="13px"/>
               <span className="rememe" id="rememe-count">
@@ -271,8 +370,9 @@ class Meme extends Component {
               className="upvote"
               id="upvote-button"
               onClick={this.handleButtonClick}
-              onMouseOver={this.handleMouseOver}
-              onMouseLeave={this.handleMouseLeave}
+              onMouseEnter={this.handleButtonMouseOver}
+              onMouseLeave={this.handleButtonMouseLeave}
+              ref={Ref => this.upvote=Ref}
             >
               <img className="upvote" src={Arrow} id="upvote" width="13px" height="13px"/>
             </p>
@@ -280,8 +380,9 @@ class Meme extends Component {
               className="downvote"
               id="downvote-button"
               onClick={this.handleButtonClick}
-              onMouseOver={this.handleMouseOver}
-              onMouseLeave={this.handleMouseLeave}
+              onMouseEnter={this.handleButtonMouseOver}
+              onMouseLeave={this.handleButtonMouseLeave}
+              ref={Ref => this.downvote=Ref}
             >
               <img className="downvote" src={Arrow} id="downvote" width="13px" height="13px"/>
             </p>

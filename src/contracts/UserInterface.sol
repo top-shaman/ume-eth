@@ -87,11 +87,11 @@ contract UserInterface {
       _userAddress.length<=32,
       'Error: userAddress must be between 2 & 32 characters');
     require(
-      userStorage.getAddr(_account)!=_account,
+      userStorage.getAddr(_account)!=_account || userStorage.getAddr(_account)==address(0x0),
       'Error: account already exists');
     require(
-      userStorage.getAddr(_account)==address(0x0),
-      'Error: user address already exists');
+      userStorage.usersByUserAddr(_userAddress)==address(0x0);
+      'Error: user address already exists'
 
     bytes32 _un = bytesToBytes32(_userName);
     bytes32 _ua = bytesToBytes32(_userAddress);

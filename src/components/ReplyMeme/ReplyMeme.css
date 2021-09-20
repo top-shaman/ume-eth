@@ -117,6 +117,10 @@ div.ReplyMeme {
   color: #00CC89;
   margin: 0;
 }
+.ReplyMeme p span#parent:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .ReplyMeme div.vl {
   border-left: 0.1rem solid #667777;
   margin: 0 auto;

@@ -7,6 +7,10 @@ div.Meme {
   min-width: 28rem;
   max-width: 80%;
 }
+div.Meme:hover {
+  background-color: #313131;
+  cursor: pointer;
+}
 .Meme div#meme-body {
   display: flex;
   min-width: 24.2rem;
@@ -31,7 +35,16 @@ div.Meme {
   width: 3rem;
   height: auto;
   border-radius: 100%;
-  margin: 0.4rem;
+  margin: 0;
+  border: 0.05rem solid rgb(0,0,0,0);
+  transition: border 0.4s;
+}
+.Meme img#profile-pic:hover {
+  border: 0.05rem solid rgb(255,255,255, 1);
+  transition: border 0.4s;
+}
+.Meme section#profilePic {
+  margin: 0.3rem 0.1rem 0 0.4rem;
 }
 
 .Meme p#meme-text {
@@ -113,184 +126,40 @@ div.Meme {
   margin: 0 0.1rem 0 0.4rem;
 }
 
-.Meme p#reply-button {
-  /*
-  animation-name: reply-out;
-  animation-duration: 0.4s;
-  animation-timing-function: ease-out;
-  */
-}
 .Meme p#reply-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
-  animation-name: reply-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
   cursor: pointer;
-  animation-fill-mode: forwards;
 }
 .Meme p#like-button-liked.like {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
 }
 .Meme p#like-button-liked:hover {
-  /*
-  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-  animation-name: like-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: forwards;
-  */
   cursor: pointer;
 }
 .Meme p#like-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-  animation-name: like-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
   cursor: pointer;
-  animation-fill-mode: forwards;
-}
-.Meme p#rememe-button {
-  /*
-  animation-name: rememe-out;
-  animation-duration: 0.4s;
-  animation-timing-function: ease-out;
-  */
 }
 .Meme p#rememe-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
-  animation-name: rememe-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
   cursor: pointer;
-  animation-fill-mode: forwards;
 }
 .Meme p#upvote-button {
   margin: 0.15rem 4rem 0.15rem 0.15rem;
-  /*
-  animation-name: upvote-out;
-  animation-duration: 0.4444s;
-  animation-timing-function: ease-out;
-  */
 }
 .Meme p#upvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
-  animation-name: upvote-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
   cursor: pointer;
-  animation-fill-mode: forwards;
 }
 .Meme p#downvote-button {
   animation-name: downvote-out;
-  /*
-  animation-duration: 0.4s;
-  animation-timing-function: ease-out;
   transform: rotate(180deg);
-  */
 }
 .Meme p#downvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
-  animation-name: downvote-in;
-  animation-duration: 0.8s;
-  animation-timing-function: ease-in-out;
   cursor: pointer;
-  animation-fill-mode: forwards;
 }
 .Meme img#upvote-button,
 .Meme img#downvote-button {
   margin-right: 3rem;
 }
-
-@keyframes reply-in {
-  from {
-    filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(85deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
-  }
-}
-@keyframes reply-out {
-  from {
-   filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.6) saturate(0) hue-rotate(85deg);
-  }
-}
-@keyframes like-in {
-  from {
-    filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(285deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-  }
-}
-@keyframes like-out {
-  from {
-   filter: invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.6) saturate(0) hue-rotate(285deg);
-  }
-}
-@keyframes rememe-in {
-  from {
-    filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(140deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(140deg);
-  }
-}
-@keyframes rememe-out {
-  from {
-   filter: invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.6) saturate(0) hue-rotate(140deg);
-  }
-}
-@keyframes upvote-in {
-  from {
-    filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(310deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
-  }
-}
-@keyframes upvote-out {
-  from {
-   filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.6) saturate(0) hue-rotate(310deg);
-  }
-}
-@keyframes downvote-in {
-  from {
-    filter: invert(0) sepia(0) brightness(0.7) saturate(0) hue-rotate(180deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
-  }
-}
-@keyframes downvote-out {
-  from {
-   filter: invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
-  }
-  to {
-    filter: invert(0) sepia(1) brightness(0.6) saturate(0) hue-rotate(180deg);
-  }
-}
-/*
-@keyframes bobble {
-  from {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.9);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-*/

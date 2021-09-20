@@ -178,6 +178,21 @@ export function zipUp(element, duration) {
   })
 }
 
+export function filterIn(element, brightnessStart, brightnessEnd, hue, duration) {
+  const elements = document.querySelectorAll(element)
+  let start = performance.now()
+  requestAnimationFrame(function animation(time) {
+    let fractionOfTime = (time - start) / duration
+
+    if(fractionOfTime > 1) fractionOfTime = 1
+    let progress1= easeInOut(fractionOfTime, brightnessStart, brightnessEnd-brightnessStart),
+        progress2= easeInOut(fractionOfTime, 0, 10000)
+    elements.forEach(e => {
+      e.style.filter = 'invert(0) sepia(1) brightness(' + progress1 + ') saturate(' + progress2 + '%) hue-rotate(' + hue + 'deg)';
+    })
+    if(fractionOfTime < 1) requestAnimationFrame(animation)
+  })
+}
 export function filterOut(element, brightnessStart, brightnessEnd, hue, duration) {
   const elements = document.querySelectorAll(element)
   let start = performance.now()
@@ -191,5 +206,30 @@ export function filterOut(element, brightnessStart, brightnessEnd, hue, duration
       e.style.filter = 'invert(0) sepia(1) brightness(' + progress1 + ') saturate(' + progress2 + '%) hue-rotate(' + hue + 'deg)';
     })
     if(fractionOfTime < 1) requestAnimationFrame(animation)
+  })
+}
+
+export function bgColorChange(element, colorStart, colorEnd, duration) {
+  const rStart = parseInt(colorStart.slice(0,2), 16),
+        gStart = parseInt(colorStart.slice(2,4), 16),
+        bStart = parseInt(colorStart.slice(4), 16),
+        rEnd = parseInt(colorEnd.slice(0,2), 16),
+        gEnd = parseInt(colorEnd.slice(2,4), 16),
+        bEnd = parseInt(colorEnd.slice(4), 16)
+
+  const elements = document.querySelectorAll(element)
+  let start = performance.now()
+  requestAnimationFrame(function animation(time) {
+    let fractionOfTime = (time - start) / duration
+
+    if(fractionOfTime > 1) fractionOfTime = 1
+    let progressR = Math.floor(easeInOut(fractionOfTime, rStart, rEnd-rStart)),
+        progressG = Math.floor(easeInOut(fractionOfTime, gStart, gEnd-gStart)),
+        progressB = Math.floor(easeInOut(fractionOfTime, bStart, bEnd-bStart))
+    elements.forEach(e => {
+      e.style.backgroundColor = '#' + progressR.toString(16).concat(progressG.toString(16), progressB.toString(16))
+    })
+    if(fractionOfTime < 1) requestAnimationFrame(animation)
+    else elements.forEach(e => { e.style.backgroundColor = '#' + colorEnd })
   })
 }

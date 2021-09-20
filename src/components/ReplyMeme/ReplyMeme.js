@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bobble, clickBobble, filterOut } from '../../resources/Libraries/Animation'
 import "./ReplyMeme.css"
 
@@ -10,7 +10,7 @@ import Liked from '../../resources/heart-filled.svg'
 import Rememe from '../../resources/rememe.svg'
 import Arrow from '../../resources/arrow.svg'
 
-const emptyAddress = '0x0000000000000000000000000000000000000000000000000000000000000000'
+const emptyId = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 class ReplyMeme extends Component {
   constructor(props) {
@@ -21,10 +21,13 @@ class ReplyMeme extends Component {
       author: this.props.author,
       text: this.props.text,
       memeId: this.props.memeId,
+      parentId: this.props.parentId,
       visibleText: this.props.text,
       replyingTo: '',
+      replyChain: [],
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
+      userStorage: this.props.userStorage,
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked
     }
@@ -34,6 +37,7 @@ class ReplyMeme extends Component {
   async componentDidMount() {
     await this.replyingTo()
     await this.formatText()
+    this.mounted = true
   }
   async componentWillUnmount() {
     this.mounted = false
@@ -62,21 +66,43 @@ class ReplyMeme extends Component {
     this.setState({ visibleText: formatted })
   }
   async replyingTo() {
-    const replyingTo= []
-    let hasParent = true,
-        parentAddress = this.state.address,
+    let replies= [],
+        hasParent = true,
+        //starting values for parentId & parentAddress
+        replyId = this.state.memeId,
+        replyAddress = this.state.address,
+        parentId = await this.state.memeStorage.methods.getParentId(replyId).call(),
         key = 1
-    console.log(this.state.username)
-    if(hasParent) {
-      replyingTo.unshift(<span id="parent" key={key}>{parentAddress}</span>)
-      const parentId = await this.state.memeStorage.methods.getParentId(this.state.memeId).call()
-      console.log(parentId)
 
-      if(parentId===emptyAddress) hasParent = false
-      console.log(replyingTo)
+    while(hasParent) {
+      if(await replyId===await parentId) hasParent = false
+      replies.push(<span value={await replyId} id="parent" key={key}>{replyAddress}</span>)
+      this.setState({ replyChain: [...this.state.replyChain, await replyId] })
+
+      replyId = parentId
+      replyAddress = await this.state.userStorage.methods.usersByMeme(replyId).call()
+        .then(e => this.state.userStorage.methods.getUserAddr(e).call())
+        .then(e => fromBytes(e))
+      parentId = await this.state.memeStorage.methods.getParentId(replyId).call()
+
+      key++
     }
-    if(replyingTo.length>1) replyingTo.join(<span id="replying">, </span>)
+    replies = replies.filter((elem, index) => {
+      console.log(index)
+      if(replies[index+1]!==undefined) {
+        return elem.props.children!==replies[index+1].props.children
+      } else return true
+    })
+    let replyingTo = [],
+        numReplies = replies.length
+    for(let i = 0; i < numReplies; i++) {
+      replyingTo.push(replies[i])
+      if(i!==numReplies-1) {
+        replyingTo.push(<span id="replying">{', '}</span>)
+      }
+    }
     this.setState({ replyingTo })
+    this.props.handleReply(this.state.replyChain)
   }
 
   render() {

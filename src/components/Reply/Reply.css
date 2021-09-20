@@ -28,7 +28,7 @@
 .Reply form#form div#text-box {
   position:relative;
   border-bottom: 0.05rem solid #667777;
-  margin: 0.4rem 0.2rem 0.2rem 0;
+  margin: 0.4rem 0.2rem 0.2rem 0.4rem;
   width: 22rem;
   min-height: 7.5rem;
 }
@@ -83,7 +83,7 @@
   font-family: 'Quicksand', sans-serif;
   font-size: 1.2rem;
   font-weight: 500;
-  margin:0;
+  margin: 0;
   padding: 0;
   width: 22rem;
   text-align: start;

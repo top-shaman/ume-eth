@@ -6,6 +6,8 @@ import './CreateMeme.css'
 import X from '../../resources/X-white.svg'
 import autosize from 'autosize'
 
+const emptyId = '0x0000000000000000000000000000000000000000000000000000000000000000'
+
 class CreateMeme extends React.Component {
   constructor(props) {
     super(props)
@@ -16,9 +18,9 @@ class CreateMeme extends React.Component {
       interface: this.props.interface,
       memeText: '',
       visibleText: '',
-      parentId: '0x0',
-      originId: '0x0',
-      repostId: '0x0',
+      parentId: emptyId,
+      originId: emptyId,
+      repostId: emptyId,
       validMeme: false
     }
 

@@ -19,14 +19,15 @@ class Reply extends React.Component {
       parentAuthor: this.props.author,
       parentText: this.props.text,
       memeId: this.props.memeId,
+      parentId: this.props.parentId,
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeText: '',
       visibleText: '',
-      parentId: '0x0',
-      originId: '0x0',
-      repostId: '0x0',
+      parentId: '',
+      originId: '',
+      repostId: '',
       validMeme: false
     }
 
@@ -125,7 +126,12 @@ class Reply extends React.Component {
     }, 500)
   }
   handleReply(e) {
-    //console.log(e)
+    this.setState({
+      parentId: e[e.length-1],
+      originId: e[0]
+    })
+    //console.log(this.state.parentId)
+    //console.log(this.state.originId)
   }
 
   async formatText() {
@@ -193,7 +199,10 @@ class Reply extends React.Component {
             author={this.state.parentAuthor}
             text={this.state.parentText}
             memeId={this.state.memeId}
+            parentId={this.state.parentId}
             memeStorage={this.state.memeStorage}
+            userStorage={this.state.userStorage}
+            handleReply={this.handleReply}
           />
           <section id="body">
             <div id="profilePic">
