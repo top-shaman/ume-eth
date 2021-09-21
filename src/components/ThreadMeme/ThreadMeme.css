@@ -1,4 +1,4 @@
-div.Meme {
+div.ThreadMeme {
   display: flex;
   flex-direction: row;
   background-color: #1D1F22;
@@ -7,31 +7,31 @@ div.Meme {
   min-width: 28rem;
   max-width: 80%;
 }
-div.Meme:hover {
+div.ThreadMeme:hover {
   background-color: #313131;
   cursor: pointer;
 }
-.Meme div#meme-body {
+.ThreadMeme div#ThreadMeme-body {
   display: flex;
   min-width: 24.2rem;
   max-width: 100%;
   flex-direction: column;
   overflow-wrap: break-word;
 }
-.Meme div#meme-header {
+.ThreadMeme div#ThreadMeme-header {
   display: flex;
   flex-direction: row;
   margin: 0.5rem 0.4rem;
   align-items: flex-end;
 }
-.Meme div#meme-footer {
+.ThreadMeme div#ThreadMeme-footer {
   display: flex;
   flex-direction: row;
   margin: 0.2rem 10rem 0.2rem 0.4rem;
   justify-content: flex-start;
   align-items: flex-end;
 }
-.Meme img#profile-pic {
+.ThreadMeme img#profile-pic {
   width: 3rem;
   height: auto;
   border-radius: 100%;
@@ -39,15 +39,15 @@ div.Meme:hover {
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
 }
-.Meme img#profile-pic:hover {
+.ThreadMeme img#profile-pic:hover {
   border: 0.05rem solid rgb(255,255,255, 1);
   transition: border 0.4s;
 }
-.Meme section#profilePic {
+.ThreadMeme section#profilePic {
   margin: 0.3rem 0.1rem 0 0.4rem;
 }
 
-.Meme p#meme-text {
+.ThreadMeme p#ThreadMeme-text {
   display: flex;
   margin: 0 1.2rem 0 0.4rem;
   padding: 0;
@@ -64,7 +64,7 @@ div.Meme:hover {
   word-break: break-all;
   max-height: 30rem;
 }
-.Meme p#meme-text span {
+.ThreadMeme p#ThreadMeme-text span {
   font-family: 'Arial', sans-serif;
   font-size: 0.84rem;
   font-weight: 500;
@@ -73,26 +73,26 @@ div.Meme:hover {
   white-space: break-spaces;
 }
 
-.Meme p#meme-text span#plain {
+.ThreadMeme p#ThreadMeme-text span#plain {
   color: #CCDDCC;
   margin: 0;
   overflow-wrap: break-word;
   word-wrap: break-spaces;
   width: inherit;
 }
-.Meme p#meme-text a#at,
-.Meme p#meme-text a#hash {
+.ThreadMeme p#ThreadMeme-text a#at,
+.ThreadMeme p#ThreadMeme-text a#hash {
   margin: 0;
   color: #00CC89;
   text-decoration: none;
 }
-.Meme p#meme-text a#at:hover,
-.Meme p#meme-text a#hash:hover {
+.ThreadMeme p#ThreadMeme-text a#at:hover,
+.ThreadMeme p#ThreadMeme-text a#hash:hover {
   color: #00CC89;
   text-decoration: underline;
 }
 
-.Meme a#username {
+.ThreadMeme a#username {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
   color: #CCDDCC;
@@ -100,19 +100,19 @@ div.Meme:hover {
   margin: 0 0.3rem 0 0;
   text-decoration: none;
 }
-.Meme a#username:hover {
+.ThreadMeme a#username:hover {
   text-decoration: underline;
 }
-.Meme span {
+.ThreadMeme span {
   font-family: 'Avenir', sans-serif;
   font-size: 0.7rem;
   margin: 0 0.3rem;
   color: #667777;
 }
-.Meme div#meme-footer p span {
+.ThreadMeme div#ThreadMeme-footer p span {
   color: #FFFFFF;
 }
-.Meme div#meme-footer p {
+.ThreadMeme div#ThreadMeme-footer p {
   margin: 0.15rem 2rem 0.15rem 0.15rem;
   padding: 0.2rem;
   flex-direction: row;
@@ -122,46 +122,46 @@ div.Meme:hover {
   position: relative;
   filter: invert(0.4);
 }
-.Meme p span {
+.ThreadMeme p span {
   margin: 0 0.1rem 0 0.4rem;
 }
-.Meme p#reply-button {
+.ThreadMeme p#reply-button {
   cursor: pointer;
 }
-.Meme p#reply-button:hover {
+.ThreadMeme p#reply-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
 }
-.Meme p#like-button-liked.like {
+.ThreadMeme p#like-button-liked.like {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
   cursor: pointer;
 }
-.Meme p#like-button {
+.ThreadMeme p#like-button {
   cursor: pointer;
 }
-.Meme p#like-button:hover {
+.ThreadMeme p#like-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
 }
-.Meme p#rememe-button {
+.ThreadMeme p#rememe-button {
   cursor: pointer;
 }
-.Meme p#rememe-button:hover {
+.ThreadMeme p#rememe-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
 }
-.Meme p#upvote-button {
+.ThreadMeme p#upvote-button {
   margin: 0.15rem 7rem 0.15rem 0.15rem;
   cursor: pointer;
 }
-.Meme p#upvote-button:hover {
+.ThreadMeme p#upvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
 }
-.Meme p#downvote-button {
+.ThreadMeme p#downvote-button {
   cursor: pointer;
 }
-.Meme p#downvote-button:hover {
+.ThreadMeme p#downvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
 }
-.Meme img#upvote {
+.ThreadMeme img#upvote {
 }
-.Meme img#downvote {
+.ThreadMeme img#downvote {
   transform: rotate(180deg);
 }

@@ -1,5 +1,6 @@
 import React from 'react'
-import Meme from "../Meme/Meme"
+import ThreadMeme from '../ThreadMeme/ThreadMeme'
+import ThreadMemeMain from '../ThreadMeme/ThreadMemeMain'
 import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
 import "./Thread.css"
 
@@ -37,10 +38,14 @@ class Thread extends React.Component {
       memeStorage: this.props.memeStorage,
       userAccount: this.props.account,
       focusPage: 'thread',
-      memeCount: null,
-      memesToRender: 50,
-      memesNotRendered: null,
-      memesRendered: null,
+      replyCount: null,
+      parentCount: null,
+      repliesToRender: 50,
+      repliesNotRendered: null,
+      repliesRendered: null,
+      parentsToRender: 50,
+      parentsNotRendered: null,
+      parentsRendered: null,
       threadLoading: false,
       contractLoading: this.props.contractLoading,
       loadingBottom: false,
@@ -64,8 +69,8 @@ class Thread extends React.Component {
       this.intervalThread = setInterval(async () => {
         //this.setState({ firstLoad: false })
         if(!this.state.firstLoad && !this.state.loadingBottom){
-          await this.loadNewMemes()
-          await this.refreshMemes()
+          //await this.loadNewMemes()
+          //await this.refreshMemes()
         }
       }, 10000)
     }
@@ -75,7 +80,7 @@ class Thread extends React.Component {
     if(this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottom) {
       setTimeout(async () => {
         if(this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottom) {
-          await this.loadOldMemes()
+          //await this.loadOldMemes()
         }
       }, 200)
     }
@@ -114,61 +119,91 @@ class Thread extends React.Component {
       console.log('load thread ' + new Date().toTimeString())
 
       // compile all meme id's
-      let memeIds
-      if(this.state.sortStyle==='time') {
-        memeIds = await this.compileMemesByTime()
-      } else if(this.state.sortStyle==='boost') {
-        memeIds = await this.compileMemesByBoost()
-      }
-
+      let parentIds = await this.compileParents(),
+          replyIds = this.state.responses
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
-            memeCount = memeIds.length,
-            newMemes = []
-      let memesToRender = this.state.memesToRender,
-          memesNotRendered = memeCount - memesToRender,
-          memesRendered = 0,
-          memesInQueue = 0
+            parentCount = parentIds.length,
+            replyCount = replyIds.length,
+            parents = [],
+            replies = []
+      let parentsToRender = this.state.parentsToRender,
+          parentsNotRendered = parentCount - parentsToRender,
+          parentsRendered = 0,
+          parentsInQueue = 0,
+          repliesToRender = this.state.parentsToRender,
+          repliesNotRendered = replyCount - repliesToRender,
+          repliesRendered = 0,
+          repliesInQueue = 0
 
       // set queue data to safe values
-      if(memeCount>memesToRender) {
-        memesNotRendered = memeCount - memesToRender
-      } else if(memeCount<=memesToRender) {
-        memesToRender = memeCount
-        memesNotRendered = 0
+      if(replyCount>repliesToRender) {
+        repliesNotRendered = replyCount - repliesToRender
+      } else if(replyCount<=repliesToRender) {
+        repliesToRender = replyCount
+        repliesNotRendered = 0
       }
-
+      if(parentCount>parentsToRender) {
+        parentsNotRendered = parentCount - parentsToRender
+      } else if(parentCount<=parentsToRender) {
+        parentsToRender = parentCount
+        parentsNotRendered = 0
+      }
       if(this.state.firstLoad) {
         this.setState({
-          memeCount,
-          memesNotRendered,
-          memeIds
+          parentCount,
+          replyCount,
+          //repliesNotRendered,
+          parentIds,
+          replyIds
         })
-        for(let i = 0; i < memesToRender; i++) {
-          const memeId = memeIds[memesNotRendered + i],
-                meme = await this.populateMeme(memeId, memeStorage, userStorage)
-          newMemes.push(meme)
-          memesInQueue++
+        // compile parents
+        for(let i = 0; i < parentsToRender; i++) {
+          const parentId = parentIds[parentsNotRendered + i],
+                meme = await this.populateMeme(parentId, memeStorage, userStorage)
+          parents.push(meme)
+          parentsInQueue++
         }
+        // compile replies
+        for(let i = 0; i < repliesToRender; i++) {
+          const replyId = replyIds[repliesNotRendered + i],
+                meme = await this.populateMeme(replyId, memeStorage, userStorage)
+          replies.push(meme)
+          repliesInQueue++
+        }
+        const meme = await this.populateMeme(this.state.memeId, memeStorage, userStorage)
 
         //set new memes to state, sort to current sort style
-        this.setState({ memes: newMemes })
-        if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
+        this.setState({
+          parents,
+          meme,
+          replies
+        })
+
+        console.log(parents)
+        console.log(meme)
+        console.log(replies)
 
         this.setState({
-          memesHTML: this.state.oldMemesHTML
+          parentsHTML: this.state.oldParentsHTML,
+          repliesHTML: this.state.oldRepliesHTML
         })
         // render memes to HTML & store in oldMemesHTML for refresh
-        await this.renderThread(memesInQueue).catch(e => console.error(e))
-        memesRendered += memesInQueue
+        await this.renderThread(parents, parentsRendered, parentsInQueue, parentCount).catch(e => console.error(e))
+        await this.renderMeme().catch(e => console.error(e))
+        await this.renderThread(replies, repliesRendered, repliesInQueue, replyCount).catch(e => console.error(e))
+        repliesRendered += repliesInQueue
+        parentsRendered += parentsInQueue
         //console.log('first load: ' + this.state.firstLoad)
         this.setState({
-          memesNotRendered,
-          memesRendered,
+          repliesNotRendered,
+          parentsNotRendered,
+          repliesRendered,
+          parentsRendered,
           threadLoading: false,
           firstLoad: false
         })
-        if(memesNotRendered===0) {
+        if(repliesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
         //console.log('total memes: ' + memeCount)
@@ -409,12 +444,12 @@ class Thread extends React.Component {
     }
   }
 
-  async renderThread(memesInQueue) {
+  async renderThread(memes, memesRendered, memesInQueue, memeCount) {
     const tempMemesHTML = [],
-          tempMemes = this.state.memes,
+          tempMemes = memes
       //    memesToRender = this.state.memesToRender,
-          memesRendered = this.state.memesRendered,
-          memeCount = this.state.memeCount
+          //memesRendered = this.state.memesRendered,
+          //memeCount = this.state.memeCount
     if(memeCount>0) {
       let meme
       for(let i = 0; i < memesRendered+memesInQueue; i++) {
@@ -422,7 +457,7 @@ class Thread extends React.Component {
         //add Meme component to temporary array
         if(meme.isVisible) {
           tempMemesHTML.unshift(
-            <Meme
+            <ThreadMeme
               key={i+1}
               memeId={meme.memeId}
               username={meme.username}
@@ -466,24 +501,30 @@ class Thread extends React.Component {
         //tempMemes[i-1].renderOrder = 0
       }
     }
-    this.setState({
-      memesHTML: tempMemesHTML,
-      memes: tempMemes
-//      oldMemes: tempMemes
-    })
+    if(memes===this.state.parents) {
+      this.setState({
+        parentsHTML: tempMemesHTML,
+        parents: tempMemes
+      })
+    } else if(memes===this.state.replies) {
+      this.setState({
+        repliesHTML: tempMemesHTML,
+        replies: tempMemes
+      })
+    }
     // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
-    await this.compileRenderedMemes(memesInQueue)
+    await this.compileRenderedMemes(tempMemes, memesRendered, memesInQueue)
   }
-  async compileRenderedMemes(memesInQueue) {
+  async compileRenderedMemes(memes, memesRendered, memesInQueue) {
     const tempMemesHTML = [],
-          memes = this.state.memes,
+          tempMemes = memes
         //  memesToRender = this.state.memesToRender,
-          memesRendered = this.state.memesRendered
+      //  memesRendered = this.state.memesRendered
     for(let i = 0; i < memesRendered+memesInQueue; i++) {
-      const meme = memes[i]
+      const meme = tempMemes[i]
       if(meme.isVisible) {
         tempMemesHTML.unshift(
-          <Meme
+          <ThreadMeme
             key={i+1}
             memeId={meme.memeId}
             username={meme.username}
@@ -520,13 +561,132 @@ class Thread extends React.Component {
         )
       }
     }
-    /*
+    if(memes===this.state.parents) {
+      this.setState({
+        oldParentsHTML: tempMemesHTML,
+      })
+    } else if(memes===this.state.replies) {
+      this.setState({
+        oldRepliesHTML: tempMemesHTML,
+      })
+    }
+  }
+  async renderMeme() {
+    const meme = this.state.meme
+    let tempMeme = meme,
+        tempMemeHTML
+    if(meme.isVisible) {
+      tempMemeHTML =
+        <ThreadMemeMain
+          memeId={meme.memeId}
+          username={meme.username}
+          address={meme.address}
+          text={meme.text}
+          time={meme.time}
+          boosts={meme.boosts}
+          likes={meme.likes}
+          likers={meme.likers}
+          rememeCount={meme.rememeCount}
+          rememes={meme.rememes}
+          quoteCount={meme.quoteCount}
+          quoteMemes={meme.quoteMemes}
+          responses={meme.responses}
+          tags={meme.tags}
+          repostId={meme.repostId}
+          parentId={meme.parentId}
+          originId={meme.originId}
+          author={meme.author}
+          isVisible={meme.isVisible}
+    //      renderOrder={meme.renderOrder}
+          alreadyRendered={
+            this.state.memesHTML!==undefined
+              ? meme.alreadyRendered
+              : false
+          }
+          handleToProfile={this.handleToProfile}
+          handleToThread={this.handleToThread}
+          handleRefresh={this.handleRefresh}
+          handleReply={this.handleReply}
+          handleOverMeme={this.handleOverMeme}
+          handleOverButton={this.handleOverButton}
+          interface={this.props.interface}
+          memeStorage={this.props.memeStorage}
+          userAccount={this.props.account}
+          userHasLiked={meme.userHasLiked}
+        />
+    }
+    tempMeme.alreadyRendered = true
+    this.setState({
+      memeHTML: tempMemeHTML,
+      meme: tempMeme
+    })
+    // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
+    await this.compileRenderedMeme()
+  }
+  async compileRenderedMeme() {
+    let tempMemeHTML
+    const meme = this.state.meme
+    if(meme.isVisible) {
+      tempMemeHTML =
+        <ThreadMemeMain
+          memeId={meme.memeId}
+          username={meme.username}
+          address={meme.address}
+          text={meme.text}
+          time={meme.time}
+          boosts={meme.boosts}
+          likes={meme.likes}
+          likers={meme.likers}
+          rememeCount={meme.rememeCount}
+          rememe={meme.rememes}
+          quoteCount={meme.quoteCount}
+          quoteMemes={meme.quoteMemes}
+          responses={meme.responses}
+          tags={meme.tags}
+          repostId={meme.repostId}
+          parentId={meme.parentId}
+          originId={meme.originId}
+          author={meme.author}
+          isVisible={meme.isVisible}
+    //      renderOrder={meme.renderOrder}
+          alreadyRendered={true}
+          handleToProfile={this.handleToProfile}
+          handleToThread={this.handleToThread}
+          handleRefresh={this.handleRefresh}
+          handleReply={this.handleReply}
+          handleOverMeme={this.handleOverMeme}
+          handleOverButton={this.handleOverButton}
+          interface={this.props.interface}
+          memeStorage={this.props.memeStorage}
+          userAccount={this.props.account}
+          userhasLiked={meme.userHasLiked}
+        />
+    }
+  /*
     const alreadyRendered = tempMemesHTML.slice(0, memesRendered)
     const newRender = tempMemesHTML.slice(memesRendered)
     */
     this.setState({
-      oldMemesHTML: tempMemesHTML
+      oldMemeHTML: tempMemeHTML
     })
+  }
+  async compileParents() {
+    let parents = [],
+        hasParent = true,
+        //starting values for parentId
+        parentId = this.state.parentId,
+        parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call(),
+        key = 1
+
+    while(parentId!==parentParentId) {
+      parents = [...parents, await parentId]
+
+      parentId = parentParentId
+      parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call()
+      key++
+    }
+    console.log(parents)
+    return parents
   }
 
   async compileMemesByTime() {
@@ -589,21 +749,28 @@ class Thread extends React.Component {
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
-                  {this.state.oldMemesHTML}
+                  {this.state.oldParentsHTML}
+                  {this.state.oldMemeHTML}
+                  {this.state.oldRepliesHTML}
                   <p>Loading...<br/></p>
                 </div>
               : <div id="loader-memes">
                   <p>Loading...</p>
-                  {this.state.oldMemesHTML}
+                  {this.state.oldParentsHTML}
+                  {this.state.oldMemeHTML}
+                  {this.state.oldRepliesHTML}
                 </div>
-          : this.state.memeCount > 0
+          : !this.state.refreshing
             ? this.state.allMemesLoaded
               ? <div id="loaded">
-                  {this.state.memesHTML}
-                  <p>All memes loaded!<br/></p>
+                  {this.state.parentsHTML}
+                  {this.state.memeHTML}
+                  {this.state.repliesHTML}
                 </div>
               : <div id="loaded">
-                  {this.state.memesHTML}
+                  {this.state.parentsHTML}
+                  {this.state.memeHTML}
+                  {this.state.repliesHTML}
                 </div>
             : <div id="loaded">
                 <p>No memes yet!</p>
