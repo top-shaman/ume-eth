@@ -18,11 +18,13 @@ class ProfilePic extends React.Component {
           { this.state.hasPic
             ? <img
                 id="profile-pic"
+                alt="profile-pic"
               />
             : <img
                 className="ProfilePic" id="profile-pic"
                 width="120"
                 height="120"
+                alt="profile-pic"
                 src={`data:image/png;base64,${
 //                  this.props.hasEntered
                     new Identicon(this.props.account, 120).toString()

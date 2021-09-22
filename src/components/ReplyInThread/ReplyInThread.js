@@ -1,9 +1,8 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { fadeIn, fadeOut, partialFadeIn, partialFadeOut, unBlur } from '../../resources/Libraries/Animation'
+import { fadeIn, partialFadeIn} from '../../resources/Libraries/Animation'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import './ReplyInThread.css'
-import X from '../../resources/X-white.svg'
 import autosize from 'autosize'
 
 const emptyId = '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -27,19 +26,16 @@ class ReplyInThread extends React.Component {
     this.textarea = React.createRef()
 
     this.handleTextChange = this.handleTextChange.bind(this)
-    this.handleMemeClick = this.handleMemeClick.bind(this)
-    this.handleCloseClick = this.handleCloseClick.bind(this)
+    this.handleReplyClick = this.handleReplyClick.bind(this)
   }
 
   componentDidMount() {
-    const textBox = document.querySelector('.CreateMeme div#text-box')
     const storage = localStorage.getItem('memeText')
-    //this.textarea.style.height = textBox.clientHeight + 'px'
-    fadeIn('.CreateMeme div#container', 333)
-    partialFadeIn('.CreateMeme div#background', 100, 0.2)
+    fadeIn('.ReplyInThread div#container', 333)
+    partialFadeIn('.ReplyInThread div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
-      const buttonText = document.querySelector('.CreateMeme p#meme-button'),
-            memeButton = document.querySelector('.CreateMeme p#meme-button')
+      const buttonText = document.querySelector('.ReplyInThread p#meme-button'),
+            memeButton = document.querySelector('.ReplyInThread p#meme-button')
       this.setState({
         memeText: localStorage.getItem('memeText'),
         visibleText: localStorage.getItem('memeText'),
@@ -61,10 +57,10 @@ class ReplyInThread extends React.Component {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
     const text = await e.target.value,
-          buttonText = document.querySelector('.CreateMeme p#meme-button'),
-          memeButton = document.querySelector('.CreateMeme p#meme-button'),
-          textBox = document.querySelector('.CreateMeme div#text-box'),
-          textarea = document.querySelector('.CreateMeme textarea#meme-text')
+          buttonText = document.querySelector('.ReplyInThread p#meme-button'),
+          memeButton = document.querySelector('.ReplyInThread p#meme-button'),
+          textBox = document.querySelector('.ReplyInThread div#text-box'),
+          textarea = document.querySelector('.ReplyInThread textarea#meme-text')
     textBox.style.height = textarea.clientHeight + 'px'
     // check text validity
     if(text.match(/\s/g)) {
@@ -93,31 +89,18 @@ class ReplyInThread extends React.Component {
     this.setState({ visibleText: formattedText})
 
   }
-  async handleMemeClick(e) {
-    const textarea = document.querySelector('.CreateMeme textarea#meme-text')
+  async handleReplyClick(e) {
     if(this.state.validMeme) {
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
-        this.props.account,
+        this.props.userAccount,
         this.state.memeText,
         await tags, this.state.parentId, this.state.originId)
-      .send({from: this.props.account})
+      .send({from: this.props.userAccount})
       this.handleCloseClick(e)
       localStorage.clear()
     }
   }
-  async handleCloseClick(e) {
-    localStorage.setItem('memeText', this.state.memeText)
-    fadeOut('.CreateMeme div#container', 500)
-    partialFadeOut('.CreateMeme div#background', 333, 0.2)
-    unBlur('.Main div#header', 500)
-    unBlur('.Main div#body', 500)
-    setTimeout(async () => {
-      await this.setState({ creatingMeme: false })
-      this.props.handleExitCreate(await this.state.creatingMeme)
-    }, 500)
-  }
-
   async formatText() {
     let text = this.state.memeText,
         plainMap = await isolatePlain(text),
@@ -166,22 +149,16 @@ class ReplyInThread extends React.Component {
 
   render() {
     return(
-      <div className="CreateMeme" id="CreateMeme" >
+      <div className="ReplyInThread" id="ReplyInThread" >
         <div id="container">
-          <section id="head">
-            <img
-              id="x"
-              className="close"
-              src={X}
-              width="11px"
-              onClick={this.handleCloseClick}
-            />
+          <section id="header">
+            {/* reply chain goes here */}
           </section>
           <section id="body">
             <div id="profilePic">
               <ProfilePic
                 id="profilePic"
-                account={this.props.account}
+                account={this.props.userAccount}
               />
             </div>
             <form id="form">
@@ -192,7 +169,7 @@ class ReplyInThread extends React.Component {
                   type="text"
                   autoComplete="off"
                   placeholder="What's the meme"
-                  rows="5"
+                  rows="1"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}
                   ref={Ref=>this.textarea=Ref}
@@ -204,9 +181,9 @@ class ReplyInThread extends React.Component {
               <div id="button-box">
                 <p
                   id="meme-button"
-                  onClick={this.handleMemeClick}
+                  onClick={this.handleReplyClick}
                 >
-                  Meme
+                  Reply
                 </p>
               </div>
             </form>

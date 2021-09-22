@@ -1,0 +1,9 @@
+.Meme p#downvote-button {
+  cursor: pointer;
+}
+.Meme p#downvote-button:hover {
+  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
+}
+.Meme img#downvote {
+  transform: rotate(180deg);
+}

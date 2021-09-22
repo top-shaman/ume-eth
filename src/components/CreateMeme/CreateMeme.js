@@ -32,9 +32,7 @@ class CreateMeme extends React.Component {
   }
 
   componentDidMount() {
-    const textBox = document.querySelector('.CreateMeme div#text-box')
     const storage = localStorage.getItem('memeText')
-    //this.textarea.style.height = textBox.clientHeight + 'px'
     fadeIn('.CreateMeme div#container', 333)
     partialFadeIn('.CreateMeme div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
@@ -94,7 +92,6 @@ class CreateMeme extends React.Component {
 
   }
   async handleMemeClick(e) {
-    const textarea = document.querySelector('.CreateMeme textarea#meme-text')
     if(this.state.validMeme) {
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -172,6 +169,7 @@ class CreateMeme extends React.Component {
             <img
               id="x"
               className="close"
+              alt="close button"
               src={X}
               width="11px"
               onClick={this.handleCloseClick}

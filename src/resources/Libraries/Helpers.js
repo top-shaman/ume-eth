@@ -1,6 +1,3 @@
-import Web3 from 'web3'
-
-
 export const toBytes = async (s) => {
   return await window.web3.utils.fromAscii(s)
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Meme from "../Meme/Meme"
-import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
+import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Timeline.css"
 
 
@@ -34,6 +34,7 @@ class Timeline extends React.Component {
     this.handleToThread = this.handleToThread.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleLike = this.handleLike.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleOverButton = this.handleOverButton.bind(this)
   }
@@ -76,11 +77,18 @@ class Timeline extends React.Component {
   }
 
   handleRefresh(e) {
-    e.preventDefault()
     setTimeout(() => this.refreshMemes(), 1000)
   }
   handleReply(e) {
     this.props.handleReply(e)
+  }
+  handleLike(event) {
+    const memes = this.state.memes,
+          index = memes.findIndex(element => element.memeId===event[0])
+    memes[index].userHasLiked = event[1]
+    memes[index].likes = event[2]
+    this.setState({ memes })
+    this.compileRenderedMemes(0)
   }
   handleOverMeme(e) {
   }
@@ -181,10 +189,8 @@ class Timeline extends React.Component {
         //begin loading if conditional met
         this.setState({ timelineLoading: true })
         const userStorage = await this.props.userStorage,
-              memeStorage = await this.props.memeStorage,
-              uInterface = await this.props.interface
-        let memesToRender = await this.state.memesToRender,
-            memesNotRendered = await this.state.memesNotRendered,
+              memeStorage = await this.props.memeStorage
+        let memesNotRendered = await this.state.memesNotRendered,
             memesRendered = await this.state.memesRendered,
             memesInQueue = 0,
             newMemes = []
@@ -244,7 +250,6 @@ class Timeline extends React.Component {
       console.log('load old memes ' + new Date().toTimeString())
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
-            uInterface = await this.props.interface,
             memeIds = await this.state.memeIds,
             memeCount = await memeIds.length,
             newMemes = []
@@ -433,6 +438,7 @@ class Timeline extends React.Component {
               handleToProfile={this.handleToProfile}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
+              handleLike={this.handleLike}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
               handleToThread={this.handleToThread}
@@ -490,6 +496,7 @@ class Timeline extends React.Component {
             handleToProfile={this.handleToProfile}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
+            handleLike={this.handleLike}
             handleOverMeme={this.handleOverMeme}
             handleOverButton={this.handleOverButton}
             handleToThread={this.handleToThread}
@@ -501,10 +508,6 @@ class Timeline extends React.Component {
         )
       }
     }
-    /*
-    const alreadyRendered = tempMemesHTML.slice(0, memesRendered)
-    const newRender = tempMemesHTML.slice(memesRendered)
-    */
     this.setState({
       oldMemesHTML: tempMemesHTML
     })
@@ -523,28 +526,8 @@ class Timeline extends React.Component {
     }
     boostMap.sort((a,b) => parseInt(a[0]) - parseInt(b[0]))
 
-    /*
-    const boosts = [],
-          noBoosts = []
-    boostMap.forEach(e => {
-      if(parseInt(e[0])>0) boosts.push(e[1])
-    })
-    boostMap.forEach(e => {
-      if(parseInt(e[0])===0) noBoosts.push(e[1])
-    })
-    const noBoostsSorted = noBoosts.sort((a,b) => parseInt(a[2])-parseInt(b[2]))
-    const memeIdsByBoost = noBoostsSorted.concat(boosts)
-    /*const memeIdsByBoost = []
-    boostMap.forEach(e => memeIdsByBoost.push(e[1]))
-    */
     const memeIdsByBoost = []
     boostMap.forEach(e => memeIdsByBoost.push(e[1]))
-/*
-    this.setState({
-      memeIdsByBoost
-    })
-    */
-    //console.log(boostMap)
     return memeIdsByBoost
   }
   sortToStyle(style) {

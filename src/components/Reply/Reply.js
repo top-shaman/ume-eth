@@ -25,7 +25,6 @@ class Reply extends React.Component {
       interface: this.props.interface,
       memeText: '',
       visibleText: '',
-      parentId: '',
       originId: '',
       repostId: '',
       validMeme: false
@@ -40,9 +39,7 @@ class Reply extends React.Component {
   }
 
   componentDidMount() {
-    const textBox = document.querySelector('.Reply div#text-box')
     const storage = localStorage.getItem('memeText')
-    //this.textarea.style.height = textBox.clientHeight + 'px'
     fadeIn('.Reply div#container', 333)
     partialFadeIn('.Reply div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
@@ -102,7 +99,6 @@ class Reply extends React.Component {
 
   }
   async handleMemeClick(e) {
-    const textarea = document.querySelector('.Reply textarea#meme-text')
     if(this.state.validMeme) {
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -189,6 +185,7 @@ class Reply extends React.Component {
               id="x"
               className="close"
               src={X}
+              alt="close button"
               width="11px"
               onClick={this.handleCloseClick}
             />

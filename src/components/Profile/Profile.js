@@ -1,6 +1,6 @@
 import React from 'react'
 import Meme from "../Meme/Meme"
-import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
+import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Profile.css"
 
 
@@ -178,10 +178,8 @@ class Profile extends React.Component {
         //begin loading if conditional met
         this.setState({ timelineLoading: true })
         const userStorage = await this.props.userStorage,
-              memeStorage = await this.props.memeStorage,
-              uInterface = await this.props.interface
-        let memesToRender = await this.state.memesToRender,
-            memesNotRendered = await this.state.memesNotRendered,
+              memeStorage = await this.props.memeStorage
+        let memesNotRendered = await this.state.memesNotRendered,
             memesRendered = await this.state.memesRendered,
             memesInQueue = 0,
             newMemes = []
@@ -241,7 +239,6 @@ class Profile extends React.Component {
       console.log('load old memes ' + new Date().toTimeString())
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
-            uInterface = await this.props.interface,
             memeIds = await this.state.memeIds,
             userMemeCount = await memeIds.length,
             newMemes = []
@@ -523,7 +520,7 @@ class Profile extends React.Component {
       this.setState({
         memes: this.state.memes.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
       })
-    } else if(style=='boost') {
+    } else if(style==='boost') {
       this.setState({
         memes: this.state.memes.sort((a,b) => a.boosts - b.boosts)
       })

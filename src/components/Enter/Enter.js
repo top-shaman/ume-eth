@@ -65,6 +65,7 @@ class Enter extends React.Component {
             <img
               id="logo"
               src={Logo}
+              alt="uMe logo"
               onMouseOver={this.handleMouseOver}
               onMouseLeave={this.handleMouseLeave}
               onClick={this.handleClick}

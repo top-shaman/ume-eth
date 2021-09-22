@@ -1,16 +1,7 @@
 import React, {Component} from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bobble, clickBobble, filterOut } from '../../resources/Libraries/Animation'
 import "./ReplyMeme.css"
-
-import Reply from '../../resources/reply.svg'
-import Like from '../../resources/heart.svg'
-import Liked from '../../resources/heart-filled.svg'
-import Rememe from '../../resources/rememe.svg'
-import Arrow from '../../resources/arrow.svg'
-
-const emptyId = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 class ReplyMeme extends Component {
   constructor(props) {
@@ -118,6 +109,7 @@ class ReplyMeme extends Component {
           <div id="meme-header">
             <a
               id="username"
+              href={this.state.username.slice(1)}
             >
               {this.state.username}
             </a>

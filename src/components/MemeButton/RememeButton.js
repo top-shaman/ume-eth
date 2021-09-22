@@ -1,9 +1,9 @@
 import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
-import Reply from '../../resources/reply.svg'
-import './ReplyButton.css'
+import Rememe from '../../resources/rememe.svg'
+import './RememeButton.css'
 
-class ReplyButton extends React.Component {
+class RememeButton extends React.Component {
   constructor(props) {
     super(props)
 
@@ -14,9 +14,10 @@ class ReplyButton extends React.Component {
       text: this.props.text,
       author: this.props.author,
       parentId: this.props.parentId,
-      responses: this.props.responses
+      reponses: this.props.responses,
+      rememeCountTotal: this.props.rememeCountTotal
     }
-    this.reply = React.createRef()
+    this.rememe = React.createRef()
 
     this.handleClick = this.handleClick.bind(this)
     this.handleMouseEnter = this.handleMouseEnter.bind(this)
@@ -26,30 +27,29 @@ class ReplyButton extends React.Component {
   }
   handleClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
-    console.log(this.state.responses)
-    this.replyClick()
+    this.rememeClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
-    if(this.reply.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg)') {
+    if(this.rememe.style.filter!=='sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg)') {
       const brightnessStart = 0.7,
-            brightnessEnd = 0.43,
-            hue = 85,
-            elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+            brightnessEnd = 0.4,
+            hue = 140,
+            elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }
   handleMouseLeave(e) {
     e.preventDefault()
-    const brightnessStart = 0.43,
+    const brightnessStart = 0.4,
           brightnessEnd = 0.6,
-          hue = 85,
-          elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+          hue = 140,
+          elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
 
-  async replyClick() {
-    this.props.handleReply(
+  async rememeClick() {
+    this.props.handleRememe(
       [ this.state.username,
         this.state.address,
         this.state.author,
@@ -63,18 +63,18 @@ class ReplyButton extends React.Component {
   render() {
     return(
       <p
-        className="reply"
-        id="reply-button"
+        className="rememe"
+        id="rememe-button"
         onClick={this.handleClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
-        ref={Ref => this.reply=Ref}
+        ref={Ref => this.rememe=Ref}
       >
-        <img className="reply" src={Reply} alt="reply button" id="reply" width="13px" height="13px"/>
-        <span className="reply" id="reply-count">{this.state.responses!==undefined ? this.state.responses.length : 0}</span>
+        <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="13px" height="13px"/>
+        <span className="rememe" id="rememe-count">{this.state.rememeCountTotal}</span>
       </p>
     )
   }
 }
 
-export default ReplyButton
+export default RememeButton

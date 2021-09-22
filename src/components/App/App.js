@@ -1,6 +1,6 @@
 import React from 'react'
 import Web3 from 'web3'
-import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
+import { blurToFadeIn, fadeOut} from '../../resources/Libraries/Animation'
 import './App.css';
 import Main from '../Main/Main'
 import Enter from '../Enter/Enter'
@@ -10,9 +10,7 @@ import Reply from '../Reply/Reply'
 import NoWallet from '../NoWallet/NoWallet'
 
 import UserInterface from '../../abis/UserInterface.json'
-import UserFactory from '../../abis/UserFactory.json'
 import UserStorage from '../../abis/UserStorage.json'
-import MemeFactory from '../../abis/MemeFactory.json'
 import MemeStorage from '../../abis/MemeStorage.json'
 import UME from '../../abis/UME.json'
 
@@ -195,16 +193,6 @@ class App extends React.Component {
       console.log('account doesn\'t exist')
     }
   }
-  /*
-  async compileMemesByBoost() {
-    const memeIdsByBoost = []
-    for(let i; i < this.state.memeCount; i++) {
-      const memeId = await this.state.interface.methods.encode(i).call()
-      memeIdsByBoost.push(await this.state.memeStorage.getBoost(memeId))
-    }
-    return memeIdsByBoost
-  }
-  */
 
   render() {
     return (

@@ -12,11 +12,11 @@ class LikeButton extends React.Component {
       memeId: this.props.memeId,
       userAccount: this.props.userAccount,
       likes: this.props.likes,
-      userHasLiked: this.props.userHasLiked,
       parentId: this.props.parentId,
       reponses: this.props.responses,
       memeStorage: this.props.memeStorage,
-      interface: this.props.interface
+      interface: this.props.interface,
+      userHasLiked: this.props.userHasLiked
     }
     this.like = React.createRef()
 
@@ -27,9 +27,9 @@ class LikeButton extends React.Component {
   async componentDidMount() {
     await this.userHasLiked()
   }
-  handleClick(e) {
+  async handleClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
-    this.likeClick()
+    await this.likeClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
@@ -65,21 +65,27 @@ class LikeButton extends React.Component {
   async likeClick() {
     console.log('accessing account: ' + this.props.userAccount)
     console.log('memeId: ' + this.state.memeId)
-    await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
+    await this.state.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
-    if(!this.state.userHasLiked) {
-      this.setState({
-        likes: this.state.likes++,
-        userHasLiked: true
+      .then(() => {
+        if(!this.state.userHasLiked) {
+          this.setState({
+            userHasLiked: true,
+            likes: this.state.likes+1
+          })
+          this.props.handleLike([this.state.memeId, this.state.userHasLiked, this.state.likes])
+        }
+        else {
+          this.setState({
+            userHasLiked: false,
+            likes: this.state.likes-1
+          })
+          this.props.handleLike([this.state.memeId, this.state.userHasLiked, this.state.likes])
+        }
       })
-    }
-    else this.setState({
-      likes: this.state.likes--,
-      userHasLiked: false
-    })
   }
   async userHasLiked() {
-    const userHasLiked = await this.props.memeStorage.methods.getLikers(this.props.memeId).call()
+    const userHasLiked = await this.state.memeStorage.methods.getLikers(this.state.memeId).call()
       .then(e => e.includes(this.props.userAccount))
     this.setState({
       userHasLiked
@@ -97,18 +103,18 @@ class LikeButton extends React.Component {
             onMouseLeave={this.handleMouseLeave}
             ref={Ref => this.liked=Ref}
           >
-            <img className="like" src={Liked} id="like" width="13px" height="13px"/>
+            <img className="like" src={Liked} alt="like button" id="like" width="13px" height="13px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
         : <p
             className="like"
             id="like-button"
             onClick={this.handleClick}
-            onMouseEnter={this.handleMouseOver}
+            onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
             ref={Ref => this.like=Ref}
           >
-            <img className="like" src={Like} id="like" width="13px" height="13px"/>
+            <img className="like" src={Like} alt="like button" id="like" width="13px" height="13px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
     )

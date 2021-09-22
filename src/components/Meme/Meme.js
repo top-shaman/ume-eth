@@ -1,13 +1,13 @@
 import React from 'react'
 import ReplyButton from '../MemeButton/ReplyButton'
+import LikeButton from '../MemeButton/LikeButton'
+import RememeButton from '../MemeButton/RememeButton'
+import UpvoteButton from '../MemeButton/UpvoteButton'
+import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bobble, clickBobble, filterIn, filterOut, bgColorChange } from '../../resources/Libraries/Animation'
+import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
 import "./Meme.css"
-
-import ReMeme from '../../resources/rememe.svg'
-import Arrow from '../../resources/arrow.svg'
-import LikeButton from '../MemeButton/LikeButton'
 
 class Meme extends React.Component {
   constructor(props) {
@@ -54,6 +54,7 @@ class Meme extends React.Component {
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleLike = this.handleLike.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -79,87 +80,12 @@ class Meme extends React.Component {
   //event handlers
   handleButtonClick(e) {
     e.preventDefault()
-    //bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
-    if(e.target.className==='reply') {
-    } else if(e.target.className==='like') {
-    } else if(e.target.className==='rememe') {
-    } else if(e.target.className==='upvote') {
-    } else if(e.target.className==='downvote') {
-      //const element = 'div#\\3' + this.state.memeId + '  p.' + e.target.className
-      //document.querySelector(element).style.transform = 'rotate(180deg)'
-    }
     this.props.handleRefresh(e)
   }
   handleButtonMouseOver(e) {
-    let brightnessEnd, hue, elementName,
-        brightnessStart = 0.7
-    /*
-    if(e.target.className==='like') {
-      if(e.target.id==='like-button' &&
-        this.like.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)') {
-        brightnessEnd = 0.4
-        hue = 285
-        elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
-        filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-      } else if(e.target.id==='like-button-liked') {
-        elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
-        bobble(elementName, 500)
-      }
-      */
-    if(e.target.className==='rememe' &&
-              this.rememe.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(140deg)') {
-      brightnessEnd = 0.4
-      hue = 140
-      elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
-      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target.className==='upvote' &&
-              this.upvote.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg)') {
-      brightnessEnd = 0.43
-      hue = 310
-      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
-      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target.className==='downvote' &&
-              this.downvote.style.filter!=='invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg)') {
-      brightnessEnd = 0.43
-      hue = 180
-      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
-      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-    }
     this.props.handleOverButton(this.div.style.filter)
   }
   handleButtonMouseLeave(e) {
-    let brightnessStart, hue, elementName,
-        brightnessEnd = 0.6
-    /*
-    if(e.target.className==='like') {
-      if(e.target.id==='like-button' || e.target.id==='like' || e.target.id==='like-count') {
-        brightnessStart = 0.4
-        hue = 285
-        elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
-        filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-      }
-      else if(e.target.id==='like-button-liked') {
-        elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
-        bobble(elementName, 500)
-      }
-    }
-      */
-    if(e.target.className==='rememe') {
-      brightnessStart = 0.4
-      hue = 140
-      elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target.className==='upvote') {
-      brightnessStart = 0.43
-      hue = 310
-      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target.className==='downvote') {
-      brightnessStart = 0.43
-      hue = 180
-      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    }
   }
   handleProfileClick(e) {
     e.preventDefault()
@@ -173,10 +99,11 @@ class Meme extends React.Component {
   }
   handleMemeClick(e) {
     e.preventDefault()
-    if(e.target.className!=='reply' &&// !e.target.id!=='reply-button' && !e.target.id!=='reply-count' &&
-       e.target.className!=='like' && //!e.target.id!=='like-button' && !e.target.id!=='like-count' &&
-       e.target.className!=='rememe' && //!e.target.id!=
-       e.target.className!=='upvote' && e.target.className!=='downvote') {
+    if(e.target.className!=='reply' &&
+       e.target.className!=='like' &&
+       e.target.className!=='rememe' &&
+       e.target.className!=='upvote' &&
+       e.target.className!=='downvote') {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -222,26 +149,16 @@ class Meme extends React.Component {
   }
   handleLike(e) {
     console.log(e)
+    this.setState({
+      userHasLiked: e[1],
+      likes: e[2],
+    })
     this.props.handleLike(e)
   }
-/*
-  async likeClick() {
-    console.log('accessing account: ' + this.props.userAccount)
-    console.log('memeId: ' + this.state.memeId)
-    await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
-      .send({from: this.state.userAccount})
-    if(!this.state.userHasLiked) {
-      this.setState({
-        likes: this.state.likes++,
-        userHasLiked: true
-      })
-    }
-    else this.setState({
-      likes: this.state.likes--,
-      userHasLiked: false
-    })
+  handleRememe(e) {
+    console.log('rememe')
   }
-  */
+
   async formatText() {
     let text = this.props.text,
         plainMap = await isolatePlain(text),
@@ -265,15 +182,6 @@ class Meme extends React.Component {
     }
     this.setState({ visibleText: formatted })
   }
-  /*
-  async userHasLiked() {
-    const userHasLiked = await this.props.memeStorage.methods.getLikers(this.props.memeId).call()
-      .then(e => e.includes(this.props.userAccount))
-    this.setState({
-      userHasLiked
-    })
-  }
-  */
 
   render() {
     const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
@@ -318,10 +226,9 @@ class Meme extends React.Component {
               username={this.state.username}
               address={this.state.address}
               text={this.state.text}
-              memeId={this.state.memeId}
               parentId={this.state.parentId}
               author={this.state.author}
-              reponses={this.state.responses}
+              responses={this.state.responses}
               handleReply={this.handleReply}
             />
             <LikeButton
@@ -329,68 +236,29 @@ class Meme extends React.Component {
               userAccount={this.state.userAccount}
               likes={this.state.likes}
               userHasLiked={this.state.userHasLiked}
-              parentId={this.state.parentId}
-              reponses={this.state.responses}
               memeStorage={this.state.memeStorage}
               interface={this.state.interface}
-              handleReply={this.handleReply}
+              handleLike={this.handleLike}
             />
-            { /*this.state.userHasLiked
-              ? <p
-                  className="like"
-                  id="like-button-liked"
-                  onClick={this.handleButtonClick}
-                  onMouseEnter={this.handleButtonMouseOver}
-                  onMouseLeave={this.handleButtonMouseLeave}
-                >
-                  <img className="like" src={Liked} id="like" width="13px" height="13px"/>
-                  <span className="like" id="like-count">{this.state.likes}</span>
-                </p>
-              : <p
-                  className="like"
-                  id="like-button"
-                  onClick={this.handleButtonClick}
-                  onMouseEnter={this.handleButtonMouseOver}
-                  onMouseLeave={this.handleButtonMouseLeave}
-                  ref={Ref => this.like=Ref}
-                >
-                  <img className="like" src={Like} id="like" width="13px" height="13px"/>
-                  <span className="like" id="like-count">{this.state.likes}</span>
-                </p>*/
-            }
-            <p
-              className="rememe"
-              id="rememe-button"
-              onClick={this.handleButtonClick}
-              onMouseEnter={this.handleButtonMouseOver}
-              onMouseLeave={this.handleButtonMouseLeave}
-              ref={Ref => this.rememe=Ref}
-            >
-              <img className="rememe" src={ReMeme} id="rememe" width="13px" height="13px"/>
-              <span className="rememe" id="rememe-count">
-                {rememeCountTotal}
-              </span>
-            </p>
-            <p
-              className="upvote"
-              id="upvote-button"
-              onClick={this.handleButtonClick}
-              onMouseEnter={this.handleButtonMouseOver}
-              onMouseLeave={this.handleButtonMouseLeave}
-              ref={Ref => this.upvote=Ref}
-            >
-              <img className="upvote" src={Arrow} id="upvote" width="13px" height="13px"/>
-            </p>
-            <p
-              className="downvote"
-              id="downvote-button"
-              onClick={this.handleButtonClick}
-              onMouseEnter={this.handleButtonMouseOver}
-              onMouseLeave={this.handleButtonMouseLeave}
-              ref={Ref => this.downvote=Ref}
-            >
-              <img className="downvote" src={Arrow} id="downvote" width="13px" height="13px"/>
-            </p>
+            <RememeButton
+              memeId={this.state.memeId}
+              username={this.state.username}
+              address={this.state.address}
+              text={this.state.text}
+              parentId={this.state.parentId}
+              author={this.state.author}
+              reponses={this.state.responses}
+              handleRememe={this.handleRememe}
+              rememeCountTotal={rememeCountTotal}
+            />
+            <UpvoteButton
+              memeId={this.state.memeId}
+              interface={this.state.interface}
+            />
+            <DownvoteButton
+              memeId={this.state.memeId}
+              interface={this.state.interface}
+            />
           </div>
         </div>
       </div>

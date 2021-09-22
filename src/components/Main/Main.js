@@ -4,7 +4,7 @@ import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
-import { blurToFadeIn, fadeOut, blur, unBlur, bobble } from '../../resources/Libraries/Animation'
+import { blur } from '../../resources/Libraries/Animation'
 import './Main.css'
 import {fromBytes} from '../../resources/Libraries/Helpers'
 
@@ -315,8 +315,6 @@ class Main extends React.Component {
                       isVisible={this.state.isVisible}
                       visibleText={this.state.visibleText}
                       userHasLiked={this.state.userHasLiked}
-                      interface={this.state.interface}
-                      memeStorage={this.state.memeStorage}
                       userAccount={this.state.account}
                     />
                   : ''

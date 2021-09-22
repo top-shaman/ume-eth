@@ -1,7 +1,7 @@
 import React from 'react'
 import ThreadMeme from '../ThreadMeme/ThreadMeme'
 import ThreadMemeMain from '../ThreadMeme/ThreadMemeMain'
-import { toBytes, fromBytes } from '../../resources/Libraries/Helpers'
+import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Thread.css"
 
 
@@ -220,7 +220,7 @@ class Thread extends React.Component {
   }
 
   // Thread by Time sort
-
+/*
   //loads new memes above rendered section
   async loadNewMemes() {
     console.log('thread: Try Loading New Memes')
@@ -407,7 +407,7 @@ class Thread extends React.Component {
       })
     }
   }
-
+  */
   // helper functions
   async populateMeme(memeId, memeStorage, userStorage) {
     const tempMeme = await memeStorage.methods.memes(memeId).call()
@@ -672,18 +672,15 @@ class Thread extends React.Component {
   }
   async compileParents() {
     let parents = [],
-        hasParent = true,
         //starting values for parentId
         parentId = this.state.parentId,
-        parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call(),
-        key = 1
+        parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call()
 
     while(parentId!==parentParentId) {
       parents = [...parents, await parentId]
 
       parentId = parentParentId
       parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call()
-      key++
     }
     console.log(parents)
     return parents

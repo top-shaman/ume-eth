@@ -125,28 +125,6 @@ div.Meme:hover {
 .Meme p span {
   margin: 0 0.1rem 0 0.4rem;
 }
-.Meme p#reply-button {
-  cursor: pointer;
-}
-.Meme p#reply-button:hover {
-  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
-}
-.Meme p#like-button-liked.like {
-  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-  cursor: pointer;
-}
-.Meme p#like-button {
-  cursor: pointer;
-}
-.Meme p#like-button:hover {
-  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
-}
-.Meme p#rememe-button {
-  cursor: pointer;
-}
-.Meme p#rememe-button:hover {
-  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
-}
 .Meme p#upvote-button {
   margin: 0.15rem 7rem 0.15rem 0.15rem;
   cursor: pointer;

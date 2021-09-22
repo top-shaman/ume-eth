@@ -1,10 +1,8 @@
 import React from 'react'
-import Identicon from 'identicon.js'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { fadeIn, fadeOut } from '../../resources/Libraries/Animation'
 import Web3 from 'web3'
 import './CreateUser.css'
-import { ethErrors, serializeError } from 'eth-rpc-errors'
 
 const toBytes = string => Web3.utils.fromAscii(string)
 
@@ -103,7 +101,7 @@ class CreateUser extends React.Component {
     } else if(this.state.username.length > 0 && this.state.username.length < 2 &&
        this.state.usernameFlag) {
       inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
-    } else if(this.state.username.length > 1 && this.state.usernameFlag==lengthFlag) {
+    } else if(this.state.username.length > 1 && this.state.usernameFlag===lengthFlag) {
       this.setState({ usernameFlag: false })
       inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
     } // check if focused
@@ -149,7 +147,7 @@ class CreateUser extends React.Component {
     } else if(this.state.address.length > 0 && this.state.address.length < 2 &&
        this.state.addressFlag) {
       inputBox.style.boxShadow = '0 0 0 0.1rem #CB0C00'
-    } else if (this.state.address.length > 1 && this.state.addressFlag==lengthFlag) {
+    } else if (this.state.address.length > 1 && this.state.addressFlag===lengthFlag) {
       this.setState({ addressFlag: false })
       inputBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
     } // check if focused
