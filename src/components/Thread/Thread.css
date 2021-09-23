@@ -1,6 +1,6 @@
-.Thread div#loader p,
-.Thread div#loader-memes p,
-.Thread div#loaded p {
+.Thread div#loader p#loader,
+.Thread div#loader-memes p#loader,
+.Thread div#loaded p#loader {
   opacity: 1;
   align-items: flex-start;
   width: 80%;

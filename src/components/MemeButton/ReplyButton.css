@@ -1,6 +1,6 @@
-.Meme p#reply-button {
+p#reply-button {
   cursor: pointer;
 }
-.Meme p#reply-button:hover {
+p#reply-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
 }

@@ -4,8 +4,8 @@ div.ThreadMeme {
   background-color: #1D1F22;
   border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
-  min-width: 28rem;
-  max-width: 80%;
+  min-width: 5rem;
+  max-width: 40rem;
 }
 div.ThreadMeme:hover {
   background-color: #313131;
@@ -13,8 +13,7 @@ div.ThreadMeme:hover {
 }
 .ThreadMeme div#ThreadMeme-body {
   display: flex;
-  min-width: 24.2rem;
-  max-width: 100%;
+  width: 100%;
   flex-direction: column;
   overflow-wrap: break-word;
 }
@@ -27,7 +26,7 @@ div.ThreadMeme:hover {
 .ThreadMeme div#ThreadMeme-footer {
   display: flex;
   flex-direction: row;
-  margin: 0.2rem 10rem 0.2rem 0.4rem;
+  margin: 0.2rem auto 0.2rem 0.4rem;
   justify-content: flex-start;
   align-items: flex-end;
 }
@@ -68,6 +67,7 @@ div.ThreadMeme:hover {
   font-family: 'Arial', sans-serif;
   font-size: 0.84rem;
   font-weight: 500;
+  width: inherit;
   margin: 0;
   word-wrap: break-word;
   white-space: break-spaces;

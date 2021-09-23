@@ -180,9 +180,22 @@ class Thread extends React.Component {
           replies
         })
 
-        console.log(parents)
-        console.log(meme)
-        console.log(replies)
+        console.log('parents ' + parents)
+        console.log('meme ' + meme)
+        console.log('replies ' + replies)
+
+        this.setState({
+          parentsHTML: this.state.oldParentsHTML,
+          repliesHTML: this.state.oldRepliesHTML
+        })
+        // render memes to HTML & store in oldMemesHTML for refresh
+        await this.renderThread(parents, parentsRendered, parentsInQueue, parentCount).catch(e => console.error(e))
+        await this.renderMeme().catch(e => console.error(e))
+        await this.renderThread(replies, repliesRendered, repliesInQueue, replyCount).catch(e => console.error(e))
+
+        console.log('parentsHTML ' + this.state.parentsHTML)
+        console.log('memeHTML ' + this.state.memeHTML)
+        console.log('repliesHTML ' + this.state.repliesHTML)
 
         this.setState({
           parentsHTML: this.state.oldParentsHTML,
@@ -211,11 +224,11 @@ class Thread extends React.Component {
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.threadLoading)
       }
-      else {
-        this.setState({
-          threadLoading: false,
-        })
-      }
+    }
+    else {
+      this.setState({
+        threadLoading: false
+      })
     }
   }
 
@@ -480,8 +493,14 @@ class Thread extends React.Component {
               isVisible={meme.isVisible}
         //      renderOrder={meme.renderOrder}
               alreadyRendered={
-                this.state.memesHTML!==undefined
+                this.state.replies===memes
+                ? this.state.repliesHTML!==undefined
                   ? meme.alreadyRendered
+                  : false
+                : this.state.parents===memes
+                  ? this.state.parentsHTML!==undefined
+                    ? meme.alreadyRendered
+                    : false
                   : false
               }
               handleToProfile={this.handleToProfile}
@@ -563,11 +582,11 @@ class Thread extends React.Component {
     }
     if(memes===this.state.parents) {
       this.setState({
-        oldParentsHTML: tempMemesHTML,
+        oldParentsHTML: tempMemesHTML
       })
     } else if(memes===this.state.replies) {
       this.setState({
-        oldRepliesHTML: tempMemesHTML,
+        oldRepliesHTML: tempMemesHTML
       })
     }
   }
@@ -599,9 +618,11 @@ class Thread extends React.Component {
           isVisible={meme.isVisible}
     //      renderOrder={meme.renderOrder}
           alreadyRendered={
-            this.state.memesHTML!==undefined
+            this.state.meme===meme
+            ? this.state.memeHTML!==undefined
               ? meme.alreadyRendered
               : false
+            : false
           }
           handleToProfile={this.handleToProfile}
           handleToThread={this.handleToThread}
@@ -673,12 +694,16 @@ class Thread extends React.Component {
   async compileParents() {
     let parents = [],
         //starting values for parentId
+        currentId = this.state.memeId,
         parentId = this.state.parentId,
         parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call()
+    console.log('parent: ' + parentId)
+    console.log('parent\'s parent: ' + parentParentId)
 
-    while(parentId!==parentParentId) {
+    while(currentId!==parentParentId) {
       parents = [...parents, await parentId]
 
+      currentId = parentId
       parentId = parentParentId
       parentParentId = await this.state.memeStorage.methods.getParentId(parentId).call()
     }
@@ -740,19 +765,19 @@ class Thread extends React.Component {
     return(
       <div className="Thread">
         { this.state.threadLoading
-          ? this.state.memeCount===null && !this.state.refreshing
+          ? (this.state.replyCount===null || this.state.parentCount===null) && !this.state.refreshing
             ? <div id="loader">
-                <p>Loading...</p>
+                <p id="loader">Loading...</p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldParentsHTML}
                   {this.state.oldMemeHTML}
                   {this.state.oldRepliesHTML}
-                  <p>Loading...<br/></p>
+                  <p id="loader">Loading...<br/></p>
                 </div>
               : <div id="loader-memes">
-                  <p>Loading...</p>
+                  <p id="loader">Loading...</p>
                   {this.state.oldParentsHTML}
                   {this.state.oldMemeHTML}
                   {this.state.oldRepliesHTML}
@@ -770,7 +795,7 @@ class Thread extends React.Component {
                   {this.state.repliesHTML}
                 </div>
             : <div id="loaded">
-                <p>No memes yet!</p>
+                <p id="loader">No memes yet!</p>
               </div>
         }
       </div>

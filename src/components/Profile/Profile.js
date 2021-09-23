@@ -532,28 +532,28 @@ class Profile extends React.Component {
         { this.state.profileLoading
           ? this.state.userMemeCount===null && !this.state.refreshing
             ? <div id="loader">
-                <p>Loading...</p>
+                <p id="loader">Loading...</p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldMemesHTML}
-                  <p>Loading...<br/></p>
+                  <p id="loader">Loading...<br/></p>
                 </div>
               : <div id="loader-memes">
-                  <p>Loading...</p>
+                  <p id="loader">Loading...</p>
                   {this.state.oldMemesHTML}
                 </div>
           : this.state.userMemeCount> 0
             ? this.state.allMemesLoaded
               ? <div id="loaded">
                   {this.state.memesHTML}
-                  <p>All memes loaded!<br/></p>
+                  <p id="loader">All memes loaded!<br/></p>
                 </div>
               : <div id="loaded">
                   {this.state.memesHTML}
                 </div>
             : <div id="loaded">
-                <p>No memes yet!</p>
+                <p id="loader">No memes yet!</p>
               </div>
         }
       </div>

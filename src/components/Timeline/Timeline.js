@@ -549,28 +549,28 @@ class Timeline extends React.Component {
         { this.state.timelineLoading
           ? this.state.memeCount===null && !this.state.refreshing
             ? <div id="loader">
-                <p>Loading...</p>
+                <p id="loader">Loading...</p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldMemesHTML}
-                  <p>Loading...<br/></p>
+                  <p id="loader">Loading...<br/></p>
                 </div>
               : <div id="loader-memes">
-                  <p>Loading...</p>
+                  <p id="loader">Loading...</p>
                   {this.state.oldMemesHTML}
                 </div>
           : this.state.memeCount > 0
             ? this.state.allMemesLoaded
               ? <div id="loaded">
                   {this.state.memesHTML}
-                  <p>All memes loaded!<br/></p>
+                  <p id="loader">All memes loaded!<br/></p>
                 </div>
               : <div id="loaded">
                   {this.state.memesHTML}
                 </div>
             : <div id="loaded">
-                <p>No memes yet!</p>
+                <p id="loader">No memes yet!</p>
               </div>
         }
       </div>

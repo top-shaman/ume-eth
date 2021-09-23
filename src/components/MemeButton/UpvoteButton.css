@@ -1,7 +1,7 @@
-.Meme p#upvote-button {
+p#upvote-button {
   margin: 0.15rem 7rem 0.15rem 0.15rem;
   cursor: pointer;
 }
-.Meme p#upvote-button:hover {
+p#upvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
 }

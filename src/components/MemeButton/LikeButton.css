@@ -1,10 +1,12 @@
-.Meme p#like-button-liked.like {
+.Meme p#like-button-liked.like,
+.ThreadMeme p#like-button-liked.like,
+.ThreadMemeMain p#like-button-liked.like {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
   cursor: pointer;
 }
-.Meme p#like-button {
+p#like-button {
   cursor: pointer;
 }
-.Meme p#like-button:hover {
+p#like-button:hover {
   filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg);
 }

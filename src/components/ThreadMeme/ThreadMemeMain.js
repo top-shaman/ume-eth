@@ -4,7 +4,7 @@ import LikeButton from '../MemeButton/LikeButton'
 import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
-//import ReplyInThread from '../ReplyInThread/ReplyInThread'
+import ReplyInThread from '../ReplyInThread/ReplyInThread'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
@@ -131,18 +131,9 @@ class ThreadMemeMain extends React.Component {
 
   handleOverMeme(e) {
     e.preventDefault()
-    const element = 'div#\\3' + this.state.memeId
-    if(this.div.style.backgroundColor!=='#313131') {
-      bgColorChange(element, '1D1F22', '313131',  500)
-    } else if(this.div.style.backgroundColor==='#313131') {
-      document.querySelector(element).style.backgroundColor = '#313131'
-    }
-    this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveMeme(e) {
     e.preventDefault()
-    const elementName = 'div#\\3' + this.state.memeId
-    bgColorChange(elementName, '313131', '1D1F22',  500)
   }
   handleReply(e) {
     console.log(e)
@@ -185,7 +176,9 @@ class ThreadMemeMain extends React.Component {
   }
 
   render() {
-    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
+    const time = new Date(this.state.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
+          date = new Date(this.state.time).toLocaleDateString([], {month: 'short', day:'numeric', year: 'numeric'}),
+          rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
     return(
       <div
         className="ThreadMemeMain"
@@ -195,91 +188,96 @@ class ThreadMemeMain extends React.Component {
         onMouseEnter={this.handleOverMeme}
         onMouseLeave={this.handleLeaveMeme}
       >
-        <section id="profilePic">
-          <a
-            id="profilePic"
-            href={`/${this.state.address.slice(1)}`}
-            onClick={this.handleProfileClick}
-          >
-            <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
-          </a>
-        </section>
-        <div id="ThreadMemeMain-body">
-          <div id="ThreadMemeMain-header">
+        <section
+          className="ThreadMemeMain"
+          id="MainMeme"
+        >
+          <section id="profilePic">
             <a
+              id="profilePic"
               href={`/${this.state.address.slice(1)}`}
-              id="username"
               onClick={this.handleProfileClick}
             >
-              {this.state.username}
+              <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
             </a>
-            <span id="address">{this.state.address}</span>
-            <span id="time">{this.state.time}</span>
-          </div>
-          <div id="text-box">
-            <p id="ThreadMemeMain-text">
-              {this.state.visibleText}
-            </p>
-          </div>
-          <div id="ThreadMemeMain-footer">
-            <ReplyButton
-              memeId={this.state.memeId}
-              username={this.state.username}
-              address={this.state.address}
-              text={this.state.text}
-              parentId={this.state.parentId}
-              author={this.state.author}
-              reponses={this.state.responses}
-              handleReply={this.handleReply}
-            />
-            <LikeButton
-              memeId={this.state.memeId}
-              userAccount={this.state.userAccount}
-              likes={this.state.likes}
-              userHasLiked={this.state.userHasLiked}
-              parentId={this.state.parentId}
-              reponses={this.state.responses}
-              memeStorage={this.state.memeStorage}
-              interface={this.state.interface}
-              handleLike={this.handleLike}
-            />
-            <RememeButton
-              memeId={this.state.memeId}
-              username={this.state.username}
-              address={this.state.address}
-              text={this.state.text}
-              parentId={this.state.parentId}
-              author={this.state.author}
-              reponses={this.state.responses}
-              handleRememe={this.handleRememe}
-              rememeCountTotal={rememeCountTotal}
-            />
-            <UpvoteButton
-              memeId={this.state.memeId}
-              interface={this.state.interface}
-            />
-            <DownvoteButton
-              memeId={this.state.memeId}
-              interface={this.state.interface}
-            />
-          </div>
+          </section>
+          <div id="ThreadMemeMain-body">
+            <div id="ThreadMemeMain-header">
+              <div id="username">
+                <a
+                  href={`/${this.state.address.slice(1)}`}
+                  id="username"
+                  onClick={this.handleProfileClick}
+                >
+                  {this.state.username}
+                </a>
+              </div>
+              <span id="address">{this.state.address}</span>
+              </div>
+              <div id="text-box">
+              <p id="ThreadMemeMain-text">
+                {this.state.visibleText}
+              </p>
+            </div>
+            <span id="time">{time + ' • ' + date}</span>
+            <div id="ThreadMemeMain-footer">
+              <ReplyButton
+                memeId={this.state.memeId}
+                username={this.state.username}
+                address={this.state.address}
+                text={this.state.text}
+                parentId={this.state.parentId}
+                author={this.state.author}
+                reponses={this.state.responses}
+                handleReply={this.handleReply}
+              />
+              <LikeButton
+                memeId={this.state.memeId}
+                userAccount={this.state.userAccount}
+                likes={this.state.likes}
+                userHasLiked={this.state.userHasLiked}
+                parentId={this.state.parentId}
+                reponses={this.state.responses}
+                memeStorage={this.state.memeStorage}
+                interface={this.state.interface}
+                handleLike={this.handleLike}
+              />
+              <RememeButton
+                memeId={this.state.memeId}
+                username={this.state.username}
+                address={this.state.address}
+                text={this.state.text}
+                parentId={this.state.parentId}
+                author={this.state.author}
+                reponses={this.state.responses}
+                handleRememe={this.handleRememe}
+                rememeCountTotal={rememeCountTotal}
+              />
+              <UpvoteButton
+                memeId={this.state.memeId}
+                interface={this.state.interface}
+              />
+              <DownvoteButton
+                memeId={this.state.memeId}
+                interface={this.state.interface}
+              />
+            </div>
 
-          {/*
-          <ReplyInThread
-            userAccount={this.state.userAccount}
-            username={this.state.username}
-            address={this.state.address}
-            author={this.state.author}
-            text={this.state.text}
-            memeId={this.state.memeId}
-            parentId={this.state.parentId}
-            handleExitReply={this.handleExitReply}
-            userStorage={this.state.userStorage}
-            memeStorage={this.state.memeStorage}
-            interface={this.state.interface}
-          />
-          */}
-        </div>
+          </div>
+        </section>
+        <ReplyInThread
+          userAccount={this.state.userAccount}
+          username={this.state.username}
+          address={this.state.address}
+          author={this.state.author}
+          text={this.state.text}
+          memeId={this.state.memeId}
+          parentId={this.state.parentId}
+          handleExitReply={this.handleExitReply}
+          userStorage={this.state.userStorage}
+          memeStorage={this.state.memeStorage}
+          interface={this.state.interface}
+        />
       </div>
       );
     }

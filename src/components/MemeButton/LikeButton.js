@@ -87,6 +87,10 @@ class LikeButton extends React.Component {
   async userHasLiked() {
     const userHasLiked = await this.state.memeStorage.methods.getLikers(this.state.memeId).call()
       .then(e => e.includes(this.props.userAccount))
+    if(userHasLiked) {
+      const element = document.getElementById('like-button-liked')
+      element.style.filter = 'invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)'
+    }
     this.setState({
       userHasLiked
     })
@@ -101,7 +105,7 @@ class LikeButton extends React.Component {
             onClick={this.handleClick}
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
-            ref={Ref => this.liked=Ref}
+            ref={Ref => this.like=Ref}
           >
             <img className="like" src={Liked} alt="like button" id="like" width="13px" height="13px"/>
             <span className="like" id="like-count">{this.state.likes}</span>

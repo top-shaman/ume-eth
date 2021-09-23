@@ -31,11 +31,11 @@ class ReplyInThread extends React.Component {
 
   componentDidMount() {
     const storage = localStorage.getItem('memeText')
-    fadeIn('.ReplyInThread div#container', 333)
+    fadeIn('.ReplyInThread div#reply-container', 333)
     partialFadeIn('.ReplyInThread div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
-      const buttonText = document.querySelector('.ReplyInThread p#meme-button'),
-            memeButton = document.querySelector('.ReplyInThread p#meme-button')
+      const buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
+            memeButton = document.querySelector('.ReplyInThread p#reply-submit')
       this.setState({
         memeText: localStorage.getItem('memeText'),
         visibleText: localStorage.getItem('memeText'),
@@ -57,10 +57,10 @@ class ReplyInThread extends React.Component {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
     const text = await e.target.value,
-          buttonText = document.querySelector('.ReplyInThread p#meme-button'),
-          memeButton = document.querySelector('.ReplyInThread p#meme-button'),
-          textBox = document.querySelector('.ReplyInThread div#text-box'),
-          textarea = document.querySelector('.ReplyInThread textarea#meme-text')
+          buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
+          memeButton = document.querySelector('.ReplyInThread p#reply-submit'),
+          textBox = document.querySelector('.ReplyInThread div#reply-text-box'),
+          textarea = document.querySelector('.ReplyInThread textarea#reply-text')
     textBox.style.height = textarea.clientHeight + 'px'
     // check text validity
     if(text.match(/\s/g)) {
@@ -150,25 +150,25 @@ class ReplyInThread extends React.Component {
   render() {
     return(
       <div className="ReplyInThread" id="ReplyInThread" >
-        <div id="container">
-          <section id="header">
+        <div id="reply-container">
+          <section id="reply-header">
             {/* reply chain goes here */}
           </section>
-          <section id="body">
-            <div id="profilePic">
+          <section id="reply-body">
+            <div id="reply-profilePic">
               <ProfilePic
                 id="profilePic"
                 account={this.props.userAccount}
               />
             </div>
-            <form id="form">
-              <div id="text-box">
+            <form id="reply-form">
+              <div id="reply-text-box">
                 <textarea
                   name="meme"
-                  id="meme-text"
+                  id="reply-text"
                   type="text"
                   autoComplete="off"
-                  placeholder="What's the meme"
+                  placeholder="Meme your reply"
                   rows="1"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}
@@ -178,21 +178,16 @@ class ReplyInThread extends React.Component {
                   {this.state.visibleText}
                 </p>
               </div>
-              <div id="button-box">
-                <p
-                  id="meme-button"
-                  onClick={this.handleReplyClick}
-                >
-                  Reply
-                </p>
-              </div>
             </form>
+            <div id="reply-button-box">
+              <p
+                id="reply-submit"
+                onClick={this.handleReplyClick}
+              >
+                Reply
+              </p>
+            </div>
           </section>
-        </div>
-        <div
-          id="background"
-          onClick={this.handleCloseClick}
-        >
         </div>
       </div>
     )

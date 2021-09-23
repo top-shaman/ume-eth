@@ -1,60 +1,54 @@
-.ReplyInThread div#background {
-  z-index: 8;
-  display:block;
-  position: fixed;
+div.ReplyInThread#ReplyInThread {
   width: 100%;
-  height: 100%;
+}
+.ReplyInThread div#background {
   background-color: #AABBBB;
 }
-.ReplyInThread div#container {
-  z-index: 10;
+.ReplyInThread div#reply-container {
   align-items: center;
   justify-content: center;
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  margin-top: -13.375rem;
-  margin-left: -13.375rem;
-  padding: 0.5rem 1rem;
+  margin: 0.5rem 0.6rem;
   border-radius: 1.5rem;
+  min-width: 22rem;
+  max-width: 100%;
   display: flex;
-  background-color: #282c34;
   opacity: 1;
+  flex-wrap: wrap;
   flex-direction: column;
 }
-.ReplyInThread form#form {
+.ReplyInThread form#reply-form {
   position: relative;
 }
-.ReplyInThread form#form div#text-box {
+.ReplyInThread form#reply-form div#reply-text-box {
   position:relative;
-  border-bottom: 0.05rem solid #667777;
   margin: 0.4rem 0.2rem 0.2rem 0;
-  width: 22rem;
+  min-width: 22rem;
+  max-width: 100%;
   min-height: 1.5rem;
 }
 
-.ReplyInThread section#head {
-  border-bottom: 0.05rem solid #667777;
+.ReplyInThread section#reply-header {
   width: 100%;
 }
-.ReplyInThread section#body {
+.ReplyInThread section#reply-body {
+  margin-right: auto;
   display: flex;
   flex-direction: row;
-  width: 25.75rem;
+  width: 100%;
   color: #CCDDCC;
 }
-.ReplyInThread img#profile-pic {
-  width: 3rem;
+.ReplyInThread div#reply-profilePic img#profile-pic {
+  width: 2.5rem;
   height: auto;
   border-radius: 100%;
-  margin: 0.4rem 0.4rem;
-  transform: translateX(-0.3rem);
+  margin: 0.4rem 0.8rem 0 0.05rem;
 }
-.ReplyInThread textarea#meme-text {
+.ReplyInThread textarea#reply-text {
   border: none;
   outline: none;
   position: absolute;
-  width: 22rem;
+  min-width: 22rem;
+  max-width: 100%;
   background: rgb(0,0,0,0);
   caret-color: #667777;
   box-shadow: none;
@@ -73,7 +67,7 @@
   z-index:10;
   overflow: visible;
 }
-.ReplyInThread div#text-box p#text-box {
+.ReplyInThread div#reply-text-box p#text-box {
   position: absolute;
   justify-content: flex-start;
   border: none;
@@ -84,7 +78,8 @@
   font-weight: 500;
   margin:0;
   padding: 0;
-  width: 22rem;
+  min-width: 22rem;
+  max-width: 100%;
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
@@ -94,6 +89,33 @@
 .ReplyInThread p#text-box span {
   margin: 0 auto 0 0;
   color: #CCDDCC;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin:0;
+  padding: 0;
+  min-width: 22rem;
+  max-width: 100%;
+  text-align: start;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:8;
+  max-height: 30rem;
+}
+.ReplyInThread p#text-box span {
+  margin: 0 auto 0 0;
+  color: #CCDDCC;
+  font-size: 1.2rem;
+  font-weight: 500;
+  word-wrap: break-word;
+  white-space: break-spaces;
+}
+
+.ReplyInThread p#text-box span#plain {
+  color: #CCDDCC;
+}
+.ReplyInThread p#text-box span#at {
+  color: #00CC89;
   word-wrap: break-word;
   white-space: break-spaces;
 }
@@ -108,15 +130,18 @@
   color: #00CC89;
 }
 
-.ReplyInThread textarea#meme-text::placeholder {
+.ReplyInThread textarea#reply-text::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
 }
 
-.ReplyInThread p#meme-button {
+.ReplyInThread div#reply-button-box {
+  max-width: 5rem;
+  margin: 0 0 0 auto;
+}
+
+.ReplyInThread p#reply-submit {
   justify-content: center;
-  width: 4.5rem;
-  margin: 0.4rem 0.7rem 0.15rem auto;
   font-size: 0.85rem;
   font-weight: 800;
   background-color: #334646;
@@ -124,11 +149,4 @@
   padding: 0.35rem 0.4rem 0.4rem 0.4rem;
   border-radius: 2rem;
   transition: background-color 0.15s;
-}
-
-img#x.close {
-  padding: 0.3rem;
-  margin-right: 100%;
-  filter: brightness(20%) invert(1);
-  cursor: pointer;
 }

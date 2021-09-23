@@ -63,7 +63,7 @@ class ThreadMeme extends React.Component {
       this.div.style.opacity = 0
       setTimeout(() => {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
-        zipUp('div#\\3' + this.state.memeId + ' ', 600)
+        zipUp('div#\\3' + this.state.memeId + ' ',600)
       }, 0 )
       //this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered) {
@@ -130,7 +130,7 @@ class ThreadMeme extends React.Component {
 
   handleOverMeme(e) {
     e.preventDefault()
-    const element = 'div#\\3' + this.state.memeId
+    const element = 'div#\\3' + this.state.memeId + ' '
     if(this.div.style.backgroundColor!=='#313131') {
       bgColorChange(element, '1D1F22', '313131',  500)
     } else if(this.div.style.backgroundColor==='#313131') {
@@ -140,7 +140,7 @@ class ThreadMeme extends React.Component {
   }
   handleLeaveMeme(e) {
     e.preventDefault()
-    const elementName = 'div#\\3' + this.state.memeId
+    const elementName = 'div#\\3' + this.state.memeId + ' '
     bgColorChange(elementName, '313131', '1D1F22',  500)
   }
   handleReply(e) {

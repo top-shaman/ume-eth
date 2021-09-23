@@ -1,6 +1,6 @@
-.Timeline div#loader p,
-.Timeline div#loader-memes p,
-.Timeline div#loaded p {
+.Timeline div#loader p#loader,
+.Timeline div#loader-memes p#loader,
+.Timeline div#loaded p#loader {
   opacity: 1;
   align-items: flex-start;
   width: 80%;

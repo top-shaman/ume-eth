@@ -1,33 +1,32 @@
 div.ThreadMemeMain {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background-color: #1D1F22;
   border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
-  min-width: 28rem;
-  max-width: 80%;
+  min-width: 5rem;
+  max-width: 40rem;
 }
-div.ThreadMemeMain:hover {
-  background-color: #313131;
-  cursor: pointer;
+section#MainMeme.ThreadMemeMain {
+  display: flex;
+  position: relative;
+  flex-direction: row;
 }
 .ThreadMemeMain div#ThreadMemeMain-body {
   display: flex;
-  min-width: 24.2rem;
-  max-width: 100%;
+  width: 100%;
   flex-direction: column;
   overflow-wrap: break-word;
 }
 .ThreadMemeMain div#ThreadMemeMain-header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: 0.5rem 0.4rem;
-  align-items: flex-end;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer {
   display: flex;
   flex-direction: row;
-  margin: 0.2rem 10rem 0.2rem 0.4rem;
+  margin: 0.2rem auto 0.2rem 0.4rem;
   justify-content: flex-start;
   align-items: flex-end;
 }
@@ -49,10 +48,11 @@ div.ThreadMemeMain:hover {
 
 .ThreadMemeMain p#ThreadMemeMain-text {
   display: flex;
-  margin: 0 1.2rem 0 0.4rem;
+  margin: 0 1.2rem 1.2rem 0.4rem;
+  width: inherit;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  font-size: 0.84rem;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.6rem;
   font-weight: 500;
   color: #CCDDCC;
   justify-content: flex-start;
@@ -65,9 +65,10 @@ div.ThreadMemeMain:hover {
   max-height: 30rem;
 }
 .ThreadMemeMain p#ThreadMemeMain-text span {
-  font-family: 'Arial', sans-serif;
-  font-size: 0.84rem;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.6rem;
   font-weight: 500;
+  width: inherit;
   margin: 0;
   word-wrap: break-word;
   white-space: break-spaces;
@@ -85,29 +86,32 @@ div.ThreadMemeMain:hover {
   margin: 0;
   color: #00CC89;
   text-decoration: none;
+  width: inherit;
 }
 .ThreadMemeMain p#ThreadMemeMain-text a#at:hover,
 .ThreadMemeMain p#ThreadMemeMain-text a#hash:hover {
   color: #00CC89;
   text-decoration: underline;
+  width: inherit;
 }
 
+.ThreadMemeMain div#username {
+  display: flex;
+}
 .ThreadMemeMain a#username {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
   color: #CCDDCC;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   margin: 0 0.3rem 0 0;
+  width: min-content;
+  white-space: pre;
   text-decoration: none;
+  justify-content: left;
+  align-items: center;
 }
 .ThreadMemeMain a#username:hover {
   text-decoration: underline;
-}
-.ThreadMemeMain span {
-  font-family: 'Avenir', sans-serif;
-  font-size: 0.7rem;
-  margin: 0 0.3rem;
-  color: #667777;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer p span {
   color: #FFFFFF;
@@ -122,6 +126,21 @@ div.ThreadMemeMain:hover {
   position: relative;
   filter: invert(0.4);
 }
-.ThreadMemeMain p span {
-  margin: 0 0.1rem 0 0.4rem;
+.ThreadMemeMain span {
+  font-family: 'Avenir-Bold', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: min-content;
+  margin: 0 auto 0 0.3rem;
+  color: #667777;
+  white-space: pre;
+}
+.ThreadMemeMain span#address {
+  font-family: 'Avenir-Bold', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: min-content;
+  margin: 0 auto 0 0;
+  color: #667777;
+  white-space: pre;
 }
