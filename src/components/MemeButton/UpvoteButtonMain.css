@@ -1,0 +1,7 @@
+.ThreadMemeMain p#upvote-button.upvote {
+  margin: 0;
+  cursor: pointer;
+}
+p#upvote-button:hover {
+  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
+}

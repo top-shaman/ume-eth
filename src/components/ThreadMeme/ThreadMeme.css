@@ -2,7 +2,6 @@ div.ThreadMeme {
   display: flex;
   flex-direction: row;
   background-color: #1D1F22;
-  border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
   min-width: 5rem;
   max-width: 40rem;

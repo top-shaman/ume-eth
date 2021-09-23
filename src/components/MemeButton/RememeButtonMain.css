@@ -1,0 +1,9 @@
+p#rememe-button {
+  cursor: pointer;
+}
+.ThreadMemeMain p#rememe-button.rememe {
+  margin: 0;
+}
+p#rememe-button:hover {
+  filter: sepia(1) brightness(0.4) saturate(10000%) hue-rotate(140deg);
+}

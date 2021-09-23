@@ -12,6 +12,9 @@ section#MainMeme.ThreadMemeMain {
   position: relative;
   flex-direction: row;
 }
+section#info {
+  margin: 0 0 0 0.6rem;
+}
 .ThreadMemeMain div#ThreadMemeMain-body {
   display: flex;
   width: 100%;
@@ -20,14 +23,14 @@ section#MainMeme.ThreadMemeMain {
 }
 .ThreadMemeMain div#ThreadMemeMain-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin: 0.5rem 0.4rem;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer {
   display: flex;
   flex-direction: row;
-  margin: 0.2rem auto 0.2rem 0.4rem;
-  justify-content: flex-start;
+  margin: 0.2rem 8rem 0.2rem 0rem;
+  justify-content: space-between;
   align-items: flex-end;
 }
 .ThreadMemeMain img#profile-pic {
@@ -143,4 +146,5 @@ section#MainMeme.ThreadMemeMain {
   margin: 0 auto 0 0;
   color: #667777;
   white-space: pre;
+  text-align: left;
 }

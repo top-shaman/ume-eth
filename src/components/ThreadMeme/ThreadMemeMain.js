@@ -1,9 +1,9 @@
 import React from 'react'
-import ReplyButton from '../MemeButton/ReplyButton'
-import LikeButton from '../MemeButton/LikeButton'
-import RememeButton from '../MemeButton/RememeButton'
-import UpvoteButton from '../MemeButton/UpvoteButton'
-import DownvoteButton from '../MemeButton/DownvoteButton'
+import ReplyButtonMain from '../MemeButton/ReplyButtonMain'
+import LikeButtonMain from '../MemeButton/LikeButtonMain'
+import RememeButtonMain from '../MemeButton/RememeButtonMain'
+import UpvoteButtonMain from '../MemeButton/UpvoteButtonMain'
+import DownvoteButtonMain from '../MemeButton/DownvoteButtonMain'
 import ReplyInThread from '../ReplyInThread/ReplyInThread'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
@@ -192,36 +192,38 @@ class ThreadMemeMain extends React.Component {
           className="ThreadMemeMain"
           id="MainMeme"
         >
-          <section id="profilePic">
-            <a
-              id="profilePic"
-              href={`/${this.state.address.slice(1)}`}
-              onClick={this.handleProfileClick}
-            >
-              <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
-            </a>
-          </section>
           <div id="ThreadMemeMain-body">
             <div id="ThreadMemeMain-header">
-              <div id="username">
+              <section id="profilePic">
                 <a
+                  id="profilePic"
                   href={`/${this.state.address.slice(1)}`}
-                  id="username"
                   onClick={this.handleProfileClick}
                 >
-                  {this.state.username}
+                  <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
                 </a>
-              </div>
-              <span id="address">{this.state.address}</span>
-              </div>
-              <div id="text-box">
+              </section>
+              <section id="info">
+                <div id="username">
+                  <a
+                    href={`/${this.state.address.slice(1)}`}
+                    id="username"
+                    onClick={this.handleProfileClick}
+                  >
+                    {this.state.username}
+                  </a>
+                </div>
+                <span id="address">{this.state.address}</span>
+              </section>
+            </div>
+            <div id="text-box">
               <p id="ThreadMemeMain-text">
                 {this.state.visibleText}
               </p>
             </div>
             <span id="time">{time + ' • ' + date}</span>
             <div id="ThreadMemeMain-footer">
-              <ReplyButton
+              <ReplyButtonMain
                 memeId={this.state.memeId}
                 username={this.state.username}
                 address={this.state.address}
@@ -231,7 +233,7 @@ class ThreadMemeMain extends React.Component {
                 reponses={this.state.responses}
                 handleReply={this.handleReply}
               />
-              <LikeButton
+              <LikeButtonMain
                 memeId={this.state.memeId}
                 userAccount={this.state.userAccount}
                 likes={this.state.likes}
@@ -242,7 +244,7 @@ class ThreadMemeMain extends React.Component {
                 interface={this.state.interface}
                 handleLike={this.handleLike}
               />
-              <RememeButton
+              <RememeButtonMain
                 memeId={this.state.memeId}
                 username={this.state.username}
                 address={this.state.address}
@@ -253,11 +255,11 @@ class ThreadMemeMain extends React.Component {
                 handleRememe={this.handleRememe}
                 rememeCountTotal={rememeCountTotal}
               />
-              <UpvoteButton
+              <UpvoteButtonMain
                 memeId={this.state.memeId}
                 interface={this.state.interface}
               />
-              <DownvoteButton
+              <DownvoteButtonMain
                 memeId={this.state.memeId}
                 interface={this.state.interface}
               />

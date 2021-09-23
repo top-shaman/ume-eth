@@ -1,0 +1,10 @@
+.ThreadMemeMain p#downvote-button.downvote {
+  margin: 0;
+  cursor: pointer;
+}
+p#downvote-button:hover {
+  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
+}
+img#downvote {
+  transform: rotate(180deg);
+}
