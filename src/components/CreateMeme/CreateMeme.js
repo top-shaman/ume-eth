@@ -16,8 +16,9 @@ class CreateMeme extends React.Component {
       creatingMeme: true,
       userStorage: this.props.userStorage,
       interface: this.props.interface,
-      memeText: '',
-      visibleText: '',
+      memeText: localStorage.getItem('memeText'),
+      visibleText: localStorage.getItem('memeText'),
+      flag: '',
       parentId: emptyId,
       originId: emptyId,
       repostId: emptyId,
@@ -25,6 +26,7 @@ class CreateMeme extends React.Component {
     }
 
     this.textarea = React.createRef()
+    this.textBox = React.createRef()
 
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
@@ -33,8 +35,6 @@ class CreateMeme extends React.Component {
 
   componentDidMount() {
     const storage = localStorage.getItem('memeText')
-    fadeIn('.CreateMeme div#container', 333)
-    partialFadeIn('.CreateMeme div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.CreateMeme p#meme-button'),
             memeButton = document.querySelector('.CreateMeme p#meme-button')
@@ -43,10 +43,13 @@ class CreateMeme extends React.Component {
         visibleText: localStorage.getItem('memeText'),
         validMeme: true
       })
+      console.log(this.textBox.clientHeight)
       memeButton.style.backgroundColor = '#00CC89'
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
     }
+    fadeIn('.CreateMeme div#container', 333)
+    partialFadeIn('.CreateMeme div#background', 100, 0.2)
     this.textarea.focus()
     autosize(this.textarea)
   }
@@ -70,7 +73,7 @@ class CreateMeme extends React.Component {
       memeButton.style.cursor = 'default'
       memeButton.style.backgroundColor = '#334646'
       buttonText.style.color = '#AABBAA'
-    } else if(text.length>0) {
+    } else if(text.length>0 && text.length<=512) {
       memeButton.style.cursor = 'pointer'
       memeButton.style.backgroundColor = '#00CC89'
       buttonText.style.backgroundColor = '#FFFFFF'
@@ -85,6 +88,17 @@ class CreateMeme extends React.Component {
       memeButton.style.cursor = 'pointer'
       memeButton.style.backgroundColor = '#00CC89'
       buttonText.style.color = '#FFFFFF'
+    }
+    if(text.length>=412 && text.length<502) {
+      this.setState({
+        flag: <p id="flag-grey">{(512-text.length) + ' characters left'}</p>
+      })
+    } else if(text.length>=502 && text.length<=512) {
+      this.setState({
+        flag: <p id="flag-red">{(512-text.length) + ' characters left'}</p>
+      })
+    } else {
+      this.setState({ flag: '' })
     }
     // change color of text if special sequence
     const formattedText = await this.formatText()
@@ -171,7 +185,7 @@ class CreateMeme extends React.Component {
               className="close"
               alt="close button"
               src={X}
-              width="11px"
+              width="13px"
               onClick={this.handleCloseClick}
             />
           </section>
@@ -183,14 +197,15 @@ class CreateMeme extends React.Component {
               />
             </div>
             <form id="form">
-              <div id="text-box">
+              <div id="text-box" ref={Ref=>this.textBox=Ref}>
                 <textarea
                   name="meme"
                   id="meme-text"
                   type="text"
                   autoComplete="off"
                   placeholder="What's the meme"
-                  rows="5"
+                  rows="auto"
+                  maxLength="512"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}
                   ref={Ref=>this.textarea=Ref}
@@ -200,6 +215,7 @@ class CreateMeme extends React.Component {
                 </p>
               </div>
               <div id="button-box">
+                <div className="counter">{this.state.flag}</div>
                 <p
                   id="meme-button"
                   onClick={this.handleMemeClick}

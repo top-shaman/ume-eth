@@ -25,6 +25,7 @@ contract UserInterface {
 
   bytes32 zeroBytes;
 
+  /*
   struct User {
     uint id; // user number in order
     string name; // user name
@@ -35,6 +36,7 @@ contract UserInterface {
     address[] following; // addressses of following
     uint[] posts; // memeIds of posts
   }
+  */
 
   event NewUser(
     address indexed account,
@@ -87,14 +89,14 @@ contract UserInterface {
       _userAddress.length<=32,
       'Error: userAddress must be between 2 & 32 characters');
     require(
-      userStorage.getAddr(_account)!=_account || userStorage.getAddr(_account)==address(0x0),
+      (userStorage.getAddr(_account)!=_account || userStorage.getAddr(_account)==address(0x0)),
       'Error: account already exists');
+    bytes32 _ua = bytesToBytes32(_userAddress);
     require(
-      userStorage.usersByUserAddr(_userAddress)==address(0x0);
-      'Error: user address already exists'
+      userStorage.usersByUserAddr(_ua)==address(0x0),
+      'Error: user address already exists');
 
     bytes32 _un = bytesToBytes32(_userName);
-    bytes32 _ua = bytesToBytes32(_userAddress);
     userFactory.newUser(_account, _un, _ua);
     emit NewUser(_account, _un, _ua);
   }
@@ -146,6 +148,34 @@ contract UserInterface {
     emit ChangedUserAddress(_account, _ua);
   }
 
+  function newBio(
+    address _account,
+    string memory _bio
+  ) public {
+    require(
+      msg.sender==_account,
+      'Error: operator must be account owner');
+    require(
+      bytes(_bio).length>0 &&
+      bytes(_bio).length<=300,
+      'Error: userAddress must be between 2 & 300 characters');
+    userStorage.setBio(_account, _bio);
+  }
+
+  function newProfilePic(
+    address _account,
+    string memory _imgHash
+  ) public {
+    require(
+      msg.sender==_account,
+      'Error: operator must be account owner');
+    require(
+      bytes(_imgHash).length>0,
+      'Error: must have image hash');
+    userStorage.setProfilePic(_account, _imgHash);
+  }
+
+
   // Meme posting functionality
   function newMeme(
     address _account,
@@ -160,6 +190,9 @@ contract UserInterface {
     require(
       bytes(_postText).length > 0,
       'Error: meme must have text');
+    require(
+      bytes(_postText).length < 512,
+      'Error: meme text must be less than 512 characters');
     require(
       userStorage.getAddr(_account)!=address(0x0),
       'Error: user doesn\'t have account');
@@ -198,8 +231,8 @@ contract UserInterface {
       _account==msg.sender,
       'Error: wrong account calling post');
     require(
-      bytes(_postText).length > 0,
-      'Error: meme must have text');
+      bytes(_postText).length < 512,
+      'Error: meme text must be less than 512 characters');
     require(
       userStorage.getAddr(_account)!=address(0x0),
       'Error: user doesn\'t have account');
@@ -210,7 +243,12 @@ contract UserInterface {
     require(
       memeStorage.getVisibility(_memeId)==true,
       'Error: repost must exist');
-    post.quoteMeme(_account, _postText, _tags, _parentId, _originId, _memeId);
+    if(bytes(_postText).length==0) {
+      post.rememe(_account, _memeId);
+    }
+    else {
+      post.quoteMeme(_account, _postText, _tags, _parentId, _originId, _memeId);
+    }
   }
 
   function deleteMeme(

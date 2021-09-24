@@ -46,6 +46,8 @@ contract UserFactory {
       _userAddress, // user address
       block.timestamp, // user creation time
       _account, // address of user
+      string(''), // bio
+      string(''), // profile pic
       new address[](0), // addresses of followers
       new address[](0), // addresses of following
       new address[](0), // addresses of unfollowers

@@ -5,9 +5,10 @@ div#box {
   display: flex;
   flex-direction: column;
   margin: 0 auto 8rem auto;
+  padding-top: 0.7rem;
   border-radius: 3rem;
   box-shadow: 0 0 0 0.1rem #00CC89;
-  width: 20rem;
+  width: 23rem;
   height: auto;
 }
 .CreateUser p#title {
@@ -15,7 +16,7 @@ div#box {
   opacity: 1;
   font-family: 'MuseoModerno', sans-serif;
   font-weight: 400;
-  font-size: 4.5rem;
+  font-size: 6rem;
 }
 
 .CreateUser img#profile-pic {
@@ -34,18 +35,20 @@ div#box {
 .CreateUser p#username {
   margin: 1.2rem 1.5rem 1rem 1.5rem;
   word-wrap: break-word;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: #CCDDCC;
 }
 .CreateUser p#address {
   margin: 0.5rem auto 0 auto;
+  font-size: 1.2rem;
   font-weight: 500;
   font-family: 'Avenir', sans-serif;
   color: #CCDDCC;
 }
 .CreateUser p#description {
   font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 1.2rem;
   font-weight: 300;
 }
 .CreateUser p {
@@ -65,13 +68,13 @@ div#box {
 .CreateUser input#submit {
   justify-content: center;
   margin: 1.5rem auto 1rem auto;
-  font-size: 0.9rem;
+  font-size: 1.0rem;
   background-color: #333334;
 }
 .CreateUser p label {
   margin: 1rem auto 0.05rem 0.7rem;
   font-family: 'Montserrat Alternates', sans-serif;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 400;
 }
 .CreateUser #button input {
@@ -88,12 +91,12 @@ div#box {
 .CreateUser p#field input {
   display: flex;
   margin: 0.2rem;
-  padding: 0.7rem 1rem 0.7rem 1rem;
+  padding: 0.75rem 1rem 0.7rem 1rem;
   border-radius: 1rem;
   outline: none;
   box-shadow: none;
   border-width: 0;
-  font-size: rem;
+  font-size: 1.3rem;
   font-family: 'Quicksand', sans-serif;
   color: #CCDDDD;
   background-color: #666677;
@@ -103,17 +106,23 @@ div#box {
   font-family: 'Quicksand', sans-serif;
   font-style: oblique;
   font-weight: 200;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #CCCDCD;
+  padding-left: 0.25rem;
   margin: 0 0.2rem;
 }
-.CreateUser input#AddressInput {
-  background: url('../../resources/at-white.svg') no-repeat scroll 7px 7px;
+.CreateUser #field input#AddressInput {
+  background: url('../../resources/at-thin.svg') no-repeat 7px 7px;
+  background-color: #666677;
+  background-size: 1.2rem;
+  background-position-y: 1.025rem;
+  background-position-x: 0.725rem;
+  padding-left: 2.175rem;
 }
 .CreateUser span#subtext {
   font-family: Avenir;
   font-weight: 200;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 .CreateUser p#field input:focus,
 .CreateUser p#field input:active {

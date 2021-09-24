@@ -21,6 +21,8 @@ contract UserStorage {
     bytes32 userAddr; // user address (@)
     uint time; // user creation time
     address addr; // address of user
+    string bio;
+    string profilePic;
     address[] followers; // addresses of followers
     address[] following; // addressses of following
     address[] unfollowers; // addresses of followers
@@ -104,6 +106,24 @@ contract UserStorage {
     users[_account].userAddr = _userAddress;
     usersByUserAddr[_userAddress] = _account;
   }
+  function setBio(
+    address _account,
+    string memory _bio
+  ) public {
+    require(
+      msg.sender==interfaceSigner,
+      'Error, interface must be signer');
+    users[_account].bio = _bio;
+  }
+  function setProfilePic(
+    address _account,
+    string memory _imgHash
+  ) public {
+    require(
+      msg.sender==interfaceSigner,
+      'Error, interface must be signer');
+    users[_account].profilePic = _imgHash;
+  }
 
   // Setters for all signers
   // set post meme
@@ -171,6 +191,12 @@ contract UserStorage {
   }
   function getAddr(address _account) public view returns(address) {
     return users[_account].addr;
+  }
+  function getBio(address _account) public view returns(string memory) {
+    return users[_account].bio;
+  }
+  function getProfilePic(address _account) public view returns(string memory) {
+    return users[_account].profilePic;
   }
   function getFollowerCount(address _account) public view returns(uint) {
     return users[_account].followers.length;

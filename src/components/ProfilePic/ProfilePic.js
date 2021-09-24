@@ -22,8 +22,8 @@ class ProfilePic extends React.Component {
               />
             : <img
                 className="ProfilePic" id="profile-pic"
-                width="120"
-                height="120"
+                width="140"
+                height="140"
                 alt="profile-pic"
                 src={`data:image/png;base64,${
 //                  this.props.hasEntered
