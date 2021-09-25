@@ -42,6 +42,7 @@ class Timeline extends React.Component {
     clearInterval(this.intervalTimeline)
     if(this.state.firstLoad) {
       await this.loadTimeline()
+      /*
       this.intervalTimeline = setInterval(async () => {
         //this.setState({ firstLoad: false })
         if(!this.state.firstLoad && !this.state.loadingBottom){
@@ -49,6 +50,7 @@ class Timeline extends React.Component {
           await this.refreshMemes()
         }
       }, 10000)
+    */
     }
     this.mounted = true
   }

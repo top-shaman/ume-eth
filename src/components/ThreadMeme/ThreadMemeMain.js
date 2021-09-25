@@ -176,7 +176,7 @@ class ThreadMemeMain extends React.Component {
   }
 
   render() {
-    const time = new Date(this.state.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
+    const time = new Date(this.state.time).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}),
           date = new Date(this.state.time).toLocaleDateString([], {month: 'short', day:'numeric', year: 'numeric'}),
           rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
     return(
@@ -221,7 +221,9 @@ class ThreadMemeMain extends React.Component {
                 {this.state.visibleText}
               </p>
             </div>
-            <span id="time">{time + ' • ' + date}</span>
+            <div id="time">
+              <span id="time">{time + ' • ' + date}</span>
+            </div>
             <div id="ThreadMemeMain-footer">
               <ReplyButtonMain
                 memeId={this.state.memeId}

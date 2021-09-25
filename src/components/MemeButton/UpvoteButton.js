@@ -60,7 +60,7 @@ class UpvoteButton extends React.Component {
           onMouseLeave={this.handleMouseLeave}
           ref={Ref => this.upvote=Ref}
         >
-          <img className="upvote" src={Upvote} alt="upvote button" id="upvote" width="13px" height="13px"/>
+          <img className="upvote" src={Upvote} alt="upvote button" id="upvote" width="16px" height="16px"/>
         </p>
     )
   }

@@ -5,7 +5,8 @@ div.ThreadMemeMain {
   border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
   min-width: 5rem;
-  max-width: 40rem;
+  max-width: 38rem;
+  overflow-x: hidden;
 }
 section#MainMeme.ThreadMemeMain {
   display: flex;
@@ -13,7 +14,8 @@ section#MainMeme.ThreadMemeMain {
   flex-direction: row;
 }
 section#info {
-  margin: 0 0 0 0.6rem;
+  margin: 0 0 0 0.5rem;
+  text-align: left;
 }
 .ThreadMemeMain div#ThreadMemeMain-body {
   display: flex;
@@ -24,12 +26,13 @@ section#info {
 .ThreadMemeMain div#ThreadMemeMain-header {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   margin: 0.5rem 0.4rem;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer {
   display: flex;
   flex-direction: row;
-  margin: 0.2rem 8rem 0.2rem 0rem;
+  margin: 0.6rem 8rem 0.2rem 1rem;
   justify-content: space-between;
   align-items: flex-end;
 }
@@ -48,12 +51,10 @@ section#info {
 .ThreadMemeMain section#profilePic {
   margin: 0.3rem 0.1rem 0 0.4rem;
 }
-
 .ThreadMemeMain p#ThreadMemeMain-text {
   display: flex;
-  margin: 0 1.2rem 1.2rem 0.4rem;
+  margin: 0 1rem 1.2rem 1rem;
   width: inherit;
-  padding: 0;
   font-family: 'Quicksand', sans-serif;
   font-size: 1.6rem;
   font-weight: 500;
@@ -65,13 +66,13 @@ section#info {
   word-wrap: break-word;
   white-space: break-spaces;
   word-break: break-all;
-  max-height: 30rem;
 }
 .ThreadMemeMain p#ThreadMemeMain-text span {
   font-family: 'Quicksand', sans-serif;
   font-size: 1.6rem;
   font-weight: 500;
   width: inherit;
+  height: inherit;
   margin: 0;
   word-wrap: break-word;
   white-space: break-spaces;
@@ -134,7 +135,7 @@ section#info {
   font-size: 0.9rem;
   font-weight: 500;
   width: min-content;
-  margin: 0 auto 0 0.3rem;
+  margin: 0 auto 0 0;
   color: #667777;
   white-space: pre;
 }
@@ -147,4 +148,14 @@ section#info {
   color: #667777;
   white-space: pre;
   text-align: left;
+}
+.ThreadMemeMain div#time {
+  width: auto;
+  text-align: left;
+  margin: 0 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.01rem solid #667777
+}
+.ThreadMemeMain span#time {
+  margin: 0 auto 1rem 0;
 }

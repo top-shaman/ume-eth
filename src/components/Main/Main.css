@@ -19,6 +19,7 @@ div.Main {
 .Main div#subheader {
   display: inline-flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
   position: sticky;
   position: -webkit-sticky;
@@ -156,5 +157,11 @@ small {
   to {
     opacity: 1;
     filter: blur(0);
+  }
+}
+
+@media screen and (max-width: 372px) {
+  div#subheader input#search.SearchBar_input {
+    display: none;
   }
 }

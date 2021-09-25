@@ -60,7 +60,7 @@ class DownvoteButton extends React.Component {
           onMouseLeave={this.handleMouseLeave}
           ref={Ref => this.downvote=Ref}
         >
-          <img className="downvote" src={Downvote} alt="downvote button" id="downvote" width="13px" height="13px"/>
+          <img className="downvote" src={Downvote} alt="downvote button" id="downvote" width="16px" height="16px"/>
         </p>
     )
   }

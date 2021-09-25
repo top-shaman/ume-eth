@@ -1,5 +1,5 @@
 div.ReplyInThread#ReplyInThread {
-  width: 100%;
+  margin: 0 1rem 1rem 1rem;
 }
 .ReplyInThread div#background {
   background-color: #AABBBB;
@@ -7,10 +7,8 @@ div.ReplyInThread#ReplyInThread {
 .ReplyInThread div#reply-container {
   align-items: center;
   justify-content: center;
-  margin: 0.5rem 0.6rem;
   border-radius: 1.5rem;
-  min-width: 22rem;
-  max-width: 100%;
+  width: inherit;
   display: flex;
   opacity: 1;
   flex-wrap: wrap;
@@ -22,8 +20,10 @@ div.ReplyInThread#ReplyInThread {
 .ReplyInThread form#reply-form div#reply-text-box {
   position:relative;
   margin: 0.4rem 0.2rem 0.2rem 0;
-  min-width: 22rem;
-  max-width: 100%;
+  width: inherit;
+  min-width: 12rem;
+  width: 100%;
+  word-wrap: break-word;
   min-height: 1.5rem;
 }
 
@@ -34,7 +34,8 @@ div.ReplyInThread#ReplyInThread {
   margin-right: auto;
   display: flex;
   flex-direction: row;
-  width: 100%;
+  flex-wrap: wrap;
+  width: inherit;
   color: #CCDDCC;
 }
 .ReplyInThread div#reply-profilePic img#profile-pic {
@@ -47,39 +48,55 @@ div.ReplyInThread#ReplyInThread {
   border: none;
   outline: none;
   position: absolute;
-  min-width: 22rem;
-  max-width: 100%;
+  width: inherit;
   background: rgb(0,0,0,0);
   caret-color: #667777;
   box-shadow: none;
   color: rgb(0,0,0,0);
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.01rem;
   font-weight: 500;
-  max-height: 30rem;
   top: 0;
   left: 0;
   margin: 0;
   padding: 0;
   resize: none;
+  overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: break-spaces;
   z-index:10;
   overflow: visible;
 }
 .ReplyInThread div#reply-text-box p#text-box {
-  position: absolute;
+  position: relative;
   justify-content: flex-start;
   border: none;
   box-shadow: none;
   color: #CCDDCC;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.01rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  width: inherit;
+  text-align: start;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:8;
+}
+.ReplyInThread p#text-box span {
+  margin: 0 auto 0 0;
+  color: #CCDDCC;
+  font-family: 'Avenir', sans-serif;
+  letter-spacing: 0.01rem;
+  font-size: 1.4rem;
   font-weight: 500;
   margin:0;
   padding: 0;
-  min-width: 22rem;
-  max-width: 100%;
+  width: inherit;
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
@@ -87,26 +104,10 @@ div.ReplyInThread#ReplyInThread {
   max-height: 30rem;
 }
 .ReplyInThread p#text-box span {
-  margin: 0 auto 0 0;
   color: #CCDDCC;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 500;
-  margin:0;
-  padding: 0;
-  min-width: 22rem;
-  max-width: 100%;
-  text-align: start;
-  word-wrap: break-word;
-  white-space: break-spaces;
-  z-index:8;
-  max-height: 30rem;
-}
-.ReplyInThread p#text-box span {
-  margin: 0 auto 0 0;
-  color: #CCDDCC;
-  font-size: 1.2rem;
-  font-weight: 500;
+  overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: break-spaces;
 }
@@ -136,17 +137,19 @@ div.ReplyInThread#ReplyInThread {
 }
 
 .ReplyInThread div#reply-button-box {
-  max-width: 5rem;
-  margin: 0 0 0 auto;
+  margin-left: auto;
+  width: 5rem;
+  justify-content: flex-end;
 }
 
 .ReplyInThread p#reply-submit {
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 800;
   background-color: #334646;
   color: #AABBAA;
-  padding: 0.35rem 0.4rem 0.4rem 0.4rem;
+  padding: 0.45rem 0.4rem 0.5rem 0.4rem;
+  margin: 0 0 auto 0;
   border-radius: 2rem;
   transition: background-color 0.15s;
 }

@@ -26,6 +26,10 @@ class LikeButton extends React.Component {
   }
   async componentDidMount() {
     await this.userHasLiked()
+    this.mounted = true
+  }
+  componentWillUnmount() {
+    this.mounted = false
   }
   async handleClick(e) {
     bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
@@ -107,7 +111,7 @@ class LikeButton extends React.Component {
             onMouseLeave={this.handleMouseLeave}
             ref={Ref => this.like=Ref}
           >
-            <img className="like" src={Liked} alt="like button" id="like" width="13px" height="13px"/>
+            <img className="like" src={Liked} alt="like button" id="like" width="16px" height="16px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
         : <p
@@ -118,7 +122,7 @@ class LikeButton extends React.Component {
             onMouseLeave={this.handleMouseLeave}
             ref={Ref => this.like=Ref}
           >
-            <img className="like" src={Like} alt="like button" id="like" width="13px" height="13px"/>
+            <img className="like" src={Like} alt="like button" id="like" width="16px" height="16px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
     )

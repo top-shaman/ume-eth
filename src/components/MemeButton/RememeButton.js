@@ -70,7 +70,7 @@ class RememeButton extends React.Component {
         onMouseLeave={this.handleMouseLeave}
         ref={Ref => this.rememe=Ref}
       >
-        <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="13px" height="13px"/>
+        <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="16px" height="16px"/>
         <span className="rememe" id="rememe-count">{this.state.rememeCountTotal}</span>
       </p>
     )

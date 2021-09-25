@@ -70,7 +70,7 @@ class ReplyButton extends React.Component {
         onMouseLeave={this.handleMouseLeave}
         ref={Ref => this.reply=Ref}
       >
-        <img className="reply" src={Reply} alt="reply button" id="reply" width="13px" height="13px"/>
+        <img className="reply" src={Reply} alt="reply button" id="reply" width="16px" height="16px"/>
         <span className="reply" id="reply-count">{this.state.responses!==undefined ? this.state.responses.length : 0}</span>
       </p>
     )

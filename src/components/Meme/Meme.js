@@ -183,8 +183,35 @@ class Meme extends React.Component {
     this.setState({ visibleText: formatted })
   }
 
+  calculateTimePassed() {
+    const ms = (new Date() - Date.parse(this.state.time)),
+          sec = Math.floor(ms/1000),
+          min = Math.floor(ms/60000),
+          hrs = Math.floor(ms/3600000),
+          days = Math.floor(ms/86400000),
+          wks = Math.floor(ms/604800000),
+          mos = Math.floor(ms/2592000000),
+          yrs = Math.floor(ms/31536000000)
+    return yrs > 0
+           ? yrs + 'y'
+           : mos > 0
+             ? mos + 'mo'
+             : wks > 0
+               ? wks + 'w'
+               : days > 0
+                 ? days + 'd'
+                 : hrs > 0
+                   ? hrs + 'h'
+                   : min > 0
+                     ? min + 'm'
+                     : sec > 0
+                       ? sec + 's'
+                       : 'now'
+  }
+
   render() {
-    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
+    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount),
+          time = this.calculateTimePassed()
     return(
       <div
         className="Meme"
@@ -213,7 +240,7 @@ class Meme extends React.Component {
               {this.state.username}
             </a>
             <span id="address">{this.state.address}</span>
-            <span id="time">{this.state.time}</span>
+            <span id="time">{time}</span>
           </div>
           <div id="text-box">
             <p id="meme-text">
