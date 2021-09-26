@@ -15,8 +15,10 @@ class ReplyInThread extends React.Component {
       creatingMeme: true,
       userStorage: this.props.userStorage,
       interface: this.props.interface,
-      memeText: '',
-      visibleText: '',
+      memeText: localStorage.getItem('memeText'),
+      visibleText: localStorage.getItem('memeText'),
+      flagText: '',
+      flag: '',
       parentId: emptyId,
       originId: emptyId,
       repostId: emptyId,
@@ -24,6 +26,7 @@ class ReplyInThread extends React.Component {
     }
 
     this.textarea = React.createRef()
+    this.textBox = React.createRef()
 
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleReplyClick = this.handleReplyClick.bind(this)
@@ -31,8 +34,6 @@ class ReplyInThread extends React.Component {
 
   componentDidMount() {
     const storage = localStorage.getItem('memeText')
-    fadeIn('.ReplyInThread div#reply-container', 333)
-    partialFadeIn('.ReplyInThread div#background', 100, 0.2)
     if(storage && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
             memeButton = document.querySelector('.ReplyInThread p#reply-submit')
@@ -47,6 +48,7 @@ class ReplyInThread extends React.Component {
     }
     this.textarea.focus()
     autosize(this.textarea)
+    this.mounted = true
   }
 
   componentWillUnmount() {
@@ -68,7 +70,7 @@ class ReplyInThread extends React.Component {
       memeButton.style.cursor = 'default'
       memeButton.style.backgroundColor = '#334646'
       buttonText.style.color = '#AABBAA'
-    } else if(text.length>0) {
+    } else if(text.length>0 && text.length<=512) {
       memeButton.style.cursor = 'pointer'
       memeButton.style.backgroundColor = '#00CC89'
       buttonText.style.backgroundColor = '#FFFFFF'
@@ -84,9 +86,33 @@ class ReplyInThread extends React.Component {
       memeButton.style.backgroundColor = '#00CC89'
       buttonText.style.color = '#FFFFFF'
     }
+    if(this.state.validMeme) {
+      memeButton.style.cursor = 'pointer'
+      memeButton.style.backgroundColor = '#00CC8    9'
+      buttonText.style.color = '#FFFFFF'
+    }
+    if(text.length>=412 && text.length<502) {
+      this.setState({
+        flagText: (512-text.length) + ' characters left',
+        flag: <p id="flag-grey">{this.state.flagText}</p>
+      })
+    } else if(text.length>=502 && text.length<=512) {
+      this.setState({
+        flagText: (512-text.length) + ' characters left',
+        flag: <p id="flag-red">{this.state.flagText}</p>
+      })
+      } else {
+      this.setState({ flag: '' })
+    }
+    if(window.innerWidth< 465) {
+      this.setState({
+        flagText: this.state.flagText.split(' ')[0]
+      })
+    }
     // change color of text if special sequence
     const formattedText = await this.formatText()
     this.setState({ visibleText: formattedText})
+    localStorage.setItem('memeText', this.state.memeText)
 
   }
   async handleReplyClick(e) {
@@ -148,13 +174,11 @@ class ReplyInThread extends React.Component {
   }
 
   render() {
+    console.log(window.innerWidth)
     return(
       <div className="ReplyInThread" id="ReplyInThread" >
         <div id="reply-container">
-          <section id="reply-header">
-            {/* reply chain goes here */}
-          </section>
-          <section id="reply-body">
+          <div id="reply-body">
             <div id="reply-profilePic">
               <ProfilePic
                 id="profilePic"
@@ -162,14 +186,18 @@ class ReplyInThread extends React.Component {
               />
             </div>
             <form id="reply-form">
-              <div id="reply-text-box">
+              <section id="reply-header">
+                {/* reply chain goes here */}
+              </section>
+              <div id="reply-text-box" ref={Ref=>this.textBox=Ref}>
                 <textarea
                   name="meme"
                   id="reply-text"
                   type="text"
                   autoComplete="off"
                   placeholder="Meme your reply"
-                  rows="1"
+                  rows="auto"
+                  maxLength="512"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}
                   ref={Ref=>this.textarea=Ref}
@@ -179,15 +207,16 @@ class ReplyInThread extends React.Component {
                 </p>
               </div>
             </form>
-            <div id="reply-button-box">
-              <p
-                id="reply-submit"
-                onClick={this.handleReplyClick}
-              >
-                Reply
-              </p>
-            </div>
-          </section>
+          </div>
+          <div id="reply-button-box">
+            <div className="counter">{this.state.flag}</div>
+            <p
+              id="reply-submit"
+              onClick={this.handleReplyClick}
+            >
+              Reply
+            </p>
+          </div>
         </div>
       </div>
     )

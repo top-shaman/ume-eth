@@ -12,9 +12,10 @@ section#MainMeme.ThreadMemeMain {
   display: flex;
   position: relative;
   flex-direction: row;
+  width: inherit;
 }
 section#info {
-  margin: 0 0 0 0.5rem;
+  margin: auto 0 auto 0.5rem;
   text-align: left;
 }
 .ThreadMemeMain div#ThreadMemeMain-body {
