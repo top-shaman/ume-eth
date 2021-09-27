@@ -1,7 +1,7 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { fadeIn, partialFadeIn} from '../../resources/Libraries/Animation'
-import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+//import { fadeIn, partialFadeIn} from '../../resources/Libraries/Animation'
+import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import './ReplyInThread.css'
 import autosize from 'autosize'
 
@@ -14,11 +14,14 @@ class ReplyInThread extends React.Component {
     this.state = {
       creatingMeme: true,
       userStorage: this.props.userStorage,
+      memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeText: localStorage.getItem('memeText'),
       visibleText: localStorage.getItem('memeText'),
       flagText: '',
       flag: '',
+      replyingTo: [],
+      replyChain: [],
       parentId: emptyId,
       originId: emptyId,
       repostId: emptyId,
@@ -46,6 +49,7 @@ class ReplyInThread extends React.Component {
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
     }
+    this.replyingTo()
     this.textarea.focus()
     autosize(this.textarea)
     this.mounted = true
@@ -123,7 +127,6 @@ class ReplyInThread extends React.Component {
         this.state.memeText,
         await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.userAccount})
-      this.handleCloseClick(e)
       localStorage.clear()
     }
   }
@@ -173,8 +176,50 @@ class ReplyInThread extends React.Component {
     return await this.state.interface.methods.bytesToBytes32(textBytes).call()
   }
 
+  async replyingTo() {
+    let replies= [],
+        hasParent = true,
+        //starting values for parentId & parentAddress
+        replyId = this.props.memeId,
+        replyAddress = this.props.address,
+        parentId = await this.state.memeStorage.methods.getParentId(replyId).call(),
+        key = 1
+
+    while(hasParent) {
+      if(await replyId===await parentId) hasParent = false
+      replies.push(<span value={await replyId} id="parent" key={key}>{replyAddress}</span>)
+      this.setState({ replyChain: [...this.state.replyChain, await replyId] })
+
+      replyId = parentId
+      replyAddress = await this.state.userStorage.methods.usersByMeme(replyId).call()
+        .then(e => this.state.userStorage.methods.getUserAddr(e).call())
+        .then(e => fromBytes(e))
+      parentId = await this.state.memeStorage.methods.getParentId(replyId).call()
+
+      key++
+    }
+    replies = replies.filter((elem, index) => {
+      if(replies[index+1]!==undefined) {
+        return elem.props.children!==replies[index+1].props.children
+      } else return true
+    })
+    let replyingTo = [],
+        numReplies = replies.length
+    for(let i = 0; i < numReplies; i++) {
+      replyingTo.push(replies[i])
+      if(i!==numReplies-1) {
+        replyingTo.push(<span id="replying">{', '}</span>)
+      }
+    }
+    this.setState({
+      replyingTo,
+      parentId: this.state.replyChain[0],
+      originId: this.state.replyChain[this.state.replyChain.length-1]
+    })
+    this.props.handleReplyThread(this.state.replyChain)
+  }
+
   render() {
-    console.log(window.innerWidth)
     return(
       <div className="ReplyInThread" id="ReplyInThread" >
         <div id="reply-container">
@@ -187,7 +232,11 @@ class ReplyInThread extends React.Component {
             </div>
             <form id="reply-form">
               <section id="reply-header">
-                {/* reply chain goes here */}
+                { this.state.memeText!==null
+                  ? <p id="replying"><span id="replying">Replying to </span>{this.state.replyingTo}</p>
+                  : <p id="replying"><span id="replying"></span></p>
+                }
+
               </section>
               <div id="reply-text-box" ref={Ref=>this.textBox=Ref}>
                 <textarea

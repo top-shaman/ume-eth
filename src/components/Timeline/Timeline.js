@@ -1,5 +1,6 @@
 import React from 'react'
-import Meme from "../Meme/Meme"
+import Meme from '../Meme/Meme'
+import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Timeline.css"
 
@@ -42,7 +43,6 @@ class Timeline extends React.Component {
     clearInterval(this.intervalTimeline)
     if(this.state.firstLoad) {
       await this.loadTimeline()
-      /*
       this.intervalTimeline = setInterval(async () => {
         //this.setState({ firstLoad: false })
         if(!this.state.firstLoad && !this.state.loadingBottom){
@@ -50,7 +50,6 @@ class Timeline extends React.Component {
           await this.refreshMemes()
         }
       }, 10000)
-    */
     }
     this.mounted = true
   }
@@ -551,15 +550,15 @@ class Timeline extends React.Component {
         { this.state.timelineLoading
           ? this.state.memeCount===null && !this.state.refreshing
             ? <div id="loader">
-                <p id="loader">Loading...</p>
+                <p id="loader"><Loader/></p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldMemesHTML}
-                  <p id="loader">Loading...<br/></p>
+                  <p id="loader"><Loader/><br/></p>
                 </div>
               : <div id="loader-memes">
-                  <p id="loader">Loading...</p>
+                  <p id="loader"><Loader/></p>
                   {this.state.oldMemesHTML}
                 </div>
           : this.state.memeCount > 0

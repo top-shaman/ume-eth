@@ -2,12 +2,11 @@ div.ReplyMeme {
   display: flex;
   flex-direction: row;
   margin: 0 auto 0 0;
-  max-width: 100%;
+  width: inherit;
 }
 .ReplyMeme div#meme-body {
   display: flex;
-  min-width: inherit;
-  max-width: 100%;
+  width: inherit;
   flex-direction: column;
   overflow-wrap: break-word;
 }
@@ -31,8 +30,9 @@ div.ReplyMeme {
   display: flex;
   margin: 0 1.2rem 0 0rem;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  font-size: 0.78rem;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.01rem;
   font-weight: 500;
   color: #CCDDCC;
   justify-content: flex-start;
@@ -42,11 +42,11 @@ div.ReplyMeme {
   word-wrap: break-word;
   white-space: break-spaces;
   word-break: break-all;
-  max-height: 30rem;
 }
 .ReplyMeme p#meme-text span {
   font-family: 'Arial', sans-serif;
-  font-size: 0.78rem;
+  font-size: 1rem;
+  letter-spacing: 0.01rem;
   font-weight: 500;
   margin: 0;
   word-wrap: break-word;
@@ -76,13 +76,13 @@ div.ReplyMeme {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
   color: #CCDDCC;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin: 0 0.3rem 0 0;
   text-decoration: none;
 }
 .ReplyMeme span {
   font-family: 'Avenir', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   margin: 0 0.3rem;
   color: #667777;
 }
@@ -126,11 +126,12 @@ div.ReplyMeme {
   margin: 0 auto;
   width: 0;
   min-height: 1.5rem;
+  height: 100%;
   top: 0%;
 }
 .ReplyMeme div#parentProfilePic {
   transform: translateX(-0.3rem);
-  margin: 0.4rem 0.4rem 0 0;
+  margin: 0.4rem 0.4rem 0 0.4rem;
 }
 .ReplyMeme div#parentProfilePic div#profilePic {
   margin: 0 auto;

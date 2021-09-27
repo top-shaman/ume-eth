@@ -50,7 +50,7 @@ section#info {
   transition: border 0.4s;
 }
 .ThreadMemeMain section#profilePic {
-  margin: 0.3rem 0.1rem 0 0.4rem;
+  margin: 0.3rem 0.1rem 0 0.2rem;
 }
 .ThreadMemeMain p#ThreadMemeMain-text {
   display: flex;

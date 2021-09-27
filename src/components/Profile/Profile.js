@@ -1,5 +1,6 @@
 import React from 'react'
-import Meme from "../Meme/Meme"
+import Meme from '../Meme/Meme'
+import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Profile.css"
 
@@ -532,15 +533,15 @@ class Profile extends React.Component {
         { this.state.profileLoading
           ? this.state.userMemeCount===null && !this.state.refreshing
             ? <div id="loader">
-                <p id="loader">Loading...</p>
+                <p id="loader"><Loader/></p>
               </div>
             : this.state.loadingBottom
               ? <div id="loader-memes">
                   {this.state.oldMemesHTML}
-                  <p id="loader">Loading...<br/></p>
+                  <p id="loader"><Loader/><br/></p>
                 </div>
               : <div id="loader-memes">
-                  <p id="loader">Loading...</p>
+                  <p id="loader"><Loader/></p>
                   {this.state.oldMemesHTML}
                 </div>
           : this.state.userMemeCount> 0

@@ -1,25 +1,24 @@
-div.Meme {
+div.ChildMeme {
   display: flex;
   flex-direction: row;
-  position: relative;
   background-color: #1D1F22;
-  border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
+  padding-top: 0.25rem;
   min-width: 5rem;
   max-width: 38rem;
-  overflow-x: hidden;
+  overflow: hidden;
 }
-div.Meme:hover {
+div.ChildMeme:hover {
   background-color: #313131;
   cursor: pointer;
 }
-.Meme div#meme-body {
+.ChildMeme div#ChildMeme-body {
   display: flex;
   width: 100%;
   flex-direction: column;
   overflow-wrap: break-word;
 }
-.Meme div#meme-header {
+.ChildMeme div#ChildMeme-header {
   display: flex;
   text-align: left;
   justify-content: flex-start;
@@ -28,39 +27,35 @@ div.Meme:hover {
   margin: 0.5rem 0.4rem;
   align-items: flex-end;
 }
-.Meme div#meme-footer {
+.ChildMeme div#ChildMeme-footer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin: 0.2rem auto 0.2rem 0.4rem;
+  justify-content: flex-start;
   align-items: flex-end;
   height: 2rem;
-  overflow-y: hidden;
-  justify-content: space-between;
-  margin-right: 20%;
 }
-.Meme img#profile-pic {
+.ChildMeme img#profile-pic {
   width: 3rem;
   height: auto;
   border-radius: 100%;
-  margin: 0;
+  margin: 0 0 0 0.4rem;
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
+  transform: translateX(-0.2rem);
 }
-.Meme img#profile-pic:hover {
+.ChildMeme img#profile-pic:hover {
   border: 0.05rem solid rgb(255,255,255, 1);
   transition: border 0.4s;
 }
-.Meme section#profilePic {
+.ChildMeme section#profilePic {
   margin: 0.3rem 0.1rem 0 0.4rem;
 }
 
-.Meme div#text-box {
-  overflow-wrap: break-word;
-}
-.Meme p#meme-text {
+.ChildMeme p#ChildMeme-text {
   display: flex;
-  margin: 0 1.5rem 0 0.4rem;
-  width: inherit;
+  margin: 0 1.2rem 0 0.4rem;
   padding: 0;
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
@@ -69,73 +64,64 @@ div.Meme:hover {
   justify-content: flex-start;
   border: none;
   box-shadow: none;
-  overflow-wrap: brek-word;
   text-align: start;
+  overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: break-spaces;
   word-break: break-all;
 }
-.Meme p#meme-text span {
+.ChildMeme p#ChildMeme-text span {
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  margin: 0;
   width: inherit;
+  margin: 0;
   word-wrap: break-word;
   white-space: break-spaces;
 }
 
-.Meme p#meme-text span#plain {
+.ChildMeme p#ChildMeme-text span#plain {
   color: #CCDDCC;
   margin: 0;
   overflow-wrap: break-word;
   width: inherit;
 }
-.Meme p#meme-text a#at,
-.Meme p#meme-text a#hash {
+.ChildMeme p#ChildMeme-text a#at,
+.ChildMeme p#ChildMeme-text a#hash {
   margin: 0;
   color: #00CC89;
   text-decoration: none;
   width: inherit;
 }
-.Meme p#meme-text a#at:hover,
-.Meme p#meme-text a#hash:hover {
+.ChildMeme p#ChildMeme-text a#at:hover,
+.ChildMeme p#ChildMeme-text a#hash:hover {
   color: #00CC89;
   text-decoration: underline;
   width: inherit;
 }
 
-.Meme span#address {
-  word-break: break-word;
-  margin: 0 0.3rem 0 0;
-}
-.Meme span#time {
-  word-break: break-word;
-  margin: 0 0.3rem 0 0;
-}
-.Meme a#username {
+.ChildMeme a#username {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
   text-align: left;
   color: #CCDDCC;
   font-size: 1.05rem;
-  margin: 0 0.3rem 0 0;
-  word-break: break-word;
+  margin: 0 0.4rem 0 0;
   text-decoration: none;
+  word-break: break-word;
 }
-.Meme a#username:hover {
+.ChildMeme a#username:hover {
   text-decoration: underline;
 }
-.Meme span {
+.ChildMeme span {
   font-family: 'Avenir', sans-serif;
   font-size: 0.8rem;
-  margin: 0 0.3rem;
   color: #667777;
 }
-.Meme div#meme-footer p span {
+.ChildMeme div#ChildMeme-footer p span {
   color: #FFFFFF;
 }
-.Meme div#meme-footer p {
+.ChildMeme div#ChildMeme-footer p {
   margin: 0.15rem;
   padding: 0.2rem;
   flex-direction: row;
@@ -146,24 +132,15 @@ div.Meme:hover {
   position: relative;
   filter: invert(0.4);
 }
-.Meme p span {
+.ChildMeme p span {
   margin: 0 0.1rem 0 0.4rem;
+  overflow-wrap: break-word;
 }
-.Meme p#upvote-button {
-  margin: 0.15rem;
-  cursor: pointer;
+.ChildMeme span#address {
+  margin: 0 0.4rem 0 0;
+  word-break: break-word;
 }
-.Meme p#upvote-button:hover {
-  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(310deg);
-}
-.Meme p#downvote-button {
-  cursor: pointer;
-}
-.Meme p#downvote-button:hover {
-  filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
-}
-.Meme img#upvote {
-}
-.Meme img#downvote {
-  transform: rotate(180deg);
+.ChildMeme span#time {
+  margin: 0 0.4rem 0 0;
+  word-break: break-word;
 }

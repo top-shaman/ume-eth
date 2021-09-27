@@ -4,7 +4,7 @@ div.ThreadMeme {
   background-color: #1D1F22;
   border-right: 0.05rem solid #AAAAAA;
   min-width: 5rem;
-  max-width: 40rem;
+  max-width: 38rem;
 }
 div.ThreadMeme:hover {
   background-color: #313131;

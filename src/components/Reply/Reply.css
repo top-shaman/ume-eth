@@ -11,16 +11,17 @@
   align-items: center;
   justify-content: center;
   position: fixed;
-  top: 40%;
+  top: 35%;
   left: 50%;
-  margin-top: -13.375rem;
-  margin-left: -13.375rem;
-  padding: 0.5rem 1rem;
+  margin-top: -18rem;
+  margin-left: -18rem;
+  padding: 1rem 1rem 0.5rem 1rem;
   border-radius: 1.5rem;
   display: flex;
   background-color: #282c34;
   opacity: 1;
   flex-direction: column;
+  width: 34rem;
 }
 .Reply form#form {
   position: relative;
@@ -28,8 +29,8 @@
 .Reply form#form div#text-box {
   position:relative;
   border-bottom: 0.05rem solid #667777;
-  margin: 0.4rem 0.2rem 0.2rem 0.4rem;
-  width: 22rem;
+  margin: 1rem 0.2rem 0.2rem 0rem;
+  width: 30rem;
   min-height: 7.5rem;
 }
 
@@ -40,7 +41,7 @@
 .Reply section#body {
   display: flex;
   flex-direction: row;
-  width: 25.75rem;
+  width: 34rem;
   color: #CCDDCC;
 }
 .Reply section#body img#profile-pic {
@@ -48,22 +49,21 @@
   width: 3rem;
   height: auto;
   border-radius: 100%;
-  justify-content: center;
-  margin: 0 auto;
+  margin: 0.4rem;
 }
 .Reply textarea#meme-text {
   border: none;
   outline: none;
   position: absolute;
-  width: 22rem;
+  width: 30rem;
   background: rgb(0,0,0,0);
   caret-color: #667777;
   box-shadow: none;
   color: rgb(0,0,0,0);
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.01rem;
   font-weight: 500;
-  max-height: 30rem;
   top: 0;
   left: 0;
   margin: 0;
@@ -80,17 +80,17 @@
   border: none;
   box-shadow: none;
   color: #CCDDCC;
-  font-family: 'Quicksand', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.01rem;
   font-weight: 500;
   margin: 0;
   padding: 0;
-  width: 22rem;
+  width: 30rem;
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
   z-index:8;
-  max-height: 30rem;
 }
 .Reply p#text-box span {
   margin: 0 auto 0 0;
@@ -117,8 +117,8 @@
 .Reply p#meme-button {
   justify-content: center;
   width: 4.5rem;
-  margin: 0.4rem 0.7rem 0.15rem auto;
-  font-size: 0.85rem;
+  margin: 0.55rem 0.7rem 0.25rem auto;
+  font-size: 1.2rem;
   font-weight: 800;
   background-color: #334646;
   color: #AABBAA;

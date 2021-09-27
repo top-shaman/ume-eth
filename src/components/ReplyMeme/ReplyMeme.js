@@ -109,7 +109,7 @@ class ReplyMeme extends Component {
           <div id="meme-header">
             <a
               id="username"
-              href={this.state.username.slice(1)}
+              href={this.state.address.slice(1)}
             >
               {this.state.username}
             </a>
