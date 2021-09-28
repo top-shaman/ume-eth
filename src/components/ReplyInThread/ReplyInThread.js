@@ -18,6 +18,7 @@ class ReplyInThread extends React.Component {
       interface: this.props.interface,
       memeText: localStorage.getItem('memeText'),
       visibleText: localStorage.getItem('memeText'),
+      responses: this.props.responses,
       flagText: '',
       flag: '',
       replyingTo: [],
@@ -27,7 +28,8 @@ class ReplyInThread extends React.Component {
       repostId: emptyId,
       validMeme: false
     }
-
+    this.div = React.createRef()
+    this.body = React.createRef()
     this.textarea = React.createRef()
     this.textBox = React.createRef()
 
@@ -45,14 +47,33 @@ class ReplyInThread extends React.Component {
         visibleText: localStorage.getItem('memeText'),
         validMeme: true
       })
+
       memeButton.style.backgroundColor = '#00CC89'
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
     }
+
+    if(this.state.responses.length > 0) {
+      this.div.style.margin = '0 1rem'
+      this.div.style.paddingBottom = '1rem'
+      this.div.style.borderBottom = '0.05rem solid #667777'
+    }
+    if(this.state.memeText.length===0) {
+      this.textBox.style.marginTop = '0.3rem'
+      this.body.style.height = '1.1rem'
+    }
+
     this.replyingTo()
-    this.textarea.focus()
+    //this.textarea.focus()
     autosize(this.textarea)
     this.mounted = true
+  }
+  componentDidUpdate() {
+    if(this.state.memeText.length>0) {
+      this.body.style.height = 'auto'
+    } else {
+      this.body.style.height = '1.3rem'
+    }
   }
 
   componentWillUnmount() {
@@ -98,11 +119,15 @@ class ReplyInThread extends React.Component {
     if(text.length>=412 && text.length<502) {
       this.setState({
         flagText: (512-text.length) + ' characters left',
+      })
+      this.setState({
         flag: <p id="flag-grey">{this.state.flagText}</p>
       })
     } else if(text.length>=502 && text.length<=512) {
       this.setState({
         flagText: (512-text.length) + ' characters left',
+      })
+      this.setState({
         flag: <p id="flag-red">{this.state.flagText}</p>
       })
       } else {
@@ -221,9 +246,9 @@ class ReplyInThread extends React.Component {
 
   render() {
     return(
-      <div className="ReplyInThread" id="ReplyInThread" >
+      <div className="ReplyInThread" id="ReplyInThread" ref={Ref=>this.div=Ref}>
         <div id="reply-container">
-          <div id="reply-body">
+          <div id="reply-body" ref={Ref=>this.body=Ref}>
             <div id="reply-profilePic">
               <ProfilePic
                 id="profilePic"
@@ -232,7 +257,7 @@ class ReplyInThread extends React.Component {
             </div>
             <form id="reply-form">
               <section id="reply-header">
-                { this.state.memeText!==null
+                { document.activeElement===this.textarea
                   ? <p id="replying"><span id="replying">Replying to </span>{this.state.replyingTo}</p>
                   : <p id="replying"><span id="replying"></span></p>
                 }
@@ -245,7 +270,7 @@ class ReplyInThread extends React.Component {
                   type="text"
                   autoComplete="off"
                   placeholder="Meme your reply"
-                  rows="auto"
+                  rows="1"
                   maxLength="512"
                   value={this.state.memeText}
                   onChange={this.handleTextChange}

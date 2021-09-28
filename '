@@ -1,66 +1,63 @@
-div.ChildMeme-Parent {
-  max-width: 38rem;
-}
-div.ChildMeme {
+div.ParentMeme {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  background-color: #1D1F22;
+  border-right: 0.05rem solid #AAAAAA;
   min-width: 5rem;
   max-width: 38rem;
-  border-right: 0.05rem solid #AAAAAA;
-  background-color: #1D1F22;
   overflow: hidden;
 }
-div.ChildMeme:hover {
+div.ParentMeme:hover {
   background-color: #313131;
   cursor: pointer;
 }
-.ChildMeme div#ChildMeme-container {
-  display: flex;
-  margin: 0 1rem;
-}
-.ChildMeme div#ChildMeme-body {
+.ParentMeme div#ParentMeme-body {
   display: flex;
   width: 100%;
+  margin-right: 0.5rem;
   flex-direction: column;
   overflow-wrap: break-word;
 }
-.ChildMeme div#ChildMeme-header {
+.ParentMeme div#ParentMeme-header {
   display: flex;
-  text-align: left;
   justify-content: flex-start;
+  text-align: left;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 0.3rem 0 0.5rem 0;
+  margin: 0.5rem 0 0.5rem 0.4rem;
   align-items: flex-end;
 }
-.ChildMeme div#ChildMeme-footer {
+.ParentMeme div#ParentMeme-footer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 0.2rem auto 0.2rem 0;
+  margin: 0.2rem auto 0.2rem 0.4rem;
   justify-content: flex-start;
   align-items: flex-end;
   height: 2rem;
 }
-.ChildMeme img#profile-pic {
+.ParentMeme img#profile-pic {
   width: 3rem;
   height: auto;
   border-radius: 100%;
-  margin: 0;
+  margin: 0 0 0 0.4rem;
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
-  transform: translateX(-0.3rem);
+  transform: translateX(-0.2rem);
 }
-.ChildMeme img#profile-pic:hover {
+.ParentMeme img#profile-pic:hover {
   border: 0.05rem solid rgb(255,255,255, 1);
   transition: border 0.4s;
 }
-.ChildMeme section#profilePic {
-  margin: 0.3rem 0.1rem 0 0;
+.ParentMeme section#profilePic {
+  margin: 0.3rem 0.1rem 0 0.4rem;
   height: inherit;
 }
 
-.ChildMeme p#ChildMeme-text {
+.ParentMeme p#ParentMeme-text {
   display: flex;
-  margin: 0 0.3rem 0 0;
+  margin: 0 0.3rem 0 0.4rem;
   padding: 0;
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
@@ -75,7 +72,7 @@ div.ChildMeme:hover {
   white-space: break-spaces;
   word-break: break-all;
 }
-.ChildMeme p#ChildMeme-text span {
+.ParentMeme p#ParentMeme-text span {
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
   font-weight: 500;
@@ -85,48 +82,48 @@ div.ChildMeme:hover {
   white-space: break-spaces;
 }
 
-.ChildMeme p#ChildMeme-text span#plain {
+.ParentMeme p#ParentMeme-text span#plain {
   color: #CCDDCC;
   margin: 0;
   overflow-wrap: break-word;
   width: inherit;
 }
-.ChildMeme p#ChildMeme-text a#at,
-.ChildMeme p#ChildMeme-text a#hash {
+.ParentMeme p#ParentMeme-text a#at,
+.ParentMeme p#ParentMeme-text a#hash {
   margin: 0;
   color: #00CC89;
   text-decoration: none;
   width: inherit;
 }
-.ChildMeme p#ChildMeme-text a#at:hover,
-.ChildMeme p#ChildMeme-text a#hash:hover {
+.ParentMeme p#ParentMeme-text a#at:hover,
+.ParentMeme p#ParentMeme-text a#hash:hover {
   color: #00CC89;
   text-decoration: underline;
   width: inherit;
 }
 
-.ChildMeme a#username {
+.ParentMeme a#username {
+  font-size: 1rem;
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
   text-align: left;
   color: #CCDDCC;
-  font-size: 1.05rem;
   margin: 0 0.4rem 0 0;
   text-decoration: none;
   word-break: break-word;
 }
-.ChildMeme a#username:hover {
+.ParentMeme a#username:hover {
   text-decoration: underline;
 }
-.ChildMeme span {
+.ParentMeme span {
   font-family: 'Avenir', sans-serif;
   font-size: 0.8rem;
   color: #667777;
 }
-.ChildMeme div#ChildMeme-footer p span {
+.ParentMeme div#ParentMeme-footer p span {
   color: #FFFFFF;
 }
-.ChildMeme div#ChildMeme-footer p {
+.ParentMeme div#ParentMeme-footer p {
   margin: 0.15rem;
   padding: 0.2rem;
   flex-direction: row;
@@ -137,32 +134,24 @@ div.ChildMeme:hover {
   position: relative;
   filter: invert(0.4);
 }
-.ChildMeme-Parent p#show-replies {
-  margin: 0 auto;
-  padding: 1rem 0;
-  border-right: 0.05rem solid #AAAAAA;
-  background-color: #1D1F22;
-}
-.ChildMeme p span {
+.ParentMeme p span {
   margin: 0 0.1rem 0 0.4rem;
-  overflow-wrap: break-word;
 }
-.ChildMeme span#address {
+.ParentMeme span#address {
   margin: 0 0.4rem 0 0;
   word-break: break-word;
 }
-.ChildMeme span#time {
+.ParentMeme span#time {
   margin: 0 0.4rem 0 0;
   word-break: break-word;
 }
 
+
+
 .ChildMeme div.vl {
-  transform: translateX(-0.25rem);
-  border-left: 0.12rem solid #667777;
+  transform: translateX(-0.3rem);
+  border-left: 0.2rem solid #667777;
   margin: 0 auto;
   width: 0;
   height: 100%;
-}
-.ChildMeme-Parent div#spinning-loader {
-  margin: 0 auto;
 }

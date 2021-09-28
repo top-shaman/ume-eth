@@ -77,10 +77,6 @@ class ThreadMemeMain extends React.Component {
     // changes color of bottom border if main meme has replies
     if(this.state.responses.length > 0) {
       //change reply margin size from default
-      const footer = document.querySelector('div.ReplyInThread#ReplyInThread')
-      footer.style.margin = '0 1rem'
-      footer.style.paddingBottom = '1rem'
-      footer.style.borderBottom = '0.05rem solid #667777'
       this.div.style.borderBottom = 'none'
     }
 
@@ -297,6 +293,7 @@ class ThreadMemeMain extends React.Component {
           address={this.state.address}
           author={this.state.author}
           text={this.state.text}
+          responses={this.state.responses}
           memeId={this.state.memeId}
           parentId={this.state.parentId}
           handleExitReply={this.handleExitReply}

@@ -6,7 +6,7 @@ div.ThreadMemeMain {
   border-right: 0.05rem solid #AAAAAA;
   min-width: 5rem;
   max-width: 38rem;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 section#MainMeme.ThreadMemeMain {
   display: flex;

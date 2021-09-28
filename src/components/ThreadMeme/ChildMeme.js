@@ -1,10 +1,12 @@
 import React from 'react'
+import ChildThread from '../Thread/ChildThread'
 import ReplyButton from '../MemeButton/ReplyButton'
 import LikeButton from '../MemeButton/LikeButton'
 import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import Loader from '../Loader/Loader'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
 import "./ChildMeme.css"
@@ -37,14 +39,23 @@ class ChildMeme extends React.Component {
       alreadyRendered: this.props.alreadyRendered,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
+      userStorage: this.props.userStorage,
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked,
+      childLoading: false,
+      unpacked: false,
+      inChildThread: this.props.inChildThread,
+      lastChild: this.props.lastChild
     }
     this.div = React.createRef()
+    this.container = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
     this.downvote= React.createRef()
+
+    this.childThread = React.createRef()
+    this.show = React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
@@ -55,9 +66,14 @@ class ChildMeme extends React.Component {
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
+
+    this.handleUnpack = this.handleUnpack.bind(this)
+    this.handleChildLoading = this.handleChildLoading.bind(this)
+    this.handleToThread = this.handleToThread.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
+    console.log(this.props.responses)
     if(!this.state.alreadyRendered) {
       //this.div.style.zIndex = 0
       this.div.style.opacity = 0
@@ -65,12 +81,22 @@ class ChildMeme extends React.Component {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ',600)
       }, 0 )
-      //this.setState({ alreadyRendered: true })
+      this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
-    if(this.state.responses.length === 0)
-      this.div.style.borderBottom = '0.01rem solid #AAAAAA'
+    if(this.state.responses.length===0 && !this.state.lastChild) {
+      this.container.style.marginTop = '0.2em'
+      this.container.style.borderBottom = '0.05rem solid #667777'
+    }
+    else if(this.state.responses.length>0) {
+      this.container.style.marginTop = '0.2em'
+    }
+    if(this.state.lastChild && this.state.responses.length===0) {
+      this.div.style.borderBottom = '0.05rem solid #AAAAAA'
+    } else if(this.state.lastChild && this.state.responses.length>0) {
+      this.show.style.borderBottom = '0.05rem solid #AAAAAA'
+    }
 
     this.mounted = true
     await this.formatText()
@@ -161,6 +187,17 @@ class ChildMeme extends React.Component {
   handleRememe(e) {
     console.log('rememe')
   }
+  handleUnpack(e) {
+    e.preventDefault()
+    this.setState({ unpacked: true })
+  }
+
+  handleChildLoading(childLoading) {
+    this.setState({ childLoading })
+  }
+  handleToThread(e) {
+    this.props.handleToThread(e)
+  }
 
   async formatText() {
     let text = this.props.text,
@@ -216,82 +253,138 @@ class ChildMeme extends React.Component {
           time = this.calculateTimePassed()
     return(
       <div
-        className="ChildMeme"
-        id={this.state.ChildMemeId}
-        ref={Ref => this.div=Ref}
-        onClick={this.handleMemeClick}
-        onMouseEnter={this.handleOverMeme}
-        onMouseLeave={this.handleLeaveMeme}
+        className="ChildMeme-Parent"
       >
-        <section id="profilePic">
-          <a
-            id="profilePic"
-            href={`/${this.state.address.slice(1)}`}
-            onClick={this.handleProfileClick}
-          >
-            <ProfilePic account={this.state.author} id="ChildMeme"/>
-          </a>
-        </section>
-        <div id="ChildMeme-body">
-          <div id="ChildMeme-header">
-            <a
-              href={`/${this.state.address.slice(1)}`}
-              id="username"
-              onClick={this.handleProfileClick}
-            >
-              {this.state.username}
-            </a>
-            <span id="address">{this.state.address}</span>
-            <span id="time">{time}</span>
-          </div>
-          <div id="text-box">
-            <p id="ChildMeme-text">
-              {this.state.visibleText}
-            </p>
-          </div>
-          <div id="ChildMeme-footer">
-            <ReplyButton
-              memeId={this.state.memeId}
-              username={this.state.username}
-              address={this.state.address}
-              text={this.state.text}
-              parentId={this.state.parentId}
-              author={this.state.author}
-              reponses={this.state.responses}
-              handleReply={this.handleReply}
-            />
-            <LikeButton
-              memeId={this.state.memeId}
-              userAccount={this.state.userAccount}
-              likes={this.state.likes}
-              userHasLiked={this.state.userHasLiked}
-              parentId={this.state.parentId}
-              reponses={this.state.responses}
-              memeStorage={this.state.memeStorage}
-              interface={this.state.interface}
-              handleLike={this.handleLike}
-            />
-            <RememeButton
-              memeId={this.state.memeId}
-              username={this.state.username}
-              address={this.state.address}
-              text={this.state.text}
-              parentId={this.state.parentId}
-              author={this.state.author}
-              reponses={this.state.responses}
-              handleRememe={this.handleRememe}
-              rememeCountTotal={rememeCountTotal}
-            />
-            <UpvoteButton
-              memeId={this.state.memeId}
-              interface={this.state.interface}
-            />
-            <DownvoteButton
-              memeId={this.state.memeId}
-              interface={this.state.interface}
-            />
+        <div
+          className="ChildMeme"
+          id={this.state.memeId}
+          ref={Ref => this.div=Ref}
+          onClick={this.handleMemeClick}
+          onMouseEnter={this.handleOverMeme}
+          onMouseLeave={this.handleLeaveMeme}
+        >
+          <div id="ChildMeme-container" ref={Ref=>this.container=Ref}>
+            <section id="profilePic">
+              <a
+                id="profilePic"
+                href={`/${this.state.address.slice(1)}`}
+                onClick={this.handleProfileClick}
+              >
+                <ProfilePic account={this.state.author} id="ChildMeme"/>
+              </a>
+              {this.state.responses.length
+                 ? <div className="vl"/>
+                 : <p/>
+              }
+            </section>
+            <div id="ChildMeme-body">
+              <div id="ChildMeme-header">
+                <a
+                  href={`/${this.state.address.slice(1)}`}
+                  id="username"
+                  onClick={this.handleProfileClick}
+                >
+                  {this.state.username}
+                </a>
+                <span id="address">{this.state.address}</span>
+                <span id="time">{time}</span>
+              </div>
+              <div id="text-box">
+                <p id="ChildMeme-text">
+                  {this.state.visibleText}
+                </p>
+              </div>
+              <div id="ChildMeme-footer">
+                <ReplyButton
+                  memeId={this.state.memeId}
+                  username={this.state.username}
+                  address={this.state.address}
+                  text={this.state.text}
+                  parentId={this.state.parentId}
+                  author={this.state.author}
+                  responses={this.state.responses}
+                  handleReply={this.handleReply}
+                />
+                <LikeButton
+                  memeId={this.state.memeId}
+                  userAccount={this.state.userAccount}
+                  likes={this.state.likes}
+                  userHasLiked={this.state.userHasLiked}
+                  parentId={this.state.parentId}
+                  reponses={this.state.responses}
+                  memeStorage={this.state.memeStorage}
+                  interface={this.state.interface}
+                  handleLike={this.handleLike}
+                />
+                <RememeButton
+                  memeId={this.state.memeId}
+                  username={this.state.username}
+                  address={this.state.address}
+                  text={this.state.text}
+                  parentId={this.state.parentId}
+                  author={this.state.author}
+                  reponses={this.state.responses}
+                  handleRememe={this.handleRememe}
+                  rememeCountTotal={rememeCountTotal}
+                />
+                <UpvoteButton
+                  memeId={this.state.memeId}
+                  interface={this.state.interface}
+                />
+                <DownvoteButton
+                  memeId={this.state.memeId}
+                  interface={this.state.interface}
+                />
+              </div>
+            </div>
           </div>
         </div>
+        { this.state.responses.length===0
+            ? ''
+            : !this.state.unpacked
+              ? <p
+                 id="show-replies"
+                 onClick={this.handleUnpack}
+                 ref={Ref=>this.show=Ref}
+                 >
+                   Show more replies
+                </p>
+              : this.state.childLoading
+                  ? <Loader/>
+                  : <ChildThread
+                      account={this.state.account}
+                      userStorage={this.state.userStorage}
+                      memeStorage={this.state.memeStorage}
+                      interface={this.state.interface}
+                      handleLoading={this.handleChildLoading}
+                      handleReply={this.handleReply}
+                      handleToThread={this.handleToThread}
+                      atBottom={this.state.atBottom}
+                      ref={Ref => this.childThread=Ref}
+                      memeId={this.state.memeId}
+                      memeUsername={this.state.memeUsername}
+                      memeAddress={this.state.memeAddress}
+                      text={this.state.text}
+                      time={this.state.time}
+                      responses={this.state.responses}
+                      likes={this.state.likes}
+                      likers={this.state.likers}
+                      rememeCount={this.state.rememeCount}
+                      rememes={this.state.rememes}
+                      quoteCount={this.state.quoteCount}
+                      quoteMemes={this.state.quoteMemes}
+                      repostId={this.state.repostId}
+                      parentId={this.state.parentId}
+                      originId={this.state.originId}
+                      author={this.state.author}
+                      isVisible={this.state.isVisible}
+                      visibleText={this.state.visibleText}
+                      userHasLiked={this.state.userHasLiked}
+                      userAccount={this.state.account}
+                      lastChild={this.state.lastChild}
+                      unpacked={this.state.unpacked}
+                    />
+        }
       </div>
       );
     }

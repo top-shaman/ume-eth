@@ -65,7 +65,7 @@ class ParentMeme extends React.Component {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ',600)
       }, 0 )
-      //this.setState({ alreadyRendered: true })
+      this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
@@ -126,6 +126,8 @@ class ParentMeme extends React.Component {
         this.state.userHasLiked
       ])
     }
+    console.log('likes: ' + this.state.likes)
+    console.log('responses: ' + this.state.likes.length)
   }
 
   handleOverMeme(e) {
@@ -215,7 +217,7 @@ class ParentMeme extends React.Component {
     return(
       <div
         className="ParentMeme"
-        id={this.state.ParentMemeId}
+        id={this.state.memeId}
         ref={Ref => this.div=Ref}
         onClick={this.handleMemeClick}
         onMouseEnter={this.handleOverMeme}
@@ -256,7 +258,7 @@ class ParentMeme extends React.Component {
               text={this.state.text}
               parentId={this.state.parentId}
               author={this.state.author}
-              reponses={this.state.responses}
+              responses={this.state.responses}
               handleReply={this.handleReply}
             />
             <LikeButton

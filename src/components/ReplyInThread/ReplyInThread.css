@@ -8,7 +8,8 @@ div.ReplyInThread#ReplyInThread {
 }
 .ReplyInThread div#reply-container {
   align-items: center;
-  border-radius: 1.5rem;
+  border-top: 0.05rem solid #667777;
+  padding-top: 0.5rem;
   width: 100%;
   display: flex;
   opacity: 1;
@@ -24,6 +25,7 @@ div.ReplyInThread#ReplyInThread {
   margin: 0.4rem 0.2rem 0.2rem 0;
   width: inherit;
   white-space: break-word;
+  align-items: flex-end;
 }
 
 .ReplyInThread section#reply-header {
