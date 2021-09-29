@@ -75,7 +75,7 @@
   overflow: visible;
 }
 .Reply div#text-box p#text-box {
-  position: absolute;
+  position: relative;
   justify-content: flex-start;
   border: none;
   box-shadow: none;
@@ -132,4 +132,19 @@ img#x.close {
   margin-right: 100%;
   filter: brightness(20%) invert(1);
   cursor: pointer;
+}
+
+
+.Reply div#button-box {
+  display: flex;
+  flex-direction: row;
+}
+.Reply p#flag-grey {
+  color: #667777;
+  margin: 0;
+}
+.Reply p#flag-red {
+  color: #DD4422;
+  font-weight: 700;
+  margin: 0;
 }

@@ -1,10 +1,8 @@
 div.ChildMeme-Parent {
   max-width: 38rem;
+  border-right: 0.05rem solid #AAAAAA;
 }
 div.ChildMeme {
-  min-width: 5rem;
-  max-width: 38rem;
-  border-right: 0.05rem solid #AAAAAA;
   background-color: #1D1F22;
   overflow: hidden;
 }
@@ -28,7 +26,7 @@ div.ChildMeme:hover {
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 0.3rem 0 0.5rem 0;
+  margin: 0.1rem 0 0.5rem 0;
   align-items: flex-end;
 }
 .ChildMeme div#ChildMeme-footer {
@@ -49,12 +47,15 @@ div.ChildMeme:hover {
   transition: border 0.4s;
   transform: translateX(-0.3rem);
 }
+.ChildMeme div#profilePic {
+  height: 3.125rem;
+}
 .ChildMeme img#profile-pic:hover {
   border: 0.05rem solid rgb(255,255,255, 1);
   transition: border 0.4s;
 }
 .ChildMeme section#profilePic {
-  margin: 0.3rem 0.1rem 0 0;
+  margin: 0 0.1rem 0 0;
   height: inherit;
 }
 
@@ -137,12 +138,6 @@ div.ChildMeme:hover {
   position: relative;
   filter: invert(0.4);
 }
-.ChildMeme-Parent p#show-replies {
-  margin: 0 auto;
-  padding: 1rem 0;
-  border-right: 0.05rem solid #AAAAAA;
-  background-color: #1D1F22;
-}
 .ChildMeme p span {
   margin: 0 0.1rem 0 0.4rem;
   overflow-wrap: break-word;
@@ -162,6 +157,28 @@ div.ChildMeme:hover {
   margin: 0 auto;
   width: 0;
   height: 100%;
+}
+.ChildMeme-Parent div.show-replies {
+  display: flex;
+  flex-direction: row;
+  background-color: #1D1F22;
+  cursor: pointer;
+  height: min-content;
+}
+.ChildMeme-Parent p#show-replies {
+  margin: 0 auto;
+  padding: 0.8rem 3rem 0.8rem 0;
+}
+.ChildMeme-Parent div.dotted-line {
+  transform: rotate(90deg);
+  letter-spacing: 0.2rem;
+  height: 0.05rem;
+  font-family: Arial, sans-serif;
+  font-size: 1.01rem;
+  align-items: center;
+  margin: 1rem 0 auto 2.092rem;
+  white-space: pre;
+  color: #667777;
 }
 .ChildMeme-Parent div#spinning-loader {
   margin: 0 auto;

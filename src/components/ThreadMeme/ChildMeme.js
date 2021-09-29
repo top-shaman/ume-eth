@@ -67,6 +67,8 @@ class ChildMeme extends React.Component {
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
 
+    this.handleOverShow = this.handleOverShow.bind(this)
+    this.handleLeaveShow = this.handleLeaveShow.bind(this)
     this.handleUnpack = this.handleUnpack.bind(this)
     this.handleChildLoading = this.handleChildLoading.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
@@ -76,7 +78,7 @@ class ChildMeme extends React.Component {
     console.log(this.props.responses)
     if(!this.state.alreadyRendered) {
       //this.div.style.zIndex = 0
-      this.div.style.opacity = 0
+      this.childParent.style.opacity = 0
       setTimeout(() => {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ',600)
@@ -85,12 +87,13 @@ class ChildMeme extends React.Component {
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
+    //check if no children, to formate inner border
     if(this.state.responses.length===0 && !this.state.lastChild) {
-      this.container.style.marginTop = '0.2em'
+      this.container.style.marginTop = '0.35rem'
       this.container.style.borderBottom = '0.05rem solid #667777'
-    }
+    } //check if has children, to properly format the top margin
     else if(this.state.responses.length>0) {
-      this.container.style.marginTop = '0.2em'
+      this.container.style.marginTop = '0.35rem'
     }
     if(this.state.lastChild && this.state.responses.length===0) {
       this.div.style.borderBottom = '0.05rem solid #AAAAAA'
@@ -159,7 +162,7 @@ class ChildMeme extends React.Component {
 
   handleOverMeme(e) {
     e.preventDefault()
-    const element = 'div#\\3' + this.state.memeId
+    const element = 'div#' + this.div.id
     if(this.div.style.backgroundColor!=='#313131') {
       bgColorChange(element, '1D1F22', '313131',  500)
     } else if(this.div.style.backgroundColor==='#313131') {
@@ -169,7 +172,22 @@ class ChildMeme extends React.Component {
   }
   handleLeaveMeme(e) {
     e.preventDefault()
-    const elementName = 'div#\\3' + this.state.memeId
+    const elementName = 'div#' + this.div.id
+    bgColorChange(elementName, '313131', '1D1F22',  500)
+  }
+  handleOverShow(e) {
+    e.preventDefault()
+    const element = 'div#' + this.show.id
+    if(this.div.style.backgroundColor!=='#313131') {
+      bgColorChange(element, '1D1F22', '313131',  500)
+    } else if(this.div.style.backgroundColor==='#313131') {
+      document.querySelector(element).style.backgroundColor = '#313131'
+    }
+    this.props.handleOverMeme(this.div.style.backgroundColor)
+  }
+  handleLeaveShow(e) {
+    e.preventDefault()
+    const elementName = 'div#' + this.show.id
     bgColorChange(elementName, '313131', '1D1F22',  500)
   }
   handleReply(e) {
@@ -254,10 +272,12 @@ class ChildMeme extends React.Component {
     return(
       <div
         className="ChildMeme-Parent"
+        id={this.state.memeId}
+        ref={Ref=>this.childParent=Ref}
       >
         <div
           className="ChildMeme"
-          id={this.state.memeId}
+          id={'meme' + this.state.memeId}
           ref={Ref => this.div=Ref}
           onClick={this.handleMemeClick}
           onMouseEnter={this.handleOverMeme}
@@ -342,13 +362,17 @@ class ChildMeme extends React.Component {
         { this.state.responses.length===0
             ? ''
             : !this.state.unpacked
-              ? <p
-                 id="show-replies"
-                 onClick={this.handleUnpack}
-                 ref={Ref=>this.show=Ref}
-                 >
-                   Show more replies
-                </p>
+              ? <div
+                  id={'show' + this.state.memeId}
+                  className="show-replies"
+                  onClick={this.handleUnpack}
+                  onMouseEnter={this.handleOverShow}
+                  onMouseLeave={this.handleLeaveShow}
+                  ref={Ref=>this.show=Ref}
+                >
+                  <div className='dotted-line'>---</div>
+                  <p id="show-replies">Show more replies</p>
+                </div>
               : this.state.childLoading
                   ? <Loader/>
                   : <ChildThread
