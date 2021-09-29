@@ -59,7 +59,7 @@ class App extends React.Component {
   async componentDidMount() {
     console.log('mount')
     if(localStorage.getItem('hasLoaded')!=='true')
-      blurToFadeIn('.App', 2000)
+      blurToFadeIn('div.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       console.log('first load')

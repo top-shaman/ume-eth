@@ -58,7 +58,7 @@ class ReplyInThread extends React.Component {
       this.div.style.paddingBottom = '1rem'
       this.div.style.borderBottom = '0.05rem solid #667777'
     }
-    if(this.state.memeText.length===0) {
+    if(this.state.memeText.length!==0) {
       this.textBox.style.marginTop = '0.3rem'
       this.body.style.height = '1.1rem'
     }
