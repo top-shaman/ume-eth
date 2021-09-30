@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
-import "./NavBar.css"
-import logo from "../../resources/UME-green-96px.png"
+import './NavBar.css'
+import logo from '../../resources/UME-green-96px.png'
+import home from '../../resources/Home-Green.svg'
+import profile from '../../resources/user-green.svg'
+import settings from '../../resources/gear.svg'
 
 
 class NavBar extends Component {
@@ -42,48 +45,67 @@ class NavBar extends Component {
       <nav
         className="navbar"
       >
-        <small className="navbar" id="logo">
-          <a
-            className="logo"
-            href="#home"
+        <small id="logo">
+          <p
+            id="logo"
             onClick={this.handleRefreshClick}
           >
             <img
               id="logo"
               src={logo}
               alt="logo"
-              width="60"
             />
-          </a>
+          </p>
         </small>
-        <small id="pages" className="link">
-          <a
-            className="home"
-            href="#home"
-            onClick={this.handleHomeClick}
-          >
-            Home
-          </a>
+        <small
+          id="pages"
+          onClick={this.handleHomeClick}
+        >
+          <p id="home">
+            <a
+              id="home"
+              href="home"
+            >
+              <span id="icon">
+
+                <img src={home} alt="home" id="icon" width="26px"/>
+              </span>
+              <span id="link">Home</span>
+            </a>
+          </p>
         </small>
-        <small id="pages" className="link">
-          <a
-            className="profile"
-            href="#profile"
-            onClick={this.handleProfileClick}
-          >
-            Profile
-          </a>
+        <small
+          id="pages"
+          onClick={this.handleProfileClick}
+        >
+          <p id="profile">
+            <a
+              id="profile"
+              href="profile"
+            >
+              <span id="icon">
+                <img src={profile} alt="profile" id="icon" width="27px"/>
+              </span>
+              <span id="link">Profile</span>
+            </a>
+          </p>
         </small>
-        <small id="pages" className="link">
-          <a
-            className="settings"
-            href="#settings"
-          >
-            Settings
-          </a>
+        <small id="pages">
+          <p id="settings">
+            <a
+              id="settings"
+              href="settings"
+            >
+              <span id="icon">
+                <img src={settings} alt="settings" id="icon" width="27px"/>
+              </span>
+
+              <span id="link">Settings</span>
+            </a>
+          </p>
         </small>
         <p
-          className="meme"
+          id="meme"
           onClick={this.handleMemeClick}
         >
 

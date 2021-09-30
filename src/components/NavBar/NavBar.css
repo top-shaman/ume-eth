@@ -5,50 +5,15 @@ nav.navbar {
   position: sticky;
   position: -webkit-sticky;
   top:0;
-
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
+  width: 14rem;
 }
-
-.navbar img#logo {
-  font-size: 1rem;
-  color: #00CC89;
-  margin: 0.2rem auto 0.2rem auto;
-  padding: 0.63rem 0.7rem 0.4rem 0.7rem;
-}
-.navbar img#logo:active {
-  animation-name: blurExtra;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-in-out;
-}
-.navbar p{
-  display: block;
-  font-size: 1.5rem;
-  color: #FFFFFF;
-  background-color: #00CC89;
-  padding: 0.5rem 2rem;
-  margin: 1rem;
-  border-radius: 3rem;
-  transition: background-color 0.2s ease-in-out 0s;
-}
-.navbar p:hover {
-  background-color: #00AB79;
-  color: #FFFFFF;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out 0s;
-  animation-name: swellNav1;
-  animation-duration: 0.33s;
-  animation-timing-function: ease-in-out;
-}
-.navbar p:active {
-  background-color: #00CC89;
-  transition: background-color 0.2 ease-in-out 0s;
-}
-
 .navbar small{
   transition: background-color 0.2s ease-in-out 0s;
   margin: 0 auto;
-  border-radius: 1rem;
+  align-items: center;
+  border-radius: 4rem;
 }
 .navbar small:hover {
   background-color: #1D1F22;
@@ -62,12 +27,10 @@ nav.navbar {
   animation-duration: 0.2s;
   animation-timing-function: ease-in-out;
 }
-.navbar small#logo {
-  margin: 0.35rem auto;
-}
 .navbar small#pages {
   font-size: 1.2rem;
   padding: 0.6rem;
+  align-items: center;
 }
 
 .navbar a:link {
@@ -87,6 +50,108 @@ nav.navbar {
 .navbar a:active {
   color: lightgrey;
 }
+
+/* logo */
+.navbar small#logo {
+  margin: 0.35rem auto;
+  cursor: pointer;
+}
+.navbar p#logo {
+  margin: 0;
+}
+.navbar img#logo {
+  font-size: 1rem;
+  color: #00CC89;
+  margin: 0.2rem auto 0 auto;
+  padding: 0.9rem 0.7rem 0.5rem 0.7rem;
+  width: 4rem;
+}
+.navbar img#logo:active {
+  animation-name: blurExtra;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+/* page links */
+.navbar small#pages {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  color: #00CC89;
+  font-size: 1.5rem;
+  margin: 0 auto 0 1rem;
+  padding: 0;
+}
+.navbar small#pages p {
+  margin: 0;
+  padding: 0.6rem;
+  line-height: 0;
+}
+.navbar small#pages a {
+  display: block;
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  align-items: center;
+}
+.navbar small#pages img#icon {
+  margin: 0 1rem 0 0;
+}
+.navbar small#pages a > * {
+  vertical-align: middle;
+}
+.navbar small#pages a span#link {
+  margin-top: 0.2rem;
+}
+
+/* link-specific settings */
+.navbar p#home a {
+  padding: 0.06rem 0.2rem 0.058rem 0.2rem;
+}
+.navbar p#profile a {
+  padding: 0.1rem 0.2rem 0.1rem 0;
+}
+.navbar p#profile img#icon {
+  transform: translateY(-0.1rem);
+  padding-left: 0.2rem;
+  padding-bottom: 0.01rem;
+}
+.navbar p#settings a {
+  padding: 0.1rem 0.2rem 0.1rem 0;
+}
+.navbar p#settings img#icon {
+  padding-left: 0.2rem;
+  padding-bottom: 0.01rem;
+  margin-right: 0.8rem;
+}
+
+/* meme button */
+.navbar p#meme{
+  display: flex;
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  background-color: #00CC89;
+  padding: 0.5rem 2rem;
+  margin: 1rem 0.3rem;
+  border-radius: 3rem;
+  transition: background-color 0.2s ease-in-out 0s;
+}
+.navbar p#meme:hover {
+  background-color: #00AB79;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swellNav1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
+.navbar p#meme:active {
+  background-color: #00CC89;
+  transition: background-color 0.2 ease-in-out 0s;
+}
+.navbar p#meme span {
+  margin: 0 auto;
+}
+
 
 
 @keyframes swellNav1 {

@@ -35,7 +35,8 @@ class ReplyButton extends React.Component {
       const brightnessStart = 0.7,
             brightnessEnd = 0.43,
             hue = 85,
-            elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+            //elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+            elementName = 'div#' + this.reply.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }

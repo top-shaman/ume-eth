@@ -1,8 +1,5 @@
-.Thread div#loader p#loader,
-.Thread div#loader-memes p#loader,
-.Thread div#loaded p#loader {
+.Thread div#loader {
   opacity: 1;
   align-items: flex-start;
-  width: 80%;
+  max-width: 38rem;
 }
-

@@ -121,7 +121,7 @@ class Reply extends React.Component {
         await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.account})
       this.handleCloseClick(e)
-      localStorage.clear()
+      localStorage.setItem('memeText', '')
     }
   }
   async handleCloseClick(e) {

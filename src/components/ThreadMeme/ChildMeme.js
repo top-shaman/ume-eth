@@ -87,15 +87,23 @@ class ChildMeme extends React.Component {
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
+    //prevent redundant right-border if in thread
+    if(this.state.inChildThread) {
+      this.childParent.style.borderRight = 'none'
+    }
     //check if no children, to formate inner border
     if(this.state.responses.length===0 && !this.state.lastChild) {
-      this.container.style.marginTop = '0.35rem'
+      this.container.style.marginTop = '0.5rem'
       this.container.style.borderBottom = '0.05rem solid #667777'
     } //check if has children, to properly format the top margin
     else if(this.state.responses.length>0) {
-      this.container.style.marginTop = '0.35rem'
+      this.container.style.marginTop = '0.5rem'
     }
-    if(this.state.lastChild && this.state.responses.length===0) {
+    if(this.state.lastChild && this.state.responses.length===0 &&
+       !this.state.inChildThread) {
+      this.container.style.marginTop = '0.5rem'
+      this.div.style.borderBottom = '0.05rem solid #AAAAAA'
+    } else if(this.state.lastChild && this.state.responses.length===0) {
       this.div.style.borderBottom = '0.05rem solid #AAAAAA'
     } else if(this.state.lastChild && this.state.responses.length>0) {
       this.show.style.borderBottom = '0.05rem solid #AAAAAA'

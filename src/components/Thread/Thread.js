@@ -868,14 +868,14 @@ class Thread extends React.Component {
                 <Loader />
               </div>
             : this.state.loadingBottom
-              ? <div id="loader-memes">
+              ? <div id="loader">
                   {this.state.oldParentsHTML}
                   {this.state.oldMemeHTML}
                   {this.state.oldRepliesHTML}
-                  <p id="loader"><Loader /></p>
+                  <Loader />
                 </div>
-              : <div id="loader-memes">
-                  <p id="loader"><Loader /></p>
+              : <div id="loader">
+                  <Loader />
                   {this.state.oldParentsHTML}
                   {this.state.oldMemeHTML}
                   {this.state.oldRepliesHTML}
