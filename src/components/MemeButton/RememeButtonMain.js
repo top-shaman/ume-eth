@@ -14,6 +14,7 @@ class RememeButtonMain extends React.Component {
       text: this.props.text,
       author: this.props.author,
       parentId: this.props.parentId,
+      originId: this.props.originId,
       reponses: this.props.responses,
       rememeCountTotal: this.props.rememeCountTotal
     }
@@ -26,7 +27,7 @@ class RememeButtonMain extends React.Component {
   componentDidMount() {
   }
   handleClick(e) {
-    bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
+    bobble('#' + this.rememe.id, 500)
     this.rememeClick()
   }
   handleMouseEnter(e) {
@@ -35,7 +36,7 @@ class RememeButtonMain extends React.Component {
       const brightnessStart = 0.7,
             brightnessEnd = 0.4,
             hue = 140,
-            elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
+            elementName = '#' + this.rememe.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }
@@ -44,7 +45,7 @@ class RememeButtonMain extends React.Component {
     const brightnessStart = 0.4,
           brightnessEnd = 0.6,
           hue = 140,
-          elementName = 'div#\\3' + this.state.memeId + '  p#rememe-button'
+          elementName = '#' + this.rememe.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
 
@@ -55,7 +56,8 @@ class RememeButtonMain extends React.Component {
         this.state.author,
         this.state.text,
         this.state.memeId,
-        this.state.parentId
+        this.state.parentId,
+        this.state.originId
       ]
     )
   }
@@ -63,8 +65,8 @@ class RememeButtonMain extends React.Component {
   render() {
     return(
       <p
-        className="rememe"
-        id="rememe-button"
+        className="RememeButtonMain"
+        id={'rememe-' + this.state.memeId}
         onClick={this.handleClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}

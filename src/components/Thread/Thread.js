@@ -62,6 +62,7 @@ class Thread extends React.Component {
     this.handleToThread = this.handleToThread.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleLike = this.handleLike.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleOverButton = this.handleOverButton.bind(this)
   }
@@ -108,6 +109,9 @@ class Thread extends React.Component {
   }
   handleReply(e) {
     this.props.handleReply(e)
+  }
+  handleLike(e) {
+
   }
   handleOverMeme(e) {
   }
@@ -498,6 +502,7 @@ class Thread extends React.Component {
               handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
+              handleLike={this.handleLike}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
               interface={this.props.interface}
@@ -556,6 +561,7 @@ class Thread extends React.Component {
             handleToThread={this.handleToThread}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
+            handleLike={this.handleLike}
             handleOverMeme={this.handleOverMeme}
             handleOverButton={this.handleOverButton}
             interface={this.props.interface}
@@ -614,6 +620,7 @@ class Thread extends React.Component {
               handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
+              handleLike={this.handleLike}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
               interface={this.props.interface}
@@ -672,6 +679,7 @@ class Thread extends React.Component {
             handleToThread={this.handleToThread}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
+            handleLike={this.handleLike}
             handleOverMeme={this.handleOverMeme}
             handleOverButton={this.handleOverButton}
             interface={this.props.interface}
@@ -727,6 +735,7 @@ class Thread extends React.Component {
           handleToThread={this.handleToThread}
           handleRefresh={this.handleRefresh}
           handleReply={this.handleReply}
+          handleLike={this.handleLike}
           handleOverMeme={this.handleOverMeme}
           handleOverButton={this.handleOverButton}
           interface={this.props.interface}
@@ -775,6 +784,7 @@ class Thread extends React.Component {
           handleToThread={this.handleToThread}
           handleRefresh={this.handleRefresh}
           handleReply={this.handleReply}
+          handleLike={this.handleLike}
           handleOverMeme={this.handleOverMeme}
           handleOverButton={this.handleOverButton}
           interface={this.props.interface}

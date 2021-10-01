@@ -14,6 +14,7 @@ class ReplyButtonMain extends React.Component {
       text: this.props.text,
       author: this.props.author,
       parentId: this.props.parentId,
+      originId: this.props.originId,
       responses: this.props.responses
     }
     this.reply = React.createRef()
@@ -25,7 +26,7 @@ class ReplyButtonMain extends React.Component {
   componentDidMount() {
   }
   handleClick(e) {
-    bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
+    bobble('#' + this.reply.id, 500)
     console.log(this.state.responses)
     this.replyClick()
   }
@@ -35,7 +36,7 @@ class ReplyButtonMain extends React.Component {
       const brightnessStart = 0.7,
             brightnessEnd = 0.43,
             hue = 85,
-            elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+            elementName = '#' + this.reply.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }
@@ -44,7 +45,7 @@ class ReplyButtonMain extends React.Component {
     const brightnessStart = 0.43,
           brightnessEnd = 0.6,
           hue = 85,
-          elementName = 'div#\\3' + this.state.memeId + '  p#reply-button'
+          elementName = '#' + this.reply.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
 
@@ -55,7 +56,8 @@ class ReplyButtonMain extends React.Component {
         this.state.author,
         this.state.text,
         this.state.memeId,
-        this.state.parentId
+        this.state.parentId,
+        this.state.originId
       ]
     )
   }
@@ -63,8 +65,8 @@ class ReplyButtonMain extends React.Component {
   render() {
     return(
       <p
-        className="reply"
-        id="reply-button"
+        className="ReplyButtonMain"
+        id={'reply-' + this.state.memeId}
         onClick={this.handleClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}

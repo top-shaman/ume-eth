@@ -20,6 +20,7 @@ class Reply extends React.Component {
       parentText: this.props.text,
       memeId: this.props.memeId,
       parentId: this.props.parentId,
+      originId: this.props.originId,
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
@@ -138,7 +139,8 @@ class Reply extends React.Component {
   handleReply(e) {
     this.setState({
       parentId: e[e.length-1],
-      originId: e[0]
+      chainParentId: e[0],
+      //originId:
     })
     //console.log(this.state.parentId)
     //console.log(this.state.originId)
@@ -211,6 +213,7 @@ class Reply extends React.Component {
             text={this.state.parentText}
             memeId={this.state.memeId}
             parentId={this.state.parentId}
+            originId={this.state.originId}
             memeStorage={this.state.memeStorage}
             userStorage={this.state.userStorage}
             handleReply={this.handleReply}

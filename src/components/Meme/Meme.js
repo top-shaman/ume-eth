@@ -254,6 +254,7 @@ class Meme extends React.Component {
               address={this.state.address}
               text={this.state.text}
               parentId={this.state.parentId}
+              originId={this.state.originId}
               author={this.state.author}
               responses={this.state.responses}
               handleReply={this.handleReply}
@@ -273,6 +274,7 @@ class Meme extends React.Component {
               address={this.state.address}
               text={this.state.text}
               parentId={this.state.parentId}
+              originId={this.state.originId}
               author={this.state.author}
               reponses={this.state.responses}
               handleRememe={this.handleRememe}

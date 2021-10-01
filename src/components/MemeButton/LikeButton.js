@@ -12,19 +12,22 @@ class LikeButton extends React.Component {
       memeId: this.props.memeId,
       userAccount: this.props.userAccount,
       likes: this.props.likes,
-      parentId: this.props.parentId,
-      reponses: this.props.responses,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       userHasLiked: this.props.userHasLiked
     }
     this.like = React.createRef()
+    this.liked = React.createRef()
 
     this.handleClick = this.handleClick.bind(this)
     this.handleMouseEnter = this.handleMouseEnter.bind(this)
     this.handleMouseLeave = this.handleMouseLeave.bind(this)
   }
   async componentDidMount() {
+    if(this.state.userHasLiked) {
+      console.log(this.liked.id)
+      this.liked.style.filter = 'invert(0) sepia(1) brightness(0.4    ) saturate(10000%) hue-rotate(285deg)'
+    }
     await this.userHasLiked()
     this.mounted = true
   }
@@ -32,21 +35,22 @@ class LikeButton extends React.Component {
     this.mounted = false
   }
   async handleClick(e) {
-    bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
+    bobble('#' + this.like.id, 500)
+    bobble('#' + this.liked.id, 500)
     await this.likeClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
     let brightnessEnd, hue, elementName,
         brightnessStart = 0.7
-    if(e.target.id==='like-button' &&
+    if(e.target===this.like &&
       this.like.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)') {
       brightnessEnd = 0.4
       hue = 285
-      elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
+      elementName = '#' + this.like.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target.id==='like-button-liked') {
-      elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
+    } else if(e.target===this.liked) {
+      elementName = '#' + this.liked.id
       bobble(elementName, 500)
     }
   }
@@ -54,14 +58,14 @@ class LikeButton extends React.Component {
     e.preventDefault()
     let brightnessStart, hue, elementName,
         brightnessEnd = 0.6
-    if(e.target.id==='like-button' || e.target.id==='like' || e.target.id==='like-count') {
+    if(e.target===this.like || e.target.className===this.like.className) {
       brightnessStart = 0.4
       hue = 285
-      elementName = 'div#\\3' + this.state.memeId + '  p#like-button'
+      elementName = '#' + this.like.id
       filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
-    else if(e.target.id==='like-button-liked') {
-      elementName = 'div#\\3' + this.state.memeId + '  p#like-button-liked'
+    else if(e.target===this.liked || e.target.className===this.liked.className) {
+      elementName = '#' + this.liked.id
       bobble(elementName, 500)
     }
   }
@@ -91,9 +95,9 @@ class LikeButton extends React.Component {
   async userHasLiked() {
     const userHasLiked = await this.state.memeStorage.methods.getLikers(this.state.memeId).call()
       .then(e => e.includes(this.props.userAccount))
-    if(userHasLiked) {
-      const element = document.getElementById('like-button-liked')
-      element.style.filter = 'invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)'
+    if(await userHasLiked) {
+      //const element = document.getElementById(this.liked.id)
+      //element.style.filter = 'invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)'
     }
     this.setState({
       userHasLiked
@@ -104,19 +108,19 @@ class LikeButton extends React.Component {
     return(
       this.state.userHasLiked
         ? <p
-            className="like"
-            id="like-button-liked"
+            className="LikeButton-Liked"
+            id={'liked-' + this.state.memeId}
             onClick={this.handleClick}
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
-            ref={Ref => this.like=Ref}
+            ref={Ref => this.liked=Ref}
           >
             <img className="like" src={Liked} alt="like button" id="like" width="16px" height="16px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
         : <p
-            className="like"
-            id="like-button"
+            className="LikeButton"
+            id={'like-' + this.state.memeId}
             onClick={this.handleClick}
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}

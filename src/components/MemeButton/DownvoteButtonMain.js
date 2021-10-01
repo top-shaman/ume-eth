@@ -20,18 +20,17 @@ class DownvoteButtonMain extends React.Component {
   async componentDidMount() {
   }
   async handleClick(e) {
-    bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
+    bobble('#' + this.downvote.id, 500)
     await this.downvoteClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
     let brightnessEnd, hue, elementName,
         brightnessStart = 0.7
-    if(e.target.id==='downvote-button' &&
-      this.downvote.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(180deg)') {
+    if(this.downvote.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(180deg)') {
       brightnessEnd = 0.4
       hue = 180
-      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
+      elementName = '#' + this.downvote.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }
@@ -39,12 +38,10 @@ class DownvoteButtonMain extends React.Component {
     e.preventDefault()
     let brightnessStart, hue, elementName,
         brightnessEnd = 0.6
-    if(e.target.id==='downvote-button' || e.target.className==='downvote') {
-      brightnessStart = 0.4
-      hue = 180
-      elementName = 'div#\\3' + this.state.memeId + '  p#downvote-button'
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    }
+    brightnessStart = 0.4
+    hue = 180
+    elementName = '#' + this.downvote.id
+    filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
 
   async downvoteClick() {
@@ -53,8 +50,8 @@ class DownvoteButtonMain extends React.Component {
   render() {
     return(
         <p
-          className="downvote"
-          id="downvote-button"
+          className="DownvoteButtonMain"
+          id={'downvote-' + this.state.memeId}
           onClick={this.handleClick}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}

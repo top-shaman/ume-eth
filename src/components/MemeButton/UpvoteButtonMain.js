@@ -20,18 +20,18 @@ class UpvoteButtonMain extends React.Component {
   async componentDidMount() {
   }
   async handleClick(e) {
-    bobble('div#\\3' + this.state.memeId + '  p.' + e.target.className, 500)
+    bobble('#' + this.upvote.id, 500)
     await this.upvoteClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
     let brightnessEnd, hue, elementName,
         brightnessStart = 0.7
-    if(e.target.id==='upvote-button' &&
+    if(e.target===this.upvote &&
       this.upvote.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(310deg)') {
       brightnessEnd = 0.4
       hue = 310
-      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
+      elementName = '#' + this.upvote.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
   }
@@ -39,12 +39,10 @@ class UpvoteButtonMain extends React.Component {
     e.preventDefault()
     let brightnessStart, hue, elementName,
         brightnessEnd = 0.6
-    if(e.target.id==='upvote-button' || e.target.className==='upvote') {
-      brightnessStart = 0.4
-      hue = 310
-      elementName = 'div#\\3' + this.state.memeId + '  p#upvote-button'
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    }
+    brightnessStart = 0.4
+    hue = 310
+    elementName = '#' + this.upvote.id
+    filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
 
   async upvoteClick() {
@@ -53,8 +51,8 @@ class UpvoteButtonMain extends React.Component {
   render() {
     return(
         <p
-          className="upvote"
-          id="upvote-button"
+          className="UpvoteButtonMain"
+          id={'upvote-' + this.state.memeId}
           onClick={this.handleClick}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}

@@ -329,6 +329,7 @@ class ChildMeme extends React.Component {
                   address={this.state.address}
                   text={this.state.text}
                   parentId={this.state.parentId}
+                  originId={this.state.originId}
                   author={this.state.author}
                   responses={this.state.responses}
                   handleReply={this.handleReply}
@@ -338,8 +339,6 @@ class ChildMeme extends React.Component {
                   userAccount={this.state.userAccount}
                   likes={this.state.likes}
                   userHasLiked={this.state.userHasLiked}
-                  parentId={this.state.parentId}
-                  reponses={this.state.responses}
                   memeStorage={this.state.memeStorage}
                   interface={this.state.interface}
                   handleLike={this.handleLike}
@@ -350,6 +349,7 @@ class ChildMeme extends React.Component {
                   address={this.state.address}
                   text={this.state.text}
                   parentId={this.state.parentId}
+                  originId={this.state.originId}
                   author={this.state.author}
                   reponses={this.state.responses}
                   handleRememe={this.handleRememe}
