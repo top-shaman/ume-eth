@@ -20,15 +20,15 @@ class Reply extends React.Component {
       parentText: this.props.text,
       memeId: this.props.memeId,
       parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
       originId: this.props.originId,
+      repostId: this.props.repostId,
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       memeText: localStorage.getItem('memeText'),
       visibleText: localStorage.getItem('memeText'),
       flag: '',
-      originId: '',
-      repostId: '',
       validMeme: false
     }
 
@@ -51,7 +51,6 @@ class Reply extends React.Component {
         visibleText: localStorage.getItem('memeText'),
         validMeme: true
       })
-      console.log(this.textBox.clientHeight)
       memeButton.style.backgroundColor = '#00CC89'
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
@@ -116,6 +115,10 @@ class Reply extends React.Component {
   async handleMemeClick(e) {
     if(this.state.validMeme) {
       const tags = await this.validAts()
+      console.log('memeId: ' + this.state.memeId)
+      console.log('parentId: ' + this.state.parentId)
+      console.log('chainParentId: ' + this.state.chainParentId)
+      console.log('originId: ' + this.state.originId)
       this.state.interface.methods.newMeme(
         this.props.account,
         this.state.memeText,
@@ -138,9 +141,8 @@ class Reply extends React.Component {
   }
   handleReply(e) {
     this.setState({
-      parentId: e[e.length-1],
-      chainParentId: e[0],
-      //originId:
+      parentId: e[0],
+      chainParentId: e[e.length-1]
     })
     //console.log(this.state.parentId)
     //console.log(this.state.originId)

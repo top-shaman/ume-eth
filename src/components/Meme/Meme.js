@@ -99,11 +99,13 @@ class Meme extends React.Component {
   }
   handleMemeClick(e) {
     e.preventDefault()
-    if(e.target.className!=='reply' &&
-       e.target.className!=='like' &&
-       e.target.className!=='rememe' &&
-       e.target.className!=='upvote' &&
-       e.target.className!=='downvote') {
+    if(e.target.id!=='profilePic' &&
+       e.target.id!=='username' &&
+       e.target!==this.reply &&
+       e.target!==this.like &&
+       e.target!==this.rememe &&
+       e.target!==this.upvote &&
+       e.target!==this.downvote) {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -131,20 +133,19 @@ class Meme extends React.Component {
   handleOverMeme(e) {
     e.preventDefault()
     const element = 'div#\\3' + this.state.memeId
-    if(this.div.style.backgroundColor!=='#313131') {
-      bgColorChange(element, '1D1F22', '313131',  500)
-    } else if(this.div.style.backgroundColor==='#313131') {
-      document.querySelector(element).style.backgroundColor = '#313131'
+    if(this.div.style.backgroundColor!=='#2A2A2A') {
+      bgColorChange(element, '1D1F22', '2A2A2A',  500)
+    } else if(this.div.style.backgroundColor==='#2A2A2A') {
+      document.querySelector(element).style.backgroundColor = '#2A2A2A'
     }
     this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveMeme(e) {
     e.preventDefault()
     const elementName = 'div#\\3' + this.state.memeId
-    bgColorChange(elementName, '313131', '1D1F22',  500)
+    bgColorChange(elementName, '2A2A2A', '1D1F22',  500)
   }
   handleReply(e) {
-    console.log(e)
     this.props.handleReply(e)
   }
   handleLike(e) {
@@ -216,6 +217,7 @@ class Meme extends React.Component {
       <div
         className="Meme"
         id={this.state.memeId}
+        href={this.state.memeId}
         ref={Ref => this.div=Ref}
         onClick={this.handleMemeClick}
         onMouseEnter={this.handleOverMeme}

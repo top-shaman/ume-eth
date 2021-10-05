@@ -27,7 +27,6 @@ class ReplyButton extends React.Component {
   }
   handleClick(e) {
     bobble('#' + this.reply.id, 500)
-    console.log(this.state.responses)
     this.replyClick()
   }
   handleMouseEnter(e) {

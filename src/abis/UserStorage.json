@@ -41375,10 +41375,112 @@
       "links": {},
       "address": "0x0dd79F54c9d109bFfD0663FC057652B5D62946D3",
       "transactionHash": "0x60d37e84c2447d0f0214b5c08cca129bce8fec34c435da577140a20662f5ccfc"
+    },
+    "1633211914986": {
+      "events": {
+        "0x5f8b18be53cdf9843c4263461966fc46896a2d372d3fa87fc22f6cfed0241862": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "FactorySignerChanged",
+          "type": "event"
+        },
+        "0x317b209d0dca6ddb6667f7c47d488a9708cc0e7befa4cde41a104b125a1d9ef6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "FollowSignerChanged",
+          "type": "event"
+        },
+        "0xdf570d582e474b2d7915b12f6f773eb74e4bc78a660caeeccf19491c8578507b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "InterfaceSignerChanged",
+          "type": "event"
+        },
+        "0x2364065f519eb2e0ac13040d65b1d1140f6677de0518b6dee6954e49f7f7a5b6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "LikeSignerChanged",
+          "type": "event"
+        },
+        "0x76ce921e20c471c95deae34d20d53706ec4378ecab394e517f73aef912ae6cdd": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "PostSignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xDe93320084B9366272D441DcAAAa49d36689D536",
+      "transactionHash": "0xa99f882ea4ac366561b99a76d8d5c4bcf3f1cee0b3f91f3cb38c8ecd2ac6dac6"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-29T01:43:38.848Z",
+  "updatedAt": "2021-10-02T22:00:22.400Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

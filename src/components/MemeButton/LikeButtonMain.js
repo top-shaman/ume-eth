@@ -20,15 +20,17 @@ class LikeButtonMain extends React.Component {
     this.liked = React.createRef()
 
     this.handleClick = this.handleClick.bind(this)
-    this.handleMouseEnter = this.handleMouseEnter.bind(this)
-    this.handleMouseLeave = this.handleMouseLeave.bind(this)
+    this.handleMouseEnterLike = this.handleMouseEnterLike.bind(this)
+    this.handleMouseLeaveLike = this.handleMouseLeaveLike.bind(this)
+    this.handleMouseEnterLiked = this.handleMouseEnterLiked.bind(this)
+    this.handleMouseLeaveLiked = this.handleMouseLeaveLiked.bind(this)
   }
   async componentDidMount() {
     if(this.state.userHasLiked) {
       this.liked.style.filter = 'invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)'
     }
-    await this.userHasLiked()
     this.mounted = true
+        await this.userHasLiked()
   }
   componentWillUnmount() {
     this.mounted = false
@@ -38,35 +40,31 @@ class LikeButtonMain extends React.Component {
     bobble('#' + this.liked.id, 500)
     await this.likeClick()
   }
-  handleMouseEnter(e) {
+  handleMouseEnterLike(e) {
     e.preventDefault()
-    let brightnessEnd, hue, elementName,
-        brightnessStart = 0.7
-    if(e.target===this.like &&
-      this.like.style.filter!=='invert(0) sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)') {
-      brightnessEnd = 0.4
-      hue = 285
-      elementName = '#' + this.like.id
-      filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
-    } else if(e.target===this.liked) {
-      elementName = '#' + this.liked.id
-      bobble(elementName, 500)
-    }
+    let brightnessStart = 0.7,
+        brightnessEnd = 0.4,
+        hue = 285,
+        elementName = '#' + this.like.id
+    filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
   }
-  handleMouseLeave(e) {
+  handleMouseLeaveLike(e) {
     e.preventDefault()
-    let brightnessStart, hue, elementName,
-        brightnessEnd = 0.6
-    if(e.target===this.like || e.target.className===this.like.className) {
-      brightnessStart = 0.4
-      hue = 285
-      elementName = '#' + this.like.id
-      filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    }
-    else if(e.target===this.liked || e.target.className===this.liked.className) {
-      elementName = '#' + this.liked.id
-      bobble(elementName, 500)
-    }
+    let brightnessEnd = 0.6,
+        brightnessStart = 0.4,
+        hue = 285,
+        elementName = '#' + this.like.id
+    filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+  }
+  handleMouseEnterLiked(e) {
+    e.preventDefault()
+    let elementName = '#' + this.liked.id
+    bobble(elementName, 500)
+  }
+  handleMouseLeaveLiked(e) {
+    e.preventDefault()
+    let elementName = '#' + this.liked.id
+    bobble(elementName, 500)
   }
 
   async likeClick() {
@@ -80,6 +78,7 @@ class LikeButtonMain extends React.Component {
             userHasLiked: true,
             likes: this.state.likes+1
           })
+          this.liked.style.filter = 'sepia(1) brightness(0.4) saturate(10000%) hue-rotate(285deg)'
           this.props.handleLike([this.state.memeId, this.state.userHasLiked, this.state.likes])
         }
         else {
@@ -94,9 +93,11 @@ class LikeButtonMain extends React.Component {
   async userHasLiked() {
     const userHasLiked = await this.state.memeStorage.methods.getLikers(this.state.memeId).call()
       .then(e => e.includes(this.props.userAccount))
-    this.setState({
-      userHasLiked
-    })
+    if(this.state.userHasLiked!==userHasLiked) {
+      this.setState({
+        userHasLiked
+      })
+    }
   }
 
   render() {
@@ -106,8 +107,8 @@ class LikeButtonMain extends React.Component {
             className="LikeButtonMain-Liked"
             id={'liked-' + this.state.memeId}
             onClick={this.handleClick}
-            onMouseEnter={this.handleMouseEnter}
-            onMouseLeave={this.handleMouseLeave}
+            onMouseEnter={this.handleMouseEnterLiked}
+            onMouseLeave={this.handleMouseLeaveLiked}
             ref={Ref => this.liked=Ref}
           >
             <img className="like" src={Liked} alt="like button" id="like" width="21px" height="21px"/>
@@ -116,8 +117,8 @@ class LikeButtonMain extends React.Component {
             className="LikeButtonMain"
             id={'like-' + this.state.memeId}
             onClick={this.handleClick}
-            onMouseEnter={this.handleMouseEnter}
-            onMouseLeave={this.handleMouseLeave}
+            onMouseEnter={this.handleMouseEnterLike}
+            onMouseLeave={this.handleMouseLeaveLike}
             ref={Ref => this.like=Ref}
           >
             <img className="like" src={Like} alt="like button" id="like" width="21px" height="21px"/>

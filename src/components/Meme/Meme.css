@@ -5,8 +5,7 @@ div.Meme {
   background-color: #1D1F22;
   border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
-  min-width: 5rem;
-  max-width: 38rem;
+  width: inherit;
   overflow-x: hidden;
 }
 div.Meme:hover {
@@ -25,7 +24,7 @@ div.Meme:hover {
   justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 0.5rem 0.4rem;
+  margin: 0.53rem 0.4rem 0.5rem 0.4rem;
   align-items: flex-end;
 }
 .Meme div#meme-footer {
@@ -36,7 +35,7 @@ div.Meme:hover {
   height: 2rem;
   overflow-y: hidden;
   justify-content: space-between;
-  margin-right: 20%;
+  margin: 0.3rem 20% 0.1rem 0;
 }
 .Meme img#profile-pic {
   width: 3rem;
@@ -51,7 +50,7 @@ div.Meme:hover {
   transition: border 0.4s;
 }
 .Meme section#profilePic {
-  margin: 0.3rem 0.1rem 0 0.4rem;
+  margin: 0.35rem 0.1rem 0 0.4rem;
 }
 
 .Meme div#text-box {

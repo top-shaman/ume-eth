@@ -19,6 +19,7 @@ class NavBar extends Component {
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
     this.handleHomeClick = this.handleHomeClick.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleSettingsClick = this.handleSettingsClick.bind(this)
   }
 
 
@@ -28,28 +29,36 @@ class NavBar extends Component {
     this.props.handleCreateMeme(await this.state.creatingMeme)
   }
   async handleRefreshClick(e) {
+    e.preventDefault()
     this.props.handleRefresh(e)
   }
   async handleHomeClick(e) {
+    e.preventDefault()
     localStorage.setItem('focusPage', 'timeline')
     localStorage.setItem('timelineSort', 'boost')
     this.props.handleToTimeline(e)
   }
   async handleProfileClick(e) {
+    e.preventDefault()
     localStorage.setItem('focusPage', 'profile')
     localStorage.setItem('userInfo', 'user')
     this.props.handleToProfile('user')
+  }
+  async handleSettingsClick(e) {
+    e.preventDefault()
+    localStorage.setItem('focusPage', 'settings')
+    this.props.handleToSettings(e)
   }
   render() {
     return (
       <nav
         className="navbar"
       >
-        <small id="logo">
-          <p
-            id="logo"
-            onClick={this.handleRefreshClick}
-          >
+        <small
+          id="logo"
+          onClick={this.handleRefreshClick}
+        >
+          <p id="logo">
             <img
               id="logo"
               src={logo}
@@ -57,53 +66,44 @@ class NavBar extends Component {
             />
           </p>
         </small>
-        <small
-          id="pages"
+        <a
+          id="home"
+          href="/home"
           onClick={this.handleHomeClick}
         >
           <p id="home">
-            <a
-              id="home"
-              href="home"
-            >
-              <span id="icon">
+            <span id="icon">
 
-                <img src={home} alt="home" id="icon" width="26px"/>
-              </span>
-              <span id="link">Home</span>
-            </a>
+              <img src={home} alt="home" id="icon" width="26px"/>
+            </span>
+            <span id="link">Home</span>
           </p>
-        </small>
-        <small
-          id="pages"
+        </a>
+        <a
+          id="profile"
+          href="/profile"
           onClick={this.handleProfileClick}
         >
           <p id="profile">
-            <a
-              id="profile"
-              href="profile"
-            >
-              <span id="icon">
-                <img src={profile} alt="profile" id="icon" width="27px"/>
-              </span>
-              <span id="link">Profile</span>
-            </a>
+            <span id="icon">
+              <img src={profile} alt="profile" id="icon" width="27px"/>
+            </span>
+            <span id="link">Profile</span>
           </p>
-        </small>
-        <small id="pages">
+        </a>
+        <a
+          id="settings"
+          href="/settings"
+          onClick={this.handleSettingsClick}
+        >
           <p id="settings">
-            <a
-              id="settings"
-              href="settings"
-            >
-              <span id="icon">
-                <img src={settings} alt="settings" id="icon" width="27px"/>
-              </span>
+            <span id="icon">
+              <img src={settings} alt="settings" id="icon" width="27px"/>
+            </span>
 
-              <span id="link">Settings</span>
-            </a>
+            <span id="link">Settings</span>
           </p>
-        </small>
+        </a>
         <p
           id="meme"
           onClick={this.handleMemeClick}

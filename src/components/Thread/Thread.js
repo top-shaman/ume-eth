@@ -31,6 +31,7 @@ class Thread extends React.Component {
       quoteMemes: this.props.quoteMemes,
       repostId: this.props.repostId,
       parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
@@ -60,6 +61,7 @@ class Thread extends React.Component {
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
+    this.handleThreadLoading = this.handleThreadLoading.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
@@ -108,6 +110,7 @@ class Thread extends React.Component {
     setTimeout(() => this.refreshMemes(), 1000)
   }
   handleReply(e) {
+    console.log(e)
     this.props.handleReply(e)
   }
   handleLike(e) {
@@ -116,6 +119,9 @@ class Thread extends React.Component {
   handleOverMeme(e) {
   }
   handleOverButton(e) {
+  }
+  handleThreadLoading(e) {
+    this.props.handleLoading(e)
   }
 
   // to be invoked upon page load
@@ -127,7 +133,7 @@ class Thread extends React.Component {
 
       // compile all meme id's
       let parentIds = await this.compileParents(),
-          replyIds = this.state.responses
+          replyIds = await this.compileRepliesByBoost()
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
             parentCount = parentIds.length,
@@ -489,6 +495,7 @@ class Thread extends React.Component {
               tags={meme.tags}
               repostId={meme.repostId}
               parentId={meme.parentId}
+              chainParentId={meme.chainParentId}
               originId={meme.originId}
               author={meme.author}
               isVisible={meme.isVisible}
@@ -510,6 +517,7 @@ class Thread extends React.Component {
               userStorage={this.props.userStorage}
               userAccount={this.props.account}
               userHasLiked={meme.userHasLiked}
+              firstParent={i===memesRendered+memesInQueue-1}
             />
           )
         }
@@ -552,6 +560,7 @@ class Thread extends React.Component {
             tags={meme.tags}
             repostId={meme.repostId}
             parentId={meme.parentId}
+            chainParentId={meme.chainParentId}
             originId={meme.originId}
             author={meme.author}
             isVisible={meme.isVisible}
@@ -569,6 +578,7 @@ class Thread extends React.Component {
             userStorage={this.props.userStorage}
             userAccount={this.props.account}
             userhasLiked={meme.userHasLiked}
+            firstParent={i===memesRendered+memesInQueue-1}
           />
         )
       }
@@ -628,7 +638,9 @@ class Thread extends React.Component {
               userStorage={this.props.userStorage}
               userAccount={this.props.account}
               userHasLiked={meme.userHasLiked}
+              firstChild={i===memesRendered+memesInQueue-1}
               lastChild={i===0}
+              finalChild={i===0}
             />
           )
         }
@@ -670,6 +682,7 @@ class Thread extends React.Component {
             tags={meme.tags}
             repostId={meme.repostId}
             parentId={meme.parentId}
+            chainParentId={meme.chainParentId}
             originId={meme.originId}
             author={meme.author}
             isVisible={meme.isVisible}
@@ -687,7 +700,9 @@ class Thread extends React.Component {
             userStorage={this.props.userStorage}
             userAccount={this.props.account}
             userhasLiked={meme.userHasLiked}
+            firstChild={i===memesRendered+memesInQueue-1}
             lastChild={i===0}
+            finalChild={i===0}
           />
         )
       }
@@ -720,6 +735,7 @@ class Thread extends React.Component {
           tags={meme.tags}
           repostId={meme.repostId}
           parentId={meme.parentId}
+          chainParentId={meme.chainParentId}
           originId={meme.originId}
           author={meme.author}
           isVisible={meme.isVisible}
@@ -775,6 +791,7 @@ class Thread extends React.Component {
           tags={meme.tags}
           repostId={meme.repostId}
           parentId={meme.parentId}
+          chainParentId={meme.chainParentId}
           originId={meme.originId}
           author={meme.author}
           isVisible={meme.isVisible}
@@ -819,13 +836,13 @@ class Thread extends React.Component {
     return parents
   }
 
-  async compileMemesByTime() {
-    const memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+  async compileRepliesByTime() {
+    const memeIds = [...await this.state.responses]
     return memeIds
   }
-  async compileMemesByBoost() {
+  async compileRepliesByBoost() {
     const boostMap = [],
-          memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+          memeIds = [...await this.state.responses]
     for(let i = 0; i < memeIds.length; i++) {
       const meme = await this.state.memeStorage.methods.memes(memeIds[i]).call()
       boostMap.push([meme.boosts, memeIds[i], meme.time])
@@ -868,6 +885,19 @@ class Thread extends React.Component {
       })
     }
   }
+  sortRepliesToStyle(style) {
+    if(style==='time') {
+      this.setState({
+        replies: this.state.replies.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
+      })
+    } else if(style==='boost') {
+      this.setState({
+        memes: this.state.replies.sort((a,b) =>
+          a.boosts - b.boosts)
+      })
+    }
+  }
+
 
   render() {
     return(

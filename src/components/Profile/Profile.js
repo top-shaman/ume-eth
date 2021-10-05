@@ -414,6 +414,7 @@ class Profile extends React.Component {
               tags={meme.tags}
               repostId={meme.repostId}
               parentId={meme.parentId}
+              chainParentId={meme.chainParentId}
               originId={meme.originId}
               author={meme.author}
               isVisible={meme.isVisible}
@@ -424,11 +425,11 @@ class Profile extends React.Component {
                   : false
               }
               handleToProfile={this.handleToProfile}
+              handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
-              handleToThread={this.handleToThread}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userAccount={this.props.account}
@@ -474,17 +475,18 @@ class Profile extends React.Component {
             tags={meme.tags}
             repostId={meme.repostId}
             parentId={meme.parentId}
+            chainParentId={meme.chainParentId}
             originId={meme.originId}
             author={meme.author}
             isVisible={meme.isVisible}
       //      renderOrder={meme.renderOrder}
             alreadyRendered={true}
             handleToProfile={this.handleToProfile}
+            handleToThread={this.handleToThread}
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
             handleOverMeme={this.handleOverMeme}
             handleOverButton={this.handleOverButton}
-            handleToThread={this.handleToThread}
             interface={this.props.interface}
             memeStorage={this.props.memeStorage}
             userAccount={this.props.account}

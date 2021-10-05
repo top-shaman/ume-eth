@@ -9,49 +9,54 @@ nav.navbar {
   font-weight: 700;
   width: 13rem;
 }
-.navbar small{
+.navbar small#logo {
+  border-radius : 30%;
   transition: background-color 0.2s ease-in-out 0s;
-  margin: 0 auto;
-  align-items: center;
-  border-radius: 2rem;
 }
-.navbar small:hover {
+.navbar small#logo:hover {
   background-color: #1D1F22;
   transition: background-color 0.2s ease-in-out 0s;
   animation-name: swellNav1;
   animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
-.navbar small:active {
+.navbar small#logo:active {
+  background-color: #1D1F22;
+  transition: background-color 0.2s ease-in-out 0s;
   animation-name: swellNav2;
-  animation-duration: 0.2s;
+  animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
-.navbar small#pages {
-  font-size: 1.2rem;
-  padding: 0.6rem;
-  margin-left: auto;
-  align-items: center;
-}
 
+.navbar a {
+  transition: background-color 0.2s ease-in-out 0s;
+  margin: 0 auto;
+  align-items: center;
+  border-radius: 2rem;
+}
 .navbar a:link {
   color: #00CC89;
   transition: color 0.125s ease-in-out 0s;
   text-decoration: none;
 }
 .navbar a:hover {
-  color: #00CC89;
-  transition: color 0.125s ease-in-out 0s;
-  text-decoration: none;
-}
-.navbar a:visited {
-  color: #00CC89;
-  text-decoration: none;
+  background-color: #1D1F22;
+  transition: background-color 0.2s ease-in-out 0s;
+  animation-name: swellNav1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
 }
 .navbar a:active {
-  color: lightgrey;
+  animation-name: swellNav2;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
 }
-
+.navbar a {
+  font-size: 1.2rem;
+  padding: 0.6rem;
+  margin-left: auto;
+  align-items: center;
+}
 /* logo */
 .navbar small#logo {
   margin: 0.35rem auto;
@@ -73,7 +78,7 @@ nav.navbar {
   animation-timing-function: ease-in-out;
 }
 /* page links */
-.navbar small#pages {
+.navbar a {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -82,52 +87,32 @@ nav.navbar {
   margin: 0 auto 0 0.3rem;
   padding: 0;
 }
-.navbar small#pages p {
+.navbar a p {
   margin: 0;
   padding: 0.6rem;
   line-height: 0;
 }
-.navbar small#pages a {
-  display: block;
-  margin: 0;
-  padding: 0;
-  white-space: pre;
-  align-items: center;
+.navbar a img#icon {
+  margin: 0.3rem 1rem 0.3rem 0.2rem;
 }
-.navbar small#pages img#icon {
-  margin: 0 1rem 0 0;
-}
-.navbar small#pages a > * {
+.navbar p > * {
   vertical-align: middle;
 }
-.navbar small#pages a span#link {
-  margin-top: 0.2rem;
+.navbar a span#link {
+  margin: 0.2rem 0.45rem 0.2rem 0;
 }
 
 /* link-specific settings */
-.navbar p#home a {
-  padding: 0.14rem 0.5rem 0.2rem 0.2rem;
-}
-.navbar p#home a span#link {
-  padding-top: 0.4rem;
-}
-.navbar p#profile a {
-  padding: 0.1rem 0.2rem 0.08rem 0;
-}
-.navbar p#profile img#icon {
+.navbar a#home p#home img#icon{
   transform: translateY(-0.1rem);
-  padding-left: 0.2rem;
-  padding-bottom: 0.01rem;
+  width: 1.75rem;
+  margin: 0.14rem 1rem 0.14rem 0.15rem;
 }
-.navbar p#settings a {
-  padding: 0.1rem 0.2rem 0.1rem 0;
+.navbar a#profile p#profile img#icon{
+  transform: translateY(-0.125rem);
+  width: 1.9rem;
+  margin: 0.14rem 1rem 0.14rem 0.1rem;
 }
-.navbar p#settings img#icon {
-  padding-left: 0.2rem;
-  padding-bottom: 0.01rem;
-  margin-right: 0.8rem;
-}
-
 /* meme button */
 .navbar p#meme{
   display: block;

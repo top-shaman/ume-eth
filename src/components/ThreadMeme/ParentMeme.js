@@ -29,6 +29,7 @@ class ParentMeme extends React.Component {
       tags: this.props.tags,
       repostId: this.props.repostId,
       parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
@@ -39,12 +40,15 @@ class ParentMeme extends React.Component {
       memeStorage: this.props.memeStorage,
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked,
+      firstParent: this.props.firstParent
     }
     this.div = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
     this.downvote= React.createRef()
+
+    this.pfp = React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
@@ -72,6 +76,9 @@ class ParentMeme extends React.Component {
     this.mounted = true
     await this.formatText()
     //await this.userHasLiked()
+    if(!this.state.firstParent && this.pfp) {
+      this.pfp.style.marginTop = '0';
+    }
   }
   async componentWillUnmount() {
     this.mounted = false
@@ -99,11 +106,13 @@ class ParentMeme extends React.Component {
   }
   handleMemeClick(e) {
     e.preventDefault()
-    if(e.target.className!=='reply' &&
-       e.target.className!=='like' &&
-       e.target.className!=='rememe' &&
-       e.target.className!=='upvote' &&
-       e.target.className!=='downvote') {
+    if(e.target.id!=='profilePic' &&
+       e.target.id!=='username' &&
+       e.target!==this.reply &&
+       e.target!==this.like &&
+       e.target!==this.rememe &&
+       e.target!==this.upvote &&
+       e.target!==this.downvote) {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -126,24 +135,22 @@ class ParentMeme extends React.Component {
         this.state.userHasLiked
       ])
     }
-    console.log('likes: ' + this.state.likes)
-    console.log('responses: ' + this.state.likes.length)
   }
 
   handleOverMeme(e) {
     e.preventDefault()
     const element = 'div#\\3' + this.state.memeId
-    if(this.div.style.backgroundColor!=='#313131') {
-      bgColorChange(element, '1D1F22', '313131',  500)
-    } else if(this.div.style.backgroundColor==='#313131') {
-      document.querySelector(element).style.backgroundColor = '#313131'
+    if(this.div.style.backgroundColor!=='#2A2A2A') {
+      bgColorChange(element, '1D1F22', '2A2A2A',  500)
+    } else if(this.div.style.backgroundColor==='#2A2A2A') {
+      document.querySelector(element).style.backgroundColor = '#2A2A2A'
     }
     this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveMeme(e) {
     e.preventDefault()
     const elementName = 'div#\\3' + this.state.memeId
-    bgColorChange(elementName, '313131', '1D1F22',  500)
+    bgColorChange(elementName, '2A2A2A', '1D1F22',  500)
   }
   handleReply(e) {
     console.log(e)
@@ -218,12 +225,16 @@ class ParentMeme extends React.Component {
       <div
         className="ParentMeme"
         id={this.state.memeId}
+        href={this.state.memeId}
         ref={Ref => this.div=Ref}
         onClick={this.handleMemeClick}
         onMouseEnter={this.handleOverMeme}
         onMouseLeave={this.handleLeaveMeme}
       >
-        <section id="profilePic">
+        <section
+          id="profilePic"
+          ref={Ref=>this.pfp=Ref}
+        >
           <a
             id="profilePic"
             href={`/${this.state.address.slice(1)}`}
@@ -258,6 +269,7 @@ class ParentMeme extends React.Component {
               text={this.state.text}
               parentId={this.state.parentId}
               originId={this.state.originId}
+              repostId={this.state.repostId}
               author={this.state.author}
               responses={this.state.responses}
               handleReply={this.handleReply}
@@ -278,6 +290,7 @@ class ParentMeme extends React.Component {
               text={this.state.text}
               parentId={this.state.parentId}
               originId={this.state.originId}
+              repostId={this.state.repostId}
               author={this.state.author}
               reponses={this.state.responses}
               handleRememe={this.handleRememe}

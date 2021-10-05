@@ -4,8 +4,7 @@ div.ThreadMemeMain {
   background-color: #1D1F22;
   border-bottom: 0.05rem solid #AAAAAA;
   border-right: 0.05rem solid #AAAAAA;
-  min-width: 5rem;
-  max-width: 38rem;
+  width: inherit;
   overflow: hidden;
 }
 section#MainMeme.ThreadMemeMain {
@@ -28,7 +27,7 @@ section#info {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 0.5rem 0.4rem;
+  margin: 0.5rem 1rem 0.5rem 0.687rem;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer {
   display: flex;
@@ -36,6 +35,10 @@ section#info {
   margin: 0.6rem 8rem 0.2rem 1rem;
   justify-content: space-between;
   align-items: flex-end;
+}
+.ThreadMemeMain div#profilePic-main {
+  margin-left: 1rem;
+  height: 3.1rem;
 }
 .ThreadMemeMain img#profile-pic {
   width: 3rem;

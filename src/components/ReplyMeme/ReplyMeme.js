@@ -79,7 +79,6 @@ class ReplyMeme extends Component {
       key++
     }
     replies = replies.filter((elem, index) => {
-      console.log(index)
       if(replies[index+1]!==undefined) {
         return elem.props.children!==replies[index+1].props.children
       } else return true

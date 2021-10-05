@@ -4,8 +4,7 @@ div.ParentMeme {
   position: relative;
   background-color: #1D1F22;
   border-right: 0.05rem solid #AAAAAA;
-  min-width: 5rem;
-  max-width: 38rem;
+  width: inherit;
   overflow: hidden;
 }
 div.ParentMeme:hover {
@@ -40,19 +39,24 @@ div.ParentMeme:hover {
 }
 .ParentMeme img#profile-pic {
   width: 3rem;
-  height: auto;
+  height: 3rem;
   border-radius: 100%;
   margin: 0 0 0 0.4rem;
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
   transform: translateX(-0.2rem);
 }
+.ParentMeme a#profilePic {
+}
+.ParentMeme div#profilePic {
+  height: 3.1rem;
+}
 .ParentMeme img#profile-pic:hover {
   border: 0.05rem solid rgb(255,255,255, 1);
   transition: border 0.4s;
 }
 .ParentMeme section#profilePic {
-  margin: 0.3rem 0.1rem 0 0.4rem;
+  margin: 0.3rem 0.1rem 0 0.5rem;
   height: inherit;
 }
 

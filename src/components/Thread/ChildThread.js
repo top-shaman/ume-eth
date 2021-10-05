@@ -1,7 +1,5 @@
 import React from 'react'
-import ParentMeme from '../ThreadMeme/ParentMeme'
 import ChildMeme from '../ThreadMeme/ChildMeme'
-import ThreadMemeMain from '../ThreadMeme/ThreadMemeMain'
 import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./ChildThread.css"
@@ -31,6 +29,7 @@ class ChildThread extends React.Component {
       quoteMemes: this.props.quoteMemes,
       repostId: this.props.repostId,
       parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
@@ -120,7 +119,7 @@ class ChildThread extends React.Component {
       console.log('load thread ' + new Date().toTimeString())
 
       // compile all meme id's
-      let replyIds = this.state.responses
+      let replyIds = await this.compileRepliesByBoost()
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,
             replyCount = replyIds.length,
@@ -156,6 +155,7 @@ class ChildThread extends React.Component {
           replies
         })
 
+        this.sortToStyle()
         //console.log('parents ' + parents)
         //console.log('meme ' + meme)
         //console.log('replies ' + replies)
@@ -221,7 +221,6 @@ class ChildThread extends React.Component {
             memesInQueue = 0,
             newMemes = []
 
-        // add new memes to total of memes not yet rendered
         memesNotRendered += countDifference
         this.setState({
           memeCount,
@@ -474,7 +473,9 @@ class ChildThread extends React.Component {
               userAccount={this.props.account}
               userHasLiked={meme.userHasLiked}
               inChildThread={true}
+              firstChild={i===memesRendered+memesInQueue-1}
               lastChild={i===0}
+              finalChild={this.props.finalChild}
             />
           )
         }
@@ -533,7 +534,9 @@ class ChildThread extends React.Component {
             userAccount={this.props.account}
             userhasLiked={meme.userHasLiked}
             inChildThread={true}
+            firstChild={i===memesRendered+memesInQueue-1}
             lastChild={i===0}
+            finalChild={this.props.finalChild}
           />
         )
       }
@@ -543,13 +546,13 @@ class ChildThread extends React.Component {
     })
   }
 
-  async compileMemesByTime() {
-    const memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+  async compileRepliesByTime() {
+    const memeIds = [...this.state.responses]
     return memeIds
   }
-  async compileMemesByBoost() {
+  async compileRepliesByBoost() {
     const boostMap = [],
-          memeIds = [...await this.state.memeStorage.methods.getEncodedIds().call()]
+          memeIds = [...this.state.responses]
     for(let i = 0; i < memeIds.length; i++) {
       const meme = await this.state.memeStorage.methods.memes(memeIds[i]).call()
       boostMap.push([meme.boosts, memeIds[i], meme.time])
@@ -583,11 +586,11 @@ class ChildThread extends React.Component {
   sortToStyle(style) {
     if(style==='time') {
       this.setState({
-        memes: this.state.memes.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
+        replies: this.state.replies.sort((a,b)=> Date.parse(a.time)-Date.parse(b.time))
       })
     } else if(style==='boost') {
       this.setState({
-        memes: this.state.memes.sort((a,b) =>
+        replies: this.state.replies.sort((a,b) =>
           a.boosts - b.boosts)
       })
     }

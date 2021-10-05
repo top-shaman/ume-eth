@@ -1,9 +1,9 @@
 div.ChildMeme-Parent {
-  max-width: 38rem;
+  width: inherit;
   border-right: 0.05rem solid #AAAAAA;
+  background-color: #1D1F22;
 }
 div.ChildMeme {
-  background-color: #1D1F22;
   overflow: hidden;
 }
 div.ChildMeme:hover {
@@ -33,10 +33,11 @@ div.ChildMeme:hover {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-right: 20%;
-  justify-content: space-between;
-  align-items: flex-end;
   height: 2rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  overflow-y: hidden;
+  margin: 0.3rem 20% 0.1rem 0;
 }
 .ChildMeme img#profile-pic {
   width: 3rem;
@@ -152,8 +153,8 @@ div.ChildMeme:hover {
 }
 
 .ChildMeme div.vl {
-  transform: translateX(-0.25rem);
-  border-left: 0.12rem solid #667777;
+  transform: translateX(-0.3rem);
+  border-left: 0.1rem solid #667777;
   margin: 0 auto;
   width: 0;
   height: 100%;
@@ -163,23 +164,37 @@ div.ChildMeme:hover {
   flex-direction: row;
   background-color: #1D1F22;
   cursor: pointer;
-  height: min-content;
+  width: inherit;
+}
+.ChildMeme-Parent div#show-replies {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border-bottom: 0.05rem solid #667777;
+  margin: 0 1rem;
 }
 .ChildMeme-Parent p#show-replies {
   margin: 0 auto;
   padding: 0.8rem 3rem 0.8rem 0;
 }
+.ChildMeme-Parent div#line-box {
+  width: 3.1rem;
+}
 .ChildMeme-Parent div.dotted-line {
-  transform: rotate(90deg);
-  letter-spacing: 0.2rem;
-  height: 0.05rem;
-  font-family: Arial, sans-serif;
-  font-size: 1.01rem;
-  align-items: center;
-  margin: 1rem 0 auto 2.092rem;
-  white-space: pre;
-  color: #667777;
+  transform: translateX(-0.3rem);
+  border-left: 0.1rem dashed #667777;
+  width: 0;
+  margin: 0 auto;
+  height: 1.5rem;
 }
 .ChildMeme-Parent div#spinning-loader {
-  margin: 0 auto;
+}
+
+@media screen and (max-width: 475px) {
+  .ChildMeme-Parent div#line-box {
+    display: none;
+  }
+  .ChildMeme-Parent p#show-replies {
+    padding: 0.8rem 0;
+  }
 }

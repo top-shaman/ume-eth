@@ -4,6 +4,7 @@ import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
+import Loader from '../Loader/Loader'
 import { blur } from '../../resources/Libraries/Animation'
 import './Main.css'
 import {fromBytes} from '../../resources/Libraries/Helpers'
@@ -34,13 +35,18 @@ class Main extends React.Component {
 
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
+
     this.handleRefresh = this.handleRefresh.bind(this)
+
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
     this.handleToTimeline = this.handleToTimeline.bind(this)
     this.handleProfileLoad = this.handleProfileLoad.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleThreadLoad = this.handleThreadLoad.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
+    this.handleToSettings = this.handleToSettings.bind(this)
+
+
     this.handleScroll = this.handleScroll.bind(this)
   }
 
@@ -82,21 +88,21 @@ class Main extends React.Component {
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
     })
-    /*
+    console.log(localStorage.getItem('focusPage'))
+    console.log(localStorage.getItem('userInfo'))
     if(localStorage.getItem('focusPage')==='profile') {
-      if(localStorage.getItem('pageInfo').split(',').length===3){
-        const profile = localStorage.getItem('pageInfo').split(',')
+      if(localStorage.getItem('userInfo').split(',').length===3){
+        const profile = localStorage.getItem('userInfo').split(',')
         if(profile.length===3) {
           this.setState({
-            profileLoading: true,
-            focusPage: 'profile',
             profileUsername: profile[0],
             profileAddress: profile[1],
             profileAccount: profile[2]
           })
+          this.setState({ focusPage: 'profile' })
         }
       }
-    }*/
+    }
   }
   componentWillUnmount() {
     window.clearInterval()
@@ -138,11 +144,14 @@ class Main extends React.Component {
     e.preventDefault()
     console.log(localStorage.getItem('focusPage'))
     console.log(localStorage.getItem('timelineSort'))
-    if(!this.state.timelineLoading) {
-      this.setState({
-        focusPage: 'timeline',
-        timelineFormat: localStorage.getItem('timelineSort')
-      })
+    if(!this.state.timelineLoading && this.state.focusPage!=='timeline') {
+      this.setState({ focusPage: null })
+      setTimeout(() => {
+        this.setState({
+          focusPage: 'timeline',
+          timelineFormat: localStorage.getItem('timelineSort')
+        })
+      }, 50)
       console.log('timeline loading: ' + this.state.timelineLoading)
     }
   }
@@ -154,15 +163,17 @@ class Main extends React.Component {
     console.log('profile loading: ' + profileLoading)
   }
   async handleToProfile(e) {
-    if(!this.state.timelineLoading) {
-      if(e!=='user') {
+    if(!this.state.profileLoading) {
+      //check to see if query is coming from NavBar or Timeline
+      if(e!=='user') { // if coming from Timeline
         this.setState({
           profileUsername: e[0],
           profileAddress: e[1],
           profileAccount: e[2]
         })
-      } else if(e==='user') {
+      } else if(e==='user') { // if coming from NavBar
         if(this.state.focusPage==='profile' && this.state.account!==this.state.profileAccount) {
+          // sees if already on profile page, finds new data to fill
           this.setState({
             profileUsername: await this.state.userStorage.methods.getName(this.state.account).call(),
             profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call(),
@@ -170,8 +181,14 @@ class Main extends React.Component {
             profileLoading: true,
             focusPage: null,
           })
+          // update local storage
         }
       }
+      localStorage.setItem('userInfo',
+        this.state.profileUsername + ',' +
+        this.state.profileAddress + ',' +
+        this.state.profileAccount
+      )
       this.setState({
         focusPage: 'profile',
       })
@@ -184,31 +201,44 @@ class Main extends React.Component {
     console.log('thread loading: ' + threadLoading)
   }
   handleToThread(e) {
-    this.setState({
-      memeId: e[0],
-      memeUsername: e[1],
-      memeAddress: e[2],
-      text: e[3],
-      time: e[4],
-      responses: e[5],
-      likes: e[6],
-      likers: e[7],
-      rememeCount: e[8],
-      rememes: e[9],
-      quoteCount: e[10],
-      quoteMemes: e[11],
-      repostId: e[12],
-      parentId: e[13],
-      originId: e[14],
-      author: e[15],
-      isVisible: e[16],
-      visibleText: e[17],
-      userHasLiked: e[18],
-      interface: this.state.interface,
-      memeStorage: this.state.memeStorage,
-      userAccount: this.state.account,
-      focusPage: 'thread'
-    })
+    console.log('leaving page: ' + this.state.focusPage)
+    if(!this.state.threadLoading) {
+      if(this.state.focusPage==='thread' && this.state.memeId!==e[0]){
+        this.setState({
+          threadLoading: true,
+          focusPage: null
+        })
+      }
+      this.setState({
+        memeId: e[0],
+        memeUsername: e[1],
+        memeAddress: e[2],
+        text: e[3],
+        time: e[4],
+        responses: e[5],
+        likes: e[6],
+        likers: e[7],
+        rememeCount: e[8],
+        rememes: e[9],
+        quoteCount: e[10],
+        quoteMemes: e[11],
+        repostId: e[12],
+        parentId: e[13],
+        originId: e[14],
+        author: e[15],
+        isVisible: e[16],
+        visibleText: e[17],
+        userHasLiked: e[18],
+      })
+      setTimeout(() => {
+        if(this.state.focusPage!=='thread') {
+          this.setState({ focusPage: 'thread' })
+        }
+      }, 50)
+    }
+  }
+
+  handleToSettings(e) {
   }
 
   handleScroll(e) {
@@ -227,6 +257,7 @@ class Main extends React.Component {
             handleRefresh={this.handleRefresh}
             handleToTimeline={this.handleToTimeline}
             handleToProfile={this.handleToProfile}
+            handleToSettings={this.handleToSettings}
           />
         </div>
         <div className="Main" id="body" onScroll={this.handleScroll}>
@@ -288,8 +319,8 @@ class Main extends React.Component {
                       memeStorage={this.state.memeStorage}
                       userMemeCount={this.state.userMemeCount}
                       interface={this.state.interface}
-                      profileLoading={this.state.profileLoading}
-                      handleLoading={this.handleProfileLoad}
+                      threadLoading={this.state.threadLoading}
+                      handleLoading={this.handleThreadLoad}
                       contractLoading={this.props.contractLoading}
                       handleToProfile={this.handleToProfile}
                       handleToThread={this.handleToThread}
@@ -317,7 +348,7 @@ class Main extends React.Component {
                       userHasLiked={this.state.userHasLiked}
                       userAccount={this.state.account}
                     />
-                  : ''
+                  : <Loader />
           }
         </div>
       </div>

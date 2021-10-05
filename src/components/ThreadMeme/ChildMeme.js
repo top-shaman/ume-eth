@@ -31,6 +31,7 @@ class ChildMeme extends React.Component {
       tags: this.props.tags,
       repostId: this.props.repostId,
       parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
@@ -45,7 +46,9 @@ class ChildMeme extends React.Component {
       childLoading: false,
       unpacked: false,
       inChildThread: this.props.inChildThread,
-      lastChild: this.props.lastChild
+      firstChild: this.props.firstChild,
+      lastChild: this.props.lastChild,
+      finalChild: this.props.finalChild
     }
     this.div = React.createRef()
     this.container = React.createRef()
@@ -55,12 +58,17 @@ class ChildMeme extends React.Component {
     this.downvote= React.createRef()
 
     this.childThread = React.createRef()
+    this.childParent = React.createRef()
     this.show = React.createRef()
+    this.showContainer = React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
     this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
+
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
+
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
@@ -75,7 +83,6 @@ class ChildMeme extends React.Component {
   }
   // lifecycle functions
   async componentDidMount() {
-    console.log(this.props.responses)
     if(!this.state.alreadyRendered) {
       //this.div.style.zIndex = 0
       this.childParent.style.opacity = 0
@@ -87,9 +94,33 @@ class ChildMeme extends React.Component {
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
+
     //prevent redundant right-border if in thread
     if(this.state.inChildThread) {
       this.childParent.style.borderRight = 'none'
+    }
+    // if not last child of a subthread or not within a subthread, makes sure top padding is proper spacing
+    if(!this.state.inChildThread || !this.state.firstChild) {
+      this.div.style.paddingTop = '0.5rem'
+    }
+    // sets soft border at bottom of each sub-thread
+    if(this.state.responses.length===0) {
+      this.container.style.borderBottom = '0.05rem solid #667777'
+    }
+    // if in final child, makes sure container and show container don't have soft border, sets hard border for child-parent thread
+    if(this.state.finalChild) {
+      this.container.style.borderBottom = 'none'
+      if(!this.state.inChildThread) {
+        this.childParent.style.borderBottom = '0.05rem solid #AAAAAA'
+      }
+      if(this.showContainer.style!==undefined) {
+        this.showContainer.style.borderBottom = 'none'
+      }
+    }
+
+    /*
+    if(this.state.inChildThread && this.state.responses.length>0) {
+      this.container.style.marginTop = '0'
     }
     //check if no children, to formate inner border
     if(this.state.responses.length===0 && !this.state.lastChild) {
@@ -99,16 +130,16 @@ class ChildMeme extends React.Component {
     else if(this.state.responses.length>0) {
       this.container.style.marginTop = '0.5rem'
     }
+    else if(!this.state.lastChild) {
+      this.container.style.marginTop = '0.5rem'
+    }
     if(this.state.lastChild && this.state.responses.length===0 &&
        !this.state.inChildThread) {
       this.container.style.marginTop = '0.5rem'
       this.div.style.borderBottom = '0.05rem solid #AAAAAA'
     } else if(this.state.lastChild && this.state.responses.length===0) {
       this.div.style.borderBottom = '0.05rem solid #AAAAAA'
-    } else if(this.state.lastChild && this.state.responses.length>0) {
-      this.show.style.borderBottom = '0.05rem solid #AAAAAA'
-    }
-
+    */
     this.mounted = true
     await this.formatText()
     //await this.userHasLiked()
@@ -137,13 +168,19 @@ class ChildMeme extends React.Component {
     localStorage.setItem('focusPage', 'profile')
     localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
   }
+  handleToProfile(e) {
+    this.props.handleToProfile(e)
+  }
   handleMemeClick(e) {
+
     e.preventDefault()
-    if(e.target.className!=='reply' &&
-       e.target.className!=='like' &&
-       e.target.className!=='rememe' &&
-       e.target.className!=='upvote' &&
-       e.target.className!=='downvote') {
+    if(e.target.id!=='profilePic' &&
+       e.target.id!=='username' &&
+       e.target!==this.reply &&
+       e.target!==this.like &&
+       e.target!==this.rememe &&
+       e.target!==this.upvote &&
+       e.target!==this.downvote) {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -171,35 +208,34 @@ class ChildMeme extends React.Component {
   handleOverMeme(e) {
     e.preventDefault()
     const element = 'div#' + this.div.id
-    if(this.div.style.backgroundColor!=='#313131') {
-      bgColorChange(element, '1D1F22', '313131',  500)
-    } else if(this.div.style.backgroundColor==='#313131') {
-      document.querySelector(element).style.backgroundColor = '#313131'
+    if(this.div.style.backgroundColor!=='#2A2A2A') {
+      bgColorChange(element, '1D1F22', '2A2A2A',  500)
+    } else if(this.div.style.backgroundColor==='#2A2A2A') {
+      document.querySelector(element).style.backgroundColor = '#2A2A2A'
     }
     this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveMeme(e) {
     e.preventDefault()
     const elementName = 'div#' + this.div.id
-    bgColorChange(elementName, '313131', '1D1F22',  500)
+    bgColorChange(elementName, '2A2A2A', '1D1F22',  500)
   }
   handleOverShow(e) {
     e.preventDefault()
     const element = 'div#' + this.show.id
-    if(this.div.style.backgroundColor!=='#313131') {
-      bgColorChange(element, '1D1F22', '313131',  500)
-    } else if(this.div.style.backgroundColor==='#313131') {
-      document.querySelector(element).style.backgroundColor = '#313131'
+    if(this.div.style.backgroundColor!=='#2A2A2A') {
+      bgColorChange(element, '1D1F22', '2A2A2A',  500)
+    } else if(this.div.style.backgroundColor==='#2A2A2A') {
+      document.querySelector(element).style.backgroundColor = '#2A2A2A'
     }
     this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveShow(e) {
     e.preventDefault()
     const elementName = 'div#' + this.show.id
-    bgColorChange(elementName, '313131', '1D1F22',  500)
+    bgColorChange(elementName, '2A2A2A', '1D1F22',  500)
   }
   handleReply(e) {
-    console.log(e)
     this.props.handleReply(e)
   }
   handleLike(e) {
@@ -281,6 +317,7 @@ class ChildMeme extends React.Component {
       <div
         className="ChildMeme-Parent"
         id={this.state.memeId}
+        hfref={this.state.memeId}
         ref={Ref=>this.childParent=Ref}
       >
         <div
@@ -330,6 +367,7 @@ class ChildMeme extends React.Component {
                   text={this.state.text}
                   parentId={this.state.parentId}
                   originId={this.state.originId}
+                  repostId={this.state.repostId}
                   author={this.state.author}
                   responses={this.state.responses}
                   handleReply={this.handleReply}
@@ -350,6 +388,7 @@ class ChildMeme extends React.Component {
                   text={this.state.text}
                   parentId={this.state.parentId}
                   originId={this.state.originId}
+                  repostId={this.state.repostId}
                   author={this.state.author}
                   reponses={this.state.responses}
                   handleRememe={this.handleRememe}
@@ -378,8 +417,12 @@ class ChildMeme extends React.Component {
                   onMouseLeave={this.handleLeaveShow}
                   ref={Ref=>this.show=Ref}
                 >
-                  <div className='dotted-line'>---</div>
-                  <p id="show-replies">Show more replies</p>
+                  <div id="show-replies" ref={Ref=>this.showContainer=Ref}>
+                    <div id="line-box">
+                      <div className='dotted-line'/ >
+                    </div>
+                    <p id="show-replies">Show more replies</p>
+                  </div>
                 </div>
               : this.state.childLoading
                   ? <Loader/>
@@ -390,6 +433,7 @@ class ChildMeme extends React.Component {
                       interface={this.state.interface}
                       handleLoading={this.handleChildLoading}
                       handleReply={this.handleReply}
+                      handleToProfile={this.handleToProfile}
                       handleToThread={this.handleToThread}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.childThread=Ref}
@@ -413,7 +457,9 @@ class ChildMeme extends React.Component {
                       visibleText={this.state.visibleText}
                       userHasLiked={this.state.userHasLiked}
                       userAccount={this.state.account}
+                      firstChild={this.state.firstChild}
                       lastChild={this.state.lastChild}
+                      finalChild={this.state.finalChild}
                       unpacked={this.state.unpacked}
                     />
         }

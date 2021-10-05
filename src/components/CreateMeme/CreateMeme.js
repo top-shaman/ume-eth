@@ -20,6 +20,7 @@ class CreateMeme extends React.Component {
       visibleText: localStorage.getItem('memeText'),
       flag: '',
       parentId: emptyId,
+      chainParentId: emptyId,
       originId: emptyId,
       repostId: emptyId,
       validMeme: false

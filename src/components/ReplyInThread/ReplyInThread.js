@@ -5,7 +5,6 @@ import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../
 import './ReplyInThread.css'
 import autosize from 'autosize'
 
-const emptyId = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 class ReplyInThread extends React.Component {
   constructor(props) {
@@ -23,9 +22,10 @@ class ReplyInThread extends React.Component {
       flag: '',
       replyingTo: [],
       replyChain: [],
-      parentId: emptyId,
-      originId: emptyId,
-      repostId: emptyId,
+      parentId: this.props.parentId,
+      chainParentId: this.props.chainParentId,
+      originId: this.props.originId,
+      repostId: this.props.repostId,
       validMeme: false
     }
     this.div = React.createRef()
@@ -39,7 +39,7 @@ class ReplyInThread extends React.Component {
 
   componentDidMount() {
     const storage = localStorage.getItem('memeText')
-    if(storage && !storage.match(/\s/g)) {
+    if(storage!==null && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
             memeButton = document.querySelector('.ReplyInThread p#reply-submit')
       this.setState({
@@ -51,6 +51,12 @@ class ReplyInThread extends React.Component {
       memeButton.style.backgroundColor = '#00CC89'
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
+    } else if(storage===null) {
+      this.setState({
+        memeText: '',
+        visibleText: '',
+        validMeme: false
+      })
     }
 
     if(this.state.responses.length > 0) {
@@ -233,13 +239,14 @@ class ReplyInThread extends React.Component {
     for(let i = 0; i < numReplies; i++) {
       replyingTo.push(replies[i])
       if(i!==numReplies-1) {
-        replyingTo.push(<span id="replying">{', '}</span>)
+        replyingTo.push(<span id="replying" key={i}>{', '}</span>)
       }
     }
     this.setState({
       replyingTo,
       parentId: this.state.replyChain[0],
-      originId: this.state.replyChain[this.state.replyChain.length-1]
+      chainParentId: this.state.replyChain[this.state.replyChain.length-1],
+      originId: this.state.originId
     })
     this.props.handleReplyThread(this.state.replyChain)
   }

@@ -7,7 +7,7 @@ import DownvoteButtonMain from '../MemeButton/DownvoteButtonMain'
 import ReplyInThread from '../ReplyInThread/ReplyInThread'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
+import { fadeIn, zipUp } from '../../resources/Libraries/Animation'
 import "./ThreadMemeMain.css"
 
 class ThreadMemeMain extends React.Component {
@@ -48,6 +48,8 @@ class ThreadMemeMain extends React.Component {
     this.upvote = React.createRef()
     this.downvote= React.createRef()
 
+    this.pfp = React.createRef()
+
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
     this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
@@ -83,11 +85,14 @@ class ThreadMemeMain extends React.Component {
     // adjust header size if main meme has parents
     if(this.state.parentId!==this.state.memeId) {
       const header = document.querySelector('div#ThreadMemeMain-header')
-      header.style.margin = '0 0.4rem 0.5rem 0.4rem'
+      header.style.margin = '0 1rem 0.5rem 0.687rem'
     }
 
     await this.formatText()
     //await this.userHasLiked()
+    if(this.state.parentId!==this.state.memeId) {
+      this.pfp.style.marginTop = '0'
+    }
   }
   async componentWillUnmount() {
     this.mounted = false
@@ -154,7 +159,6 @@ class ThreadMemeMain extends React.Component {
     e.preventDefault()
   }
   handleReply(e) {
-    console.log(e)
     this.props.handleReply(e)
   }
   handleLike(e) {
@@ -212,7 +216,10 @@ class ThreadMemeMain extends React.Component {
         >
           <div id="ThreadMemeMain-body">
             <div id="ThreadMemeMain-header">
-              <section id="profilePic">
+              <section
+                id="profilePic-main"
+                ref={Ref=>this.pfp=Ref}
+              >
                 <a
                   id="profilePic"
                   href={`/${this.state.address.slice(1)}`}
@@ -270,6 +277,7 @@ class ThreadMemeMain extends React.Component {
                 text={this.state.text}
                 parentId={this.state.parentId}
                 originId={this.state.originId}
+                repostId={this.state.repostId}
                 author={this.state.author}
                 reponses={this.state.responses}
                 handleRememe={this.handleRememe}
@@ -297,6 +305,7 @@ class ThreadMemeMain extends React.Component {
           memeId={this.state.memeId}
           parentId={this.state.parentId}
           originId={this.state.originId}
+          repostId={this.state.repostId}
           handleExitReply={this.handleExitReply}
           handleReplyThread={this.handleReplyThread}
           userStorage={this.state.userStorage}
