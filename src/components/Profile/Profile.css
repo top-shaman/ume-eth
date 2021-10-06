@@ -6,3 +6,94 @@ p#loader.Profile {
   align-items: flex-start;
   padding: 1rem 0;
 }
+
+.Profile div#Profile {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Quicksand', sans-serif;
+  border-right: 0.05rem solid #AAAAAA;
+  border-bottom: 0.05rem solid #AAAAAA;
+  background-color: #1D1F22;
+}
+.Profile div#Profile span {
+  color: #778888;
+}
+
+/* header */
+/* info section */
+.Profile div#Profile div#header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: none;
+}
+.Profile div#Profile div#left {
+  margin: 0.6rem 0.6rem 0 1rem;
+}
+.Profile div#Profile div#profilePic {
+  text-align: left;
+}
+.Profile div#Profile img#profile-pic {
+  border: 0.05rem solid #CCDDDD;
+  border-radius: 50%;
+  transition: filter 0.2s ease-in-out;
+  cursor: pointer;
+}
+.Profile div#Profile img#profile-pic:hover {
+  filter: brightness(0.9);
+  transition: filter 0.2s ease-in-out;
+}
+.Profile div#Profile p#info {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  text-align: left;
+  margin: 0.2rem 0 0 0;
+}
+.Profile div#Profile div#left span#username {
+  color: #CCDDDD;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.Profile div#Profile div#left span#address {
+  font-family: 'Avenir', sans-serif;
+}
+/* edit/follow button */
+.Profile div#Profile div#right p {
+  color: #CCDDDD;
+  font-weight: 700;
+  padding: 0.6rem 1rem;
+  margin: 0.6rem 1rem;
+  border: 0.05rem solid #CCDDDD;
+  border-radius: 3rem;
+  cursor: pointer;
+  transition: background-color 0.33s ease-in-out;
+}
+.Profile div#Profile div#right p:hover {
+  transition: background-color 0.33s ease-in-out;
+  background-color: #2A2A2A;
+}
+
+/* body */
+.Profile div#Profile div#body {
+  margin: 0.6rem 1rem;
+  text-align: left;
+}
+.Profile div#Profile div#body p#bio {
+  margin: 0;
+}
+
+/* footer */
+.Profile div#Profile div#footer {
+  display: flex;
+  flex-direction: row;
+  margin: 0 1rem;
+}
+.Profile div#Profile div#footer p {
+  margin: 0 1.2rem 0.6rem 0;
+  cursor: pointer;
+}
+.Profile div#Profile div#footer p span#count {
+  color: #CCDDDD;
+  font-weight: 800;
+}

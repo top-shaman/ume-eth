@@ -93,6 +93,7 @@ class Thread extends React.Component {
   }
   componentWillUnmount() {
     clearInterval(this.intervalThread)
+    this.props.handleLoading(false)
     this.mounted = false
   }
   handleToProfile(e) {

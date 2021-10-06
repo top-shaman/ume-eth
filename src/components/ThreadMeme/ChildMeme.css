@@ -123,7 +123,7 @@ div.ChildMeme:hover {
 .ChildMeme span {
   font-family: 'Avenir', sans-serif;
   font-size: 0.8rem;
-  color: #667777;
+  color: #778888;
 }
 .ChildMeme div#ChildMeme-footer p span {
   color: #FFFFFF;
@@ -186,8 +186,6 @@ div.ChildMeme:hover {
   width: 0;
   margin: 0 auto;
   height: 1.5rem;
-}
-.ChildMeme-Parent div#spinning-loader {
 }
 
 @media screen and (max-width: 475px) {

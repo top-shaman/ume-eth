@@ -23,28 +23,28 @@ class NavBar extends Component {
   }
 
 
-  async handleMemeClick(e) {
+  handleMemeClick(e) {
     e.preventDefault()
-    await this.setState({ creatingMeme: true })
-    this.props.handleCreateMeme(await this.state.creatingMeme)
+    this.setState({ creatingMeme: true })
+    this.props.handleCreateMeme(true)
   }
-  async handleRefreshClick(e) {
+  handleRefreshClick(e) {
     e.preventDefault()
     this.props.handleRefresh(e)
   }
-  async handleHomeClick(e) {
+  handleHomeClick(e) {
     e.preventDefault()
     localStorage.setItem('focusPage', 'timeline')
     localStorage.setItem('timelineSort', 'boost')
     this.props.handleToTimeline(e)
   }
-  async handleProfileClick(e) {
+  handleProfileClick(e) {
     e.preventDefault()
     localStorage.setItem('focusPage', 'profile')
     localStorage.setItem('userInfo', 'user')
     this.props.handleToProfile('user')
   }
-  async handleSettingsClick(e) {
+  handleSettingsClick(e) {
     e.preventDefault()
     localStorage.setItem('focusPage', 'settings')
     this.props.handleToSettings(e)

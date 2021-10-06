@@ -4,6 +4,11 @@ export const toBytes = async (s) => {
 export const fromBytes = async (b) => {
   return await window.web3.utils.toUtf8(b)
 }
+export const is32Bytes = h => {
+  let re = /0x[0-9A-Fa-f]{64}/g
+  return re.test(h)
+}
+
 
 export const isolatePlain = async text => {
   const regex = /((([^@#](?=\w)*)|([@#](?!\w))))(?<!(([@]\w{1,31})|([#]\w+)))([^@#]|([@#](?!\w)))*/g,

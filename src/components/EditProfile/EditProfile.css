@@ -1,0 +1,139 @@
+.EditProfile div#background {
+  z-index: 8;
+  display:block;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #AABBBB;
+}
+.EditProfile div#container {
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  margin-top: -18rem;
+  margin-left: -18rem;
+  padding: 0.8rem 1rem 0.5rem 1rem;
+  border-radius: 1.5rem;
+  display: flex;
+  background-color: #282c34;
+  opacity: 1;
+  flex-direction: column;
+}
+
+/* header */
+.EditProfile section#head {
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  margin: 0 auto 0 0;
+  width: 100%;
+  border-bottom: 0.05rem solid #667777;
+}
+.EditProfile img#x.close {
+  padding: 0.8rem;
+  text-align: left;
+  margin: auto 0;
+  filter: brightness(20%) invert(1);
+  cursor: pointer;
+}
+.EditProfile section#head p#title {
+  color: #CCDDDD;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: auto 0;
+}
+.EditProfile div#button-box {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  margin: 0.25rem 0.5rem 0.25rem auto;
+}
+.EditProfile p#save-button {
+  justify-content: center;
+  width: 5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  background-color: #334646;
+  color: #AABBAA;
+  padding: 0.3rem;
+  margin: 0 0 0.3rem 0;
+  border-radius: 2rem;
+  transition: background-color 0.15s;
+}
+
+
+.EditProfile section#body {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 34rem;
+  color: #CCDDCC;
+}
+.EditProfile img#profile-pic {
+  border-radius: 100%;
+  margin: 0.8rem 0.4rem;
+}
+
+.EditProfile form#form {
+  position: relative;
+}
+.EditProfile form#form label {
+  font-size: 0.8rem;
+  font-family: 'Avenir', sans-serif;
+  font-weight: 600;
+  color: #778888;
+  margin: 0.4rem 0.4rem 0 0.4rem;
+}
+.EditProfile form#form div#edit-box {
+  border: 0.05rem solid #667777;
+  border-radius: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  position: relative;
+  margin: 0.6rem;
+  width: inherit;
+}
+
+.EditProfile textarea {
+  border: none;
+  outline: none;
+  position: relative;
+  background: rgb(0,0,0,0);
+  caret-color: #667777;
+  box-shadow: none;
+  color: #CCDDDD;
+  font-family: 'Avenir', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.01rem;
+  font-weight: 500;
+  top: 0;
+  left: 0;
+  margin: 0.2rem 0.4rem;
+  padding: 0;
+  resize: none;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  z-index:10;
+  overflow: visible;
+}
+
+
+.EditProfile textarea#name-text::placeholder {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 500;
+}
+
+
+.EditProfile p#flag-grey {
+  color: #667777;
+  margin: 0;
+}
+.EditProfile p#flag-red {
+  color: #DD4422;
+  font-weight: 700;
+  margin: 0;
+}

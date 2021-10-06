@@ -5,9 +5,9 @@ import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
 import Loader from '../Loader/Loader'
-import { blur } from '../../resources/Libraries/Animation'
+import { blur, blurToFadeIn } from '../../resources/Libraries/Animation'
 import './Main.css'
-import {fromBytes} from '../../resources/Libraries/Helpers'
+import { fromBytes, is32Bytes } from '../../resources/Libraries/Helpers'
 
 class Main extends React.Component {
   constructor(props) {
@@ -29,99 +29,107 @@ class Main extends React.Component {
       atBottom: false
     }
 
+    // references
     this.timeline = React.createRef()
     this.profile = React.createRef()
     this.thread = React.createRef()
 
+    // page overlay handles
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleEdit = this.handleEdit.bind(this)
 
     this.handleRefresh = this.handleRefresh.bind(this)
 
+    // page navigation handles
     this.handleTimelineLoad = this.handleTimelineLoad.bind(this)
     this.handleToTimeline = this.handleToTimeline.bind(this)
+
     this.handleProfileLoad = this.handleProfileLoad.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
+
     this.handleThreadLoad = this.handleThreadLoad.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
+
     this.handleToSettings = this.handleToSettings.bind(this)
 
-
+    // handle to log page location
     this.handleScroll = this.handleScroll.bind(this)
   }
 
+  // lifecycles
   async componentDidMount() {
+    // if previously loaded, no blur entrance
     if(localStorage.getItem('hasLoaded')!=='true') {
       //blurToFadeIn('.Main #subheader', 2000)
       //blurToFadeIn('.Main #header', 2000)
-      //blurToFadeIn('div.Timeline', 2000)
+      blurToFadeIn('div.Main', 2000)
       localStorage.setItem('hasLoaded', 'true')
+      //localStorage.setItem('hasLoaded', 'true')
     }
-    /*
-    if(localStorage.getItem('focusPage')==='profile') {
-      const profile = localStorage.getItem('pageInfo')
-      console.log(profile)
-      if(profile==='user') {
-        this.setState({
-          profileUsername: await this.props.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
-          profileAddress: await this.props.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
-          profileAccount: this.props.account,
-          focusPage: 'profile'
-        })
-      } else if(profile.split(',').length===3) {
-        this.setState({
-          profileUsername: profile.split(',')[0],
-          profileAddress: profile.split(',')[1],
-          profileAccount: profile.split(',')[2],
-          focusPage: 'profile'
-        })
-      }
-    }
-    */
+    // blur entrance for dev purposes
+    blurToFadeIn('div.Main', 2000)
+
+    // by default, set User Account's user info for profile navigation
     this.setState({
-      profileUsername: await this.props.userStorage.methods.getName(this.props.account).call().then(e => fromBytes(e)),
-      profileAddress: await this.props.userStorage.methods.getUserAddr(this.props.account).call().then(e => fromBytes(e)),
-      profileAccount: this.props.account
+      profileUsername: await this.state.userStorage.methods.getName(this.props.account).call().then(async e => await fromBytes(e)),
+      profileAddress: await this.state.userStorage.methods.getUserAddr(this.props.account).call().then(async e => await fromBytes(e)),
+      profileAccount: this.state.account
     })
-    this.setState({
-      userStorage: this.props.userStorage,
-      memeStorage: this.props.memeStorage,
-      interface: this.props.interface,
-    })
-    console.log(localStorage.getItem('focusPage'))
-    console.log(localStorage.getItem('userInfo'))
+
+    // if previously on profile page, set to profile page upon reload
     if(localStorage.getItem('focusPage')==='profile') {
       if(localStorage.getItem('userInfo').split(',').length===3){
         const profile = localStorage.getItem('userInfo').split(',')
         if(profile.length===3) {
-          this.setState({
-            profileUsername: profile[0],
-            profileAddress: profile[1],
-            profileAccount: profile[2]
-          })
+          if(is32Bytes(profile[0]) && is32Bytes(profile[1])) {
+            this.setState({
+              profileUsername: await fromBytes(profile[0]),
+              profileAddress: await fromBytes(profile[1]),
+              profileAccount: profile[2]
+            })
+          }
+          else {
+            this.setState({
+              profileUsername: profile[0],
+              profileAddress: profile[1],
+              profileAccount: profile[2]
+            })
+          }
           this.setState({ focusPage: 'profile' })
         }
       }
     }
+    // if previously on a thread, set to thread upon reload
   }
   componentWillUnmount() {
     window.clearInterval()
   }
 
-  handleCreateMeme(handleCreateMeme) {
-    this.setState({ creatingMeme: handleCreateMeme })
-    this.props.handleCreateMeme(handleCreateMeme)
-    //bobble()
+  // handles
+  // meme creation
+  handleCreateMeme(e) {
+    //this.setState({ creatingMeme })
+    this.props.handleCreateMeme(e)
+    // blur out Main section upon Meme Creation
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
-  handleReply(handleReply) {
-    this.setState({ replying: handleReply})
-    this.props.handleReply(handleReply)
-    //bobble()
+  handleReply(e) {
+    //this.setState({ replying})
+    this.props.handleReply(e)
+    // blur out Main section upon Reply Creation
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
+  handleEdit(e) {
+    //this.setState({ editing })
+    this.props.handleEdit(e)
+    blur('.Main div#header', 500)
+    blur('.Main div#body', 500)
+  }
+
+  // refresh functionality
   async handleRefresh(e) {
     e.preventDefault()
     if(this.state.focusPage==='timeline' && !this.state.timelineLoading && !this.state.threadLoading) {
@@ -134,17 +142,24 @@ class Main extends React.Component {
       await this.thread.loadNewMemes()
       await this.thread.refreshMemes()
     }
-
   }
   handleTimelineLoad(timelineLoading) {
     this.setState({ timelineLoading })
+    if(timelineLoading) {
+      this.setState({
+        profileLoading: false,
+        threadLoading: false
+      })
+    }
     console.log('timeline loading: ' + timelineLoading)
   }
   async handleToTimeline(e) {
     e.preventDefault()
     console.log(localStorage.getItem('focusPage'))
     console.log(localStorage.getItem('timelineSort'))
-    if(!this.state.timelineLoading && this.state.focusPage!=='timeline') {
+    console.log('coming from: ' + this.state.focusPage)
+    console.log('timeline loading: ' + this.state.timelineLoading)
+    //if(!this.state.timelineLoading && this.state.focusPage!=='timeline') {
       this.setState({ focusPage: null })
       setTimeout(() => {
         this.setState({
@@ -153,17 +168,25 @@ class Main extends React.Component {
         })
       }, 50)
       console.log('timeline loading: ' + this.state.timelineLoading)
-    }
+    //}
   }
 
   handleProfileLoad(profileLoading) {
     this.setState({
       profileLoading
     })
+    if(profileLoading) {
+      this.setState({
+        timelineLoading: false,
+        threadLoading: false
+      })
+    }
     console.log('profile loading: ' + profileLoading)
   }
   async handleToProfile(e) {
-    if(!this.state.profileLoading) {
+    console.log('coming from: ' + this.state.focusPage)
+    console.log('profile loading: ' + this.state.profileLoading)
+    //if(!this.state.profileLoading) {
       //check to see if query is coming from NavBar or Timeline
       if(e!=='user') { // if coming from Timeline
         this.setState({
@@ -175,8 +198,8 @@ class Main extends React.Component {
         if(this.state.focusPage==='profile' && this.state.account!==this.state.profileAccount) {
           // sees if already on profile page, finds new data to fill
           this.setState({
-            profileUsername: await this.state.userStorage.methods.getName(this.state.account).call(),
-            profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call(),
+            profileUsername: await this.state.userStorage.methods.getName(this.state.account).call().then(async e => await fromBytes(e)),
+            profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call().then(async e => await fromBytes(e)),
             profileAccount: this.props.account,
             profileLoading: true,
             focusPage: null,
@@ -189,10 +212,12 @@ class Main extends React.Component {
         this.state.profileAddress + ',' +
         this.state.profileAccount
       )
-      this.setState({
-        focusPage: 'profile',
-      })
-    }
+      setTimeout(() => {
+        this.setState({
+          focusPage: 'profile',
+        })
+      }, 50)
+    //}
   }
   handleThreadLoad(threadLoading) {
     this.setState({
@@ -202,7 +227,7 @@ class Main extends React.Component {
   }
   handleToThread(e) {
     console.log('leaving page: ' + this.state.focusPage)
-    if(!this.state.threadLoading) {
+    //if(!this.state.threadLoading) {
       if(this.state.focusPage==='thread' && this.state.memeId!==e[0]){
         this.setState({
           threadLoading: true,
@@ -235,7 +260,7 @@ class Main extends React.Component {
           this.setState({ focusPage: 'thread' })
         }
       }, 50)
-    }
+    //}
   }
 
   handleToSettings(e) {
@@ -263,11 +288,19 @@ class Main extends React.Component {
         <div className="Main" id="body" onScroll={this.handleScroll}>
           <div id="subheader">
             <section id="title">
-              <a href="#home">
-                <p id="subheader">
-                  uMe
-                </p>
-              </a>
+              { this.state.focusPage==='timeline' || this.state.focusPage==='thread'
+                ? <a href="#home">
+                    <p id="subheader">
+                      uMe
+                    </p>
+                  </a>
+                : <a href="#profile">
+                    <p id="profile-subheader">
+                      <span id="username">{this.state.profileUsername}</span>
+                      <span id="memes">{this.state.userMemeCount} Memes</span>
+                    </p>
+                  </a>
+              }
             </section>
             <section id="searchBar">
               <SearchBar
@@ -306,6 +339,7 @@ class Main extends React.Component {
                   handleToProfile={this.handleToProfile}
                   handleToThread={this.handleToThread}
                   handleReply={this.handleReply}
+                  handleEdit={this.handleEdit}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
                   profileAccount={this.state.profileAccount}

@@ -7,6 +7,7 @@ import Enter from '../Enter/Enter'
 import CreateUser from '../CreateUser/CreateUser'
 import CreateMeme from '../CreateMeme/CreateMeme'
 import Reply from '../Reply/Reply'
+import EditProfile from '../EditProfile/EditProfile'
 import NoWallet from '../NoWallet/NoWallet'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -30,46 +31,32 @@ class App extends React.Component {
       registered: false,
       entered: false,
       creatingMeme: false,
-      replying: false
+      replying: false,
+      editing: false
     }
 
     this.handleEntered = this.handleEntered.bind(this)
+
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
-    this.handleReply = this.handleReply.bind(this)
     this.handleExitCreate = this.handleExitCreate.bind(this)
+
+    this.handleReply = this.handleReply.bind(this)
     this.handleExitReply = this.handleExitReply.bind(this)
+
+    this.handleEdit = this.handleEdit.bind(this)
+    this.handleExitEdit = this.handleExitEdit.bind(this)
   }
 
-  handleEntered(entered) {
-    this.setState({ entered })
-  }
-  handleCreateMeme(creatingMeme) {
-    this.setState({ creatingMeme })
-  }
-  handleReply(replying) {
-    this.setState({ replying })
-  }
-  handleExitCreate(creatingMeme) {
-    this.setState({ creatingMeme })
-  }
-  handleExitReply(replying) {
-    this.setState({ replying })
-  }
-
+  // lifecycle methods
   async componentDidMount() {
-    console.log('mount')
+    // check if has previously loaded, so page can know to blur
     if(localStorage.getItem('hasLoaded')!=='true')
       blurToFadeIn('div.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
-      console.log('first load')
+      // load Web3 & UME contracts
       await this.loadWeb3().catch(e => console.error(e))
       await this.loadContracts().catch(e => console.error(e))
-      /*
-      setInterval(() => {
-        this.loadContracts()
-      }, 5000)
-      */
     }
     // automatically emit account updates
     const checkEntered = localStorage.getItem('hasEntered')
@@ -83,6 +70,32 @@ class App extends React.Component {
   async componentWillUnmount() {
     window.clearInterval()
     fadeOut('.App', 1500)
+  }
+
+  // handles
+  handleEntered(entered) {
+    this.setState({ entered })
+  }
+
+  handleCreateMeme(creatingMeme) {
+    this.setState({ creatingMeme })
+  }
+  handleExitCreate(creatingMeme) {
+    this.setState({ creatingMeme })
+  }
+
+  handleReply(replying) {
+    this.setState({ replying })
+  }
+  handleExitReply(replying) {
+    this.setState({ replying })
+  }
+
+  handleEdit(editing) {
+    this.setState({ editing })
+  }
+  handleExitEdit(editing) {
+    this.setState({ editing })
   }
 
   async request() {
@@ -134,20 +147,22 @@ class App extends React.Component {
   }
 
   async loadContracts() {
-    const web3 = window.web3
-    const accounts = await web3.eth.getAccounts()
+    const web3 = window.web3,
+          accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
-    const netId = await web3.eth.net.getId()
-    const umeNetData = UME.networks[netId]
-    const interfaceNetData = UserInterface.networks[netId]
-    const userStorageNetData= UserStorage.networks[netId]
-    const memeStorageNetData= MemeStorage.networks[netId]
+    // retrieve NetId into constants
+    const netId = await web3.eth.net.getId(),
+          umeNetData = UME.networks[netId],
+          interfaceNetData = UserInterface.networks[netId],
+          userStorageNetData= UserStorage.networks[netId],
+          memeStorageNetData= MemeStorage.networks[netId]
 
+    // check if Contract netData is valid
     if(umeNetData && interfaceNetData && userStorageNetData && memeStorageNetData) {
-      const ume = new web3.eth.Contract(UME.abi, umeNetData.address)
-      const memeStorage = new web3.eth.Contract(MemeStorage.abi, memeStorageNetData.address)
-      const userStorage = new web3.eth.Contract(UserStorage.abi, userStorageNetData.address)
-      const uInterface = new web3.eth.Contract(UserInterface.abi, interfaceNetData.address)
+      const ume = new web3.eth.Contract(UME.abi, umeNetData.address),
+            memeStorage = new web3.eth.Contract(MemeStorage.abi, memeStorageNetData.address),
+            userStorage = new web3.eth.Contract(UserStorage.abi, userStorageNetData.address),
+            uInterface = new web3.eth.Contract(UserInterface.abi, interfaceNetData.address)
       // app state from BlockChain
       this.setState({
         ume,
@@ -155,21 +170,22 @@ class App extends React.Component {
         memeStorage,
         interface: uInterface
       })
-      let memeCount = await memeStorage.methods.memeCount().call()
-      console.log('meme count: ' + memeCount)
-      const userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length)
+      // retrieve Blockchain data for development purposes, display to console
+      const memeCount = await memeStorage.methods.memeCount().call(),
+            userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length),
+            userCount = await userStorage.methods.userCount().call()
       this.setState({
         memeCount,
         userMemeCount
       })
+      console.log('meme count: ' + memeCount)
       console.log('user meme count: ' + userMemeCount)
-      const userCount = await userStorage.methods.userCount().call()
       console.log('user count: ' + userCount)
+      // mark contract as loaded
       this.setState({
         contractLoading: false
       })
-
-      console.log(this.state.contractLoading)
+      // after contract is loaded, load Account
       await this.loadAccount().catch(e => console.error(e))
     }
     else {
@@ -178,6 +194,7 @@ class App extends React.Component {
   }
 
   async loadAccount() {
+    // helper function to return whether or not user exists on blockchain
     const profileExists = async () => {
       if(this.state.account!==undefined)
         return await this.state.userStorage.methods.userExists(this.state.account).call()
@@ -200,28 +217,39 @@ class App extends React.Component {
         { this.state.account!==undefined
           ? this.state.registered
             ? <div className="App">
-                { this.state.creatingMeme || this.state.replying
-                  ? !this.state.replying
+                { this.state.creatingMeme || this.state.replying || this.state.editing
+                  ? this.state.creatingMeme
                     ? <CreateMeme
                         account={this.state.account}
                         handleExitCreate={this.handleExitCreate}
                         userStorage={this.state.userStorage}
                         interface={this.state.interface}
                       />
-                    : <Reply
-                        account={this.state.account}
-                        username={this.state.replying[0]}
-                        address={this.state.replying[1]}
-                        author={this.state.replying[2]}
-                        text={this.state.replying[3]}
-                        memeId={this.state.replying[4]}
-                        parentId={this.state.replying[5]}
-                        originId={this.state.replying[6]}
-                        handleExitReply={this.handleExitReply}
-                        userStorage={this.state.userStorage}
-                        memeStorage={this.state.memeStorage}
-                        interface={this.state.interface}
-                      />
+                    : this.state.replying
+                      ? <Reply
+                          account={this.state.account}
+                          username={this.state.replying[0]}
+                          address={this.state.replying[1]}
+                          author={this.state.replying[2]}
+                          text={this.state.replying[3]}
+                          memeId={this.state.replying[4]}
+                          parentId={this.state.replying[5]}
+                          originId={this.state.replying[6]}
+                          handleExitReply={this.handleExitReply}
+                          userStorage={this.state.userStorage}
+                          memeStorage={this.state.memeStorage}
+                          interface={this.state.interface}
+                        />
+                      : this.state.editing
+                        ? <EditProfile
+                            account={this.state.account}
+                            username={this.state.editing[0]}
+                            bio={this.state.editing[1]}
+                            handleExitEdit={this.handleExitEdit}
+                            userStorage={this.state.userStorage}
+                            interface={this.state.interface}
+                          />
+                        : ''
                   : ''
                 }
                 <Main
@@ -235,6 +263,7 @@ class App extends React.Component {
                   contractLoading={this.state.contractLoading}
                   handleCreateMeme={this.handleCreateMeme}
                   handleReply={this.handleReply}
+                  handleEdit={this.handleEdit}
                 />
               </div>
             : this.state.entered

@@ -37,6 +37,7 @@ class Meme extends React.Component {
       alreadyRendered: this.props.alreadyRendered,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
+      userStorage: this.props.userStorage,
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked,
     }
@@ -83,7 +84,6 @@ class Meme extends React.Component {
     this.props.handleRefresh(e)
   }
   handleButtonMouseOver(e) {
-    this.props.handleOverButton(this.div.style.filter)
   }
   handleButtonMouseLeave(e) {
   }
@@ -138,7 +138,6 @@ class Meme extends React.Component {
     } else if(this.div.style.backgroundColor==='#2A2A2A') {
       document.querySelector(element).style.backgroundColor = '#2A2A2A'
     }
-    this.props.handleOverMeme(this.div.style.backgroundColor)
   }
   handleLeaveMeme(e) {
     e.preventDefault()
@@ -267,6 +266,7 @@ class Meme extends React.Component {
               likes={this.state.likes}
               userHasLiked={this.state.userHasLiked}
               memeStorage={this.state.memeStorage}
+              userStorage={this.state.userStorage}
               interface={this.state.interface}
               handleLike={this.handleLike}
             />

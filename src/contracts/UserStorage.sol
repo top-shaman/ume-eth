@@ -177,6 +177,28 @@ contract UserStorage {
       return false;
     }
   }
+  function isFollowing(
+    address _from,
+    address _to
+  ) public view returns(bool) {
+    for(uint i = 0; i < users[_to].following.length; i++) {
+      if(_from==users[_to].following[i]) {
+        return true;
+      }
+    }
+  }
+  function isFollower(
+    address _from,
+    address _to
+  ) public view returns(bool) {
+    for(uint i = 0; i < users[_to].followers.length; i++) {
+      if(_from==users[_to].followers[i]) {
+        return true;
+      }
+    }
+  }
+
+
   function getUser(address _account) public view returns(User memory){
     return users[_account];
   }
@@ -194,6 +216,9 @@ contract UserStorage {
   }
   function getBio(address _account) public view returns(string memory) {
     return users[_account].bio;
+  }
+  function getTime(address _account) public view returns(uint) {
+    return users[_account].time;
   }
   function getProfilePic(address _account) public view returns(string memory) {
     return users[_account].profilePic;
