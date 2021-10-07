@@ -40,10 +40,6 @@ class ProfileThread extends React.Component {
 
   // lifecycle methods
   async componentDidMount() {
-    console.log(this.state.userAccount)
-    console.log(this.state.profileAccount)
-    console.log(this.state.address)
-    console.log(this.state.username)
     clearInterval(this.intervalProfile)
     if(this.state.firstLoad) {
       await this.loadProfile()

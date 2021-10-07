@@ -5,7 +5,8 @@ import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import Tag from '../Tag/Tag'
+import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
 import "./Meme.css"
 
@@ -41,6 +42,7 @@ class Meme extends React.Component {
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked,
     }
+    this.pfp = React.createRef()
     this.div = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
@@ -48,9 +50,16 @@ class Meme extends React.Component {
     this.downvote= React.createRef()
 
     this.handleButtonClick = this.handleButtonClick.bind(this)
-    this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
-    this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
+    this.handleOverReply = this.handleOverReply.bind(this)
+    this.handleOverLike = this.handleOverLike.bind(this)
+    this.handleOverRememe = this.handleOverLike.bind(this)
+    this.handleOverUpvote = this.handleOverUpvote.bind(this)
+    this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
+    this.handleRendered = this.handleRendered.bind(this)
+
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleTag = this.handleTag.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
@@ -83,24 +92,45 @@ class Meme extends React.Component {
     e.preventDefault()
     this.props.handleRefresh(e)
   }
-  handleButtonMouseOver(e) {
+  handleOverReply(e) {
+    this.props.handleOverReply(this.div.style.filter)
   }
-  handleButtonMouseLeave(e) {
+  handleOverLike(e) {
+    this.props.handleOverLike(this.div.style.filter)
   }
+  handleOverRememe(e) {
+    this.props.handleOverRememe(this.div.style.filter)
+  }
+  handleOverUpvote(e) {
+    this.props.handleOverUpvote(this.div.style.filter)
+  }
+  handleOverDownvote(e) {
+    this.props.handleOverDownvote(this.div.style.filter)
+  }
+
+  handleRendered(e) {
+
+  }
+
   handleProfileClick(e) {
     e.preventDefault()
-    this.props.handleToProfile([
-      this.state.username,
-      this.state.address,
-      this.state.author
-    ])
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    localStorage.setItem('userInfo', this.state.author)
+    this.props.handleToProfile(this.state.author)
+  }
+  async handleTag(e) {
+    const address = await toBytes(e),
+          account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
   }
   handleMemeClick(e) {
     e.preventDefault()
-    if(e.target.id!=='profilePic' &&
+    if(e.target!==this.pfp &&
+       e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
+       e.target.id!=='at' &&
        e.target!==this.reply &&
        e.target!==this.like &&
        e.target!==this.rememe &&
@@ -174,7 +204,7 @@ class Meme extends React.Component {
         if(elem[2]==='plain')
           formatted.push(<span key={i} id="plain">{elem[1]}</span>)
         else if(elem[2]==='at')
-          formatted.push(<a key={i} href={`/${elem[1].slice(1)}`} id="at">{elem[1]}</a>)
+          formatted.push(<Tag key={i} address={elem[1]} handleTag={this.handleTag}/>)
         else if(elem[2]==='hash')
           formatted.push(<a key={i} href={`/${elem[1]}`} id="hash">{elem[1]}</a>)
         i++
@@ -222,7 +252,10 @@ class Meme extends React.Component {
         onMouseEnter={this.handleOverMeme}
         onMouseLeave={this.handleLeaveMeme}
       >
-        <section id="profilePic">
+        <section
+          id="profilePic"
+          ref={Ref=>this.pfp=Ref}
+        >
           <a
             id="profilePic"
             href={`/${this.state.address.slice(1)}`}

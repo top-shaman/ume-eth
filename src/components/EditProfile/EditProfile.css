@@ -81,20 +81,26 @@
   position: relative;
 }
 .EditProfile form#form label {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-family: 'Avenir', sans-serif;
   font-weight: 600;
   color: #778888;
   margin: 0.4rem 0.4rem 0 0.4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.EditProfile form#form label span#count {
+  font-size: 0.8rem;
 }
 .EditProfile form#form div#edit-box {
-  border: 0.05rem solid #667777;
+  box-shadow: 0 0 0 0.1rem #667777;
+  border: none;
   border-radius: 0.4rem;
   display: flex;
   flex-direction: column;
   text-align: left;
   position: relative;
-  margin: 0.6rem;
+  margin: 0.6rem 0.6rem 0.3rem 0.6rem;
   width: inherit;
 }
 
@@ -127,13 +133,12 @@
   font-weight: 500;
 }
 
-
-.EditProfile p#flag-grey {
-  color: #667777;
-  margin: 0;
+.EditProfile div.flag {
+  margin: 0 0 0 1rem;
 }
-.EditProfile p#flag-red {
+.EditProfile div.flag span#flag {
   color: #DD4422;
-  font-weight: 700;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
   margin: 0;
 }

@@ -34,6 +34,7 @@ class UpvoteButtonMain extends React.Component {
       elementName = '#' + this.upvote.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
+    this.props.handleOverUpvote(this.upvote.style.filter)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -43,6 +44,7 @@ class UpvoteButtonMain extends React.Component {
     hue = 310
     elementName = '#' + this.upvote.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOverUpvote(this.upvote.style.filter)
   }
 
   async upvoteClick() {

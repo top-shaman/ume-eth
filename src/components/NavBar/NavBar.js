@@ -12,6 +12,7 @@ class NavBar extends Component {
     super(props)
 
     this.state = {
+      account: this.props.account,
       creatingMeme: false
     }
 
@@ -35,14 +36,12 @@ class NavBar extends Component {
   handleHomeClick(e) {
     e.preventDefault()
     localStorage.setItem('focusPage', 'timeline')
-    localStorage.setItem('timelineSort', 'boost')
     this.props.handleToTimeline(e)
   }
   handleProfileClick(e) {
     e.preventDefault()
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('userInfo', 'user')
-    this.props.handleToProfile('user')
+    this.props.handleToProfile(this.state.account)
   }
   handleSettingsClick(e) {
     e.preventDefault()

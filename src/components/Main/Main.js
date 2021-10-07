@@ -77,7 +77,12 @@ class Main extends React.Component {
       profileAccount: this.state.account
     })
 
+    if(localStorage.getItem('focusPage')==='timeline') {
+      localStorage.setItem('timelineSort', 'boost')
+    }
     // if previously on profile page, set to profile page upon reload
+    // change profile query with one parameter
+    /*
     if(localStorage.getItem('focusPage')==='profile') {
       if(localStorage.getItem('userInfo').split(',').length===3){
         const profile = localStorage.getItem('userInfo').split(',')
@@ -100,6 +105,7 @@ class Main extends React.Component {
         }
       }
     }
+    */
     // if previously on a thread, set to thread upon reload
   }
   componentWillUnmount() {
@@ -184,40 +190,23 @@ class Main extends React.Component {
     console.log('profile loading: ' + profileLoading)
   }
   async handleToProfile(e) {
-    console.log('coming from: ' + this.state.focusPage)
-    console.log('profile loading: ' + this.state.profileLoading)
-    //if(!this.state.profileLoading) {
-      //check to see if query is coming from NavBar or Timeline
-      if(e!=='user') { // if coming from Timeline
-        this.setState({
-          profileUsername: e[0],
-          profileAddress: e[1],
-          profileAccount: e[2]
-        })
-      } else if(e==='user') { // if coming from NavBar
-        if(this.state.focusPage==='profile' && this.state.account!==this.state.profileAccount) {
-          // sees if already on profile page, finds new data to fill
-          this.setState({
-            profileUsername: await this.state.userStorage.methods.getName(this.state.account).call().then(async e => await fromBytes(e)),
-            profileAddress: await this.state.userStorage.methods.getUserAddr(this.state.account).call().then(async e => await fromBytes(e)),
-            profileAccount: this.props.account,
-            profileLoading: true,
-            focusPage: null,
-          })
-          // update local storage
-        }
-      }
-      localStorage.setItem('userInfo',
-        this.state.profileUsername + ',' +
-        this.state.profileAddress + ',' +
-        this.state.profileAccount
-      )
-      setTimeout(() => {
-        this.setState({
-          focusPage: 'profile',
-        })
-      }, 50)
-    //}
+    // check to see if page already loaded
+    if(this.state.profileAccount!==e) {
+      this.setState({
+        profileUsername: await this.state.userStorage.methods.getName(e).call().then(async e => await fromBytes(e)),
+        profileAddress: await this.state.userStorage.methods.getUserAddr(e).call().then(async e => await fromBytes(e)),
+        profileAccount: e,
+        profileLoading: true,
+        focusPage: null,
+      })
+    }
+    // update local storage
+    localStorage.setItem('userInfo', e)
+    setTimeout(() => {
+      this.setState({
+        focusPage: 'profile',
+      })
+    }, 50)
   }
   handleThreadLoad(threadLoading) {
     this.setState({

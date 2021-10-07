@@ -33,6 +33,7 @@ class DownvoteButtonMain extends React.Component {
       elementName = '#' + this.downvote.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
+    this.props.handleOver(this.downvote.style.filter)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -42,6 +43,7 @@ class DownvoteButtonMain extends React.Component {
     hue = 180
     elementName = '#' + this.downvote.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOver(this.downvote.style.filter)
   }
 
   async downvoteClick() {

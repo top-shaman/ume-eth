@@ -38,6 +38,7 @@ class RememeButton extends React.Component {
             elementName = '#' + this.rememe.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
+    this.props.handleOverRememe(this.rememe.style.filter)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -46,6 +47,7 @@ class RememeButton extends React.Component {
           hue = 140,
           elementName = '#' + this.rememe.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOverRememe(this.rememe.style.filter)
   }
 
   async rememeClick() {

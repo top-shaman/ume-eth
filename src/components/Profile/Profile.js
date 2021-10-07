@@ -1,6 +1,7 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import ProfileThread from './ProfileThread'
+import { fromBytes } from '../../resources/Libraries/Helpers'
 import "./Profile.css"
 
 
@@ -10,8 +11,8 @@ class Profile extends React.Component {
     this.state = {
       userAccount: this.props.account,
       profileAccount: this.props.profileAccount,
-      username: this.props.profileUsername,
-      address: this.props.profileAddress,
+      username: '',
+      address: '',
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
       userStorage: this.props.userStorage,
@@ -29,12 +30,10 @@ class Profile extends React.Component {
   }
   // lifecycles
   async componentDidMount() {
-    console.log('profile user: ' + this.state.userAccount)
-    console.log('profile account: ' + this.state.profileAccount)
-    console.log('profile address: ' + this.state.address)
-    console.log('profile username: ' + this.state.username)
-
+    console.log(this.state.profileAccount)
     await this.compileProfile()
+    console.log(this.state.profileAccount)
+    console.log(this.state.username)
   }
   componentDidUpdate() {
   }
@@ -56,6 +55,7 @@ class Profile extends React.Component {
   handleEdit(e) {
     this.props.handleEdit([
       this.state.username,
+      this.state.address,
       this.state.bio
     ])
   }
@@ -67,25 +67,26 @@ class Profile extends React.Component {
   }
 
   async compileProfile() {
-    const isFollowing = await this.state.userStorage.methods.isFollowing(this.state.userAccount, this.state.profileAccount).call(),
+    const username = await this.state.userStorage.methods.getName(this.state.profileAccount).call().then(e => fromBytes(e)),
+          address = await this.state.userStorage.methods.getUserAddr(this.state.profileAccount).call().then(e => fromBytes(e)),
+          isFollowing = await this.state.userStorage.methods.isFollowing(this.state.userAccount, this.state.profileAccount).call(),
           isFollower = await this.state.userStorage.methods.isFollower(this.state.userAccount, this.state.profileAccount).call(),
           following = await this.state.userStorage.methods.getFollowingCount(this.state.profileAccount).call(),
           followers = await this.state.userStorage.methods.getFollowerCount(this.state.profileAccount).call(),
           bio = await this.state.userStorage.methods.users(this.state.profileAccount).call().then(e => e.bio),
-      time = await this.state.userStorage.methods.users(this.state.profileAccount).call().then(e => new Date(e.time*1000).toLocaleDateString(undefined, {month: 'long', year: 'numeric'}))
+          time = await this.state.userStorage.methods.users(this.state.profileAccount).call().then(e => new Date(e.time*1000).toLocaleDateString(undefined, {month: 'long', year: 'numeric'})),
+          userMemeCount = await this.state.userStorage.methods.getPostCount(this.state.profileAccount).call()
     this.setState({
+      username,
+      address,
       isFollowing,
       isFollower,
       following,
       followers,
       bio,
-      time
+      time,
+      userMemeCount
     })
-    console.log(this.state.following + '\n' +
-                this.state.followers + '\n' +
-                this.state.bio + '\n' +
-                this.state.time
-    )
   }
 
   render() {

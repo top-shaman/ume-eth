@@ -38,6 +38,7 @@ class ReplyButtonMain extends React.Component {
             elementName = '#' + this.reply.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
+    this.props.handleOverReply(this.reply.style.filter)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -46,6 +47,7 @@ class ReplyButtonMain extends React.Component {
           hue = 85,
           elementName = '#' + this.reply.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOverReply(this.reply.style.filter)
   }
 
   async replyClick() {

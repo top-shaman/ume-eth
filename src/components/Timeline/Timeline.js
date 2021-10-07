@@ -36,6 +36,14 @@ class Timeline extends React.Component {
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
+
+    this.handleOverReply = this.handleOverReply.bind(this)
+    this.handleOverLike = this.handleOverLike.bind(this)
+    this.handleOverRememe = this.handleOverRememe.bind(this)
+    this.handleOverUpvote = this.handleOverUpvote.bind(this)
+    this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
+    this.handleRendered = this.handleRendered.bind(this)
   }
   async componentDidMount() {
     clearInterval(this.intervalTimeline)
@@ -90,6 +98,23 @@ class Timeline extends React.Component {
     this.setState({ memes })
     this.compileRenderedMemes(0)
   }
+
+  handleOverReply(e) {
+  }
+  handleOverLike(e) {
+  }
+  handleOverRememe(e) {
+  }
+  handleOverUpvote(e) {
+  }
+  handleOverDownvote(e) {
+  }
+
+  handleRendered(e) {
+  }
+
+
+
 
   // to be invoked upon page load
   async loadTimeline() {
@@ -437,8 +462,15 @@ class Timeline extends React.Component {
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
               handleLike={this.handleLike}
+              handleOverReply={this.handleOverReply}
+              handleOverLike={this.handleOverLike}
+              handleOverRememe={this.handleOverRememe}
+              handleOverUpvote={this.handleOverUpvote}
+              handleOverDownvote={this.handleOverDownvote}
+              handleRendered={this.handleRendered}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
+              userStorage={this.props.userStorage}
               userAccount={this.props.account}
               userHasLiked={meme.userHasLiked}
             />
@@ -494,8 +526,15 @@ class Timeline extends React.Component {
             handleRefresh={this.handleRefresh}
             handleReply={this.handleReply}
             handleLike={this.handleLike}
+            handleOverReply={this.handleOverReply}
+            handleOverLike={this.handleOverLike}
+            handleOverRememe={this.handleOverRememe}
+            handleOverUpvote={this.handleOverUpvote}
+            handleOverDownvote={this.handleOverDownvote}
+            handleRendered={this.handleRendered}
             interface={this.props.interface}
             memeStorage={this.props.memeStorage}
+            userStorage={this.props.userStorage}
             userAccount={this.props.account}
             userhasLiked={meme.userHasLiked}
           />

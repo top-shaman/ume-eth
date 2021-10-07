@@ -36,6 +36,7 @@ class ThreadMemeMain extends React.Component {
       visibleText: this.props.text,
       renderOrder: this.props.renderOrder,
       alreadyRendered: this.props.alreadyRendered,
+      mouseOver: this.props.mouseOver,
       interface: this.props.interface,
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
@@ -290,6 +291,7 @@ class ThreadMemeMain extends React.Component {
               <DownvoteButtonMain
                 memeId={this.state.memeId}
                 interface={this.state.interface}
+                handleOver={this.handleButtonMouseOver}
               />
             </div>
 

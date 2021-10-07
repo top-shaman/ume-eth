@@ -13,14 +13,18 @@ class EditProfile extends React.Component {
     this.state = {
       account: this.props.account,
       username: this.props.username,
+      address: this.props.address,
       bio: this.props.bio,
       editing: true,
       userStorage: this.props.userStorage,
       interface: this.props.interface,
       nameText: this.props.username,
+      bioText: this.props.bio,
+      nameTextFocused: false,
+      bioTextFocused: false,
       flagName: '',
       flagBio: '',
-      validMeme: false
+      isClickable: false
     }
 
     this.textareaName = React.createRef()
@@ -29,14 +33,18 @@ class EditProfile extends React.Component {
     this.bioBox = React.createRef()
 
     this.handleNameTextChange = this.handleNameTextChange.bind(this)
+    this.handleNameTextFocus = this.handleNameTextFocus.bind(this)
+    this.handleNameTextBlur = this.handleNameTextBlur.bind(this)
+
     this.handleBioTextChange = this.handleBioTextChange.bind(this)
+    this.handleBioTextFocus = this.handleBioTextFocus.bind(this)
+    this.handleBioTextBlur = this.handleBioTextBlur.bind(this)
 
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
   }
 
   async componentDidMount() {
-    console.log(this.state.nameText)
     fadeIn('.EditProfile div#container', 333)
     partialFadeIn('.EditProfile div#background', 100, 0.2)
     this.textareaName.focus()
@@ -44,76 +52,51 @@ class EditProfile extends React.Component {
     this.textareaBio.focus()
     autosize(this.textareaBio)
   }
+  componentDidUpdate() {
+    this.checkUsername()
+    this.checkBio()
+    this.updateButton()
+  }
 
   componentWillUnmount() {
     this.mounted = false
   }
 
-  async handleNameTextChange(e) {
+  handleNameTextChange(e) {
     e.preventDefault()
     this.setState({ nameText: e.target.value })
-    /*
-    const text = await e.target.value,
-          buttonText = document.querySelector('.EditProfile p#meme-button'),
-          memeButton = document.querySelector('.EditProfile p#meme-button'),
-          nameBox = document.querySelector('.EditProfile div#text-box'),
-          textareaName = document.querySelector('.EditProfile textarea#meme-text')
-    nameBox.style.height = textareaName.clientHeight + 'px'
-    // check text validity
-    if(text.match(/\s/g)) {
-      this.setState({ validMeme: text.length!==text.match(/\s/g).length })
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
-    } else if(text.length>0 && text.length<=512) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.backgroundColor = '#FFFFFF'
-      this.setState({ validMeme: true })
-    } else if(e.target.value==='') {
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
-      this.setState({ validMeme: false })
-    }
-    if(this.state.validMeme) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.color = '#FFFFFF'
-    }
-    if(text.length>=412 && text.length<502) {
-      this.setState({
-        flag: <p id="flag-grey">{(512-text.length) + ' characters left'}</p>
-      })
-    } else if(text.length>=502 && text.length<=512) {
-      this.setState({
-        flag: <p id="flag-red">{(512-text.length) + ' characters left'}</p>
-      })
-    } else {
-      this.setState({ flag: '' })
-    }
-    // change color of text if special sequence
-    const formattedText = await this.formatText()
-    this.setState({ visibleText: formattedText})
-    */
   }
-  async handleBioTextChange(e) {
+  handleNameTextFocus(e) {
+    this.setState({ nameTextFocused: true })
+  }
+  handleNameTextBlur(e) {
+    this.setState({ nameTextFocused: false })
+  }
+
+  handleBioTextChange(e) {
     e.preventDefault()
     this.setState({ bioText: e.target.value })
   }
+  handleBioTextFocus(e) {
+    this.setState({ bioTextFocused: true })
+  }
+  handleBioTextBlur(e) {
+    this.setState({ bioTextFocused: false })
+  }
   async handleSaveClick(e) {
-    /*
-    if(this.state.validMeme) {
-      const tags = await this.validAts()
-      this.state.interface.methods.newMeme(
-        this.props.account,
-        this.state.nameText,
-        await tags, this.state.parentId, this.state.originId)
-      .send({from: this.props.account})
-      this.handleCloseClick(e)
-      localStorage.setItem('nameText', '')
+    let updated = false
+    if(this.state.username!==this.state.nameText && !this.state.flagName) {
+      const nameBytes = await toBytes(this.state.nameText)
+      await this.state.interface.methods.changeUserName(this.state.account, nameBytes).send({from: this.state.account})
+      this.setState({ username: this.state.nameText })
+      localStorage.setItem('userInfo', this.state.account)
+      updated = true
     }
-    */
+    if(this.state.bio!==this.state.bioText) {
+      await this.state.interface.methods.newBio(this.state.account, this.state.bioText).send({from: this.state.account})
+      updated = true
+    }
+    if(updated) window.location.reload()
   }
   async handleCloseClick(e) {
     localStorage.setItem('nameText', this.state.nameText)
@@ -129,6 +112,99 @@ class EditProfile extends React.Component {
   async toBytes32(text) {
     const textBytes = await toBytes(text)
     return await this.state.interface.methods.bytesToBytes32(textBytes).call()
+  }
+
+  checkUsername() {
+    // valid characters
+    const usernameRegex = /[^A-Za-z0-9_\s,'":?!%&*()+=/^><-]/g,
+          letterRegex = /[^A-Za-z]/g,
+          checkUsername = this.state.nameText.search(usernameRegex),
+          checkFirstLetter = this.state.nameText.search(letterRegex),
+          invalidFlag = 'invalid character used',
+          firstFlag = 'first character must be letter',
+          lengthFlag = 'must be between 2 and 32 characters',
+          label = document.querySelector('.EditProfile label#name span#label')
+    // check characters
+    if(checkUsername > -1 && this.state.flagName.length===undefined) {
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+      this.setState({ flagName: invalidFlag })
+    } else if (checkUsername < 0 && this.state.flagName===invalidFlag)
+      this.setState({ flagName: false})
+    // check first character
+    if(checkFirstLetter===0 && this.state.flagName.length===undefined) {
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+      this.setState({ flagName: firstFlag })
+    } else if(checkFirstLetter < 0 && this.state.flagName===firstFlag) {
+      this.setState({ flagName: false })
+    }
+
+    // check length
+    if(this.state.nameText.length > 0 && this.state.nameText.length < 2 &&
+       !this.state.flagName) {
+      this.setState({ flagName: lengthFlag })
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+    } else if(this.state.nameText.length > 0 && this.state.nameText.length < 2 &&
+       this.state.flagName) {
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+    } else if(this.state.nameText.length > 1 && this.state.flagName===lengthFlag) {
+      this.setState({ flagName: false })
+      label.style.color = '#00CC89'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+    } // check if focused
+    else if(this.state.nameText.length > 0 && !this.state.nameTextFocused &&
+            !this.state.flagName) {
+      this.setState({ nameTextFocused: true })
+      label.style.color = '#00CC89'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+    } else if(this.state.nameText.length > 0 && this.state.nameTextFocused &&
+              !this.state.flagName) {
+      label.style.color = '#00CC89'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+    } else if(this.state.nameText.length === 0 && this.state.nameTextFocused &&
+              !this.state.flagName) {
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+      this.setState({ flagName: lengthFlag })
+    } else if(this.state.nameText.length === 0 && !this.state.nameTextFocused &&
+              !this.state.flagName) {
+      this.nameBox.style.boxShadow = 'none'
+    } else if(this.state.flagName) {
+      label.style.color = '#DD4422'
+      this.nameBox.style.boxShadow = '0 0 0 0.1rem #DD4422'
+    }
+  }
+  checkBio() {
+    const label = document.querySelector('.EditProfile label#bio span#label')
+    if(this.state.bioText.length>0) {
+      label.style.color = '#00CC89'
+      this.bioBox.style.boxShadow = '0 0 0 0.1rem #00CC89'
+    } else {
+      label.style.color = '#667777'
+      this.bioBox.style.boxShadow = '0 0 0 0.1rem #667777'
+    }
+  }
+  updateButton() {
+    const button = document.querySelector('.EditProfile p#save-button')
+    if(this.state.username!==this.state.nameText && !this.state.flagName) {
+      button.style.cursor = 'pointer'
+      button.style.backgroundColor = '#00CC89'
+      button.style.color = '#FFFFFF'
+      //this.setState({ isClickable: true })
+    } else if(this.state.bio!==this.state.bioText) {
+      button.style.cursor = 'pointer'
+      button.style.backgroundColor = '#00CC89'
+      button.style.color = '#FFFFFF'
+      //this.setState({ isClickable: true })
+    } else {
+      button.style.cursor = 'default'
+      button.style.backgroundColor = '#334646'
+      button.style.color = '#AABBAA'
+      //this.setState({ isClickable: false })
+    }
   }
 
   render() {
@@ -163,7 +239,10 @@ class EditProfile extends React.Component {
             </div>
             <form id="form">
               <div id="edit-box" ref={Ref=>this.nameBox=Ref}>
-                <label id="name">Name</label>
+                <label id="name">
+                  <span id="label">Name</span>
+                  <span id="count">{this.state.nameText.length} / 32</span>
+                </label>
                 <textarea
                   name="name"
                   id="name-text"
@@ -174,15 +253,22 @@ class EditProfile extends React.Component {
                   maxLength="32"
                   value={this.state.nameText}
                   onChange={this.handleNameTextChange}
+                  onFocus={this.handleNameTextFocus}
+                  onBlur={this.handleNameTextBlur}
                   ref={Ref=>this.textareaName=Ref}
                   required/>
               </div>
               { this.state.flagName
-                  ? <div className="counter" id="name-counter">{this.state.flagName}</div>
+                  ? <div className="flag" id="name-flag">
+                      <span id="flag">{this.state.flagName}</span>
+                    </div>
                   : ''
               }
               <div id="edit-box" ref={Ref=>this.bioBox=Ref}>
-                <label id="bio">Bio</label>
+                <label id="bio">
+                  <span id="label">Bio</span>
+                  <span id="count">{this.state.bioText.length} / 300</span>
+                </label>
                 <textarea
                   name="bio"
                   id="bio-text"
@@ -197,7 +283,9 @@ class EditProfile extends React.Component {
                   required/>
               </div>
               { this.state.flagBio
-                  ? <div className="counter" id="bio-counter">{this.state.flagBio}</div>
+                  ? <div className="flag" id="bio-flag">
+                      <span id="flag">{this.state.flagBio}</span>
+                    </div>
                   : ''
               }
             </form>

@@ -38,6 +38,7 @@ class ChildMeme extends React.Component {
       visibleText: this.props.text,
       renderOrder: this.props.renderOrder,
       alreadyRendered: this.props.alreadyRendered,
+      mouseOver: this.props.mouseOver,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
       userStorage: this.props.userStorage,
@@ -68,6 +69,7 @@ class ChildMeme extends React.Component {
 
     this.handleProfileClick = this.handleProfileClick.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
+    this.handleTag = this.handleTag.bind(this)
 
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)

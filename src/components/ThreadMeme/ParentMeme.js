@@ -5,7 +5,7 @@ import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
 import "./ParentMeme.css"
 
@@ -36,6 +36,7 @@ class ParentMeme extends React.Component {
       visibleText: this.props.text,
       renderOrder: this.props.renderOrder,
       alreadyRendered: this.props.alreadyRendered,
+      mouseOver: this.props.mouseOver,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
       userAccount: this.props.userAccount,
@@ -54,6 +55,8 @@ class ParentMeme extends React.Component {
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
     this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleTag = this.handleTag.bind(this)
+
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
@@ -96,18 +99,22 @@ class ParentMeme extends React.Component {
   }
   handleProfileClick(e) {
     e.preventDefault()
-    this.props.handleToProfile([
-      this.state.username,
-      this.state.address,
-      this.state.author
-    ])
+    this.props.handleToProfile(this.state.author)
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    localStorage.setItem('userInfo', this.state.author)
+  }
+  async handleTag(e) {
+    const address = await toBytes(e),
+          account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
   }
   handleMemeClick(e) {
     e.preventDefault()
-    if(e.target.id!=='profilePic' &&
+    if(e.target!==this.pfp &&
        e.target.id!=='username' &&
+       e.target.id!=='at' &&
        e.target!==this.reply &&
        e.target!==this.like &&
        e.target!==this.rememe &&
@@ -234,11 +241,11 @@ class ParentMeme extends React.Component {
         <section
           id="profilePic"
           ref={Ref=>this.pfp=Ref}
+          onClick={this.handleProfileClick}
         >
           <a
             id="profilePic"
             href={`/${this.state.address.slice(1)}`}
-            onClick={this.handleProfileClick}
           >
             <ProfilePic account={this.state.author} id="ParentMeme"/>
           </a>

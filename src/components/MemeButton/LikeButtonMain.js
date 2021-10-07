@@ -47,6 +47,7 @@ class LikeButtonMain extends React.Component {
         hue = 285,
         elementName = '#' + this.like.id
     filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOverLike(this.like.style.filter)
   }
   handleMouseLeaveLike(e) {
     e.preventDefault()
@@ -55,6 +56,7 @@ class LikeButtonMain extends React.Component {
         hue = 285,
         elementName = '#' + this.like.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
+    this.props.handleOverLike(this.like.style.filter)
   }
   handleMouseEnterLiked(e) {
     e.preventDefault()

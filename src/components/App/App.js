@@ -244,7 +244,8 @@ class App extends React.Component {
                         ? <EditProfile
                             account={this.state.account}
                             username={this.state.editing[0]}
-                            bio={this.state.editing[1]}
+                            address={this.state.editing[1]}
+                            bio={this.state.editing[2]}
                             handleExitEdit={this.handleExitEdit}
                             userStorage={this.state.userStorage}
                             interface={this.state.interface}
@@ -264,6 +265,7 @@ class App extends React.Component {
                   handleCreateMeme={this.handleCreateMeme}
                   handleReply={this.handleReply}
                   handleEdit={this.handleEdit}
+                  handleProfileChange={this.handleProfileChange}
                 />
               </div>
             : this.state.entered

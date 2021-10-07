@@ -103,6 +103,9 @@ contract UserStorage {
     require(
       msg.sender==interfaceSigner,
       'Error: user factory must be signer');
+    // clean up old user address mapping
+    usersByUserAddr[users[_account].userAddr] = address(0x0)
+    // set new user & address mapping
     users[_account].userAddr = _userAddress;
     usersByUserAddr[_userAddress] = _account;
   }
