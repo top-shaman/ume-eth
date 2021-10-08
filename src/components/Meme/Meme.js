@@ -75,7 +75,7 @@ class Meme extends React.Component {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ', 600)
         this.setState({ alreadyRendered: true })
-        //this.props.handleRendered(this.state.memeId)
+        this.props.handleRendered(this.state.memeId)
       }, 0 )
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1

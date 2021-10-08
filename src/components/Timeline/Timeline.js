@@ -111,12 +111,10 @@ class Timeline extends React.Component {
   }
 
   handleRendered(e) {
-    /*
-    let memesHTML = this.state.memesHTML,
-          index = memesHTML.findIndex(elem => elem.props.memeId===e)
-    memesHTML[index] = <Meme {...this.state.memesHTML[index].props} alreadyRendered={true} key={this.state.memesHTML[index].key}/>
-    this.setState({ memesHTML })
-    */
+    //let memesHTML = this.state.memesHTML,
+    //      index = memesHTML.findIndex(elem => elem.props.memeId===e)
+    //memesHTML[index] = <Meme {...this.state.memesHTML[index].props} alreadyRendered={true} key={this.state.memesHTML[index].key}/>
+    //this.setState({ oldMemesHTML: this.state.memesHTML })
   }
 
 
@@ -240,10 +238,10 @@ class Timeline extends React.Component {
         this.setState({ memes: this.state.memes.concat(newMemes) })
         if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
 
-        //this.setState({ memesHTML: this.state.oldMemesHTML })
+        this.setState({ memesHTML: this.state.oldMemesHTML })
         // render new HTML
         await this.renderTimeline(memesInQueue).catch(e => console.error(e))
-        //this.setState({ oldMemesHTML: this.state.memesHTML })
+        this.setState({ oldMemesHTML: this.state.memesHTML })
         // update queue values
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
@@ -314,10 +312,10 @@ class Timeline extends React.Component {
 
         // sorting functionality
 
-        //this.setState({ memesHTML: this.state.oldMemesHTML })
+        this.setState({ memesHTML: this.state.oldMemesHTML })
 
         await this.renderTimeline(memesInQueue).catch(e => console.error(e))
-        //this.setState({ oldMemesHTML: this.state.memesHTML })
+        this.setState({ oldMemesHTML: this.state.memesHTML })
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
         this.setState({
@@ -382,9 +380,9 @@ class Timeline extends React.Component {
 
       //this.setState({ memes: loadedMemes })
       this.sortToStyle(this.state.sortStyle)
-      //this.setState({ memesHTML: this.state.oldMemesHTML })
+      this.setState({ memesHTML: this.state.oldMemesHTML })
       await this.renderTimeline(0).catch(e => console.error(e))
-      //this.setState({ oldMemesHTML: this.state.memesHTML })
+      this.setState({ oldMemesHTML: this.state.memesHTML })
       this.setState({
         timelineLoading: false,
         refreshing: false
@@ -501,10 +499,10 @@ class Timeline extends React.Component {
 //      oldMemes: tempMemes
     })
     //set memes as already rendered
-    //tempMemesHTML.forEach(elem => {
-      //elem = <Meme {...elem.props} alreadyRendered={true} key={elem.key}/>
-    //})
-    //this.setState({ oldMemesHTML })
+    tempMemesHTML.forEach(elem => {
+      elem = <Meme {...elem.props} alreadyRendered={true} key={elem.key}/>
+    })
+    this.setState({ oldMemesHTML: tempMemesHTML })
     // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
     //await this.compileRenderedMemes(memesInQueue)
   }
@@ -606,14 +604,12 @@ class Timeline extends React.Component {
               </div>
             : this.state.loadingBottom
               ? <div id="loader">
-                  {//this.state.oldMemesHTML
-                   this.state.memesHTML}
+                  {this.state.oldMemesHTML}
                   <Loader/>
                 </div>
               : <div id="loader">
                   <Loader/>
-                  {//this.state.oldMemesHTML
-                   this.state.memesHTML}
+                  {this.state.oldMemesHTML}
                 </div>
           : this.state.memeCount > 0
             ? this.state.allMemesLoaded
