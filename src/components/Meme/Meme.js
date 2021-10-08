@@ -74,8 +74,9 @@ class Meme extends React.Component {
       setTimeout(() => {
         fadeIn('div#\\3' + this.state.memeId + ' ', 600)
         zipUp('div#\\3' + this.state.memeId + ' ', 600)
+        this.setState({ alreadyRendered: true })
+        //this.props.handleRendered(this.state.memeId)
       }, 0 )
-      //this.setState({ alreadyRendered: true })
     } else if(this.state.alreadyRendered) {
       this.div.style.opacity = 1
     }
@@ -292,6 +293,7 @@ class Meme extends React.Component {
               author={this.state.author}
               responses={this.state.responses}
               handleReply={this.handleReply}
+              handleOverReply={this.handleOverReply}
             />
             <LikeButton
               memeId={this.state.memeId}
@@ -302,6 +304,7 @@ class Meme extends React.Component {
               userStorage={this.state.userStorage}
               interface={this.state.interface}
               handleLike={this.handleLike}
+              handleOverLike={this.handleOverLike}
             />
             <RememeButton
               memeId={this.state.memeId}
@@ -313,15 +316,18 @@ class Meme extends React.Component {
               author={this.state.author}
               reponses={this.state.responses}
               handleRememe={this.handleRememe}
+              handleOverRememe={this.handleOverRememe}
               rememeCountTotal={rememeCountTotal}
             />
             <UpvoteButton
               memeId={this.state.memeId}
               interface={this.state.interface}
+              handleOverUpvote={this.handleOverUpvote}
             />
             <DownvoteButton
               memeId={this.state.memeId}
               interface={this.state.interface}
+              handleOverDownvote={this.handleOverDownvote}
             />
           </div>
         </div>
