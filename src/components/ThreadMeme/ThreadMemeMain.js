@@ -1,5 +1,5 @@
 import React from 'react'
-import ReplyButtonMain from '../MemeButton/ReplyButtonMain'
+import ReplyButton from '../MemeButton/ReplyButton'
 import LikeButtonMain from '../MemeButton/LikeButtonMain'
 import RememeButtonMain from '../MemeButton/RememeButtonMain'
 import UpvoteButtonMain from '../MemeButton/UpvoteButtonMain'
@@ -44,6 +44,7 @@ class ThreadMemeMain extends React.Component {
       userHasLiked: this.props.userHasLiked,
     }
     this.div = React.createRef()
+    this.reply= React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
@@ -251,7 +252,7 @@ class ThreadMemeMain extends React.Component {
               <span id="time">{time + ' • ' + date}</span>
             </div>
             <div id="ThreadMemeMain-footer">
-              <ReplyButtonMain
+              <ReplyButton
                 memeId={this.state.memeId}
                 username={this.state.username}
                 address={this.state.address}
@@ -259,17 +260,21 @@ class ThreadMemeMain extends React.Component {
                 parentId={this.state.parentId}
                 originId={this.state.originId}
                 author={this.state.author}
+                isMain={true}
                 reponses={this.state.responses}
                 handleReply={this.handleReply}
+                ref={Ref=>this.reply=Ref}
               />
               <LikeButtonMain
                 memeId={this.state.memeId}
                 userAccount={this.state.userAccount}
                 likes={this.state.likes}
                 userHasLiked={this.state.userHasLiked}
+                isMain={true}
                 memeStorage={this.state.memeStorage}
                 interface={this.state.interface}
                 handleLike={this.handleLike}
+                ref={Ref=>this.like=Ref}
               />
               <RememeButtonMain
                 memeId={this.state.memeId}
@@ -280,18 +285,24 @@ class ThreadMemeMain extends React.Component {
                 originId={this.state.originId}
                 repostId={this.state.repostId}
                 author={this.state.author}
+                isMain={true}
                 reponses={this.state.responses}
                 handleRememe={this.handleRememe}
                 rememeCountTotal={rememeCountTotal}
+                ref={Ref=>this.rememe=Ref}
               />
               <UpvoteButtonMain
                 memeId={this.state.memeId}
+                isMain={true}
                 interface={this.state.interface}
+                ref={Ref=>this.upvote=Ref}
               />
               <DownvoteButtonMain
                 memeId={this.state.memeId}
+                isMain={true}
                 interface={this.state.interface}
                 handleOver={this.handleButtonMouseOver}
+                ref={Ref=>this.downvote=Ref}
               />
             </div>
 

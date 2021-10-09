@@ -2,7 +2,6 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Reply from '../../resources/reply.svg'
 import './ReplyButton.css'
-import './ReplyButtonMain.css'
 
 class ReplyButton extends React.Component {
   constructor(props) {
@@ -16,7 +15,7 @@ class ReplyButton extends React.Component {
       author: this.props.author,
       parentId: this.props.parentId,
       originId: this.props.originId,
-      responses: this.props.responses,
+      responses: this.props.responses
       isMain: this.props.isMain
     }
     this.reply = React.createRef()
@@ -40,7 +39,7 @@ class ReplyButton extends React.Component {
             elementName = '#' + this.reply.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
-    //this.props.handleOverReply(this.reply.style.filter)
+    this.props.handleOverReply(this.reply.style.filter)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -49,7 +48,7 @@ class ReplyButton extends React.Component {
           hue = 85,
           elementName = '#' + this.reply.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    //this.props.handleOverReply(this.reply.style.filter)
+    this.props.handleOverReply(this.reply.style.filter)
   }
 
   async replyClick() {
@@ -66,34 +65,19 @@ class ReplyButton extends React.Component {
   }
 
   render() {
-    if(!this.state.isMain) {
-      return(
-        <p
-          className="reply"
-          id={"reply-" + this.state.memeId}
-          onClick={this.handleClick}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          ref={Ref => this.reply=Ref}
-        >
-          <img className="reply" src={Reply} alt="reply button" id="reply" width="16px" height="16px"/>
-          <span className="reply" id="reply-count">{this.state.responses!==undefined ? this.state.responses.length : 0}</span>
+    return(
+      <p
+        className="reply"
+        id={"reply-" + this.state.memeId}
+        onClick={this.handleClick}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        ref={Ref => this.reply=Ref}
+      >
+        <img className="reply" src={Reply} alt="reply button" id="reply" width="16px" height="16px"/>
+        <span className="reply" id="reply-count">{this.state.responses!==undefined ? this.state.responses.length : 0}</span>
       </p>
-      )
-    } else {
-      return(
-        <p
-          className="ReplyButtonMain"
-          id={'reply-' + this.state.memeId}
-          onClick={this.handleClick}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          ref={Ref => this.reply=Ref}
-        >
-          <img className="reply" src={Reply} alt="reply button" id="reply" width="21px" height="21px"/>
-        </p>
-      )
-    }
+    )
   }
 }
 

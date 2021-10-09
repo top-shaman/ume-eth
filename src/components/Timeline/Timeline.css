@@ -4,6 +4,11 @@ p#loader.Timeline {
 .Timeline div#loader {
   opacity: 1;
   align-items: flex-start;
-  padding: 1rem 0;
 }
 
+div.Timeline div#loader div#spinning-loader {
+  margin: 1rem auto;
+}
+div.Timeline div#loader-bottom div#spinning-loader {
+  margin: 1rem auto 2rem auto;
+}

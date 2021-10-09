@@ -44,6 +44,7 @@ class ParentMeme extends React.Component {
       firstParent: this.props.firstParent
     }
     this.div = React.createRef()
+    this.reply = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
@@ -278,17 +279,21 @@ class ParentMeme extends React.Component {
               originId={this.state.originId}
               repostId={this.state.repostId}
               author={this.state.author}
+              isMain={false}
               responses={this.state.responses}
               handleReply={this.handleReply}
+              ref={Ref=>this.reply=Ref}
             />
             <LikeButton
               memeId={this.state.memeId}
               userAccount={this.state.userAccount}
               likes={this.state.likes}
               userHasLiked={this.state.userHasLiked}
+              isMain={false}
               memeStorage={this.state.memeStorage}
               interface={this.state.interface}
               handleLike={this.handleLike}
+              ref={Ref=>this.like=Ref}
             />
             <RememeButton
               memeId={this.state.memeId}
@@ -300,16 +305,22 @@ class ParentMeme extends React.Component {
               repostId={this.state.repostId}
               author={this.state.author}
               reponses={this.state.responses}
+              isMain={false}
               handleRememe={this.handleRememe}
               rememeCountTotal={rememeCountTotal}
+              ref={Ref=>this.rememe=Ref}
             />
             <UpvoteButton
               memeId={this.state.memeId}
+              isMain={false}
               interface={this.state.interface}
+              ref={Ref=>this.upvote=Ref}
             />
             <DownvoteButton
               memeId={this.state.memeId}
+              isMain={false}
               interface={this.state.interface}
+              ref={Ref=>this.downvote=Ref}
             />
           </div>
         </div>

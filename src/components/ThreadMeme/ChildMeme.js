@@ -7,7 +7,7 @@ import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import Loader from '../Loader/Loader'
-import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
 import "./ChildMeme.css"
 
@@ -53,6 +53,7 @@ class ChildMeme extends React.Component {
     }
     this.div = React.createRef()
     this.container = React.createRef()
+    this.reply = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
@@ -172,6 +173,13 @@ class ChildMeme extends React.Component {
   }
   handleToProfile(e) {
     this.props.handleToProfile(e)
+  }
+  async handleTag(e) {
+    const address = await toBytes(e),
+    account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
   }
   handleMemeClick(e) {
 
@@ -372,16 +380,20 @@ class ChildMeme extends React.Component {
                   repostId={this.state.repostId}
                   author={this.state.author}
                   responses={this.state.responses}
+                  isMain={false}
                   handleReply={this.handleReply}
+                  ref={Ref=>this.reply=Ref}
                 />
                 <LikeButton
                   memeId={this.state.memeId}
                   userAccount={this.state.userAccount}
                   likes={this.state.likes}
                   userHasLiked={this.state.userHasLiked}
+                  isMain={false}
                   memeStorage={this.state.memeStorage}
                   interface={this.state.interface}
                   handleLike={this.handleLike}
+                  ref={Ref=>this.like=Ref}
                 />
                 <RememeButton
                   memeId={this.state.memeId}
@@ -393,16 +405,22 @@ class ChildMeme extends React.Component {
                   repostId={this.state.repostId}
                   author={this.state.author}
                   reponses={this.state.responses}
+                  isMain={false}
                   handleRememe={this.handleRememe}
                   rememeCountTotal={rememeCountTotal}
+                  ref={Ref=>this.rememe=Ref}
                 />
                 <UpvoteButton
                   memeId={this.state.memeId}
+                  isMain={false}
                   interface={this.state.interface}
+                  ref={Ref=>this.upvote=Ref}
                 />
                 <DownvoteButton
                   memeId={this.state.memeId}
+                  isMain={false}
                   interface={this.state.interface}
+                  ref={Ref=>this.downvote=Ref}
                 />
               </div>
             </div>

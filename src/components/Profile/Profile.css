@@ -4,7 +4,13 @@ p#loader.Profile {
 .Profile div#loader {
   opacity: 1;
   align-items: flex-start;
-  padding: 1rem 0;
+}
+
+div.Profile div#loader div#spinning-loader {
+  margin: 1rem auto;
+}
+div.Profile div#loader-bottom div#spinning-loader {
+  margin: 1rem auto 2rem auto;
 }
 
 .Profile div#Profile {

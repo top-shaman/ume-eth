@@ -44,6 +44,7 @@ class Meme extends React.Component {
     }
     this.pfp = React.createRef()
     this.div = React.createRef()
+    this.reply = React.createRef()
     this.like = React.createRef()
     this.rememe = React.createRef()
     this.upvote = React.createRef()
@@ -52,11 +53,11 @@ class Meme extends React.Component {
     this.handleButtonClick = this.handleButtonClick.bind(this)
     this.handleOverReply = this.handleOverReply.bind(this)
     this.handleOverLike = this.handleOverLike.bind(this)
-    this.handleOverRememe = this.handleOverLike.bind(this)
+    this.handleOverRememe = this.handleOverRememe.bind(this)
     this.handleOverUpvote = this.handleOverUpvote.bind(this)
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
 
-    this.handleRendered = this.handleRendered.bind(this)
+    //this.handleRendered = this.handleRendered.bind(this)
 
     this.handleProfileClick = this.handleProfileClick.bind(this)
     this.handleTag = this.handleTag.bind(this)
@@ -68,18 +69,17 @@ class Meme extends React.Component {
   }
   // lifecycle functions
   async componentDidMount() {
-    if(!this.state.alreadyRendered) {
-      //this.div.style.zIndex = 0
-      this.div.style.opacity = 0
-      setTimeout(() => {
-        fadeIn('div#\\3' + this.state.memeId + ' ', 600)
-        zipUp('div#\\3' + this.state.memeId + ' ', 600)
-        this.setState({ alreadyRendered: true })
-        this.props.handleRendered(this.state.memeId)
-      }, 0 )
-    } else if(this.state.alreadyRendered) {
-      this.div.style.opacity = 1
-    }
+//    if(!this.state.alreadyRendered) {
+//      this.div.style.zIndex = 0
+//      this.div.style.opacity = 0
+//      setTimeout(() => {
+//        fadeIn('div#\\3' + this.state.memeId + ' ', 600)
+//        zipUp('div#\\3' + this.state.memeId + ' ', 600)
+//        this.setState({ alreadyRendered: true })
+//      }, 0 )
+//    } else if(this.state.alreadyRendered) {
+//      this.div.style.opacity = 1
+//    }
     this.mounted = true
     await this.formatText()
     //await this.userHasLiked()
@@ -128,15 +128,16 @@ class Meme extends React.Component {
   }
   handleMemeClick(e) {
     e.preventDefault()
+    console.log(e.target)
     if(e.target!==this.pfp &&
        e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
        e.target.id!=='at' &&
-       e.target!==this.reply &&
-       e.target!==this.like &&
-       e.target!==this.rememe &&
-       e.target!==this.upvote &&
-       e.target!==this.downvote) {
+       e.target.id!=='reply' &&
+       e.target.id!=='like' &&
+       e.target.id!=='rememe' &&
+       e.target.id!=='upvote' &&
+       e.target.id!=='downvote') {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -292,19 +293,23 @@ class Meme extends React.Component {
               originId={this.state.originId}
               author={this.state.author}
               responses={this.state.responses}
+              isMain={false}
               handleReply={this.handleReply}
               handleOverReply={this.handleOverReply}
+              ref={Ref=>this.reply=Ref}
             />
             <LikeButton
               memeId={this.state.memeId}
               userAccount={this.state.userAccount}
               likes={this.state.likes}
               userHasLiked={this.state.userHasLiked}
+              isMain={false}
               memeStorage={this.state.memeStorage}
               userStorage={this.state.userStorage}
               interface={this.state.interface}
               handleLike={this.handleLike}
               handleOverLike={this.handleOverLike}
+              ref={Ref=>this.like=Ref}
             />
             <RememeButton
               memeId={this.state.memeId}
@@ -315,19 +320,25 @@ class Meme extends React.Component {
               originId={this.state.originId}
               author={this.state.author}
               reponses={this.state.responses}
+              isMain={false}
               handleRememe={this.handleRememe}
               handleOverRememe={this.handleOverRememe}
               rememeCountTotal={rememeCountTotal}
+              ref={Ref=>this.rememe=Ref}
             />
             <UpvoteButton
               memeId={this.state.memeId}
+              isMain={false}
               interface={this.state.interface}
               handleOverUpvote={this.handleOverUpvote}
+              ref={Ref=>this.upvote=Ref}
             />
             <DownvoteButton
               memeId={this.state.memeId}
+              isMain={false}
               interface={this.state.interface}
               handleOverDownvote={this.handleOverDownvote}
+              ref={Ref=>this.downvote=Ref}
             />
           </div>
         </div>

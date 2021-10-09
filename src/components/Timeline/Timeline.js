@@ -53,7 +53,7 @@ class Timeline extends React.Component {
         //this.setState({ firstLoad: false })
         if(!this.state.firstLoad && !this.state.loadingBottom){
           await this.loadNewMemes()
-          //await this.refreshMemes()
+          await this.refreshMemes()
         }
       }, 10000)
     }
@@ -100,6 +100,7 @@ class Timeline extends React.Component {
   }
 
   handleOverReply(e) {
+    console.log(e)
   }
   handleOverLike(e) {
   }
@@ -109,14 +110,14 @@ class Timeline extends React.Component {
   }
   handleOverDownvote(e) {
   }
-
   handleRendered(e) {
-    //let memesHTML = this.state.memesHTML,
-    //      index = memesHTML.findIndex(elem => elem.props.memeId===e)
-    //memesHTML[index] = <Meme {...this.state.memesHTML[index].props} alreadyRendered={true} key={this.state.memesHTML[index].key}/>
-    //this.setState({ oldMemesHTML: this.state.memesHTML })
+    /*
+    let memesHTML = this.state.memesHTML,
+          index = memesHTML.findIndex(elem => elem.props.memeId===e)
+    memesHTML[index] = <Meme {...this.state.memesHTML[index].props} alreadyRendered={true} key={this.state.memesHTML[index].key}/>
+    this.setState({ memesHTML })
+    */
   }
-
 
 
 
@@ -238,28 +239,28 @@ class Timeline extends React.Component {
         this.setState({ memes: this.state.memes.concat(newMemes) })
         if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
 
-        this.setState({ memesHTML: this.state.oldMemesHTML })
+        //this.setState({ memesHTML: this.state.oldMemesHTML })
         // render new HTML
         await this.renderTimeline(memesInQueue).catch(e => console.error(e))
-        this.setState({ oldMemesHTML: this.state.memesHTML })
         // update queue values
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
         //delay so animation can come in before refresh triggers
-        setTimeout(() => {
-          this.setState({
-            memeIds: memeIds,
-            memesNotRendered,
-            memesRendered,
-            timelineLoading: false
-          })
-        }, 200)
+        //setTimeout(() => {
+        this.setState({
+          memeIds: memeIds,
+          memesNotRendered,
+          memesRendered,
+          timelineLoading: false
+        })
+        //}, 10)
         if(memesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
-        //console.log('total memes: ' + memeCount)
-        //console.log('memes rendered: ' + memesRendered)
-        //console.log('memes not yet rendered: ' + memesNotRendered)
+        console.log('load new memes')
+        console.log('total memes: ' + memeCount)
+        console.log('memes rendered: ' + memesRendered)
+        console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.timelineLoading)
       }
       else {
@@ -312,10 +313,9 @@ class Timeline extends React.Component {
 
         // sorting functionality
 
-        this.setState({ memesHTML: this.state.oldMemesHTML })
+        //this.setState({ memesHTML: this.state.oldMemesHTML })
 
         await this.renderTimeline(memesInQueue).catch(e => console.error(e))
-        this.setState({ oldMemesHTML: this.state.memesHTML })
         memesRendered += memesInQueue
         memesNotRendered -= memesInQueue
         this.setState({
@@ -327,9 +327,10 @@ class Timeline extends React.Component {
         if(memesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
-        //console.log('total memes: ' + memeCount)
-        //console.log('memes rendered: ' + memesRendered)
-        //console.log('memes not yet rendered: ' + memesNotRendered)
+        console.log('load old memes:')
+        console.log('total memes: ' + memeCount)
+        console.log('memes rendered: ' + memesRendered)
+        console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.timelineLoading)
       }
       else {
@@ -380,9 +381,8 @@ class Timeline extends React.Component {
 
       //this.setState({ memes: loadedMemes })
       this.sortToStyle(this.state.sortStyle)
-      this.setState({ memesHTML: this.state.oldMemesHTML })
+      //this.setState({ memesHTML: this.state.oldMemesHTML })
       await this.renderTimeline(0).catch(e => console.error(e))
-      this.setState({ oldMemesHTML: this.state.memesHTML })
       this.setState({
         timelineLoading: false,
         refreshing: false
@@ -421,7 +421,7 @@ class Timeline extends React.Component {
       author: await tempMeme.author,
       isVisible: await tempMeme.isVisible,
       //renderOrder: 0,
-      alreadyRendered: false,
+      //alreadyRendered: false,
       userHasLiked: await likers.includes(this.props.account),
     }
   }
@@ -434,8 +434,6 @@ class Timeline extends React.Component {
           memeCount = this.state.memeCount
     if(memeCount>0) {
       let meme
-      console.log(this.state.memesHTML)
-      console.log(this.state.memes)
       for(let i = 0; i < memesRendered+memesInQueue; i++) {
         meme = tempMemes[i]
         //add Meme component to temporary array
@@ -464,12 +462,13 @@ class Timeline extends React.Component {
               author={meme.author}
               isVisible={meme.isVisible}
         //      renderOrder={meme.renderOrder}
-              alreadyRendered={
+        //      alreadyRendered={
                 //this.state.memesHTML!==undefined
                   //? meme.alreadyRendered
                   //: false
-                meme.alreadyRendered
-              }
+        //        meme.alreadyRendered
+        //      }
+              isMain={false}
               handleToProfile={this.handleToProfile}
               handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
@@ -480,7 +479,7 @@ class Timeline extends React.Component {
               handleOverRememe={this.handleOverRememe}
               handleOverUpvote={this.handleOverUpvote}
               handleOverDownvote={this.handleOverDownvote}
-              handleRendered={this.handleRendered}
+              //handleRendered={this.handleRendered}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}
@@ -489,23 +488,30 @@ class Timeline extends React.Component {
             />
           )
         }
-        tempMemes[i].alreadyRendered = true
+        //tempMemes[i].alreadyRendered = true
         //tempMemes[i-1].renderOrder = 0
       }
     }
+    console.log(tempMemesHTML)
     this.setState({
       memesHTML: tempMemesHTML,
       memes: tempMemes
 //      oldMemes: tempMemes
     })
-    //set memes as already rendered
-    tempMemesHTML.forEach(elem => {
-      elem = <Meme {...elem.props} alreadyRendered={true} key={elem.key}/>
-    })
-    this.setState({ oldMemesHTML: tempMemesHTML })
+    //setTimeout(() => this.setRendered(), 600)
     // memesHTML to function that marks rendered memes as 'alreadyRendered', sends to oldMemesHTML
     //await this.compileRenderedMemes(memesInQueue)
   }
+
+  async setRendered() {
+    const memesHTML = this.state.memesHTML
+    //set memes as already rendered
+    memesHTML.forEach(elem => {
+      elem = <Meme {...elem.props} alreadyRendered={true} key={elem.key}/>
+    })
+    this.setState({ memesHTML })
+  }
+
   async compileRenderedMemes(memesInQueue) {
     const tempMemesHTML = [],
           memes = this.state.memes,
@@ -603,13 +609,15 @@ class Timeline extends React.Component {
                 <Loader/>
               </div>
             : this.state.loadingBottom
-              ? <div id="loader">
-                  {this.state.oldMemesHTML}
+              ? <div id="loader-bottom">
+                  {//this.state.oldMemesHTML}
+                    this.state.memesHTML}
                   <Loader/>
                 </div>
               : <div id="loader">
                   <Loader/>
-                  {this.state.oldMemesHTML}
+                  {//this.state.oldMemesHTML}
+                    this.state.memesHTML}
                 </div>
           : this.state.memeCount > 0
             ? this.state.allMemesLoaded
