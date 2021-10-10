@@ -1,0 +1,12 @@
+div#upvote-popup {
+  transform: translateX(-2rem) translateY(-3rem);
+  display: none;
+  z-index: 1;
+  position: fixed;
+  background-color: #1D1F22;
+  padding: 0.4rem;
+  color: #CCDDDD;
+  border: 0.2rem solid #00CC89;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 8px #667777;
+}

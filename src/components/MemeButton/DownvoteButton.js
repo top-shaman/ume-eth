@@ -2,6 +2,7 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Downvote from '../../resources/arrow.svg'
 import './DownvoteButton.css'
+import './DownvoteButtonMain.css'
 
 class DownvoteButton extends React.Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class DownvoteButton extends React.Component {
 
     this.state = {
       memeId: this.props.memeId,
+      isMain: this.props.isMain,
       interface: this.props.interface
     }
     this.downvote = React.createRef()
@@ -53,18 +55,34 @@ class DownvoteButton extends React.Component {
   }
 
   render() {
-    return(
-        <p
-          className="downvote"
-          id={'downvote-' + this.state.memeId}
-          onClick={this.handleClick}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          ref={Ref => this.downvote=Ref}
-        >
-          <img className="downvote" src={Downvote} alt="downvote button" id="downvote" width="16px" height="16px"/>
-        </p>
-    )
+    if(!this.state.isMain) {
+      return(
+          <p
+            className="downvote"
+            id={'downvote-' + this.state.memeId}
+            onClick={this.handleClick}
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            ref={Ref => this.downvote=Ref}
+          >
+            <img className="downvote" src={Downvote} alt="downvote button" id="downvote" width="16px" height="16px"/>
+          </p>
+      )
+    }
+    else {
+      return(
+          <p
+            className="downvote"
+            id={'downvote-' + this.state.memeId}
+            onClick={this.handleClick}
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            ref={Ref => this.downvote=Ref}
+          >
+            <img className="downvote" src={Downvote} alt="downvote button" id="downvote" width="21px" height="21px"/>
+          </p>
+      )
+    }
   }
 }
 

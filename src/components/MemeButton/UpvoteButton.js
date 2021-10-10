@@ -2,6 +2,7 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Upvote from '../../resources/arrow.svg'
 import './UpvoteButton.css'
+import './UpvoteButtonMain.css'
 
 class UpvoteButton extends React.Component {
   constructor(props) {
@@ -9,6 +10,8 @@ class UpvoteButton extends React.Component {
 
     this.state = {
       memeId: this.props.memeId,
+      account: this.props.account,
+      isMain: this.props.isMain,
       interface: this.props.interface
     }
     this.upvote = React.createRef()
@@ -21,6 +24,7 @@ class UpvoteButton extends React.Component {
   }
   async handleClick(e) {
     bobble('#' + this.upvote.id, 500)
+    this.props.handleUpvotePopup([e, this.state.memeId])
     await this.upvoteClick()
   }
   handleMouseEnter(e) {
@@ -48,23 +52,38 @@ class UpvoteButton extends React.Component {
     }
     this.props.handleOverUpvote(this.upvote.style.filter)
   }
-
-  async upvoteClick() {
+  upvoteClick() {
   }
 
   render() {
-    return(
-        <p
-          className="upvote"
-          id={'upvote-' + this.state.memeId}
-          onClick={this.handleClick}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          ref={Ref => this.upvote=Ref}
-        >
-          <img className="upvote" src={Upvote} alt="upvote button" id="upvote" width="16px" height="16px"/>
-        </p>
-    )
+    if(!this.state.isMain) {
+      return(
+          <p
+            className="upvote"
+            id={'upvote-' + this.state.memeId}
+            onClick={this.handleClick}
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            ref={Ref => this.upvote=Ref}
+          >
+            <img className="upvote" src={Upvote} alt="upvote button" id="upvote" width="16px" height="16px"/>
+          </p>
+      )
+    }
+    else {
+      return(
+          <p
+            className="upvote"
+            id={'upvote-' + this.state.memeId}
+            onClick={this.handleClick}
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            ref={Ref => this.upvote=Ref}
+          >
+            <img className="upvote" src={Upvote} alt="upvote button" id="upvote" width="21px" height="21px"/>
+          </p>
+      )
+    }
   }
 }
 

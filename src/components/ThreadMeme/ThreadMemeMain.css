@@ -3,7 +3,6 @@ div.ThreadMemeMain {
   flex-direction: column;
   background-color: #1D1F22;
   border-bottom: 0.05rem solid #AAAAAA;
-  border-right: 0.05rem solid #AAAAAA;
   width: inherit;
   overflow: hidden;
 }

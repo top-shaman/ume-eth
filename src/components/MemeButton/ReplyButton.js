@@ -17,6 +17,7 @@ class ReplyButton extends React.Component {
       parentId: this.props.parentId,
       originId: this.props.originId,
       responses: this.props.responses,
+      isOver: this.props.isOver,
       isMain: this.props.isMain
     }
     this.reply = React.createRef()
@@ -26,6 +27,9 @@ class ReplyButton extends React.Component {
     this.handleMouseLeave = this.handleMouseLeave.bind(this)
   }
   componentDidMount() {
+    if(this.state.isOver) {
+      this.reply.style.filter = 'invert(0) sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg)'
+    }
   }
   handleClick(e) {
     bobble('#' + this.reply.id, 500)
@@ -40,7 +44,7 @@ class ReplyButton extends React.Component {
             elementName = '#' + this.reply.id
       filterIn(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
-    //this.props.handleOverReply(this.reply.style.filter)
+    this.props.handleOverReply(true)
   }
   handleMouseLeave(e) {
     e.preventDefault()
@@ -49,7 +53,7 @@ class ReplyButton extends React.Component {
           hue = 85,
           elementName = '#' + this.reply.id
     filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
-    //this.props.handleOverReply(this.reply.style.filter)
+    this.props.handleOverReply(false)
   }
 
   async replyClick() {
@@ -83,7 +87,7 @@ class ReplyButton extends React.Component {
     } else {
       return(
         <p
-          className="ReplyButtonMain"
+          className="reply"
           id={'reply-' + this.state.memeId}
           onClick={this.handleClick}
           onMouseEnter={this.handleMouseEnter}

@@ -2,7 +2,7 @@ div.Main {
   text-align: center;
   display: inline-flex;
   flex-direction: row;
-  max-width: 50rem;
+  max-width: 64rem;
   width: 100%;
   height: 100%;
   margin: 0 auto;
@@ -13,8 +13,12 @@ div.Main {
   height: 40vmin;
   pointer-events: none;
 }
-.Main div#header {
+.Main div#side-header {
   border-right: 0.05rem solid #AAAAAA;
+}
+.Main div#side-footer {
+  height: 100%;
+  border-left: 0.05rem solid #AAAAAA;
 }
 .Main div#link {
   color: #61dafb;
@@ -23,9 +27,9 @@ div.Main {
 div#body.Main {
   position: relative;
   flex-direction: column;
-  width: 100%;
   color: lightgrey;
   overflow: auto;
+  max-width: 38rem;
 }
 
 .Main div#subheader {

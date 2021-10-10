@@ -26,8 +26,8 @@ class Reply extends React.Component {
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
-      memeText: localStorage.getItem('memeText'),
-      visibleText: localStorage.getItem('memeText'),
+      memeText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
+      visibleText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
       flag: '',
       validMeme: false
     }

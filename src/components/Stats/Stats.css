@@ -1,0 +1,89 @@
+div#stats {
+  margin: 0.8rem;
+  padding-top: 1rem;
+  width: 11.4rem;
+  transition: background-color 1s ease-in-out;
+  border-radius: 1.5rem;
+}
+div#side-footer div#loader {
+  width: 13rem;
+  margin: 6rem 0;
+}
+
+div#stats:hover {
+  background-color: #1D1F22;
+}
+
+div#stats div#header {
+  width: inherit;
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+div#stats div#body {
+  padding: 0.5rem 1rem;
+}
+
+div#stats div#header img {
+  width: 3.5rem;
+  margin: 0 auto;
+  height: auto;
+  border-radius: 50%;
+}
+
+div#stats p#info {
+  margin: 0 0.8rem 0.8rem 0.8rem;
+  word-break: break-all;
+  text-align: center;
+}
+
+div#stats a,
+div#stats a:hover,
+div#stats a:visited {
+  color: #CCDDDD;
+  word-break: all;
+  text-decoration: none;
+}
+
+div#stats p#stats {
+  width: inherit;
+  margin: 0;
+  padding: 1rem 0.6rem;
+  border-top: 0.05rem solid #667777;
+  color: #CCDDDD;
+  font-weight: 500;
+  text-align: left;
+  word-break: break;
+}
+div#stats span#username {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+div#stats p#balance {
+  width: inherit;
+  margin: 0;
+  padding: 1rem 0.6rem;
+  border-top: 0.05rem solid #667777;
+  color: #00CC89;
+  font-weight: 600;
+  text-align: center;
+  word-break: break;
+}
+div#stats span#label {
+  font-weight: 500;
+  font-size: 1rem;
+  word-break: break-all;
+}
+div#stats p#balance span#label {
+  font-size: 0.9em;
+}
+div#stats p#balance span#data {
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+div#stats p#balance img {
+  transform: translateY(0.05rem);
+  width: 1rem;
+  margin: auto 0.3rem auto 0;
+}

@@ -1,13 +1,12 @@
 import React from 'react'
 import ReplyButton from '../MemeButton/ReplyButton'
-import LikeButtonMain from '../MemeButton/LikeButtonMain'
-import RememeButtonMain from '../MemeButton/RememeButtonMain'
-import UpvoteButtonMain from '../MemeButton/UpvoteButtonMain'
-import DownvoteButtonMain from '../MemeButton/DownvoteButtonMain'
+import LikeButton from '../MemeButton/LikeButton'
+//import RememeButton from '../MemeButton/RememeButton'
+import UpvoteButton from '../MemeButton/UpvoteButton'
+import DownvoteButton from '../MemeButton/DownvoteButton'
 import ReplyInThread from '../ReplyInThread/ReplyInThread'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp } from '../../resources/Libraries/Animation'
 import "./ThreadMemeMain.css"
 
 class ThreadMemeMain extends React.Component {
@@ -33,6 +32,7 @@ class ThreadMemeMain extends React.Component {
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
+      isMain: this.props.isMain,
       visibleText: this.props.text,
       renderOrder: this.props.renderOrder,
       alreadyRendered: this.props.alreadyRendered,
@@ -63,20 +63,17 @@ class ThreadMemeMain extends React.Component {
     this.handleReplyThread = this.handleReplyThread.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
+
+    this.handleOverReply = this.handleOverReply.bind(this)
+    this.handleOverLike = this.handleOverLike.bind(this)
+    this.handleOverRememe = this.handleOverRememe.bind(this)
+    this.handleOverUpvote = this.handleOverUpvote.bind(this)
+    this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
+    this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
-    if(!this.state.alreadyRendered) {
-      //this.div.style.zIndex = 0
-      this.div.style.opacity = 0
-      setTimeout(() => {
-        fadeIn('div#\\3' + this.state.memeId + ' ', 600)
-        zipUp('div#\\3' + this.state.memeId + ' ', 600)
-      }, 0 )
-      //this.setState({ alreadyRendered: true })
-    } else if(this.state.alreadyRendered) {
-      this.div.style.opacity = 1
-    }
     this.mounted = true
     // changes color of bottom border if main meme has replies
     if(this.state.responses.length > 0) {
@@ -112,18 +109,22 @@ class ThreadMemeMain extends React.Component {
   }
   handleProfileClick(e) {
     e.preventDefault()
-    this.props.handleToProfile([
-      this.state.username,
-      this.state.address,
-      this.state.author
-    ])
+    this.props.handleToProfile(this.state.author)
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    localStorage.setItem('userInfo', this.state.author)
   }
   handleMemeClick(e) {
+    console.log(e.target)
     e.preventDefault()
-    if(e.target.className!=='reply' &&
+    if(e.target!==this.pfp &&
+       e.target.id!=='profile-pic' &&
+       e.target.id!=='username' &&
+       e.target.id!=='at' &&
+       e.target.className!=='reply' &&
+       e.target.className!=='LikeButton' &&
+       e.target.className!=='LikeButton-Liked' &&
        e.target.className!=='like' &&
+       e.target.className!=='liked' &&
        e.target.className!=='rememe' &&
        e.target.className!=='upvote' &&
        e.target.className!=='downvote') {
@@ -174,6 +175,20 @@ class ThreadMemeMain extends React.Component {
   handleRememe(e) {
     console.log('rememe')
   }
+  handleOverReply(e) {
+  }
+  handleOverLike(e) {
+  }
+  handleOverRememe(e) {
+  }
+  handleOverUpvote(e) {
+  }
+  handleOverDownvote(e) {
+  }
+  handleUpvotePopup(e) {
+    this.props.handleUpvotePopup(e)
+  }
+
 
   async formatText() {
     let text = this.props.text,
@@ -201,8 +216,8 @@ class ThreadMemeMain extends React.Component {
 
   render() {
     const time = new Date(this.state.time).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}),
-          date = new Date(this.state.time).toLocaleDateString([], {month: 'short', day:'numeric', year: 'numeric'}),
-          rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
+          date = new Date(this.state.time).toLocaleDateString([], {month: 'short', day:'numeric', year: 'numeric'})
+          //rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount)
     return(
       <div
         className="ThreadMemeMain"
@@ -263,9 +278,10 @@ class ThreadMemeMain extends React.Component {
                 isMain={true}
                 reponses={this.state.responses}
                 handleReply={this.handleReply}
+                handleOverReply={this.handleOverReply}
                 ref={Ref=>this.reply=Ref}
               />
-              <LikeButtonMain
+              <LikeButton
                 memeId={this.state.memeId}
                 userAccount={this.state.userAccount}
                 likes={this.state.likes}
@@ -274,9 +290,11 @@ class ThreadMemeMain extends React.Component {
                 memeStorage={this.state.memeStorage}
                 interface={this.state.interface}
                 handleLike={this.handleLike}
+                handleOverLike={this.handleOverLike}
                 ref={Ref=>this.like=Ref}
               />
-              <RememeButtonMain
+              {/*
+              <RememeButton
                 memeId={this.state.memeId}
                 username={this.state.username}
                 address={this.state.address}
@@ -289,19 +307,26 @@ class ThreadMemeMain extends React.Component {
                 reponses={this.state.responses}
                 handleRememe={this.handleRememe}
                 rememeCountTotal={rememeCountTotal}
+                handleOverRememe={this.handleOverRememe}
                 ref={Ref=>this.rememe=Ref}
               />
-              <UpvoteButtonMain
+              */}
+              <UpvoteButton
                 memeId={this.state.memeId}
+                account={this.state.userAccount}
                 isMain={true}
                 interface={this.state.interface}
+                handleOverUpvote={this.handleOverUpvote}
+                handleUpvotePopup={this.handleUpvotePopup}
                 ref={Ref=>this.upvote=Ref}
               />
-              <DownvoteButtonMain
+              <DownvoteButton
                 memeId={this.state.memeId}
+                account={this.state.userAccount}
                 isMain={true}
                 interface={this.state.interface}
                 handleOver={this.handleButtonMouseOver}
+                handleOverDownvote={this.handleOverDownvote}
                 ref={Ref=>this.downvote=Ref}
               />
             </div>

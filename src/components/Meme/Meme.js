@@ -1,7 +1,7 @@
 import React from 'react'
 import ReplyButton from '../MemeButton/ReplyButton'
 import LikeButton from '../MemeButton/LikeButton'
-import RememeButton from '../MemeButton/RememeButton'
+//import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
@@ -66,6 +66,8 @@ class Meme extends React.Component {
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
+
+    this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -94,19 +96,19 @@ class Meme extends React.Component {
     this.props.handleRefresh(e)
   }
   handleOverReply(e) {
-    this.props.handleOverReply(this.div.style.filter)
+    this.props.handleOverReply(e)
   }
   handleOverLike(e) {
-    this.props.handleOverLike(this.div.style.filter)
+    this.props.handleOverLike(e)
   }
   handleOverRememe(e) {
-    this.props.handleOverRememe(this.div.style.filter)
+    this.props.handleOverRememe(e)
   }
   handleOverUpvote(e) {
-    this.props.handleOverUpvote(this.div.style.filter)
+    this.props.handleOverUpvote(e)
   }
   handleOverDownvote(e) {
-    this.props.handleOverDownvote(this.div.style.filter)
+    this.props.handleOverDownvote(e)
   }
 
   handleRendered(e) {
@@ -128,16 +130,18 @@ class Meme extends React.Component {
   }
   handleMemeClick(e) {
     e.preventDefault()
-    console.log(e.target)
     if(e.target!==this.pfp &&
        e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
        e.target.id!=='at' &&
-       e.target.id!=='reply' &&
-       e.target.id!=='like' &&
-       e.target.id!=='rememe' &&
-       e.target.id!=='upvote' &&
-       e.target.id!=='downvote') {
+       e.target.className!=='reply' &&
+       e.target.className!=='LikeButton' &&
+       e.target.className!=='LikeButton-Liked' &&
+       e.target.className!=='like' &&
+       e.target.className!=='liked' &&
+       e.target.className!=='rememe' &&
+       e.target.className!=='upvote' &&
+       e.target.className!=='downvote') {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -189,6 +193,10 @@ class Meme extends React.Component {
   }
   handleRememe(e) {
     console.log('rememe')
+  }
+
+  handleUpvotePopup(e) {
+    this.props.handleUpvotePopup(e)
   }
 
   async formatText() {
@@ -311,6 +319,7 @@ class Meme extends React.Component {
               handleOverLike={this.handleOverLike}
               ref={Ref=>this.like=Ref}
             />
+            {/*
             <RememeButton
               memeId={this.state.memeId}
               username={this.state.username}
@@ -326,15 +335,19 @@ class Meme extends React.Component {
               rememeCountTotal={rememeCountTotal}
               ref={Ref=>this.rememe=Ref}
             />
+            */}
             <UpvoteButton
               memeId={this.state.memeId}
+              account={this.state.userAccount}
               isMain={false}
               interface={this.state.interface}
               handleOverUpvote={this.handleOverUpvote}
+              handleUpvotePopup={this.handleUpvotePopup}
               ref={Ref=>this.upvote=Ref}
             />
             <DownvoteButton
               memeId={this.state.memeId}
+              account={this.state.userAccount}
               isMain={false}
               interface={this.state.interface}
               handleOverDownvote={this.handleOverDownvote}

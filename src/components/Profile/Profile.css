@@ -17,7 +17,6 @@ div.Profile div#loader-bottom div#spinning-loader {
   display: flex;
   flex-direction: column;
   font-family: 'Quicksand', sans-serif;
-  border-right: 0.05rem solid #AAAAAA;
   border-bottom: 0.05rem solid #AAAAAA;
   background-color: #1D1F22;
 }

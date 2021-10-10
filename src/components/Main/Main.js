@@ -1,9 +1,11 @@
 import React from 'react'
 import NavBar from '../NavBar/NavBar'
-import SearchBar from '../SearchBar/SearchBar'
+import Stats from '../Stats/Stats'
+//import SearchBar from '../SearchBar/SearchBar'
 import Timeline from '../Timeline/Timeline'
 import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
+import UpvotePopup from '../Popups/UpvotePopup'
 import Loader from '../Loader/Loader'
 import { blur, blurToFadeIn } from '../../resources/Libraries/Animation'
 import './Main.css'
@@ -18,18 +20,27 @@ class Main extends React.Component {
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
+      ume: this.props.ume,
       memeCount: this.props.memeCount,
       userMemeCount: this.props.userMemeCount,
       timelineFormat: 'boost',
       timelineLoading: false,
       profileLoading: false,
       threadLoading: false,
+      upvotePopup: false,
+      popupX: null,
+      popupY: null,
+      popup: null,
+      offsetY: 0,
+      startingWidth: null,
+      width: null,
       reload: false,
       focusPage: 'timeline',
       atBottom: false
     }
 
     // references
+    this.body = React.createRef()
     this.timeline = React.createRef()
     this.profile = React.createRef()
     this.thread = React.createRef()
@@ -52,6 +63,8 @@ class Main extends React.Component {
     this.handleToThread = this.handleToThread.bind(this)
 
     this.handleToSettings = this.handleToSettings.bind(this)
+
+    this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
 
     // handle to log page location
     this.handleScroll = this.handleScroll.bind(this)
@@ -108,6 +121,10 @@ class Main extends React.Component {
     */
     // if previously on a thread, set to thread upon reload
   }
+  componentDidUpdate() {
+    if(this.state.popup!==null){
+    }
+  }
   componentWillUnmount() {
     window.clearInterval()
   }
@@ -134,17 +151,48 @@ class Main extends React.Component {
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
+  handleUpvotePopup(e) {
+    const element = e[0].target.getBoundingClientRect()
+    this.setState({
+      upvotePopup: false,
+      upvoteMeme: null,
+      popup: null,
+      popupX: null,
+      popupY: null
+    })
+    this.setState({
+      popup: e[0].target,
+      upvoteMeme: e[1],
+      popupX: element.x,
+      popupY: element.y + this.state.offsetY
+    })
+    setTimeout(() => {
+      // set memeId
+      this.setState({
+        upvotePopup: true
+      })
+    }, 20)
+    if(this.state.upvotePopup && this.state.popup===e[0].target) {
+      this.setState({
+        upvotePopup: false,
+        upvoteMeme: null,
+        popup: null,
+        popupX: null,
+        popupY: null
+      })
+    }
+  }
 
   // refresh functionality
   async handleRefresh(e) {
     e.preventDefault()
-    if(this.state.focusPage==='timeline' && !this.state.timelineLoading && !this.state.threadLoading) {
+    if(this.state.focusPage==='timeline' && !this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
       await this.timeline.loadNewMemes()
       await this.timeline.refreshMemes()
-    } else if(this.state.focusPage==='profile' && !this.state.profileLoading && !this.state.threadLoading) {
+    } else if(this.state.focusPage==='profile' && !this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
       await this.profile.loadNewMemes()
       await this.profile.refreshMemes()
-    } else if(this.state.focusPage==='thread' && !this.state.timelineLoading && !this.state.profileLoading) {
+    } else if(this.state.focusPage==='thread' && !this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
       await this.thread.loadNewMemes()
       await this.thread.refreshMemes()
     }
@@ -175,6 +223,7 @@ class Main extends React.Component {
       }, 50)
       console.log('timeline loading: ' + this.state.timelineLoading)
     //}
+    this.setState({ width: this.body.clientWidth })
   }
 
   handleProfileLoad(profileLoading) {
@@ -196,10 +245,12 @@ class Main extends React.Component {
         profileUsername: await this.state.userStorage.methods.getName(e).call().then(async e => await fromBytes(e)),
         profileAddress: await this.state.userStorage.methods.getUserAddr(e).call().then(async e => await fromBytes(e)),
         profileAccount: e,
-        profileLoading: true,
-        focusPage: null,
       })
     }
+    this.setState({
+        profileLoading: true,
+        focusPage: null
+    })
     // update local storage
     localStorage.setItem('userInfo', e)
     setTimeout(() => {
@@ -207,6 +258,7 @@ class Main extends React.Component {
         focusPage: 'profile',
       })
     }, 50)
+    this.setState({ width: this.body.clientWidth })
   }
   handleThreadLoad(threadLoading) {
     this.setState({
@@ -250,6 +302,7 @@ class Main extends React.Component {
         }
       }, 50)
     //}
+    this.setState({ width: this.body.clientWidth })
   }
 
   handleToSettings(e) {
@@ -260,11 +313,14 @@ class Main extends React.Component {
       this.setState({ atBottom: true })
     }
     else this.setState({ atBottom: false })
+
+    this.setState({ offsetY: e.target.scrollTop })
   }
+
   render() {
     return(
       <div className="Main">
-        <div id="header">
+        <div id="side-header">
           <NavBar
             account={this.state.account}
             handleCreateMeme={this.handleCreateMeme}
@@ -274,7 +330,12 @@ class Main extends React.Component {
             handleToSettings={this.handleToSettings}
           />
         </div>
-        <div className="Main" id="body" onScroll={this.handleScroll}>
+        <div
+          className="Main"
+          id="body"
+          onScroll={this.handleScroll}
+          ref={Ref=>this.body=Ref}
+        >
           <div id="subheader">
             <section id="title">
               { this.state.focusPage==='timeline' || this.state.focusPage==='thread'
@@ -292,12 +353,24 @@ class Main extends React.Component {
               }
             </section>
             <section id="searchBar">
+              {/*
               <SearchBar
                 userStorage={this.state.userStorage}
                 memeStorage={this.state.memeStorage}
               />
+              */}
             </section>
           </div>
+          { this.state.upvotePopup && this.state.popupX!==null && this.state.popupY!==null
+              ? <UpvotePopup
+                  positionX={`${this.state.popupX - this.body.getBoundingClientRect().left}`}
+                  positionY={`${this.state.popupY}`}
+                  account={this.state.account}
+                  memeId={this.state.upvoteMeme}
+                  interface={this.state.interface}
+                />
+              : ''
+          }
           { this.state.focusPage==='timeline' //&& !this.state.reload
             ? <Timeline
                 account={this.state.account}
@@ -312,6 +385,7 @@ class Main extends React.Component {
                 handleToProfile={this.handleToProfile}
                 handleToThread={this.handleToThread}
                 handleReply={this.handleReply}
+                handleUpvotePopup={this.handleUpvotePopup}
                 atBottom={this.state.atBottom}
                 ref={Ref => this.timeline=Ref}
               />
@@ -329,6 +403,7 @@ class Main extends React.Component {
                   handleToThread={this.handleToThread}
                   handleReply={this.handleReply}
                   handleEdit={this.handleEdit}
+                  handleUpvotePopup={this.handleUpvotePopup}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
                   profileAccount={this.state.profileAccount}
@@ -348,6 +423,7 @@ class Main extends React.Component {
                       handleToProfile={this.handleToProfile}
                       handleToThread={this.handleToThread}
                       handleReply={this.handleReply}
+                      handleUpvotePopup={this.handleUpvotePopup}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.thread=Ref}
                       memeId={this.state.memeId}
@@ -373,6 +449,16 @@ class Main extends React.Component {
                     />
                   : <Loader />
           }
+        </div>
+        <div id="side-footer">
+          <Stats
+            account={this.state.account}
+            userStorage={this.state.userStorage}
+            memeStorage={this.state.memeStorage}
+            update={this.updateStats}
+            ume={this.state.ume}
+            handleToProfile={this.handleToProfile}
+          />
         </div>
       </div>
     )

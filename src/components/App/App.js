@@ -258,6 +258,7 @@ class App extends React.Component {
                   userStorage={this.state.userStorage}
                   memeStorage={this.state.memeStorage}
                   interface={this.state.interface}
+                  ume={this.state.ume}
                   memeCount={this.state.memeCount}
                   userMemeCount={this.state.userMemeCount}
                   memeIdsByBoost={this.state.memeIdsByBoost}

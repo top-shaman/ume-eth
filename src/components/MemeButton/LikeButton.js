@@ -3,6 +3,7 @@ import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation
 import Like from '../../resources/heart.svg'
 import Liked from '../../resources/heart-filled.svg'
 import './LikeButton.css'
+import './LikeButtonMain.css'
 
 class LikeButton extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class LikeButton extends React.Component {
       memeId: this.props.memeId,
       userAccount: this.props.userAccount,
       likes: this.props.likes,
+      isMain: this.props.isMain,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
       userHasLiked: this.props.userHasLiked
@@ -103,31 +105,58 @@ class LikeButton extends React.Component {
   }
 
   render() {
-    return(
-      this.state.userHasLiked
-        ? <p
-            className="LikeButton-Liked"
-            id={'liked-' + this.state.memeId}
-            onClick={this.handleClick}
-            onMouseEnter={this.handleMouseEnterLiked}
-            onMouseLeave={this.handleMouseLeaveLiked}
-            ref={Ref => this.liked=Ref}
-          >
-            <img className="like" src={Liked} alt="like button" id="like" width="16px" height="16px"/>
-            <span className="like" id="like-count">{this.state.likes}</span>
-          </p>
-        : <p
-            className="LikeButton"
-            id={'like-' + this.state.memeId}
-            onClick={this.handleClick}
-            onMouseEnter={this.handleMouseEnterLike}
-            onMouseLeave={this.handleMouseLeaveLike}
-            ref={Ref => this.like=Ref}
+    if(!this.state.isMain) {
+      return(
+        this.state.userHasLiked
+          ? <p
+              className="LikeButton-Liked"
+              id={'liked-' + this.state.memeId}
+              onClick={this.handleClick}
+              onMouseEnter={this.handleMouseEnterLiked}
+              onMouseLeave={this.handleMouseLeaveLiked}
+              ref={Ref => this.liked=Ref}
+            >
+              <img className="like" src={Liked} alt="like button" id="like" width="16px" height="16px"/>
+              <span className="like" id="like-count">{this.state.likes}</span>
+            </p>
+          : <p
+              className="LikeButton"
+              id={'like-' + this.state.memeId}
+              onClick={this.handleClick}
+              onMouseEnter={this.handleMouseEnterLike}
+              onMouseLeave={this.handleMouseLeaveLike}
+              ref={Ref => this.like=Ref}
           >
             <img className="like" src={Like} alt="like button" id="like" width="16px" height="16px"/>
             <span className="like" id="like-count">{this.state.likes}</span>
           </p>
-    )
+      )
+    }
+    else {
+      return(
+        this.state.userHasLiked
+          ? <p
+              className="LikeButton-Liked"
+              id={'liked-' + this.state.memeId}
+              onClick={this.handleClick}
+              onMouseEnter={this.handleMouseEnterLiked}
+              onMouseLeave={this.handleMouseLeaveLiked}
+              ref={Ref => this.liked=Ref}
+            >
+              <img className="like" src={Liked} alt="like button" id="like" width="21px" height="21px"/>
+            </p>
+          : <p
+              className="LikeButton"
+              id={'like-' + this.state.memeId}
+              onClick={this.handleClick}
+              onMouseEnter={this.handleMouseEnterLike}
+              onMouseLeave={this.handleMouseLeaveLike}
+              ref={Ref => this.like=Ref}
+            >
+              <img className="like" src={Like} alt="like button" id="like" width="21px" height="21px"/>
+          </p>
+      )
+    }
   }
 }
 

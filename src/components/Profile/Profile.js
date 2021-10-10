@@ -18,8 +18,8 @@ class Profile extends React.Component {
       userStorage: this.props.userStorage,
       userMemeCount: this.props.userMemeCount,
       profileLoading: false,
-      refreshing: false,
-      atBottom: this.props.atBottom
+      infoLoading: true,
+      refreshing: false
     }
 
     this.handleToProfile = this.handleToProfile.bind(this)
@@ -27,6 +27,8 @@ class Profile extends React.Component {
     this.handleEdit = this.handleEdit.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLoading = this.handleLoading.bind(this)
+
+    this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
   }
   // lifecycles
   async componentDidMount() {
@@ -44,6 +46,7 @@ class Profile extends React.Component {
   // handles
   handleToProfile(e) {
     if(!this.state.profileLoading) {
+      this.setState({ profileLoading: e })
       this.props.handleToProfile(e)
     }
   }
@@ -65,6 +68,9 @@ class Profile extends React.Component {
   handleLoading(e) {
     this.props.handleLoading(e)
   }
+  handleUpvotePopup(e) {
+    this.props.handleUpvotePopup(e)
+  }
 
   async compileProfile() {
     const username = await this.state.userStorage.methods.getName(this.state.profileAccount).call().then(e => fromBytes(e)),
@@ -85,76 +91,80 @@ class Profile extends React.Component {
       followers,
       bio,
       time,
-      userMemeCount
+      userMemeCount,
+      infoLoading: false
     })
   }
 
   render() {
     return(
       <div className="Profile">
-        <div id="Profile">
-          <div id="header">
-            <div id="left">
-              <ProfilePic
-                account={this.state.profileAccount}
-              />
-              <p id="info">
-                <span id="username">{this.state.username}</span>
-                <span id="address">{this.state.address}</span>
-              </p>
-            </div>
-            <div id="right">
-              { this.state.profileAccount===this.state.userAccount
-                  ? <p
-                      id="edit"
-                      onClick={this.handleEdit}
-                    >
-                      Edit profile
+        { this.state.infoLoading
+            ? ''
+            : <div id="Profile">
+                <div id="header">
+                  <div id="left">
+                    <ProfilePic
+                      account={this.state.profileAccount}
+                    />
+                    <p id="info">
+                      <span id="username">{this.state.username}</span>
+                      <span id="address">{this.state.address}</span>
                     </p>
-                  : this.state.isFollowing
-                      ? <p id="following">Following</p>
-                      : <p id="follow">Follow</p>
-              }
-            </div>
-          </div>
-          <div id="body">
-            <p id="bio">{this.state.bio}</p>
-            <span id="time">Joined {this.state.time}</span>
-          </div>
-          <div id="footer">
-            <p id="following-count">
-              <span id="count">
-                {this.state.following}
-              </span>
-              <span> Following</span>
-            </p>
-            <p id="follower-count">
-              <span id="count">
-                {this.state.followers}
-              </span>
-              { this.state.followers===1
-                  ? <span> Follower</span>
-                  : <span> Followers</span>
-              }
-            </p>
-          </div>
-        </div>
+                  </div>
+                  <div id="right">
+                    { this.state.profileAccount===this.state.userAccount
+                        ? <p
+                            id="edit"
+                            onClick={this.handleEdit}
+                          >
+                            Edit profile
+                          </p>
+                        : this.state.isFollowing
+                            ? <p id="following">Following</p>
+                            : <p id="follow">Follow</p>
+                    }
+                  </div>
+                </div>
+                <div id="body">
+                  <p id="bio">{this.state.bio}</p>
+                  <span id="time">Joined {this.state.time}</span>
+                </div>
+                <div id="footer">
+                  <p id="following-count">
+                    <span id="count">
+                      {this.state.following}
+                    </span>
+                    <span> Following</span>
+                  </p>
+                  <p id="follower-count">
+                    <span id="count">
+                      {this.state.followers}
+                    </span>
+                    { this.state.followers===1
+                        ? <span> Follower</span>
+                        : <span> Followers</span>
+                    }
+                  </p>
+                </div>
+              </div>
+        }
         <ProfileThread
           account={this.state.account}
           userStorage={this.state.userStorage}
           memeStorage={this.state.memeStorage}
           userMemeCount={this.state.userMemeCount}
           interface={this.state.interface}
-          profileLoading={this.state.profileLoading}
           handleLoading={this.handleLoading}
           contractLoading={this.props.contractLoading}
           handleToProfile={this.handleToProfile}
           handleToThread={this.handleToThread}
           handleReply={this.handleReply}
+          handleUpvotePopup={this.handleUpvotePopup}
           profileUsername={this.state.profileUsername}
           profileAddress={this.state.profileAddress}
           profileAccount={this.state.profileAccount}
-          atBottom={this.state.atBottom}
+          atBottom={this.props.atBottom}
           ref={Ref => this.profile=Ref}
         />
       </div>

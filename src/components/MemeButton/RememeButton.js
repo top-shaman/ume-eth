@@ -2,6 +2,7 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Rememe from '../../resources/rememe.svg'
 import './RememeButton.css'
+import './RememeButtonMain.css'
 
 class RememeButton extends React.Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class RememeButton extends React.Component {
       author: this.props.author,
       parentId: this.props.parentId,
       reponses: this.props.responses,
+      isMain: this.props.isMain,
       rememeCountTotal: this.props.rememeCountTotal
     }
     this.rememe = React.createRef()
@@ -63,19 +65,35 @@ class RememeButton extends React.Component {
   }
 
   render() {
-    return(
-      <p
-        className="rememe"
-        id={'rememe-' + this.state.memeId}
-        onClick={this.handleClick}
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        ref={Ref => this.rememe=Ref}
-      >
-        <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="16px" height="16px"/>
-        <span className="rememe" id="rememe-count">{this.state.rememeCountTotal}</span>
-      </p>
-    )
+    if(!this.state.isMain) {
+      return(
+        <p
+          className="rememe"
+          id={'rememe-' + this.state.memeId}
+          onClick={this.handleClick}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          ref={Ref => this.rememe=Ref}
+        >
+          <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="16px" height="16px"/>
+          <span className="rememe" id="rememe-count">{this.state.rememeCountTotal}</span>
+        </p>
+      )
+    }
+    else {
+      return(
+        <p
+          className="rememe"
+          id={'rememe-' + this.state.memeId}
+          onClick={this.handleClick}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          ref={Ref => this.rememe=Ref}
+        >
+          <img className="rememe" src={Rememe} alt="rememe button" id="rememe" width="21px" height="21px"/>
+        </p>
+      )
+    }
   }
 }
 

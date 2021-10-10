@@ -2,13 +2,13 @@ import React from 'react'
 import ChildThread from '../Thread/ChildThread'
 import ReplyButton from '../MemeButton/ReplyButton'
 import LikeButton from '../MemeButton/LikeButton'
-import RememeButton from '../MemeButton/RememeButton'
+//import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import Loader from '../Loader/Loader'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
+import { bgColorChange } from '../../resources/Libraries/Animation'
 import "./ChildMeme.css"
 
 class ChildMeme extends React.Component {
@@ -83,21 +83,17 @@ class ChildMeme extends React.Component {
     this.handleUnpack = this.handleUnpack.bind(this)
     this.handleChildLoading = this.handleChildLoading.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
+
+    this.handleOverReply = this.handleOverReply.bind(this)
+    this.handleOverLike = this.handleOverLike.bind(this)
+    this.handleOverRememe = this.handleOverRememe.bind(this)
+    this.handleOverUpvote = this.handleOverUpvote.bind(this)
+    this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
+    this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
-    if(!this.state.alreadyRendered) {
-      //this.div.style.zIndex = 0
-      this.childParent.style.opacity = 0
-      setTimeout(() => {
-        fadeIn('div#\\3' + this.state.memeId + ' ', 600)
-        zipUp('div#\\3' + this.state.memeId + ' ',600)
-      }, 0 )
-      this.setState({ alreadyRendered: true })
-    } else if(this.state.alreadyRendered) {
-      this.div.style.opacity = 1
-    }
-
     //prevent redundant right-border if in thread
     if(this.state.inChildThread) {
       this.childParent.style.borderRight = 'none'
@@ -121,28 +117,6 @@ class ChildMeme extends React.Component {
       }
     }
 
-    /*
-    if(this.state.inChildThread && this.state.responses.length>0) {
-      this.container.style.marginTop = '0'
-    }
-    //check if no children, to formate inner border
-    if(this.state.responses.length===0 && !this.state.lastChild) {
-      this.container.style.marginTop = '0.5rem'
-      this.container.style.borderBottom = '0.05rem solid #667777'
-    } //check if has children, to properly format the top margin
-    else if(this.state.responses.length>0) {
-      this.container.style.marginTop = '0.5rem'
-    }
-    else if(!this.state.lastChild) {
-      this.container.style.marginTop = '0.5rem'
-    }
-    if(this.state.lastChild && this.state.responses.length===0 &&
-       !this.state.inChildThread) {
-      this.container.style.marginTop = '0.5rem'
-      this.div.style.borderBottom = '0.05rem solid #AAAAAA'
-    } else if(this.state.lastChild && this.state.responses.length===0) {
-      this.div.style.borderBottom = '0.05rem solid #AAAAAA'
-    */
     this.mounted = true
     await this.formatText()
     //await this.userHasLiked()
@@ -184,13 +158,18 @@ class ChildMeme extends React.Component {
   handleMemeClick(e) {
 
     e.preventDefault()
-    if(e.target.id!=='profilePic' &&
+    if(e.target!==this.pfp &&
+       e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
-       e.target!==this.reply &&
-       e.target!==this.like &&
-       e.target!==this.rememe &&
-       e.target!==this.upvote &&
-       e.target!==this.downvote) {
+       e.target.id!=='at' &&
+       e.target.className!=='reply' &&
+       e.target.className!=='LikeButton' &&
+       e.target.className!=='LikeButton-Liked' &&
+       e.target.className!=='like' &&
+       e.target.className!=='liked' &&
+       e.target.className!=='rememe' &&
+       e.target.className!=='upvote' &&
+       e.target.className!=='downvote') {
       this.props.handleToThread([
         this.state.memeId,
         this.state.username,
@@ -270,6 +249,26 @@ class ChildMeme extends React.Component {
   handleToThread(e) {
     this.props.handleToThread(e)
   }
+  handleOverReply(e) {
+    this.props.handleOverReply(e)
+  }
+  handleOverLike(e) {
+    this.props.handleOverLike(e)
+  }
+  handleOverRememe(e) {
+    this.props.handleOverRememe(e)
+  }
+  handleOverUpvote(e) {
+    this.props.handleOverUpvote(e)
+  }
+  handleOverDownvote(e) {
+    this.props.handleOverDownvote(e)
+  }
+
+  handleUpvotePopup(e) {
+    this.props.handleUpvotePopup(e)
+  }
+
 
   async formatText() {
     let text = this.props.text,
@@ -321,7 +320,7 @@ class ChildMeme extends React.Component {
   }
 
   render() {
-    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount),
+    const //rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount),
           time = this.calculateTimePassed()
     return(
       <div
@@ -382,6 +381,7 @@ class ChildMeme extends React.Component {
                   responses={this.state.responses}
                   isMain={false}
                   handleReply={this.handleReply}
+                  handleOverReply={this.handleOverReply}
                   ref={Ref=>this.reply=Ref}
                 />
                 <LikeButton
@@ -393,8 +393,10 @@ class ChildMeme extends React.Component {
                   memeStorage={this.state.memeStorage}
                   interface={this.state.interface}
                   handleLike={this.handleLike}
+                  handleOverLike={this.handleOverLike}
                   ref={Ref=>this.like=Ref}
                 />
+                {/*
                 <RememeButton
                   memeId={this.state.memeId}
                   username={this.state.username}
@@ -407,19 +409,26 @@ class ChildMeme extends React.Component {
                   reponses={this.state.responses}
                   isMain={false}
                   handleRememe={this.handleRememe}
+                  handleOverRememe={this.handleOverRememe}
                   rememeCountTotal={rememeCountTotal}
                   ref={Ref=>this.rememe=Ref}
                 />
+                */}
                 <UpvoteButton
                   memeId={this.state.memeId}
+                  account={this.state.userAccount}
                   isMain={false}
                   interface={this.state.interface}
+                  handleOverUpvote={this.handleOverUpvote}
+                  handleUpvotePopup={this.handleUpvotePopup}
                   ref={Ref=>this.upvote=Ref}
                 />
                 <DownvoteButton
                   memeId={this.state.memeId}
+                  account={this.state.userAccount}
                   isMain={false}
                   interface={this.state.interface}
+                  handleOverDownvote={this.handleOverDownvote}
                   ref={Ref=>this.downvote=Ref}
                 />
               </div>
@@ -455,6 +464,7 @@ class ChildMeme extends React.Component {
                       handleReply={this.handleReply}
                       handleToProfile={this.handleToProfile}
                       handleToThread={this.handleToThread}
+                      handleUpvotePopup={this.handleUpvotePopup}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.childThread=Ref}
                       memeId={this.state.memeId}
