@@ -57,6 +57,8 @@ div.Meme:hover {
 }
 .Meme p#meme-text {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin: 0 1.5rem 0 0.4rem;
   width: inherit;
   padding: 0;
@@ -67,48 +69,60 @@ div.Meme:hover {
   justify-content: flex-start;
   border: none;
   box-shadow: none;
-  overflow-wrap: brek-word;
   text-align: start;
   word-wrap: break-word;
   white-space: break-spaces;
   word-break: break-all;
+  overflow-wrap: break-word;
 }
 .Meme p#meme-text span {
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
   font-weight: 500;
   margin: 0;
-  width: inherit;
   word-wrap: break-word;
   white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .Meme p#meme-text span#plain {
   color: #CCDDCC;
   margin: 0;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  word-break: break-word;
   overflow-wrap: break-word;
-  width: inherit;
+  /*
+  overflow-wrap: break-word;
+  */
 }
 .Meme p#meme-text a#at,
 .Meme p#meme-text a#hash {
   margin: 0;
   color: #00CC89;
   text-decoration: none;
-  width: inherit;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .Meme p#meme-text a#at:hover,
 .Meme p#meme-text a#hash:hover {
   color: #00CC89;
   text-decoration: underline;
-  width: inherit;
+  word-wrap: break-word;
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .Meme span#address {
-  word-break: break-word;
+  word-break: break-all;
   margin: 0 0.3rem 0 0;
 }
 .Meme span#time {
-  word-break: break-word;
+  word-break: break-all;
   margin: 0 0.3rem 0 0;
 }
 .Meme a#username {
@@ -118,8 +132,8 @@ div.Meme:hover {
   color: #CCDDCC;
   font-size: 1.05rem;
   margin: 0 0.3rem 0 0;
-  word-break: break-word;
   text-decoration: none;
+  word-break: break-all;
 }
 .Meme a#username:hover {
   text-decoration: underline;

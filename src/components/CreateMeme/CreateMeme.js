@@ -16,8 +16,8 @@ class CreateMeme extends React.Component {
       creatingMeme: true,
       userStorage: this.props.userStorage,
       interface: this.props.interface,
-      memeText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
-      visibleText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
+      memeText: localStorage.getItem('memeText')!==undefined ? localStorage.getItem('memeText') : '',
+      visibleText: localStorage.getItem('memeText')!==undefined ? localStorage.getItem('memeText') : '',
       flag: '',
       parentId: emptyId,
       chainParentId: emptyId,
@@ -40,8 +40,8 @@ class CreateMeme extends React.Component {
       const buttonText = document.querySelector('.CreateMeme p#meme-button'),
             memeButton = document.querySelector('.CreateMeme p#meme-button')
       this.setState({
-        memeText: localStorage.getItem('memeText'),
-        visibleText: localStorage.getItem('memeText'),
+        memeText: this.state.memeText!=='null' || this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
+        visibleText: this.state.memeText!=='null' || this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
         validMeme: true
       })
       console.log(this.textBox.clientHeight)

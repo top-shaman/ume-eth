@@ -142,7 +142,7 @@ contract UserInterface {
       'Error: must be different user address');
     require(
       userStorage.usersByUserAddr(_ua)==address(0x0),
-      'Error: user address must be unique'
+      'Error: user address must be unique');
 
     userStorage.setUserAddress(_account, _ua);
     emit ChangedUserAddress(_account, _ua);

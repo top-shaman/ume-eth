@@ -2,7 +2,6 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Downvote from '../../resources/arrow.svg'
 import './DownvoteButton.css'
-import './DownvoteButtonMain.css'
 
 class DownvoteButton extends React.Component {
   constructor(props) {

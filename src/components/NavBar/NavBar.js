@@ -31,7 +31,7 @@ class NavBar extends Component {
   }
   handleRefreshClick(e) {
     e.preventDefault()
-    this.props.handleRefresh(e)
+    this.props.handleRefreshClick(e)
   }
   handleHomeClick(e) {
     e.preventDefault()

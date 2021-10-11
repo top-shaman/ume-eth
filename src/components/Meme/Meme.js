@@ -312,9 +312,9 @@ class Meme extends React.Component {
               likes={this.state.likes}
               userHasLiked={this.state.userHasLiked}
               isMain={false}
-              memeStorage={this.state.memeStorage}
-              userStorage={this.state.userStorage}
-              interface={this.state.interface}
+              memeStorage={this.props.memeStorage}
+              userStorage={this.props.userStorage}
+              interface={this.props.interface}
               handleLike={this.handleLike}
               handleOverLike={this.handleOverLike}
               ref={Ref=>this.like=Ref}

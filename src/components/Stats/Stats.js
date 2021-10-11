@@ -55,6 +55,7 @@ class Stats extends React.Component {
       umeBalance,
       statsLoading: false
     })
+    this.props.handleBalance(umeBalance)
   }
   async calculateLikes() {
     const memeIds = await this.state.userStorage.methods.getPosts(this.state.account).call()

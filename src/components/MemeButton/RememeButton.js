@@ -2,7 +2,6 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Rememe from '../../resources/rememe.svg'
 import './RememeButton.css'
-import './RememeButtonMain.css'
 
 class RememeButton extends React.Component {
   constructor(props) {

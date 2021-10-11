@@ -20,6 +20,7 @@ contract UME is ERC20 {
   event MemeFactorySignerChanged(address indexed from, address indexed to);
   event LikeSignerChanged(address indexed from, address indexed to);
   event FollowSignerChanged(address indexed from, address indexed to);
+  event BoostSignerChanged(address indexed from, address indexed to);
   // minting events
   event Minted(address indexed account, uint time, string flag);
 
@@ -265,7 +266,7 @@ contract UME is ERC20 {
       msg.sender==boostSigner,
       'Error: only deployer can pass boost signer role');
     boostSigner = _boost;
-    emit FollowSignerChanged(msg.sender, boostSigner);
+    emit BoostSignerChanged(msg.sender, boostSigner);
     return true;
   }
 }

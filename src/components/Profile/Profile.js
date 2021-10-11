@@ -17,7 +17,7 @@ class Profile extends React.Component {
       memeStorage: this.props.memeStorage,
       userStorage: this.props.userStorage,
       userMemeCount: this.props.userMemeCount,
-      profileLoading: false,
+      loading: false,
       infoLoading: true,
       refreshing: false
     }
@@ -27,6 +27,7 @@ class Profile extends React.Component {
     this.handleEdit = this.handleEdit.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleLoading = this.handleLoading.bind(this)
+    this.handleRefresh = this.handleRefresh.bind(this)
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
   }
@@ -45,13 +46,13 @@ class Profile extends React.Component {
 
   // handles
   handleToProfile(e) {
-    if(!this.state.profileLoading) {
-      this.setState({ profileLoading: e })
+    if(!this.state.loading) {
+      this.setState({ loading: e })
       this.props.handleToProfile(e)
     }
   }
   handleToThread(e) {
-    if(!this.state.profileLoading) {
+    if(!this.state.loading) {
       this.props.handleToThread(e)
     }
   }
@@ -67,6 +68,9 @@ class Profile extends React.Component {
   }
   handleLoading(e) {
     this.props.handleLoading(e)
+  }
+  handleRefresh(e) {
+    this.props.handleRefresh(e)
   }
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
@@ -156,6 +160,7 @@ class Profile extends React.Component {
           userMemeCount={this.state.userMemeCount}
           interface={this.state.interface}
           handleLoading={this.handleLoading}
+          handleRefresh={this.handleRefresh}
           contractLoading={this.props.contractLoading}
           handleToProfile={this.handleToProfile}
           handleToThread={this.handleToThread}

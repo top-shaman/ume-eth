@@ -9,7 +9,6 @@ class ChildThread extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      account: '',
       ume: null,
       memes: [],
       memesHTML: [],
@@ -44,10 +43,10 @@ class ChildThread extends React.Component {
       repliesToRender: 50,
       repliesNotRendered: null,
       repliesRendered: null,
-      threadLoading: false,
+      loading: false,
+      refreshing: false,
       contractLoading: this.props.contractLoading,
       loadingBottom: false,
-      refreshing: false,
       allMemesLoaded: false,
       firstLoad: true,
       sortStyle: 'boost'
@@ -55,8 +54,10 @@ class ChildThread extends React.Component {
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
-    this.handleRefresh = this.handleRefresh.bind(this)
+
     this.handleReply = this.handleReply.bind(this)
+    this.handleLike = this.handleLike.bind(this)
+
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleOverButton = this.handleOverButton.bind(this)
 
@@ -88,21 +89,20 @@ class ChildThread extends React.Component {
     this.mounted = false
   }
   handleToProfile(e) {
-    if(!this.state.threadLoading) {
+    if(!this.state.loading) {
       this.props.handleToProfile(e)
     }
   }
   handleToThread(e) {
-    if(!this.state.threadLoading) {
+    if(!this.state.loading) {
       this.props.handleToThread(e)
     }
   }
-  handleRefresh(e) {
-    e.preventDefault()
-    setTimeout(() => this.refreshMemes(), 1000)
-  }
   handleReply(e) {
     this.props.handleReply(e)
+  }
+  handleLike(e) {
+    this.props.handleLike(e)
   }
   handleOverMeme(e) {
   }
@@ -126,7 +126,8 @@ class ChildThread extends React.Component {
   async loadChildThread() {
     console.log('thread: Try Load ChildThread')
     if(this.state.firstLoad) {
-      this.setState({ threadLoading: true })
+      this.setState({ loading: true })
+      this.props.handleLoading(this.state.loading)
       console.log('load thread ' + new Date().toTimeString())
 
       // compile all meme id's
@@ -185,7 +186,7 @@ class ChildThread extends React.Component {
         this.setState({
           repliesNotRendered,
           repliesRendered,
-          threadLoading: false,
+          loading: false,
           firstLoad: false
         })
         if(repliesNotRendered===0) {
@@ -194,13 +195,14 @@ class ChildThread extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
     }
     else {
       this.setState({
-        threadLoading: false
+        loading: false
       })
+      await this.props.handleLoading(this.state.loading)
     }
   }
 
@@ -218,7 +220,7 @@ class ChildThread extends React.Component {
       // see if there are any new memes, i.e. if countDifference greater than 0
       if(countDifference>0) {
         //begin loading if conditional met
-        this.setState({ threadLoading: true })
+        this.setState({ loading: true })
         const userStorage = await this.props.userStorage,
               memeStorage = await this.props.memeStorage,
               uInterface = await this.props.interface
@@ -259,17 +261,17 @@ class ChildThread extends React.Component {
             memeIds: memeIds,
             memesNotRendered,
             memesRendered,
-            threadLoading: false
+            loading: false
           })
         }, 200)
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({
-          threadLoading: false,
+          loading: false,
         })
       }
     }
@@ -301,7 +303,7 @@ class ChildThread extends React.Component {
 
       if(memesToRender!==0) {
         this.setState({
-          threadLoading: true,
+          loading: true,
           memeCount
         })
         for(let i = 0; i < memesToRender; i++) {
@@ -325,7 +327,7 @@ class ChildThread extends React.Component {
         this.setState({
           memesNotRendered,
           memesRendered,
-          threadLoading: false,
+          loading: false,
           loadingBottom: false
         })
         if(memesNotRendered===0) {
@@ -334,11 +336,11 @@ class ChildThread extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({
-          threadLoading: false,
+          loading: false,
           loadingBottom: false
         })
       }
@@ -347,15 +349,13 @@ class ChildThread extends React.Component {
 */
   async refreshMemes() {
     console.log('thread: Try Refresh Memes')
-    if(!this.state.threadLoading && !this.state.loadingBottom && !this.state.refreshing) {
+    if(!this.state.loading && !this.state.loadingBottom && !this.state.refreshing) {
     console.log('refreshing memes ' + new Date().toTimeString())
       let loadedMemes = this.state.memes
       this.setState({
-        threadLoading: true,
         refreshing: true
       })
-      this.props.handleChildThreadLoading(true)
-      this.props.handleChildThreadRefreshing(true)
+      await this.props.handleRefreshing(false)
 
       loadedMemes.forEach(async e => {
         const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
@@ -369,7 +369,7 @@ class ChildThread extends React.Component {
         if(e.likes!==newLikers.length) {
           e.likes = newLikers.length
           e.likers = newLikers
-          e.userHasLiked = e.likers.includes(this.props.account)
+          e.userHasLiked = e.likers.includes(this.state.userAccount)
         }
         if(e.rememeCount!==newRememes.length){
           e.rememeCount = newRememes.length
@@ -388,11 +388,9 @@ class ChildThread extends React.Component {
       this.sortToStyle(this.state.sortStyle)
       await this.renderReplies(loadedMemes.length, 0, loadedMemes.length).catch(e => console.error(e))
       this.setState({
-        threadLoading: false,
         refreshing: false
       })
-      this.props.handleChildThreadLoading(false)
-      this.props.handleChildThreadRefreshing(false)
+      await this.props.handleRefreshing(false)
     }
   }
   // helper functions
@@ -427,7 +425,7 @@ class ChildThread extends React.Component {
       isVisible: await tempMeme.isVisible,
       //renderOrder: 0,
       alreadyRendered: false,
-      userHasLiked: await likers.includes(this.props.account),
+      userHasLiked: await likers.includes(this.state.userAccount),
       inChildThread: true
     }
   }
@@ -469,6 +467,7 @@ class ChildThread extends React.Component {
               handleToThread={this.handleToThread}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
+              handleLike={this.handleLike}
               handleOverMeme={this.handleOverMeme}
               handleOverButton={this.handleOverButton}
               handleOverReply={this.handleOverReply}
@@ -480,7 +479,7 @@ class ChildThread extends React.Component {
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}
-              userAccount={this.props.account}
+              userAccount={this.state.userAccount}
               userHasLiked={meme.userHasLiked}
               inChildThread={true}
               firstChild={i===memesRendered+memesInQueue-1}
@@ -532,7 +531,7 @@ class ChildThread extends React.Component {
   render() {
     return(
       <div className="ChildThread">
-        { this.state.threadLoading
+        { this.state.loading
           ? (this.state.replyCount===null) && !this.state.refreshing
             ? <div id="loader">
                 <Loader />

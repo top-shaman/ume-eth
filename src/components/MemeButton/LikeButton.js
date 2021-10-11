@@ -3,7 +3,6 @@ import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation
 import Like from '../../resources/heart.svg'
 import Liked from '../../resources/heart-filled.svg'
 import './LikeButton.css'
-import './LikeButtonMain.css'
 
 class LikeButton extends React.Component {
   constructor(props) {
@@ -38,8 +37,14 @@ class LikeButton extends React.Component {
     this.mounted = false
   }
   async handleClick(e) {
-    bobble('#' + this.like.id, 500)
-    bobble('#' + this.liked.id, 500)
+    console.log(this.state.memeId)
+    console.log(this.state.userAccount)
+    console.log(this.state.interface)
+    if(!this.state.userHasLiked) {
+      bobble('#' + this.like.id, 500)
+    } else {
+      bobble('#' + this.liked.id, 500)
+    }
     await this.likeClick()
   }
   handleMouseEnterLike(e) {
@@ -74,7 +79,7 @@ class LikeButton extends React.Component {
   async likeClick() {
     console.log('accessing account: ' + this.props.userAccount)
     console.log('memeId: ' + this.state.memeId)
-    await this.state.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
+    await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
       .then(() => {
         if(!this.state.userHasLiked) {

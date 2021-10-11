@@ -15,8 +15,8 @@ class ReplyInThread extends React.Component {
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
-      memeText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
-      visibleText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
+      memeText: localStorage.getItem('memeText')!==undefined ? localStorage.getItem('memeText') : '',
+      visibleText: localStorage.getItem('memeText')!==undefined ? localStorage.getItem('memeText') : '',
       responses: this.props.responses,
       flagText: '',
       flag: '',
@@ -43,8 +43,8 @@ class ReplyInThread extends React.Component {
       const buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
             memeButton = document.querySelector('.ReplyInThread p#reply-submit')
       this.setState({
-        memeText: localStorage.getItem('memeText'),
-        visibleText: localStorage.getItem('memeText'),
+        memeText: this.state.memeText!=='null' && this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
+        visibleText: this.state.memeText!=='null' && this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
         validMeme: true
       })
 
@@ -64,7 +64,7 @@ class ReplyInThread extends React.Component {
       this.div.style.paddingBottom = '1rem'
       this.div.style.borderBottom = '0.05rem solid #667777'
     }
-    if(this.state.memeText.length!==0) {
+    if(this.state.memeText==='') {
       this.textBox.style.marginTop = '0.3rem'
       this.body.style.height = '1.1rem'
     }

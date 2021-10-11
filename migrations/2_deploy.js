@@ -52,6 +52,7 @@ module.exports = async function(deployer) {
   await umeToken.passMemeFactorySignerRole(memeFactory.address)
   await umeToken.passLikeSignerRole(like.address)
   await umeToken.passFollowSignerRole(follow.address)
+  await umeToken.passBoostSignerRole(boost.address)
   // pass storage signer role -> factory
   await memeStorage.passFactorySigner(memeFactory.address)
   await userStorage.passMemeFactorySigner(memeFactory.address)

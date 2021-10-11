@@ -26,6 +26,7 @@ class App extends React.Component {
       uStorage: null,
       memeStorage: null,
       ume: null,
+      umeBalance: null,
       memeIdsByBoost: [],
       contractLoading: true,
       registered: false,
@@ -173,11 +174,14 @@ class App extends React.Component {
       // retrieve Blockchain data for development purposes, display to console
       const memeCount = await memeStorage.methods.memeCount().call(),
             userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length),
-            userCount = await userStorage.methods.userCount().call()
+            userCount = await userStorage.methods.userCount().call(),
+            umeBalance = await ume.methods.balanceOf(this.state.account).call().then(elem => parseInt(elem))
       this.setState({
         memeCount,
-        userMemeCount
+        userMemeCount,
+        umeBalance
       })
+
       console.log('meme count: ' + memeCount)
       console.log('user meme count: ' + userMemeCount)
       console.log('user count: ' + userCount)
@@ -214,7 +218,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        { this.state.account!==undefined
+        { this.state.account!==undefined && !this.contractLoading
           ? this.state.registered
             ? <div className="App">
                 { this.state.creatingMeme || this.state.replying || this.state.editing
@@ -261,6 +265,7 @@ class App extends React.Component {
                   ume={this.state.ume}
                   memeCount={this.state.memeCount}
                   userMemeCount={this.state.userMemeCount}
+                  umeBalance={this.state.umeBalance}
                   memeIdsByBoost={this.state.memeIdsByBoost}
                   contractLoading={this.state.contractLoading}
                   handleCreateMeme={this.handleCreateMeme}
@@ -278,6 +283,7 @@ class App extends React.Component {
               : <Enter
                   account={this.state.account}
                   hasEntered={this.handleEntered}
+                  contractLoading={this.state.contractLoading}
                 />
           : <NoWallet />
         }

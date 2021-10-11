@@ -11,7 +11,6 @@ class Thread extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      account: '',
       ume: null,
       memes: [],
       memesHTML: [],
@@ -48,10 +47,10 @@ class Thread extends React.Component {
       parentsToRender: 50,
       parentsNotRendered: null,
       parentsRendered: null,
-      threadLoading: false,
+      loading: false,
+      refreshing: false,
       contractLoading: this.props.contractLoading,
       loadingBottom: false,
-      refreshing: false,
       allMemesLoaded: false,
       firstLoad: true,
       sortStyle: 'boost'
@@ -59,9 +58,10 @@ class Thread extends React.Component {
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
-    this.handleThreadLoading = this.handleThreadLoading.bind(this)
-    this.handleChildThreadLoading = this.handleChildThreadLoading.bind(this)
+
+    this.handleLoading = this.handleLoading.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
+
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
@@ -104,19 +104,19 @@ class Thread extends React.Component {
     this.mounted = false
   }
   handleToProfile(e) {
-    if(!this.state.threadLoading) {
+    if(!this.state.loading) {
       this.props.handleToProfile(e)
     }
   }
   handleToThread(e) {
-    if(!this.state.threadLoading) {
+    if(!this.state.loading) {
       this.props.handleToThread(e)
     }
   }
   handleRefresh(e) {
-    e.preventDefault()
-    setTimeout(() => this.refreshMemes(), 1000)
+    this.props.handleRefresh(e)
   }
+
   handleReply(e) {
     console.log(e)
     this.props.handleReply(e)
@@ -128,14 +128,8 @@ class Thread extends React.Component {
   }
   handleOverButton(e) {
   }
-  handleThreadLoading(e) {
+  handleLoading(e) {
     this.props.handleLoading(e)
-  }
-  handleChildThreadLoading(e) {
-    this.setState({ threadLoading: e })
-  }
-  handleChildThreadRefreshing(e) {
-    this.setState({ threadRefreshing: e })
   }
   handleOverReply(e) {
     console.log(e)
@@ -156,7 +150,8 @@ class Thread extends React.Component {
   async loadThread() {
     console.log('thread: Try Load Thread')
     if(this.state.firstLoad) {
-      this.setState({ threadLoading: true })
+      this.setState({ loading: true })
+      await this.props.handleLoading(this.state.loading)
       console.log('load thread ' + new Date().toTimeString())
 
       // compile all meme id's
@@ -244,7 +239,7 @@ class Thread extends React.Component {
           parentsNotRendered,
           repliesRendered,
           parentsRendered,
-          threadLoading: false,
+          loading: false,
           firstLoad: false
         })
         if(repliesNotRendered===0) {
@@ -253,13 +248,14 @@ class Thread extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
     }
     else {
       this.setState({
-        threadLoading: false
+        loading: false
       })
+      await this.props.handleLoading(this.state.loading)
     }
   }
 
@@ -277,7 +273,7 @@ class Thread extends React.Component {
       // see if there are any new memes, i.e. if countDifference greater than 0
       if(countDifference>0) {
         //begin loading if conditional met
-        this.setState({ threadLoading: true })
+        this.setState({ loading: true })
         const userStorage = await this.props.userStorage,
               memeStorage = await this.props.memeStorage,
               uInterface = await this.props.interface
@@ -319,17 +315,17 @@ class Thread extends React.Component {
             memeIds: memeIds,
             memesNotRendered,
             memesRendered,
-            threadLoading: false
+            loading: false
           })
         }, 200)
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({
-          threadLoading: false,
+          loading: false,
         })
       }
     }
@@ -361,7 +357,7 @@ class Thread extends React.Component {
 
       if(memesToRender!==0) {
         this.setState({
-          threadLoading: true,
+          loading: true,
           memeCount
         })
         for(let i = 0; i < memesToRender; i++) {
@@ -385,7 +381,7 @@ class Thread extends React.Component {
         this.setState({
           memesNotRendered,
           memesRendered,
-          threadLoading: false,
+          loading: false,
           loadingBottom: false
         })
         if(memesNotRendered===0) {
@@ -394,11 +390,11 @@ class Thread extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.threadLoading)
+        await this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({
-          threadLoading: false,
+          loading: false,
           loadingBottom: false
         })
       }
@@ -407,12 +403,12 @@ class Thread extends React.Component {
   */
   async refreshMemes() {
     console.log('thread: Try Refresh Memes')
-    if(!this.state.threadLoading && !this.state.loadingBottom && !this.state.refreshing) {
+    if(!this.state.loading && !this.state.loadingBottom && !this.state.refreshing) {
     console.log('refreshing memes ' + new Date().toTimeString())
       this.setState({
-        threadLoading: true,
         refreshing: true
       })
+      await this.props.handleRefresh(this.state.refreshing)
 
       const parents = await this.updateMemes(this.state.parents),
             meme = await this.updateMeme(),
@@ -423,9 +419,9 @@ class Thread extends React.Component {
       await this.renderReplies(replies.length, 0, replies.length).catch(e => console.error(e))
     }
     this.setState({
-      threadLoading: false,
       refreshing: false
     })
+    await this.props.handleRefresh(this.state.refreshing)
   }
 
   // helper functions
@@ -458,7 +454,7 @@ class Thread extends React.Component {
       originId: await tempMeme.originId,
       author: await tempMeme.author,
       isVisible: await tempMeme.isVisible,
-      userHasLiked: await likers.includes(this.props.account),
+      userHasLiked: await likers.includes(this.state.userAccount),
     }
   }
 
@@ -513,7 +509,7 @@ class Thread extends React.Component {
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}
-              userAccount={this.props.account}
+              userAccount={this.state.userAccount}
               userHasLiked={meme.userHasLiked}
               firstParent={i===memesRendered+memesInQueue-1}
             />
@@ -566,6 +562,7 @@ class Thread extends React.Component {
               isMain={false}
               handleToProfile={this.handleToProfile}
               handleToThread={this.handleToThread}
+              handleLoading={this.handleLoading}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
               handleLike={this.handleLike}
@@ -576,13 +573,11 @@ class Thread extends React.Component {
               handleOverRememe={this.handleOverRememe}
               handleOverUpvote={this.handleOverUpvote}
               handleOverDownvote={this.handleOverDownvote}
-              handleChildThreadLoading={this.handleChildThreadLoading}
-              handleChildThreadRefreshing={this.handleChildThreadRefreshing}
               handleUpvotePopup={this.handleUpvotePopup}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}
-              userAccount={this.props.account}
+              userAccount={this.state.userAccount}
               userHasLiked={meme.userHasLiked}
               firstChild={i===memesRendered+memesInQueue-1}
               lastChild={i===0}
@@ -641,7 +636,7 @@ class Thread extends React.Component {
           interface={this.props.interface}
           memeStorage={this.props.memeStorage}
           userStorage={this.props.userStorage}
-          userAccount={this.props.account}
+          userAccount={this.state.userAccount}
           userHasLiked={meme.userHasLiked}
         />
     }
@@ -680,7 +675,7 @@ class Thread extends React.Component {
       if(e.likes!==newLikers.length) {
         e.likes = newLikers.length
         e.likers = newLikers
-        e.userHasLiked = e.likers.includes(this.props.account)
+        e.userHasLiked = e.likers.includes(this.state.userAccount)
       }
       if(e.rememeCount!==newRememes.length){
         e.rememeCount = newRememes.length
@@ -709,7 +704,7 @@ class Thread extends React.Component {
     if(loadedMeme.likes!==newLikers.length) {
       loadedMeme.likes = newLikers.length
       loadedMeme.likers = newLikers
-      loadedMeme.userHasLiked = loadedMeme.likers.includes(this.props.account)
+      loadedMeme.userHasLiked = loadedMeme.likers.includes(this.state.userAccount)
     }
     if(loadedMeme.rememeCount!==newRememes.length){
       loadedMeme.rememeCount = newRememes.length
@@ -773,7 +768,7 @@ class Thread extends React.Component {
   render() {
     return(
       <div className="Thread">
-        { this.state.threadLoading && !this.state.refreshing
+        { this.state.loading && !this.state.refreshing
           ? (this.state.replyCount===null || this.state.parentCount===null) && !this.state.refreshing
             ? <div id="loader">
                 <Loader />

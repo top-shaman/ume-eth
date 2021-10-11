@@ -1,9 +1,9 @@
-p#downvote-button {
+p.downvote {
   cursor: pointer;
 }
-p#downvote-button:hover {
+p.downvote:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
 }
-img#downvote {
+img.downvote {
   transform: rotate(180deg);
 }

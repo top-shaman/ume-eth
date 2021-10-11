@@ -2,7 +2,6 @@ import React from 'react'
 import { bobble, filterIn, filterOut } from '../../resources/Libraries/Animation'
 import Reply from '../../resources/reply.svg'
 import './ReplyButton.css'
-import './ReplyButtonMain.css'
 
 class ReplyButton extends React.Component {
   constructor(props) {
