@@ -1,5 +1,6 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import Tag from '../Tag/Tag'
 //import { fadeIn, partialFadeIn} from '../../resources/Libraries/Animation'
 import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import './ReplyInThread.css'
@@ -35,6 +36,7 @@ class ReplyInThread extends React.Component {
 
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleReplyClick = this.handleReplyClick.bind(this)
+    this.handleTag = this.handleTag.bind(this)
   }
 
   componentDidMount() {
@@ -161,6 +163,16 @@ class ReplyInThread extends React.Component {
       localStorage.setItem('memeText', '')
     }
   }
+
+  async handleTag(e) {
+    const address = await toBytes(e),
+    account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    console.log(address)
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
+  }
+
   async formatText() {
     let text = this.state.memeText,
         plainMap = await isolatePlain(text),
@@ -218,7 +230,7 @@ class ReplyInThread extends React.Component {
 
     while(hasParent) {
       if(await replyId===await parentId) hasParent = false
-      replies.push(<span value={await replyId} id="parent" key={key}>{replyAddress}</span>)
+      replies.push(<Tag key={key} address={replyAddress} handleTag={this.handleTag} />)
       this.setState({ replyChain: [...this.state.replyChain, await replyId] })
 
       replyId = parentId

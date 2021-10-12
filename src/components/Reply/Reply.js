@@ -1,6 +1,7 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import ReplyMeme from '../ReplyMeme/ReplyMeme'
+import ReplyMeme from '../Reply/ReplyMeme'
+import Tag from '../Tag/Tag'
 import { fadeIn, fadeOut, partialFadeIn, partialFadeOut, unBlur } from '../../resources/Libraries/Animation'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import './Reply.css'
@@ -26,8 +27,8 @@ class Reply extends React.Component {
       userStorage: this.props.userStorage,
       memeStorage: this.props.memeStorage,
       interface: this.props.interface,
-      memeText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
-      visibleText: localStorage.getItem('memeText')!=='null' ? localStorage.getItem('memeText') : '',
+      memeText: localStorage.getItem('memeText')!==null ? localStorage.getItem('memeText') : '',
+      visibleText: localStorage.getItem('memeText')!==null ? localStorage.getItem('memeText') : '',
       flag: '',
       validMeme: false
     }
@@ -39,6 +40,7 @@ class Reply extends React.Component {
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
   }
 
   componentDidMount() {
@@ -47,8 +49,8 @@ class Reply extends React.Component {
       const buttonText = document.querySelector('.Reply p#meme-button'),
             memeButton = document.querySelector('.Reply p#meme-button')
       this.setState({
-        memeText: localStorage.getItem('memeText'),
-        visibleText: localStorage.getItem('memeText'),
+        memeText: this.state.memeText!==null && this.state.memeText!=='null' ? '' : localStorage.getItem('memeText'),
+        visibleText: this.state.memeText!==null && this.state.memeText!=='null' ? '' : localStorage.getItem('memeText'),
         validMeme: true
       })
       memeButton.style.backgroundColor = '#00CC89'
@@ -147,6 +149,10 @@ class Reply extends React.Component {
     //console.log(this.state.parentId)
     //console.log(this.state.originId)
   }
+  async handleToProfile(e) {
+    this.handleCloseClick(e)
+    this.props.handleToProfile(e)
+  }
 
   async formatText() {
     let text = this.state.memeText,
@@ -219,6 +225,7 @@ class Reply extends React.Component {
             memeStorage={this.state.memeStorage}
             userStorage={this.state.userStorage}
             handleReply={this.handleReply}
+            handleToProfile={this.handleToProfile}
           />
           <section id="body">
             <div id="profilePic">

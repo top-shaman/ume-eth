@@ -6,8 +6,8 @@ import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import Tag from '../Tag/Tag'
-import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
-import { fadeIn, zipUp, bgColorChange } from '../../resources/Libraries/Animation'
+import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { bgColorChange } from '../../resources/Libraries/Animation'
 import "./Meme.css"
 
 class Meme extends React.Component {
@@ -184,7 +184,6 @@ class Meme extends React.Component {
     this.props.handleReply(e)
   }
   handleLike(e) {
-    console.log(e)
     this.setState({
       userHasLiked: e[1],
       likes: e[2],
@@ -250,7 +249,7 @@ class Meme extends React.Component {
   }
 
   render() {
-    const rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount),
+    const //rememeCountTotal = parseInt(this.state.rememeCount) + parseInt(this.state.quoteCount),
           time = this.calculateTimePassed()
     return(
       <div

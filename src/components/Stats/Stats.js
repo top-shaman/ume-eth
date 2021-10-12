@@ -97,7 +97,7 @@ class Stats extends React.Component {
                 <span id="data">{this.state.followers}</span>
               </p>
               <p id="balance">
-                <span id="label">UME balance: </span>
+                <span id="bold-label">UME</span><span id="label"> balance: </span>
                 <br/>
                 <span id="data">
                   <img id="logo" src={Logo} alt="logo"/>

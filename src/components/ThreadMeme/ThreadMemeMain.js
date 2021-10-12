@@ -56,6 +56,7 @@ class ThreadMemeMain extends React.Component {
     this.handleButtonMouseOver = this.handleButtonMouseOver.bind(this)
     this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
     this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
@@ -113,8 +114,10 @@ class ThreadMemeMain extends React.Component {
     localStorage.setItem('focusPage', 'profile')
     localStorage.setItem('userInfo', this.state.author)
   }
+  handleToProfile(e) {
+    this.props.handleToProfile(e)
+  }
   handleMemeClick(e) {
-    console.log(e.target)
     e.preventDefault()
     if(e.target!==this.pfp &&
        e.target.id!=='profile-pic' &&
@@ -152,7 +155,6 @@ class ThreadMemeMain extends React.Component {
     }
   }
   handleReplyThread(e) {
-    console.log(e)
   }
 
   handleOverMeme(e) {
@@ -165,7 +167,6 @@ class ThreadMemeMain extends React.Component {
     this.props.handleReply(e)
   }
   handleLike(e) {
-    console.log(e)
     this.setState({
       userHasLiked: e[1],
       likes: e[2],
@@ -346,6 +347,7 @@ class ThreadMemeMain extends React.Component {
           repostId={this.state.repostId}
           handleExitReply={this.handleExitReply}
           handleReplyThread={this.handleReplyThread}
+          handleToProfile={this.handleToProfile}
           userStorage={this.state.userStorage}
           memeStorage={this.state.memeStorage}
           interface={this.state.interface}

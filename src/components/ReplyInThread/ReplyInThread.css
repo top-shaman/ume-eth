@@ -28,8 +28,6 @@ div.ReplyInThread#ReplyInThread {
   align-items: flex-end;
 }
 
-.ReplyInThread section#reply-header {
-}
 .ReplyInThread div#reply-container div#reply-body {
   display: flex;
   flex-direction: row;
@@ -126,6 +124,8 @@ div.ReplyInThread#ReplyInThread {
 .ReplyInThread textarea#reply-text::placeholder {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
+  width: 80%;
+  white-space: pre-wrap;
 }
 
 .ReplyInThread div#reply-button-box {
@@ -157,18 +157,42 @@ div.ReplyInThread#ReplyInThread {
   font-weight: 700;
   margin: 0 auto 0 3.5rem;
 }
-.ReplyInThread p#replying {
+.ReplyInThread section#reply-header {
+  position: relative;
   text-align: left;
-  margin: auto auto 0 0;
+  width: inherit;
+
+}
+.ReplyInThread p#replying {
+  width: inherit;
+  text-align: left;
+  margin: 0;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 .ReplyInThread p span#replying{
-  height: auto;
   margin: 0;
+  word-break: break-word;
+}
+.ReplyInThread p#replying a#at,
+.ReplyInThread p#replying a#hash {
+   display: inline;
+   margin: 0;
+   color: #00CC89;
+   text-decoration: none;
+   line-break: anywhere;
+}
+.ReplyInThread p#replying a#at:hover,
+.ReplyInThread p#replying a#hash:hover {
+   color: #00CC89;
+   text-decoration: underline;
 }
 .ReplyInThread p span#parent {
   height: auto;
   color: #00CC89;
   margin: 0;
+  word-break: break-word;
 }
 .ReplyInThread p span#parent:hover {
   cursor: pointer;

@@ -36,6 +36,8 @@ class App extends React.Component {
       editing: false
     }
 
+    this.main = React.createRef()
+
     this.handleEntered = this.handleEntered.bind(this)
 
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
@@ -43,6 +45,7 @@ class App extends React.Component {
 
     this.handleReply = this.handleReply.bind(this)
     this.handleExitReply = this.handleExitReply.bind(this)
+    this.handleToProfile = this.handleToProfile.bind(this)
 
     this.handleEdit = this.handleEdit.bind(this)
     this.handleExitEdit = this.handleExitEdit.bind(this)
@@ -90,6 +93,9 @@ class App extends React.Component {
   }
   handleExitReply(replying) {
     this.setState({ replying })
+  }
+  handleToProfile(e) {
+    this.main.handleToProfile(e)
   }
 
   handleEdit(editing) {
@@ -240,6 +246,7 @@ class App extends React.Component {
                           parentId={this.state.replying[5]}
                           originId={this.state.replying[6]}
                           handleExitReply={this.handleExitReply}
+                          handleToProfile={this.handleToProfile}
                           userStorage={this.state.userStorage}
                           memeStorage={this.state.memeStorage}
                           interface={this.state.interface}
@@ -272,6 +279,7 @@ class App extends React.Component {
                   handleReply={this.handleReply}
                   handleEdit={this.handleEdit}
                   handleProfileChange={this.handleProfileChange}
+                  ref={Ref=>this.main=Ref}
                 />
               </div>
             : this.state.entered

@@ -9,7 +9,7 @@ import UpvotePopup from '../Popups/UpvotePopup'
 import Loader from '../Loader/Loader'
 import { blur, blurToFadeIn } from '../../resources/Libraries/Animation'
 import './Main.css'
-import { fromBytes, is32Bytes } from '../../resources/Libraries/Helpers'
+import { fromBytes } from '../../resources/Libraries/Helpers'
 
 class Main extends React.Component {
   constructor(props) {
@@ -73,7 +73,6 @@ class Main extends React.Component {
 
   // lifecycles
   async componentDidMount() {
-    console.log(this.state.umeBalance)
     // if previously loaded, no blur entrance
     if(localStorage.getItem('hasLoaded')!=='true') {
       //blurToFadeIn('.Main #subheader', 2000)
@@ -219,8 +218,6 @@ class Main extends React.Component {
   }
   async handleToTimeline(e) {
     e.preventDefault()
-    console.log(localStorage.getItem('focusPage'))
-    console.log(localStorage.getItem('timelineSort'))
     console.log('coming from: ' + this.state.focusPage)
     console.log('timeline loading: ' + this.state.timelineLoading)
     this.clearPopups()

@@ -154,7 +154,7 @@ class Profile extends React.Component {
               </div>
         }
         <ProfileThread
-          account={this.state.account}
+          account={this.state.userAccount}
           userStorage={this.state.userStorage}
           memeStorage={this.state.memeStorage}
           userMemeCount={this.state.userMemeCount}

@@ -442,7 +442,7 @@ class ProfileThread extends React.Component {
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}
-              userAccount={this.props.account}
+              userAccount={this.state.userAccount}
               userHasLiked={meme.userHasLiked}
             />
           )

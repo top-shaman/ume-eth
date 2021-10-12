@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import Tag from '../Tag/Tag'
+import { toBytes, fromBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import "./ReplyMeme.css"
 
 class ReplyMeme extends Component {
@@ -23,6 +24,7 @@ class ReplyMeme extends Component {
       userHasLiked: this.props.userHasLiked
     }
     this.div = React.createRef()
+    this.handleTag = this.handleTag.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -33,6 +35,15 @@ class ReplyMeme extends Component {
   async componentWillUnmount() {
     this.mounted = false
   }
+
+  async handleTag(e) {
+    const address = await toBytes(e),
+    account = await this.state.userStorage.methods.usersByUserAddr(address).call(    )
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
+  }
+
   async formatText() {
     let text = this.props.text,
         plainMap = await isolatePlain(text),
@@ -67,7 +78,7 @@ class ReplyMeme extends Component {
 
     while(hasParent) {
       if(await replyId===await parentId) hasParent = false
-      replies.push(<span value={await replyId} id="parent" key={key}>{replyAddress}</span>)
+      replies.push(<Tag address={replyAddress} key={key} handleTag={this.handleTag}/>)
       this.setState({ replyChain: [...this.state.replyChain, await replyId] })
 
       replyId = parentId

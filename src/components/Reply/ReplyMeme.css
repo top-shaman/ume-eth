@@ -6,9 +6,9 @@ div.ReplyMeme {
 }
 .ReplyMeme div#meme-body {
   display: flex;
-  width: inherit;
+  width: 100%;
   flex-direction: column;
-  overflow-wrap: break-word;
+  text-align: left;
 }
 .ReplyMeme div#meme-header {
   display: flex;
@@ -26,9 +26,15 @@ div.ReplyMeme {
 .ReplyMeme img#profile-pic {
 }
 
+.ReplyMeme div#text-box {
+  display: inline;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
 .ReplyMeme p#meme-text {
-  display: flex;
   margin: 0 1.2rem 0 0rem;
+  width: inherit;
   padding: 0;
   font-family: 'Avenir', sans-serif;
   font-size: 1rem;
@@ -38,30 +44,25 @@ div.ReplyMeme {
   justify-content: flex-start;
   border: none;
   box-shadow: none;
-  text-align: start;
-  word-wrap: break-word;
-  white-space: break-spaces;
-  word-break: break-all;
 }
 .ReplyMeme p#meme-text span {
+  display: inline;
   font-family: 'Arial', sans-serif;
   font-size: 1rem;
   letter-spacing: 0.01rem;
   font-weight: 500;
   margin: 0;
-  word-wrap: break-word;
-  white-space: break-spaces;
+  text-align: left;
 }
 
 .ReplyMeme p#meme-text span#plain {
   color: #CCDDCC;
   margin: 0;
-  overflow-wrap: break-word;
-  word-wrap: break-spaces;
-  width: inherit;
+  word-break: break-word;
 }
 .ReplyMeme p#meme-text a#at,
 .ReplyMeme p#meme-text a#hash {
+  display: inline;
   margin: 0;
   color: #00CC89;
   text-decoration: none;
@@ -112,6 +113,22 @@ div.ReplyMeme {
   height: auto;
   margin: 0;
 }
+
+.ReplyMeme p#replying a#at,
+.ReplyMeme p#replying a#hash {
+  font-size: 0.8rem;
+  display: inline;
+  margin: 0;
+  color: #00CC89;
+  text-decoration: none;
+  line-break: anywhere;
+}
+.ReplyMeme p#replying a#at:hover,
+.ReplyMeme p#replying a#hash:hover {
+  color: #00CC89;
+  text-decoration: underline;
+}
+
 .ReplyMeme p span#parent {
   height: auto;
   color: #00CC89;

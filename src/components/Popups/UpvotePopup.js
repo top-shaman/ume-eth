@@ -1,7 +1,5 @@
 import React from 'react'
 import './UpvotePopup.css'
-import Plus from '../../resources/+.svg'
-import Minus from '../../resources/-.svg'
 
 class UpvotePopup extends React.Component {
   constructor(props) {

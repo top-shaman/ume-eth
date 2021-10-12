@@ -96,7 +96,6 @@ class Timeline extends React.Component {
   }
 
   handleOverReply(e) {
-    console.log(e)
   }
   handleOverLike(e) {
   }
@@ -241,10 +240,10 @@ class Timeline extends React.Component {
         if(memesNotRendered===0) {
           this.setState({ allMemesLoaded: true })
         }
-        console.log('load new memes')
-        console.log('total memes: ' + memeCount)
-        console.log('memes rendered: ' + memesRendered)
-        console.log('memes not yet rendered: ' + memesNotRendered)
+        //console.log('load new memes')
+        //console.log('total memes: ' + memeCount)
+        //console.log('memes rendered: ' + memesRendered)
+        //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
       }
       else {
@@ -466,7 +465,6 @@ class Timeline extends React.Component {
         }
       }
     }
-    console.log(tempMemesHTML)
     this.setState({
       memesHTML: tempMemesHTML,
       memes: tempMemes
