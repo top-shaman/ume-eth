@@ -1,6 +1,7 @@
 div.Main {
+  position: relative;
   text-align: center;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   max-width: 64rem;
   width: 100%;
@@ -17,7 +18,6 @@ div.Main {
   border-right: 0.05rem solid #AAAAAA;
 }
 .Main div#side-footer {
-  height: 100%;
   border-left: 0.05rem solid #AAAAAA;
 }
 .Main div#link {
@@ -28,11 +28,12 @@ div#body.Main {
   position: relative;
   flex-direction: column;
   color: lightgrey;
-  overflow: auto;
   max-width: 38rem;
+  height: auto;
 }
 
 .Main div#subheader {
+  position: fixed;
   display: inline-flex;
   justify-content: space-between;
   flex-wrap: wrap;

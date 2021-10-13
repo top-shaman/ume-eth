@@ -1,7 +1,15 @@
+div#stats-container {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  border-left: 0.05rem;
+  width: 13rem;
+}
 div#stats {
-  margin: 0.8rem;
-  padding-top: 1rem;
   width: 11.4rem;
+  margin: 0.8rem;
   transition: background-color 1s ease-in-out;
   border-radius: 1.5rem;
 }
@@ -41,6 +49,7 @@ div#stats a,
 div#stats a:hover,
 div#stats a:visited {
   color: #CCDDDD;
+  padding-top: 1rem;
   word-break: all;
   text-decoration: none;
 }

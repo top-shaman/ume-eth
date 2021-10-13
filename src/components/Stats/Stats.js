@@ -68,45 +68,48 @@ class Stats extends React.Component {
 
   render() {
     return(
-      this.state.statsLoading
-        ? <div id="loader"><Loader/></div>
-        : <div id="stats">
-            <div id="header">
-              <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
-                <ProfilePic account={this.state.account} />
-              </a>
-              <p id="info">
+      <div id="stats-container">
+      { this.state.statsLoading
+          ? <div id="loader"><Loader/></div>
+          : <div id="stats">
+              <div id="header">
                 <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
-                  <span id="username">{this.state.username}</span>
+                  <ProfilePic account={this.state.account} />
                 </a>
-                <br/>
-                <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
-                  <span id="address">{this.state.address}</span>
-                </a>
-              </p>
-            </div>
-            <div id="body">
-              <p id="stats">
-                <span id="label">Memes: </span>
-                <span id="data">{this.state.memes}</span>
-                <br/>
-                <span id="label">Likes: </span>
-                <span id="data">{this.state.totalLikes}</span>
-                <br/>
-                <span id="label">Followers: </span>
-                <span id="data">{this.state.followers}</span>
-              </p>
-              <p id="balance">
-                <span id="bold-label">UME</span><span id="label"> balance: </span>
-                <br/>
-                <span id="data">
-                  <img id="logo" src={Logo} alt="logo"/>
-                  {this.state.umeBalance}
-                </span>
-              </p>
+                <p id="info">
+                  <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
+                    <span id="username">{this.state.username}</span>
+                  </a>
+                  <br/>
+                  <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
+                    <span id="address">{this.state.address}</span>
+                  </a>
+                </p>
+              </div>
+              <div id="body">
+                <p id="stats">
+                  <span id="label">Memes: </span>
+                  <span id="data">{this.state.memes}</span>
+                  <br/>
+                  <span id="label">Likes: </span>
+                  <span id="data">{this.state.totalLikes}</span>
+                  <br/>
+                  <span id="label">Followers: </span>
+                  <span id="data">{this.state.followers}</span>
+                </p>
+                <p id="balance">
+                  <span id="bold-label">UME</span><span id="label"> balance: </span>
+                  <br/>
+                  <span id="data">
+                    <img id="logo" src={Logo} alt="logo"/>
+                    {this.state.umeBalance}
+                  </span>
+                </p>
 
+              </div>
             </div>
-          </div>
+        }
+      </div>
     )
   }
 
