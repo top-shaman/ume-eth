@@ -43,7 +43,9 @@ class ProfileThread extends React.Component {
     this.handleOverRememe = this.handleOverRememe.bind(this)
     this.handleOverUpvote = this.handleOverUpvote.bind(this)
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
 
   }
 
@@ -79,6 +81,7 @@ class ProfileThread extends React.Component {
 
   // handles
   handleToProfile(e) {
+    console.log(e)
     if(!this.state.loading) {
       this.props.handleToProfile(e)
     }
@@ -107,6 +110,9 @@ class ProfileThread extends React.Component {
   }
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
+  }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
   }
 
   async loadProfile() {
@@ -439,6 +445,7 @@ class ProfileThread extends React.Component {
               handleOverUpvote={this.handleOverUpvote}
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
+              handleDownvotePopup={this.handleDownvotePopup}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}

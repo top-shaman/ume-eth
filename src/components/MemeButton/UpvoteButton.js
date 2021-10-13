@@ -10,8 +10,7 @@ class UpvoteButton extends React.Component {
     this.state = {
       memeId: this.props.memeId,
       account: this.props.account,
-      isMain: this.props.isMain,
-      interface: this.props.interface
+      isMain: this.props.isMain
     }
     this.upvote = React.createRef()
 
@@ -24,7 +23,6 @@ class UpvoteButton extends React.Component {
   async handleClick(e) {
     bobble('#' + this.upvote.id, 500)
     this.props.handleUpvotePopup([e, this.state.memeId])
-    await this.upvoteClick()
   }
   handleMouseEnter(e) {
     e.preventDefault()
@@ -50,8 +48,6 @@ class UpvoteButton extends React.Component {
       filterOut(elementName, brightnessStart, brightnessEnd, hue, 200)
     }
     this.props.handleOverUpvote(this.upvote.style.filter)
-  }
-  upvoteClick() {
   }
 
   render() {

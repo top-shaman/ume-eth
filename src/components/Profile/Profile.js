@@ -26,10 +26,14 @@ class Profile extends React.Component {
     this.handleToThread = this.handleToThread.bind(this)
     this.handleEdit = this.handleEdit.bind(this)
     this.handleReply = this.handleReply.bind(this)
+    this.handleFollow = this.handleFollow.bind(this)
+
     this.handleLoading = this.handleLoading.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+
   }
   // lifecycles
   async componentDidMount() {
@@ -66,6 +70,10 @@ class Profile extends React.Component {
   handleReply(e) {
     this.props.handleReply(e)
   }
+  async handleFollow(e) {
+    e.preventDefault()
+    await this.state.interface.methods.followUser(this.state.userAccount, this.state.profileAccount).send({from: this.state.userAccount}).then(() => this.compileProfile())
+  }
   handleLoading(e) {
     this.props.handleLoading(e)
   }
@@ -74,6 +82,9 @@ class Profile extends React.Component {
   }
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
+  }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
   }
 
   async compileProfile() {
@@ -124,9 +135,19 @@ class Profile extends React.Component {
                           >
                             Edit profile
                           </p>
-                        : this.state.isFollowing
-                            ? <p id="following">Following</p>
-                            : <p id="follow">Follow</p>
+                        : this.state.isFollower
+                            ? <
+                                p id="following"
+                                onClick={this.handleFollow}
+                              >
+                                Following
+                              </p>
+                            : <
+                                p id="follow"
+                                onClick={this.handleFollow}
+                              >
+                                Follow
+                              </p>
                     }
                   </div>
                 </div>
@@ -145,7 +166,7 @@ class Profile extends React.Component {
                     <span id="count">
                       {this.state.followers}
                     </span>
-                    { this.state.followers===1
+                    { this.state.followers==='1'
                         ? <span> Follower</span>
                         : <span> Followers</span>
                     }
@@ -166,6 +187,7 @@ class Profile extends React.Component {
           handleToThread={this.handleToThread}
           handleReply={this.handleReply}
           handleUpvotePopup={this.handleUpvotePopup}
+          handleDownvotePopup={this.handleDownvotePopup}
           profileUsername={this.state.profileUsername}
           profileAddress={this.state.profileAddress}
           profileAccount={this.state.profileAccount}

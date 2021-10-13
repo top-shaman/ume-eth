@@ -51,8 +51,9 @@ div#body.Main {
   border: none;
 }
 .Main div#subheader section#title {
+  display: flex;
   justify-content: center;
-  margin: 0 1rem 0 1rem;
+  margin: 0 1rem 0 0;
   border: none;
   font-family: 'MuseoModerno', sans-sarif;
   font-size: 2.15rem;
@@ -62,19 +63,20 @@ div#body.Main {
   justify-content: right;
   flex-direction: row-reverse;
 }
+.Main div#subheader p#subheader {
+  margin: 0.5rem;
+}
 
-p {
+.Main p {
   font-family: 'Quicksand', sans-serif;
   color: #00CC89;
 }
-small {
+.Main small {
   justify-content: center;
   margin: 0 auto;
 }
 .Main div#subheader p {
-
   display: flex;
-
   align-items: center;
   justify-content: center;
   font-family: 'MuseoModerno', sans-serif;
@@ -119,14 +121,37 @@ small {
   animation-duration: 0.2s;
   animation-timing-function: ease-in-out;
 }
+.Main div#subheader img {
+  width: 2rem;
+  height: 2rem;
+  padding: 0.6rem;
+  border-radius: 50%;
+  margin: auto 0.1rem auto 0.5rem;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.Main div#subheader img:hover {
+  background-color: #1D1F22;
+  transition: background-color 0.3s ease-in-out;
+  animation-name: swell1;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
+.Main div#subheader img:active {
+  animation-name: swell2;
+  animation-duration: 0.33s;
+  animation-timing-function: ease-in-out;
+}
 
 /* Profile-specific subheader */
 .Main div#subheader p#profile-subheader {
   display: flex;
   flex-direction: column;
   text-align: left;
+  padding: 0.7rem;
   font-family: 'Quicksand', sans-serif;
-  margin-bottom: 0.8rem;
+  margin: 0.4rem 0;
 }
 .Main div#subheader p#profile-subheader span {
   margin: 0 auto 0 0;
@@ -149,10 +174,10 @@ small {
     transform: scale(1);
   }
   33% {
-    transform: scale(0.96);
+    transform: scale(0.98);
   }
   66% {
-    transform: scale(1.02);
+    transform: scale(1.01);
     filter: blur(0.5px);
   }
   to {
@@ -165,7 +190,7 @@ small {
     transform: scale(1);
   }
   33% {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
   66% {
     transform: scale(1.03);

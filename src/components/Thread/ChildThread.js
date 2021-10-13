@@ -13,11 +13,13 @@ class ChildThread extends React.Component {
       memes: [],
       memesHTML: [],
       memeId: this.props.memeId,
+      parentId: this.props.parentId,
+      responses: this.props.responses,
+      /*
       memeUsername: this.props.memeUsername,
       memeAddress: this.props.memeAddress,
       text: this.props.text,
       time: this.props.time,
-      responses: this.props.responses,
       likes: this.props.likes,
       likers: this.props.likers,
       rememeCount: this.props.rememeCount,
@@ -25,19 +27,19 @@ class ChildThread extends React.Component {
       quoteCount: this.props.quoteCount,
       quoteMemes: this.props.quoteMemes,
       repostId: this.props.repostId,
-      parentId: this.props.parentId,
       chainParentId: this.props.chainParentId,
       originId: this.props.originId,
       author: this.props.author,
       isVisible: this.props.isVisible,
       visibleText: this.props.visibleText,
+      */
       userHasLiked: this.props.userHasLiked,
       inChildThread: this.props.inChildThread,
       unpacked: this.props.unpacked,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
       userStorage: this.props.userStorage,
-      userAccount: this.props.account,
+      userAccount: this.props.userAccount,
       focusPage: 'thread',
       replyCount: null,
       repliesToRender: 50,
@@ -66,7 +68,9 @@ class ChildThread extends React.Component {
     this.handleOverRememe = this.handleOverRememe.bind(this)
     this.handleOverUpvote = this.handleOverUpvote.bind(this)
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   async componentDidMount() {
     clearInterval(this.intervalChildThread)
@@ -120,6 +124,9 @@ class ChildThread extends React.Component {
   }
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
+  }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
   }
 
   // to be invoked upon page load
@@ -206,147 +213,6 @@ class ChildThread extends React.Component {
     }
   }
 
-  // ChildThread by Time sort
-/*
-  //loads new memes above rendered section
-  async loadNewMemes() {
-    console.log('thread: Try Loading New Memes')
-    if(!this.state.firstLoad && !this.state.loadingBottom && !this.state.refreshing) {
-      console.log('loading new memes' + new Date().toTimeString())
-      // compile all memes, including new memes
-      const memeIds = await this.compileMemesByTime(),
-            memeCount = await memeIds.length,
-            countDifference =  await memeCount - this.state.memeCount
-      // see if there are any new memes, i.e. if countDifference greater than 0
-      if(countDifference>0) {
-        //begin loading if conditional met
-        this.setState({ loading: true })
-        const userStorage = await this.props.userStorage,
-              memeStorage = await this.props.memeStorage,
-              uInterface = await this.props.interface
-        let memesToRender = await this.state.memesToRender,
-            memesNotRendered = await this.state.memesNotRendered,
-            memesRendered = await this.state.memesRendered,
-            memesInQueue = 0,
-            newMemes = []
-
-        memesNotRendered += countDifference
-        this.setState({
-          memeCount,
-          memeIds
-        })
-        // populate new memes
-        for(let i = 0; i < countDifference; i++) {
-          const memeId = memeIds[memeCount - countDifference + i]
-          //console.log('meme Id: ' + memeId)
-          const meme = await this.populateMeme(memeId, memeStorage, userStorage)
-          newMemes.push(meme)
-          memesInQueue++
-        }
-        // update state with new memes & replace current memesHTML with old memesHTML, while new HTML loads
-        this.setState({ memes: this.state.memes.concat(newMemes) })
-        if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
-
-        this.setState({
-          memesHTML: this.state.oldMemesHTML
-        })
-        // render new HTML
-        await this.renderParents(memesInQueue).catch(e => console.error(e))
-        // update queue values
-        memesRendered += memesInQueue
-        memesNotRendered -= memesInQueue
-        //delay so animation can come in before refresh triggers
-        setTimeout(() => {
-          this.setState({
-            memeIds: memeIds,
-            memesNotRendered,
-            memesRendered,
-            loading: false
-          })
-        }, 200)
-        //console.log('total memes: ' + memeCount)
-        //console.log('memes rendered: ' + memesRendered)
-        //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.loading)
-      }
-      else {
-        this.setState({
-          loading: false,
-        })
-      }
-    }
-  }
-  // loads old memes below thread section
-  async loadOldMemes() {
-    console.log('thread: Try Load Old Memes')
-    if(!this.state.firstLoad && this.props.atBottom && !this.state.loadingBottom && !this.state.refreshing) {
-      this.setState({ loadingBottom: true })
-      console.log('load old memes ' + new Date().toTimeString())
-      const userStorage = await this.props.userStorage,
-            memeStorage = await this.props.memeStorage,
-            uInterface = await this.props.interface,
-            memeIds = await this.state.memeIds,
-            memeCount = await memeIds.length,
-            newMemes = []
-      let memesToRender = await this.state.memesToRender,
-          memesNotRendered = await this.state.memesNotRendered,
-          memesRendered = await this.state.memesRendered,
-          memesInQueue = 0
-
-      // set memes to render to safe value
-      if(memesNotRendered-memesToRender <= 0) {
-        memesToRender = memesNotRendered
-      }
-      //console.log('memes rendered: ' + memesRendered)
-      //console.log('old memes to render: ' + memesToRender)
-      //console.log('old memes not yet rendered: ' + memesNotRendered)
-
-      if(memesToRender!==0) {
-        this.setState({
-          loading: true,
-          memeCount
-        })
-        for(let i = 0; i < memesToRender; i++) {
-          const memeId = memeIds[memesNotRendered-memesToRender + i],
-
-                meme = await this.populateMeme(memeId, memeStorage, userStorage)
-          newMemes.push(meme)
-          memesInQueue++
-        }
-
-        this.setState({ memes: newMemes.concat(this.state.memes) })
-        if(this.state.sortStyle!=='time') this.sortToStyle(this.state.sortStyle)
-
-        // sorting functionality
-        this.setState({
-          memesHTML: this.state.oldMemesHTML
-        })
-        await this.renderParents(memesInQueue).catch(e => console.error(e))
-        memesRendered += memesInQueue
-        memesNotRendered -= memesInQueue
-        this.setState({
-          memesNotRendered,
-          memesRendered,
-          loading: false,
-          loadingBottom: false
-        })
-        if(memesNotRendered===0) {
-          this.setState({ allMemesLoaded: true })
-        }
-        //console.log('total memes: ' + memeCount)
-        //console.log('memes rendered: ' + memesRendered)
-        //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.loading)
-      }
-      else {
-        this.setState({
-          loading: false,
-          loadingBottom: false
-        })
-      }
-    }
-  }
-*/
   async refreshMemes() {
     console.log('thread: Try Refresh Memes')
     if(!this.state.loading && !this.state.loadingBottom && !this.state.refreshing) {
@@ -476,6 +342,7 @@ class ChildThread extends React.Component {
               handleOverUpvote={this.handleOverUpvote}
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
+              handleDownvotePopup={this.handleDownvotePopup}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}

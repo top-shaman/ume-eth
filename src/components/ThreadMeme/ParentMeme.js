@@ -4,6 +4,7 @@ import LikeButton from '../MemeButton/LikeButton'
 //import RememeButton from '../MemeButton/RememeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
+import Tag from '../Tag/Tag'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { bgColorChange } from '../../resources/Libraries/Animation'
@@ -35,11 +36,10 @@ class ParentMeme extends React.Component {
       isVisible: this.props.isVisible,
       isMain: this.props.isMain,
       visibleText: this.props.text,
-      renderOrder: this.props.renderOrder,
-      //alreadyRendered: this.props.alreadyRendered,
       mouseOver: this.props.mouseOver,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
+      userStorage: this.props.userStorage,
       userAccount: this.props.userAccount,
       userHasLiked: this.props.userHasLiked,
       firstParent: this.props.firstParent
@@ -70,24 +70,14 @@ class ParentMeme extends React.Component {
     this.handleOverRememe = this.handleOverRememe.bind(this)
     this.handleOverUpvote = this.handleOverUpvote.bind(this)
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
-//    if(!this.state.alreadyRendered) {
-//      //this.div.style.zIndex = 0
-//      this.div.style.opacity = 0
-//      setTimeout(() => {
-//        fadeIn('div#\\3' + this.state.memeId + ' ', 600)
-//        zipUp('div#\\3' + this.state.memeId + ' ',600)
-//      }, 0 )
-//      this.setState({ alreadyRendered: true })
-//    } else if(this.state.alreadyRendered) {
-//      this.div.style.opacity = 1
-//    }
     this.mounted = true
     await this.formatText()
-    //await this.userHasLiked()
     if(!this.state.firstParent && this.pfp) {
       this.pfp.style.marginTop = '0';
     }
@@ -133,27 +123,7 @@ class ParentMeme extends React.Component {
        e.target.className!=='rememe' &&
        e.target.className!=='upvote' &&
        e.target.className!=='downvote') {
-      this.props.handleToThread([
-        this.state.memeId,
-        this.state.username,
-        this.state.address,
-        this.state.text,
-        this.state.time,
-        this.state.responses,
-        this.state.likes,
-        this.state.likers,
-        this.state.rememeCount,
-        this.state.rememes,
-        this.state.quoteCount,
-        this.state.quoteMemes,
-        this.state.repostId,
-        this.state.parentId,
-        this.state.originId,
-        this.state.author,
-        this.state.isVisible,
-        this.state.visibleText,
-        this.state.userHasLiked
-      ])
+      this.props.handleToThread(this.state.memeId)
     }
   }
 
@@ -207,6 +177,9 @@ class ParentMeme extends React.Component {
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
   }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
+  }
 
   async formatText() {
     let text = this.props.text,
@@ -223,7 +196,7 @@ class ParentMeme extends React.Component {
         if(elem[2]==='plain')
           formatted.push(<span key={i} id="plain">{elem[1]}</span>)
         else if(elem[2]==='at')
-          formatted.push(<a key={i} href={`/${elem[1].slice(1)}`} id="at">{elem[1]}</a>)
+          formatted.push(<Tag key={i} address={elem[1]} handleTag={this.handleTag}/>)
         else if(elem[2]==='hash')
           formatted.push(<a key={i} href={`/${elem[1]}`} id="hash">{elem[1]}</a>)
         i++
@@ -362,6 +335,7 @@ class ParentMeme extends React.Component {
               isMain={false}
               interface={this.state.interface}
               handleOverDownvote={this.handleOverDownvote}
+              handleDownvotePopup={this.handleDownvotePopup}
               ref={Ref=>this.downvote=Ref}
             />
           </div>

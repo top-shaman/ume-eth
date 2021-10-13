@@ -6,6 +6,7 @@ import LikeButton from '../MemeButton/LikeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import Tag from '../Tag/Tag'
 import Loader from '../Loader/Loader'
 import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { bgColorChange } from '../../resources/Libraries/Animation'
@@ -36,8 +37,6 @@ class ChildMeme extends React.Component {
       author: this.props.author,
       isVisible: this.props.isVisible,
       visibleText: this.props.text,
-      renderOrder: this.props.renderOrder,
-      alreadyRendered: this.props.alreadyRendered,
       mouseOver: this.props.mouseOver,
       interface: this.props.interface,
       memeStorage: this.props.memeStorage,
@@ -91,6 +90,7 @@ class ChildMeme extends React.Component {
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -137,13 +137,9 @@ class ChildMeme extends React.Component {
   }
   handleProfileClick(e) {
     e.preventDefault()
-    this.props.handleToProfile([
-      this.state.username,
-      this.state.address,
-      this.state.author
-    ])
+    this.props.handleToProfile(this.state.author)
     localStorage.setItem('focusPage', 'profile')
-    localStorage.setItem('userInfo', this.state.username + ',' + this.state.address + ',' + this.state.author)
+    localStorage.setItem('userInfo', this.state.author)
   }
   handleToProfile(e) {
     this.props.handleToProfile(e)
@@ -170,27 +166,7 @@ class ChildMeme extends React.Component {
        e.target.className!=='rememe' &&
        e.target.className!=='upvote' &&
        e.target.className!=='downvote') {
-      this.props.handleToThread([
-        this.state.memeId,
-        this.state.username,
-        this.state.address,
-        this.state.text,
-        this.state.time,
-        this.state.responses,
-        this.state.likes,
-        this.state.likers,
-        this.state.rememeCount,
-        this.state.rememes,
-        this.state.quoteCount,
-        this.state.quoteMemes,
-        this.state.repostId,
-        this.state.parentId,
-        this.state.originId,
-        this.state.author,
-        this.state.isVisible,
-        this.state.visibleText,
-        this.state.userHasLiked
-      ])
+      this.props.handleToThread(this.state.memeId)
     }
   }
 
@@ -268,6 +244,9 @@ class ChildMeme extends React.Component {
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
   }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
+  }
 
 
   async formatText() {
@@ -285,7 +264,7 @@ class ChildMeme extends React.Component {
         if(elem[2]==='plain')
           formatted.push(<span key={i} id="plain">{elem[1]}</span>)
         else if(elem[2]==='at')
-          formatted.push(<a key={i} href={`/${elem[1].slice(1)}`} id="at">{elem[1]}</a>)
+          formatted.push(<Tag key={i} address={elem[1]} handleTag={this.handleTag}/>)
         else if(elem[2]==='hash')
           formatted.push(<a key={i} href={`/${elem[1]}`} id="hash">{elem[1]}</a>)
         i++
@@ -429,6 +408,7 @@ class ChildMeme extends React.Component {
                   isMain={false}
                   interface={this.state.interface}
                   handleOverDownvote={this.handleOverDownvote}
+                  handleDownvotePopup={this.handleDownvotePopup}
                   ref={Ref=>this.downvote=Ref}
                 />
               </div>
@@ -456,7 +436,6 @@ class ChildMeme extends React.Component {
               : this.state.childLoading
                   ? <Loader/>
                   : <ChildThread
-                      account={this.state.account}
                       userStorage={this.state.userStorage}
                       memeStorage={this.state.memeStorage}
                       interface={this.state.interface}
@@ -465,6 +444,7 @@ class ChildMeme extends React.Component {
                       handleToProfile={this.handleToProfile}
                       handleToThread={this.handleToThread}
                       handleUpvotePopup={this.handleUpvotePopup}
+                      handleDownvotePopup={this.handleDownvotePopup}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.childThread=Ref}
                       memeId={this.state.memeId}
@@ -486,7 +466,7 @@ class ChildMeme extends React.Component {
                       isVisible={this.state.isVisible}
                       visibleText={this.state.visibleText}
                       userHasLiked={this.state.userHasLiked}
-                      userAccount={this.state.account}
+                      userAccount={this.state.userAccount}
                       firstChild={this.state.firstChild}
                       lastChild={this.state.lastChild}
                       finalChild={this.state.finalChild}

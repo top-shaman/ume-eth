@@ -78,6 +78,21 @@ div.Profile div#loader-bottom div#spinning-loader {
   transition: background-color 0.33s ease-in-out;
   background-color: #2A2A2A;
 }
+.Profile div#Profile div#right p#following {
+  color: #1D1F22;
+  font-weight: 700;
+  background-color: #CCDDDD;
+  padding: 0.6rem 1rem;
+  margin: 0.6rem 1rem;
+  border: 0.05rem solid #CCDDDD;
+  border-radius: 3rem;
+  cursor: pointer;
+  transition: background-color 0.33s ease-in-out;
+}
+.Profile div#Profile div#right p#following:hover {
+  transition: background-color 0.33s ease-in-out;
+  background-color: #AABBBB;
+}
 
 /* body */
 .Profile div#Profile div#body {

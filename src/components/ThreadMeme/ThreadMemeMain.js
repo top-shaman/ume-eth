@@ -5,8 +5,9 @@ import LikeButton from '../MemeButton/LikeButton'
 import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ReplyInThread from '../ReplyInThread/ReplyInThread'
+import Tag from '../Tag/Tag'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import { isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import "./ThreadMemeMain.css"
 
 class ThreadMemeMain extends React.Component {
@@ -57,9 +58,7 @@ class ThreadMemeMain extends React.Component {
     this.handleButtonMouseLeave = this.handleButtonMouseLeave.bind(this)
     this.handleProfileClick = this.handleProfileClick.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
-    this.handleMemeClick = this.handleMemeClick.bind(this)
-    this.handleOverMeme = this.handleOverMeme.bind(this)
-    this.handleLeaveMeme = this.handleLeaveMeme.bind(this)
+    this.handleTag = this.handleTag.bind(this)
 
     this.handleReplyThread = this.handleReplyThread.bind(this)
     this.handleReply = this.handleReply.bind(this)
@@ -72,6 +71,7 @@ class ThreadMemeMain extends React.Component {
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -109,6 +109,7 @@ class ThreadMemeMain extends React.Component {
   handleButtonMouseLeave(e) {
   }
   handleProfileClick(e) {
+    console.log(e)
     e.preventDefault()
     this.props.handleToProfile(this.state.author)
     localStorage.setItem('focusPage', 'profile')
@@ -117,52 +118,16 @@ class ThreadMemeMain extends React.Component {
   handleToProfile(e) {
     this.props.handleToProfile(e)
   }
-  handleMemeClick(e) {
-    e.preventDefault()
-    if(e.target!==this.pfp &&
-       e.target.id!=='profile-pic' &&
-       e.target.id!=='username' &&
-       e.target.id!=='at' &&
-       e.target.className!=='reply' &&
-       e.target.className!=='LikeButton' &&
-       e.target.className!=='LikeButton-Liked' &&
-       e.target.className!=='like' &&
-       e.target.className!=='liked' &&
-       e.target.className!=='rememe' &&
-       e.target.className!=='upvote' &&
-       e.target.className!=='downvote') {
-      this.props.handleToThread([
-        this.state.memeId,
-        this.state.username,
-        this.state.address,
-        this.state.text,
-        this.state.time,
-        this.state.responses,
-        this.state.likes,
-        this.state.likers,
-        this.state.rememeCount,
-        this.state.rememes,
-        this.state.quoteCount,
-        this.state.quoteMemes,
-        this.state.repostId,
-        this.state.parentId,
-        this.state.originId,
-        this.state.author,
-        this.state.isVisible,
-        this.state.visibleText,
-        this.state.userHasLiked
-      ])
+  async handleTag(e) {
+    const address = await toBytes(e),
+          account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
     }
   }
   handleReplyThread(e) {
   }
 
-  handleOverMeme(e) {
-    e.preventDefault()
-  }
-  handleLeaveMeme(e) {
-    e.preventDefault()
-  }
   handleReply(e) {
     this.props.handleReply(e)
   }
@@ -189,6 +154,9 @@ class ThreadMemeMain extends React.Component {
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
   }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
+  }
 
 
   async formatText() {
@@ -206,7 +174,7 @@ class ThreadMemeMain extends React.Component {
         if(elem[2]==='plain')
           formatted.push(<span key={i} id="plain">{elem[1]}</span>)
         else if(elem[2]==='at')
-          formatted.push(<a key={i} href={`/${elem[1].slice(1)}`} id="at">{elem[1]}</a>)
+          formatted.push(<Tag key={i} address={elem[1]} handleTag={this.handleTag}/>)
         else if(elem[2]==='hash')
           formatted.push(<a key={i} href={`/${elem[1]}`} id="hash">{elem[1]}</a>)
         i++
@@ -224,9 +192,6 @@ class ThreadMemeMain extends React.Component {
         className="ThreadMemeMain"
         id={this.state.memeId}
         ref={Ref => this.div=Ref}
-        onClick={this.handleMemeClick}
-        onMouseEnter={this.handleOverMeme}
-        onMouseLeave={this.handleLeaveMeme}
       >
         <section
           className="ThreadMemeMain"
@@ -328,6 +293,7 @@ class ThreadMemeMain extends React.Component {
                 interface={this.state.interface}
                 handleOver={this.handleButtonMouseOver}
                 handleOverDownvote={this.handleOverDownvote}
+                handleDownvotePopup={this.handleDownvotePopup}
                 ref={Ref=>this.downvote=Ref}
               />
             </div>

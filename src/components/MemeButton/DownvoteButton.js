@@ -22,7 +22,7 @@ class DownvoteButton extends React.Component {
   }
   async handleClick(e) {
     bobble('#' + this.downvote.id, 500)
-    await this.downvoteClick()
+    await this.props.handleDownvotePopup([e, this.state.memeId])
   }
   handleMouseEnter(e) {
     e.preventDefault()
@@ -50,8 +50,6 @@ class DownvoteButton extends React.Component {
     this.props.handleOverDownvote(this.downvote.style.filter)
   }
 
-  async downvoteClick() {
-  }
 
   render() {
     if(!this.state.isMain) {

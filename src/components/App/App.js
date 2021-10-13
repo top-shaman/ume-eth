@@ -54,8 +54,8 @@ class App extends React.Component {
   // lifecycle methods
   async componentDidMount() {
     // check if has previously loaded, so page can know to blur
-    if(localStorage.getItem('hasLoaded')!=='true')
-      blurToFadeIn('div.App', 2000)
+    //if(localStorage.getItem('hasLoaded')!=='true')
+      //blurToFadeIn('div.App', 2000)
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       // load Web3 & UME contracts

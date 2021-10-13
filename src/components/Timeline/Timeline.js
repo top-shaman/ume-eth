@@ -42,7 +42,9 @@ class Timeline extends React.Component {
     this.handleOverRememe = this.handleOverRememe.bind(this)
     this.handleOverUpvote = this.handleOverUpvote.bind(this)
     this.handleOverDownvote = this.handleOverDownvote.bind(this)
+
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   async componentDidMount() {
     clearInterval(this.intervalTimeline)
@@ -107,6 +109,9 @@ class Timeline extends React.Component {
   }
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
+  }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
   }
 
   // to be invoked upon page load
@@ -455,6 +460,7 @@ class Timeline extends React.Component {
               handleOverUpvote={this.handleOverUpvote}
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
+              handleDownvotePopup={this.handleDownvotePopup}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}

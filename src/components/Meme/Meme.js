@@ -68,6 +68,7 @@ class Meme extends React.Component {
     this.handleLike = this.handleLike.bind(this)
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
+    this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -142,27 +143,7 @@ class Meme extends React.Component {
        e.target.className!=='rememe' &&
        e.target.className!=='upvote' &&
        e.target.className!=='downvote') {
-      this.props.handleToThread([
-        this.state.memeId,
-        this.state.username,
-        this.state.address,
-        this.state.text,
-        this.state.time,
-        this.state.responses,
-        this.state.likes,
-        this.state.likers,
-        this.state.rememeCount,
-        this.state.rememes,
-        this.state.quoteCount,
-        this.state.quoteMemes,
-        this.state.repostId,
-        this.state.parentId,
-        this.state.originId,
-        this.state.author,
-        this.state.isVisible,
-        this.state.visibleText,
-        this.state.userHasLiked
-      ])
+      this.props.handleToThread(this.state.memeId)
     }
   }
 
@@ -196,6 +177,9 @@ class Meme extends React.Component {
 
   handleUpvotePopup(e) {
     this.props.handleUpvotePopup(e)
+  }
+  handleDownvotePopup(e) {
+    this.props.handleDownvotePopup(e)
   }
 
   async formatText() {
@@ -350,6 +334,7 @@ class Meme extends React.Component {
               isMain={false}
               interface={this.state.interface}
               handleOverDownvote={this.handleOverDownvote}
+              handleDownvotePopup={this.handleDownvotePopup}
               ref={Ref=>this.downvote=Ref}
             />
           </div>

@@ -1,4 +1,4 @@
-div#upvote-popup {
+div#downvote-popup {
   transform: translateX(-4.4rem) translateY(-7rem);
   display: flex;
   flex-direction: column;
@@ -7,7 +7,7 @@ div#upvote-popup {
   background-color: #1D1F22;
   padding: 0.4rem;
   color: #CCDDDD;
-  border: 0.2rem solid #FF4500;
+  border: 0.2rem solid #4F56DF;
   border-radius: 1rem;
   box-shadow: 0px 0px 8px #667777;
   vertical-align: middle;
@@ -15,17 +15,17 @@ div#upvote-popup {
   white-space: pre;
 }
 
-div#upvote-popup form div#boost {
+div#downvote-popup form div#boost {
   margin: 0.2rem 0.1rem;
   display: flex;
   flex-direction: column;
   text-align: center;
 }
 
-div#upvote-popup form label#boost {
+div#downvote-popup form label#boost {
   margin: 0.2rem 0.3rem 0.7rem 0.3rem;
 }
-div#upvote-popup div#boost div#boost-field {
+div#downvote-popup div#boost div#boost-field {
   display: inline-block;
   border: 0.2rem solid #667777;
   box-shadow: none;
@@ -34,7 +34,7 @@ div#upvote-popup div#boost div#boost-field {
   margin: 0;
   transition: border 0.5s ease-in-out;
 }
-div#upvote-popup form input {
+div#downvote-popup form input {
   background-color: #1D1F22;
   box-shadow: none;
   border: none;
@@ -50,7 +50,7 @@ div#upvote-popup form input {
   font-weight: 600;
 }
 
-div#upvote-popup form span{
+div#downvote-popup form span{
   font-family: sans-serif;
   display: inline;
   border: none;
@@ -58,22 +58,22 @@ div#upvote-popup form span{
   white-space: pre;
   font-size: 1.4rem;
 }
-div#upvote-popup form span#increase {
+div#downvote-popup form span#increase {
   padding: 0 0.6rem 0 0;
 }
-div#upvote-popup form span#decrease,
-div#upvote-popup form span#increase {
+div#downvote-popup form span#decrease,
+div#downvote-popup form span#increase {
   filter: sepia(0) brightness(1) saturate(0%) hue-rotate(12deg);
   transition: filter 0.3s ease-in-out;
   cursor: pointer;
 }
-div#upvote-popup form span#decrease:hover ,
-div#upvote-popup form span#increase:hover {
+div#downvote-popup form span#decrease:hover ,
+div#downvote-popup form span#increase:hover {
   transition: filter 0.3s ease-in-out;
   filter: sepia(1) brightness(0.8) saturate(100%) hue-rotate(12deg);
 }
 
-div#upvote-popup form span#boost {
+div#downvote-popup form span#boost {
   background-color: #667777;
   width: min-content;
   font-family: 'Quicksand', sans-serif;
@@ -85,18 +85,18 @@ div#upvote-popup form span#boost {
   border-radius: 1rem;
 }
 
-div#upvote-popup input[type="number"] {
+div#downvote-popup input[type="number"] {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
   appearance: textfield;
 }
-div#upvote-popup input[type="number"]::-webkit-inner-spin-button,
-div#upvote-popup input[type="number"]::-webkit-outer-spin-button {
+div#downvote-popup input[type="number"]::-webkit-inner-spin-button,
+div#downvote-popup input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
-div#upvote-popup input::-webkit-calendar-picker-indicator {
+div#downvote-popup input::-webkit-calendar-picker-indicator {
   display: none;
 }
-div#upvote-popup datalist {
+div#downvote-popup datalist {
   display: none;
 }

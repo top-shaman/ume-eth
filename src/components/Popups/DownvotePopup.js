@@ -1,7 +1,7 @@
 import React from 'react'
-import './UpvotePopup.css'
+import './DownvotePopup.css'
 
-class UpvotePopup extends React.Component {
+class DownvotePopup extends React.Component {
   constructor(props) {
     super(props)
 
@@ -48,7 +48,7 @@ class UpvotePopup extends React.Component {
 
     handleFocus(e) {
       e.preventDefault()
-      this.field.style.border = '0.2rem solid #FF4500'
+      this.field.style.border = '0.2rem solid #4F56DF'
     }
     async handleChange(e) {
       e.preventDefault()
@@ -61,7 +61,7 @@ class UpvotePopup extends React.Component {
       console.log(this.state.boostValue)
       console.log(this.state.umeBalance)
       if(this.state.valid) {
-        await this.state.interface.methods.boostMeme(this.state.account, this.state.memeId, this.state.boostValue).send({ from: this.state.account })
+        await this.state.interface.methods.unBoostMeme(this.state.account, this.state.memeId, this.state.boostValue).send({ from: this.state.account })
         this.props.handleClose()
       }
     }
@@ -77,7 +77,7 @@ class UpvotePopup extends React.Component {
 
     async validate() {
       if(this.state.boostValue>0 && this.state.umeBalance >= this.state.boostValue) {
-        this.button.style.backgroundColor = '#FF4500'
+        this.button.style.backgroundColor = '#4F56DF'
         this.button.style.color = '#FFFFFF'
         this.button.style.cursor = 'pointer'
         await this.setState({ valid: true })
@@ -92,7 +92,7 @@ class UpvotePopup extends React.Component {
     render() {
       return(
         <div
-          id="upvote-popup"
+          id="downvote-popup"
           ref={Ref=>this.div=Ref}
         >
 
@@ -103,7 +103,7 @@ class UpvotePopup extends React.Component {
                   id="boost"
                   ref={Ref=>this.button=Ref}
                 >
-                  Promote
+                  Demote
                 </span>
               </label>
               <div
@@ -148,4 +148,4 @@ class UpvotePopup extends React.Component {
 
 }
 
-export default UpvotePopup
+export default DownvotePopup
