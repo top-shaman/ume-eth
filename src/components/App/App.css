@@ -7,13 +7,17 @@ html {
   background-color: #282c34;
   overflow: hidden;
 }
+div#root {
+  height: 100%;
+}
 body {
   margin: 0;
   width: 100%;
-  overflow: auto;
+  height: 100%;
   background-color: #282c34;
 }
-.App {
+div.App {
+  overflow: auto;
   text-align: center;
   display: inline-flex;
   flex-direction: row;

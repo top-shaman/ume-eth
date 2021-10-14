@@ -6,6 +6,7 @@ div#stats-container {
   top: 0;
   border-left: 0.05rem;
   width: 13rem;
+  z-index: 0;
 }
 div#stats {
   width: 11.4rem;

@@ -3,7 +3,7 @@ div#downvote-popup {
   display: flex;
   flex-direction: column;
   z-index: 1;
-  position: fixed;
+  position: absolute;
   background-color: #1D1F22;
   padding: 0.4rem;
   color: #CCDDDD;

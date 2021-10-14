@@ -1,9 +1,12 @@
+div.Timeline {
+}
 p#loader.Timeline {
   max-width: 38rem;
 }
 .Timeline div#loader {
   opacity: 1;
   align-items: flex-start;
+  height: 100%;
 }
 
 div.Timeline div#loader div#spinning-loader {

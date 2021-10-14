@@ -6,4 +6,5 @@ p#loader.Thread {
   align-items: flex-start;
   padding: 1rem 0;
   border-right: 0.05 solid #AAAAAA;
+  height: 100%;
 }

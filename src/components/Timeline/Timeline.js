@@ -30,6 +30,7 @@ class Timeline extends React.Component {
       firstLoad: true,
       sortStyle: 'boost'
     }
+    this.div = React.createRef()
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
@@ -45,14 +46,17 @@ class Timeline extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+
   }
   async componentDidMount() {
     clearInterval(this.intervalTimeline)
     if(this.state.firstLoad) {
       await this.loadTimeline()
+      this.props.handleHeight(this.div.getBoundingClientRect().height)
       this.intervalTimeline = setInterval(async () => {
         if(!this.state.firstLoad && !this.state.loadingBottom){
           await this.loadNewMemes()
+          this.props.handleHeight(this.div.getBoundingClientRect().height)
           await this.refreshMemes()
         }
       }, 10000)
@@ -185,6 +189,7 @@ class Timeline extends React.Component {
         this.setState({
           loading: false,
         })
+        await this.props.handleLoading(this.state.loading)
       }
     }
   }
@@ -509,7 +514,7 @@ class Timeline extends React.Component {
 
   render() {
     return(
-      <div className="Timeline">
+      <div className="Timeline" ref={Ref=>this.div=Ref}>
         { this.state.loading
           ? this.state.memeCount===null && !this.state.refreshing
             ? <div id="loader">

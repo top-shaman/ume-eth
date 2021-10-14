@@ -4,6 +4,7 @@ p#loader.Profile {
 .Profile div#loader {
   opacity: 1;
   align-items: flex-start;
+  height: 100%;
 }
 
 div.Profile div#loader div#spinning-loader {

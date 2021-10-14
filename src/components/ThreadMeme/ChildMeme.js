@@ -70,6 +70,7 @@ class ChildMeme extends React.Component {
     this.handleProfileClick = this.handleProfileClick.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleTag = this.handleTag.bind(this)
+    this.handleHeight = this.handleHeight.bind(this)
 
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleOverMeme = this.handleOverMeme.bind(this)
@@ -151,8 +152,11 @@ class ChildMeme extends React.Component {
       this.props.handleToProfile(await account)
     }
   }
-  handleMemeClick(e) {
+  handleHeight() {
+    this.props.handleHeight()
+  }
 
+  handleMemeClick(e) {
     e.preventDefault()
     if(e.target!==this.pfp &&
        e.target.id!=='profile-pic' &&
@@ -439,6 +443,7 @@ class ChildMeme extends React.Component {
                       userStorage={this.state.userStorage}
                       memeStorage={this.state.memeStorage}
                       interface={this.state.interface}
+                      handleHeight={this.handleHeight}
                       handleLoading={this.handleChildLoading}
                       handleReply={this.handleReply}
                       handleToProfile={this.handleToProfile}

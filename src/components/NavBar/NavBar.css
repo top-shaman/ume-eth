@@ -1,13 +1,14 @@
 nav.navbar {
+  position: sticky;
+  position: -webkit-sticky;
   width: 13rem;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
-  position: sticky;
-  position: -webkit-sticky;
   top:0;
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
+  z-index:1;
 }
 .navbar small#logo {
   border-radius : 30%;

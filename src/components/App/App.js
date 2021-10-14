@@ -49,6 +49,8 @@ class App extends React.Component {
 
     this.handleEdit = this.handleEdit.bind(this)
     this.handleExitEdit = this.handleExitEdit.bind(this)
+
+    this.handleScroll = this.handleScroll.bind(this)
   }
 
   // lifecycle methods
@@ -70,6 +72,8 @@ class App extends React.Component {
     if(window.ethereum) {
       this.chainListen()
     }
+  }
+  componentDidUpdate() {
   }
   async componentWillUnmount() {
     window.clearInterval()
@@ -103,6 +107,13 @@ class App extends React.Component {
   }
   handleExitEdit(editing) {
     this.setState({ editing })
+  }
+  handleScroll(e) {
+    if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight+150) {
+      this.setState({ atBottom: true })
+    }
+    else this.setState({ atBottom: false })
+    this.setState({ offsetY: e.target.scrollTop})
   }
 
   async request() {
@@ -226,7 +237,10 @@ class App extends React.Component {
       <div className="App">
         { this.state.account!==undefined && !this.contractLoading
           ? this.state.registered
-            ? <div className="App">
+            ? <div
+                className="App"
+                onScroll={this.handleScroll}
+              >
                 { this.state.creatingMeme || this.state.replying || this.state.editing
                   ? this.state.creatingMeme
                     ? <CreateMeme
@@ -254,7 +268,7 @@ class App extends React.Component {
                       : this.state.editing
                         ? <EditProfile
                             account={this.state.account}
-                            username={this.state.editing[0]}
+                           username={this.state.editing[0]}
                             address={this.state.editing[1]}
                             bio={this.state.editing[2]}
                             handleExitEdit={this.handleExitEdit}
@@ -275,6 +289,8 @@ class App extends React.Component {
                   umeBalance={this.state.umeBalance}
                   memeIdsByBoost={this.state.memeIdsByBoost}
                   contractLoading={this.state.contractLoading}
+                  atBottom={this.state.atBottom}
+                  offsetY={this.state.offsetY}
                   handleCreateMeme={this.handleCreateMeme}
                   handleReply={this.handleReply}
                   handleEdit={this.handleEdit}

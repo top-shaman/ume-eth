@@ -31,6 +31,7 @@ class ProfileThread extends React.Component {
       firstLoad: true,
       sortStyle: 'time'
     }
+    this.div = React.createRef()
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
@@ -178,12 +179,14 @@ class ProfileThread extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
       else {
         this.setState({
           loading: false,
         })
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
     }
   }
@@ -242,12 +245,14 @@ class ProfileThread extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
       else {
         this.setState({
           loading: false
         })
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
     }
   }
@@ -310,6 +315,7 @@ class ProfileThread extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
       else {
         this.setState({
@@ -317,6 +323,7 @@ class ProfileThread extends React.Component {
           loadingBottom: false
         })
         await this.props.handleLoading(this.state.loading)
+        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
     }
   }
@@ -361,6 +368,7 @@ class ProfileThread extends React.Component {
         refreshing: false
       })
       this.props.handleRefresh(false)
+      this.props.handleHeight(this.div.getBoundingClientRect().height)
     }
   }
 
@@ -494,7 +502,7 @@ class ProfileThread extends React.Component {
   }
   render() {
     return(
-      <div className="Profile">
+      <div className="Profile" ref={Ref=>this.div=Ref}>
         { this.state.loading
           ? this.state.userMemeCount===null && !this.state.refreshing
             ? <div id="loader">

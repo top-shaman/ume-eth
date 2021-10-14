@@ -39,14 +39,15 @@ class Main extends React.Component {
       popupY: null,
       popup: null,
       offsetX: 0,
-      offsetY: 0,
+      offsetY: this.props.offsetY,
       startingWidth: null,
       reload: false,
       focusPage: 'timeline',
-      atBottom: false
+      atBottom: this.props.atBottom
     }
 
     // references
+    this.main = React.createRef()
     this.body = React.createRef()
     this.timeline = React.createRef()
     this.profile = React.createRef()
@@ -76,6 +77,7 @@ class Main extends React.Component {
 
     // handle to log page location
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleHeight = this.handleHeight.bind(this)
   }
 
   // lifecycles
@@ -134,6 +136,7 @@ class Main extends React.Component {
     if(this.state.popup!==null && this.body.clientWidth<365){
       console.log(this.body.clientWidth)
     }
+    console.log()
   }
   componentWillUnmount() {
     window.clearInterval()
@@ -164,12 +167,14 @@ class Main extends React.Component {
   handleUpvotePopup(e) {
     const element = e[0].target.getBoundingClientRect()
     console.log(element)
+    /*
     let offsetX = element.x - this.body.clientWidth - 120
     if(offsetX>=0) {
       this.setState({ offsetX })
     } else {
       this.setState({ offsetX: 0 })
     }
+      */
     this.setState({
       activePopup: null,
       popupMeme: null,
@@ -180,8 +185,8 @@ class Main extends React.Component {
     this.setState({
       popup: e[0].target,
       popupMeme: e[1],
-      popupX: element.x - this.state.offsetX,
-      popupY: element.y + this.state.offsetY
+      popupX: element.x,
+      popupY: element.y + this.props.offsetY
     })
     setTimeout(() => {
       // set memeId
@@ -191,7 +196,7 @@ class Main extends React.Component {
     }, 20)
     if(this.state.activePopup && this.state.popup===e[0].target) {
       this.setState({
-        activePopup: 'upvote',
+        activePopup: null,
         popupMeme: null,
         popup: null,
         popupX: null,
@@ -202,12 +207,14 @@ class Main extends React.Component {
   handleDownvotePopup(e) {
     const element = e[0].target.getBoundingClientRect()
     console.log(element)
+    /*
     let offsetX = element.x - this.body.clientWidth - 120
     if(offsetX>=0) {
       this.setState({ offsetX })
     } else {
       this.setState({ offsetX: 0 })
     }
+    */
     this.setState({
       activePopup: null,
       popupMeme: null,
@@ -218,8 +225,8 @@ class Main extends React.Component {
     this.setState({
       popup: e[0].target,
       popupMeme: e[1],
-      popupX: element.x - this.state.offsetX,
-      popupY: element.y + this.state.offsetY
+      popupX: element.x,
+      popupY: element.y + this.props.offsetY
     })
     setTimeout(() => {
       // set memeId
@@ -268,7 +275,6 @@ class Main extends React.Component {
   }
   handleBalance(umeBalance) {
     this.setState({ umeBalance })
-    console.log('new balance: ' + this.state.umeBalance + ' UME')
   }
   async handleBack(e) {
     //console.log(this.state.lastPage)
@@ -371,13 +377,61 @@ class Main extends React.Component {
   handleToSettings(e) {
   }
 
+  handleHeight(e) {
+    const subheader = document.querySelector('div#subheader').getBoundingClientRect().height,
+          height = e + subheader
+    // get main's height
+    let mainHeight
+    const test = /([0-9.]+)(?=px)/g,
+          ext = /[0-9.]+/g
+    this.main.style.height = height + 'px'
+    if(test.test(this.main.style.height)) {
+      mainHeight = parseFloat(ext.exec(this.main.style.height))
+    } else {
+      mainHeight = document.querySelector('div.Main').getBoundingClientRect().height
+    }
+    console.log(mainHeight)
+    console.log(height)
+    if(Math.floor(mainHeight)<=Math.floor(height)) {
+      this.main.style.height = height + 'px'
+    } else {
+      this.main.style.height = 'inherit'
+    }
+    /*
+    } else {
+      this.main.style.height = height
+    }
+    if(mainHeight<height){
+      this.main.style.height = height
+    } else {
+      this.main.style.height = 'inherit'
+    }
+    /*
+    if(this.main.style.height==='') {
+      mainHeight = this.main.getBoundingClientRect().height
+    } else if(this.main.style.height!=='inherit') {
+      mainHeight = this.main.style.height//.split(0, this.mainstyle.height.length-2)
+    }
+    console.log(mainHeight)
+    if(mainHeight<height && this.main.style.height!=='inherit') {
+      this.main.style.height = Math.floor(height) + 'px'
+    } else this.main.style.height = 'inherit'
+    */
+  }
   handleScroll(e) {
+    /*
     if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight+150) {
       this.setState({ atBottom: true })
     }
     else this.setState({ atBottom: false })
 
-    this.setState({ offsetY: e.target.scrollTop })
+    this.setState({ offsetY: e.target.scrollHeight})
+    console.log(e)
+
+    const scrollY = window.scrollY,
+          scrollTop = this.body.current.scrollTop
+    console.log('scrollY: ' + scrollY + '\n' + 'scrollTop: ' + scrollTop)
+    */
   }
 
   async headerInfo() {
@@ -400,7 +454,10 @@ class Main extends React.Component {
 
   render() {
     return(
-      <div className="Main">
+      <div
+        className="Main"
+        ref={Ref=>this.main=Ref}
+      >
         <div id="side-header">
           <NavBar
             account={this.state.account}
@@ -414,7 +471,6 @@ class Main extends React.Component {
         <div
           className="Main"
           id="body"
-          onScroll={this.handleScroll}
           ref={Ref=>this.body=Ref}
         >
           <div id="subheader">
@@ -497,7 +553,8 @@ class Main extends React.Component {
                 handleReply={this.handleReply}
                 handleUpvotePopup={this.handleUpvotePopup}
                 handleDownvotePopup={this.handleDownvotePopup}
-                atBottom={this.state.atBottom}
+                handleHeight={this.handleHeight}
+                atBottom={this.props.atBottom}
                 ref={Ref => this.timeline=Ref}
               />
             : this.state.focusPage==='profile' //&& !this.state.reload
@@ -517,10 +574,11 @@ class Main extends React.Component {
                   handleEdit={this.handleEdit}
                   handleUpvotePopup={this.handleUpvotePopup}
                   handleDownvotePopup={this.handleDownvotePopup}
+                  handleHeight={this.handleHeight}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
                   profileAccount={this.state.profileAccount}
-                  atBottom={this.state.atBottom}
+                  atBottom={this.props.atBottom}
                   ref={Ref => this.profile=Ref}
                 />
                 : this.state.focusPage==='thread'
@@ -539,7 +597,8 @@ class Main extends React.Component {
                       handleReply={this.handleReply}
                       handleUpvotePopup={this.handleUpvotePopup}
                       handleDownvotePopup={this.handleDownvotePopup}
-                      atBottom={this.state.atBottom}
+                      handleHeight={this.handleHeight}
+                      atBottom={this.props.atBottom}
                       ref={Ref => this.thread=Ref}
                       memeId={this.state.memeId}
                     /*
