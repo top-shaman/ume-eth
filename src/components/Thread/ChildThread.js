@@ -56,7 +56,6 @@ class ChildThread extends React.Component {
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
-    this.handleHeight = this.handleHeight.bind(this)
 
     this.handleReply = this.handleReply.bind(this)
     this.handleLike = this.handleLike.bind(this)
@@ -102,9 +101,6 @@ class ChildThread extends React.Component {
     if(!this.state.loading) {
       this.props.handleToThread(e)
     }
-  }
-  handleHeight() {
-    this.props.handleHeight()
   }
   handleReply(e) {
     this.props.handleReply(e)
@@ -207,7 +203,6 @@ class ChildThread extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
-        this.props.handleHeight()
       }
     }
     else {
@@ -215,7 +210,6 @@ class ChildThread extends React.Component {
         loading: false
       })
       await this.props.handleLoading(this.state.loading)
-      this.props.handleHeight()
     }
   }
 
@@ -263,7 +257,6 @@ class ChildThread extends React.Component {
         refreshing: false
       })
       await this.props.handleRefreshing(false)
-      this.props.handleHeight()
     }
   }
   // helper functions
@@ -338,7 +331,6 @@ class ChildThread extends React.Component {
               isVisible={meme.isVisible}
               handleToProfile={this.handleToProfile}
               handleToThread={this.handleToThread}
-              handleHeight={this.handleHeight}
               handleRefresh={this.handleRefresh}
               handleReply={this.handleReply}
               handleLike={this.handleLike}

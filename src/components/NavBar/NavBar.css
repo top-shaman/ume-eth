@@ -117,10 +117,10 @@ nav.navbar {
 /* meme button */
 .navbar p#meme{
   display: block;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: #FFFFFF;
   background-color: #00CC89;
-  padding: 0.7rem 2rem;
+  padding: 0.7rem 2rem 0.9rem 2rem;
   margin: 0.7rem 0.3rem;
   width: 8rem;
   border-radius: 3rem;

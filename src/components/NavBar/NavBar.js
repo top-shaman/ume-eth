@@ -90,6 +90,7 @@ class NavBar extends Component {
             <span id="link">Profile</span>
           </p>
         </a>
+        {/*
         <a
           id="settings"
           href="/settings"
@@ -103,6 +104,7 @@ class NavBar extends Component {
             <span id="link">Settings</span>
           </p>
         </a>
+        */}
         <p
           id="meme"
           onClick={this.handleMemeClick}

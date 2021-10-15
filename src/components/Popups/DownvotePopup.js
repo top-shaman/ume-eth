@@ -10,7 +10,7 @@ class DownvotePopup extends React.Component {
       this.state = {
         account: this.props.account,
         memeId: this.props.memeId,
-        umeBalance: this.props.umeBalance,
+        umeBalance: parseInt(this.props.umeBalance),
         boostValue: 0,
         positionX: this.props.positionX,
         positionY: this.props.positionY,
@@ -28,7 +28,6 @@ class DownvotePopup extends React.Component {
       this.handleClick = this.handleClick.bind(this)
     }
     componentDidMount() {
-      console.log(this.state.umeBalance)
       this.div.style.left = `${this.state.positionX}px`
       if(parseFloat(this.state.positionY)<150) {
         this.div.style.top = `${parseFloat(this.state.positionY) + 135}px`
@@ -52,27 +51,31 @@ class DownvotePopup extends React.Component {
     }
     async handleChange(e) {
       e.preventDefault()
-      await this.setState({ boostValue: e.target.value })
+      await this.setState({ boostValue: parseInt(e.target.value )})
       this.validate()
       console.log(this.state.valid)
     }
     async handleClick(e) {
       e.preventDefault()
-      console.log(this.state.boostValue)
-      console.log(this.state.umeBalance)
       if(this.state.valid) {
         await this.state.interface.methods.unBoostMeme(this.state.account, this.state.memeId, this.state.boostValue).send({ from: this.state.account })
         this.props.handleClose()
       }
     }
 
-    increment(e) {
-      e.preventDefault()
-      this.input.stepUp()
+    async increment() {
+      if(!this.state.boostValue && this.state.boostValue<this.state.boostValue-5) this.setState({ boostValue: 5 })
+      else if(this.state.boostValue>this.state.umeBalance-5) this.setState({ boostValue: this.state.umeBalance })
+      else this.setState({ boostValue: this.state.boostValue + 5 })
+      this.field.style.border = '0.2rem solid #4F56DF'
     }
-    decrement(e) {
-      e.preventDefault()
-      this.input.stepDown()
+    async decrement() {
+      if(await !this.state.boostValue || await this.state.boostValue<5) {
+        await this.setState({ boostValue: 0 })
+      } else {
+        await this.setState({ boostValue: this.state.boostValue - 5 })
+      }
+      this.field.style.border = '0.2rem solid #4F56DF'
     }
 
     async validate() {
@@ -111,7 +114,7 @@ class DownvotePopup extends React.Component {
                 onFocus={this.handleFocus}
                 ref={Ref=>this.field=Ref}
               >
-                <span id="decrease" onClick={this.decrement}>
+                <span id="decrease" onClick={async () => this.decrement().then(()=> this.validate())}>
                   -
                 </span>
                 { this.state.umeBalance
@@ -122,24 +125,17 @@ class DownvotePopup extends React.Component {
                         min="0"
                         max={this.state.umeBalance}
                         step="5"
-                        list="defaultNumbers"
                         onChange={this.handleChange}
+                        value={this.state.boostValue}
                         ref={Ref=>this.input=Ref}
                         required>
                       </input>
                     : ''
               }
-              <span id="increase" onClick={this.increment}>
+              <span id="increase" onClick={async () => this.increment().then(()=> this.validate())}>
                 +
               </span>
             </div>
-            <datalist id="defaultNumbers">
-              <option value="5"/>
-              <option value="10"/>
-              <option value="25"/>
-              <option value="50"/>
-              <option value="100"/>
-            </datalist>
           </div>
         </form>
       </div>

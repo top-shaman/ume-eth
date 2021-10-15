@@ -37,9 +37,6 @@ class LikeButton extends React.Component {
     this.mounted = false
   }
   async handleClick(e) {
-    console.log(this.state.memeId)
-    console.log(this.state.userAccount)
-    console.log(this.state.interface)
     if(!this.state.userHasLiked) {
       bobble('#' + this.like.id, 500)
     } else {
@@ -77,8 +74,6 @@ class LikeButton extends React.Component {
   }
 
   async likeClick() {
-    console.log('accessing account: ' + this.props.userAccount)
-    console.log('memeId: ' + this.state.memeId)
     await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
       .then(() => {

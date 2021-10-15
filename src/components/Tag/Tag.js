@@ -21,7 +21,6 @@ class Tag extends React.Component {
   render() {
     return(
       <a
-        key={this.props.key}
         href={this.state.address.slice(1)}
         id="at"
         onClick={this.handleClick}

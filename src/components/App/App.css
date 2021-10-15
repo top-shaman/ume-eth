@@ -31,3 +31,7 @@ small {
   margin: 0 auto;
 }
 
+p {
+  font-family: 'Quicksand', sans-serif;
+  color: #00CC89;
+}

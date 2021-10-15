@@ -232,6 +232,17 @@ class ThreadMemeMain extends React.Component {
             <div id="time">
               <span id="time">{time + ' • ' + date}</span>
             </div>
+            { this.state.likes>0 || this.state.rememes>0
+                ? <div id="stats">
+                    { this.state.likes
+                      ? <p id="like-stats">
+                          <span id="like-count">{this.state.likes}</span><span> Likes</span>
+                      </p>
+                      : ''
+                    }
+                  </div>
+                : ''
+            }
             <div id="ThreadMemeMain-footer">
               <ReplyButton
                 memeId={this.state.memeId}

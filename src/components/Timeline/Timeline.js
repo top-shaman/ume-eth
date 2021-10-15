@@ -52,11 +52,9 @@ class Timeline extends React.Component {
     clearInterval(this.intervalTimeline)
     if(this.state.firstLoad) {
       await this.loadTimeline()
-      this.props.handleHeight(this.div.getBoundingClientRect().height)
       this.intervalTimeline = setInterval(async () => {
         if(!this.state.firstLoad && !this.state.loadingBottom){
           await this.loadNewMemes()
-          this.props.handleHeight(this.div.getBoundingClientRect().height)
           await this.refreshMemes()
         }
       }, 10000)
@@ -269,7 +267,6 @@ class Timeline extends React.Component {
     console.log('timeline: Try Load Old Memes')
     if(!this.state.firstLoad && this.props.atBottom && !this.state.loadingBottom && !this.state.refreshing) {
       this.setState({ loadingBottom: true })
-      await this.props.handleLoading(this.state.loading)
       console.log('load old memes ' + new Date().toTimeString())
       const userStorage = await this.props.userStorage,
             memeStorage = await this.props.memeStorage,

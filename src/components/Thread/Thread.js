@@ -61,7 +61,6 @@ class Thread extends React.Component {
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
-    this.handleHeight = this.handleHeight.bind(this)
 
     this.handleLoading = this.handleLoading.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
@@ -119,9 +118,6 @@ class Thread extends React.Component {
     if(!this.state.loading) {
       this.props.handleToThread(e)
     }
-  }
-  handleHeight() {
-    this.props.handleHeight(this.div.getBoundingClientRect().height)
   }
   handleRefresh(e) {
     this.props.handleRefresh(e)
@@ -267,7 +263,6 @@ class Thread extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleLoading(this.state.loading)
-        this.props.handleHeight(this.div.getBoundingClientRect().height)
       }
     }
     else {
@@ -275,7 +270,6 @@ class Thread extends React.Component {
         loading: false
       })
       await this.props.handleLoading(this.state.loading)
-      this.props.handleHeight(this.div.getBoundingClientRect().height)
     }
   }
 
@@ -300,7 +294,6 @@ class Thread extends React.Component {
       refreshing: false
     })
     await this.props.handleRefresh(this.state.refreshing)
-    this.props.handleHeight(this.div.getBoundingClientRect().height)
   }
 
   // helper functions
@@ -455,7 +448,6 @@ class Thread extends React.Component {
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
               handleDownvotePopup={this.handleDownvotePopup}
-              handleHeight={this.handleHeight}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}

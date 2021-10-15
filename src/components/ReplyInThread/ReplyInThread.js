@@ -41,19 +41,20 @@ class ReplyInThread extends React.Component {
 
   componentDidMount() {
     const storage = localStorage.getItem('memeText')
-    if(storage!==null && !storage.match(/\s/g)) {
+    console.log(storage)
+    if(storage!==null && storage!=='' && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.ReplyInThread p#reply-submit'),
             memeButton = document.querySelector('.ReplyInThread p#reply-submit')
       this.setState({
-        memeText: this.state.memeText!=='null' && this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
-        visibleText: this.state.memeText!=='null' && this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
+        memeText: storage,
+        visibleText: storage,
         validMeme: true
       })
 
       memeButton.style.backgroundColor = '#00CC89'
       memeButton.style.cursor = 'pointer'
       buttonText.style.color = '#FFFFFF'
-    } else if(storage===null) {
+    } else {
       this.setState({
         memeText: '',
         visibleText: '',
@@ -78,7 +79,10 @@ class ReplyInThread extends React.Component {
   }
   componentDidUpdate() {
     if(this.state.memeText.length>0) {
+      this.textarea.style.width = 'inherit'
       this.body.style.height = 'auto'
+    } else if(document.activeElement===this.textarea && this.state.memeText.length===0) {
+      this.textarea.style.width = '100%'
     } else {
       this.body.style.height = '1.3rem'
     }

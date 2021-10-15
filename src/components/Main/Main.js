@@ -31,7 +31,7 @@ class Main extends React.Component {
       profileLoading: false,
       threadLoading: false,
       refreshing: false,
-      lastPage: null,
+      lastPage: [['timeline', '0x0']],
       back: false,
       activePopup: null,
       popupMeme: null,
@@ -39,7 +39,7 @@ class Main extends React.Component {
       popupY: null,
       popup: null,
       offsetX: 0,
-      offsetY: this.props.offsetY,
+      offsetY: 0,
       startingWidth: null,
       reload: false,
       focusPage: 'timeline',
@@ -74,15 +74,12 @@ class Main extends React.Component {
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
     this.handleClose = this.handleClose.bind(this)
-
-    // handle to log page location
-    this.handleScroll = this.handleScroll.bind(this)
-    this.handleHeight = this.handleHeight.bind(this)
   }
 
   // lifecycles
   async componentDidMount() {
-    console.log(this.state.lastPage)
+    if(this.state.lastPage!==null)
+      console.log('coming from ' + this.state.lastPage)
     // if previously loaded, no blur entrance
     if(localStorage.getItem('hasLoaded')!=='true') {
       //blurToFadeIn('.Main #subheader', 2000)
@@ -132,12 +129,6 @@ class Main extends React.Component {
     */
     // if previously on a thread, set to thread upon reload
   }
-  componentDidUpdate() {
-    if(this.state.popup!==null && this.body.clientWidth<365){
-      console.log(this.body.clientWidth)
-    }
-    console.log()
-  }
   componentWillUnmount() {
     window.clearInterval()
   }
@@ -145,36 +136,25 @@ class Main extends React.Component {
   // handles
   // meme creation
   handleCreateMeme(e) {
-    //this.setState({ creatingMeme })
     this.props.handleCreateMeme(e)
     // blur out Main section upon Meme Creation
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
   handleReply(e) {
-    //this.setState({ replying})
     this.props.handleReply(e)
     // blur out Main section upon Reply Creation
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
   handleEdit(e) {
-    //this.setState({ editing })
     this.props.handleEdit(e)
     blur('.Main div#header', 500)
     blur('.Main div#body', 500)
   }
   handleUpvotePopup(e) {
-    const element = e[0].target.getBoundingClientRect()
-    console.log(element)
-    /*
-    let offsetX = element.x - this.body.clientWidth - 120
-    if(offsetX>=0) {
-      this.setState({ offsetX })
-    } else {
-      this.setState({ offsetX: 0 })
-    }
-      */
+    const element = e[0].target.getBoundingClientRect(),
+          offsetY = this.props.offsetY ? this.props.offsetY : 0
     this.setState({
       activePopup: null,
       popupMeme: null,
@@ -186,7 +166,7 @@ class Main extends React.Component {
       popup: e[0].target,
       popupMeme: e[1],
       popupX: element.x,
-      popupY: element.y + this.props.offsetY
+      popupY: element.y + offsetY
     })
     setTimeout(() => {
       // set memeId
@@ -205,16 +185,8 @@ class Main extends React.Component {
     }
   }
   handleDownvotePopup(e) {
-    const element = e[0].target.getBoundingClientRect()
-    console.log(element)
-    /*
-    let offsetX = element.x - this.body.clientWidth - 120
-    if(offsetX>=0) {
-      this.setState({ offsetX })
-    } else {
-      this.setState({ offsetX: 0 })
-    }
-    */
+    const element = e[0].target.getBoundingClientRect(),
+          offsetY = this.props.offsetY ? this.props.offsetY : 0
     this.setState({
       activePopup: null,
       popupMeme: null,
@@ -226,7 +198,7 @@ class Main extends React.Component {
       popup: e[0].target,
       popupMeme: e[1],
       popupX: element.x,
-      popupY: element.y + this.props.offsetY
+      popupY: element.y + offsetY
     })
     setTimeout(() => {
       // set memeId
@@ -277,16 +249,19 @@ class Main extends React.Component {
     this.setState({ umeBalance })
   }
   async handleBack(e) {
-    //console.log(this.state.lastPage)
-    const last = this.state.lastPage.length - 1,
-          id = this.state.lastPage[last][1]
-    this.setState({ back: true })
-    if(last===0) {
+    console.log(this.state.lastPage)
+    const index = this.state.lastPage.length - 2,
+          id = this.state.lastPage[index][1]
+    console.log(index)
+    console.log(id)
+    if(this.state.lastPage[index][0]==='timeline') {
       await this.handleToTimeline(e)
-    } else if(this.state.lastPage[last][0]==='profile') {
+    } else if(this.state.lastPage[index][0]==='profile') {
+      this.setState({ lastPage: this.state.lastPage.pop() })
       this.setState({ lastPage: this.state.lastPage.pop() })
       await this.handleToProfile(id)
-    } else if(this.state.lastPage[last][0]==='thread') {
+    } else if(this.state.lastPage[index][0]==='thread') {
+      this.setState({ lastPage: this.state.lastPage.pop() })
       this.setState({ lastPage: this.state.lastPage.pop() })
       await this.handleToThread(id)
     }
@@ -300,29 +275,22 @@ class Main extends React.Component {
     if(this.state.focusPage!=='timeline') {
       this.setState({
         focusPage: null,
-        lastPage: null,
+        lastPage: [['timeline', '0x0']],
         back: false
       })
     }
     setTimeout(() => {
       this.setState({
         focusPage: 'timeline',
-        timelineFormat: localStorage.getItem('timelineSort')
+        timelineFormat: localStorage.getItem('timelineSort'),
+        memeId: null,
       })
     }, 50)
     console.log('timeline loading: ' + this.state.timelineLoading)
   }
 
   async handleToProfile(e) {
-    if(!this.state.back) {
-      if(this.state.lastPage!==null) {
-        this.setState({ lastPage: [...this.state.lastPage, ['profile', e]] })
-      } else {
-        this.setState({ lastPage: [['profile', e]] })
-      }
-    } else if(this.state.back) {
-      this.setState({ back: false })
-    }
+    this.setState({ lastPage: [...this.state.lastPage, ['profile', e]] })
     if(this.state.profileAccount!==e) {
       this.setState({
         focusPage: null
@@ -341,22 +309,15 @@ class Main extends React.Component {
     setTimeout(() => {
       if(this.state.focusPage!=='profile') {
         this.setState({
-          focusPage: 'profile'
+          focusPage: 'profile',
+          memeId: null
         })
       }
     }, 50)
   }
 
   async handleToThread(e) {
-    if(!this.state.back) {
-      if(this.state.lastPage!==null) {
-        this.setState({ lastPage: [...this.state.lastPage, ['thread', e]] })
-      } else {
-        this.setState({ lastPage: [['thread', e]] })
-      }
-    } else if(this.state.back) {
-      this.setState({ back: false })
-    }
+    this.setState({ lastPage: [...this.state.lastPage, ['thread', e]] })
     console.log('leaving page: ' + this.state.focusPage)
     if(this.state.memeId!==e){
       this.setState({
@@ -375,63 +336,6 @@ class Main extends React.Component {
   }
 
   handleToSettings(e) {
-  }
-
-  handleHeight(e) {
-    const subheader = document.querySelector('div#subheader').getBoundingClientRect().height,
-          height = e + subheader
-    // get main's height
-    let mainHeight
-    const test = /([0-9.]+)(?=px)/g,
-          ext = /[0-9.]+/g
-    this.main.style.height = height + 'px'
-    if(test.test(this.main.style.height)) {
-      mainHeight = parseFloat(ext.exec(this.main.style.height))
-    } else {
-      mainHeight = document.querySelector('div.Main').getBoundingClientRect().height
-    }
-    console.log(mainHeight)
-    console.log(height)
-    if(Math.floor(mainHeight)<=Math.floor(height)) {
-      this.main.style.height = height + 'px'
-    } else {
-      this.main.style.height = 'inherit'
-    }
-    /*
-    } else {
-      this.main.style.height = height
-    }
-    if(mainHeight<height){
-      this.main.style.height = height
-    } else {
-      this.main.style.height = 'inherit'
-    }
-    /*
-    if(this.main.style.height==='') {
-      mainHeight = this.main.getBoundingClientRect().height
-    } else if(this.main.style.height!=='inherit') {
-      mainHeight = this.main.style.height//.split(0, this.mainstyle.height.length-2)
-    }
-    console.log(mainHeight)
-    if(mainHeight<height && this.main.style.height!=='inherit') {
-      this.main.style.height = Math.floor(height) + 'px'
-    } else this.main.style.height = 'inherit'
-    */
-  }
-  handleScroll(e) {
-    /*
-    if(e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight+150) {
-      this.setState({ atBottom: true })
-    }
-    else this.setState({ atBottom: false })
-
-    this.setState({ offsetY: e.target.scrollHeight})
-    console.log(e)
-
-    const scrollY = window.scrollY,
-          scrollTop = this.body.current.scrollTop
-    console.log('scrollY: ' + scrollY + '\n' + 'scrollTop: ' + scrollTop)
-    */
   }
 
   async headerInfo() {
@@ -475,7 +379,7 @@ class Main extends React.Component {
         >
           <div id="subheader">
             <section id="title">
-              { this.state.lastPage!==null
+              { this.state.focusPage!=='timeline'
                   ? <
                       img src={Arrow}
                       alt="back-arrow"
@@ -483,25 +387,33 @@ class Main extends React.Component {
                     />
                   : ''
               }
-              { this.state.focusPage!=='profile'
+              { this.state.focusPage==='timeline'
                 ? <a href="#home">
                     <p id="subheader">
                       uMe
                     </p>
                   </a>
-                : <a href="#profile">
-                    <p id="profile-subheader">
-                      <span id="username">{this.state.profileUsername}</span>
-                      <span id="memes">
-                        {this.state.userMemeCount + ' Memes | '}
-                        { this.state.totalLikes===1
-                            ? this.state.totalLikes + ' Like'
-                            : this.state.totalLikes + ' Likes'
-                        }
-                      </span>
-                    </p>
-                  </a>
-              }
+                : this.state.focusPage==='profile'
+                    ? <a href="#profile">
+                        <p id="profile-subheader">
+                          <span id="username">{this.state.profileUsername}</span>
+                          <span id="memes">
+                            {this.state.userMemeCount + ' Memes | '}
+                            { this.state.totalLikes===1
+                                ? this.state.totalLikes + ' Like'
+                                : this.state.totalLikes + ' Likes'
+                            }
+                          </span>
+                        </p>
+                      </a>
+                    : this.state.focusPage==='thread'
+                        ? <a href="#home">
+                            <p id="thread-subheader">
+                              Thread
+                            </p>
+                          </a>
+                        : ''
+                  }
             </section>
             <section id="searchBar">
               {/*

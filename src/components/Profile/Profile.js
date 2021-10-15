@@ -34,7 +34,6 @@ class Profile extends React.Component {
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
 
-    this.handleHeight = this.handleHeight.bind(this)
   }
   // lifecycles
   async componentDidMount() {
@@ -86,9 +85,6 @@ class Profile extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
-  }
-  handleHeight(e) {
-    this.props.handleHeight(e)
   }
 
   async compileProfile() {
@@ -192,7 +188,6 @@ class Profile extends React.Component {
           handleReply={this.handleReply}
           handleUpvotePopup={this.handleUpvotePopup}
           handleDownvotePopup={this.handleDownvotePopup}
-          handleHeight={this.handleHeight}
           profileUsername={this.state.profileUsername}
           profileAddress={this.state.profileAddress}
           profileAccount={this.state.profileAccount}

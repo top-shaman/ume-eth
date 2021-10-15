@@ -125,7 +125,6 @@ div.ReplyInThread#ReplyInThread {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
   width: 80%;
-  white-space: pre-wrap;
 }
 
 .ReplyInThread div#reply-button-box {
