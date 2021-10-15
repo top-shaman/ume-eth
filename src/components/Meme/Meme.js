@@ -83,10 +83,11 @@ class Meme extends React.Component {
 //    } else if(this.state.alreadyRendered) {
 //      this.div.style.opacity = 1
 //    }
-    await this.formatText()
-    //await this.userHasLiked()
+    this.mounted = new AbortController()
+    await this.formatText().catch(e=>console.error(e))
   }
-  async componentWillUnmount() {
+  componentWillUnmount() {
+    this.mounted.abort()
   }
 
   //event handlers

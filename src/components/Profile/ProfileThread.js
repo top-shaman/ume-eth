@@ -63,7 +63,6 @@ class ProfileThread extends React.Component {
         }
       }, 10000)
     }
-    this.mounted = true
   }
   componentDidUpdate() {
     if(this.props.atBottom && !this.state.firstLoad && this.state.memesNotRendered!==0 && !this.state.loadingBottom) {
@@ -77,7 +76,6 @@ class ProfileThread extends React.Component {
   async componentWillUnmount() {
     clearInterval(this.intervalProfile)
     this.props.handleLoading(false)
-    this.mounted = false
   }
 
   // handles

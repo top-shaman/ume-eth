@@ -21,6 +21,7 @@ class Profile extends React.Component {
       infoLoading: true,
       refreshing: false
     }
+    this.profile = React.createRef()
 
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
@@ -37,10 +38,7 @@ class Profile extends React.Component {
   }
   // lifecycles
   async componentDidMount() {
-    console.log(this.state.profileAccount)
     await this.compileProfile()
-    console.log(this.state.profileAccount)
-    console.log(this.state.username)
   }
   componentDidUpdate() {
   }
@@ -85,6 +83,13 @@ class Profile extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+
+  loadNewMemes() {
+    this.profile.loadNewMemes()
+  }
+  refreshMemes() {
+    this.profile.refreshMemes()
   }
 
   async compileProfile() {

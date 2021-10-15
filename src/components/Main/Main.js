@@ -229,15 +229,14 @@ class Main extends React.Component {
   }
   async handleRefreshClick(e) {
     e.preventDefault()
-    //if(this.state.focusPage==='timeline' && !this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
-    if(this.state.focusPage==='timeline' && !this.state.loading) {
+    if(this.state.focusPage==='timeline' && !this.state.loading && this.timeline) {
       await this.timeline.loadNewMemes()
       await this.timeline.refreshMemes()
-    } else if(this.state.focusPage==='profile' && !this.state.loading) {//!this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
+    } else if(this.state.focusPage==='profile' && !this.state.loading && this.profile) {
       await this.profile.loadNewMemes()
       await this.profile.refreshMemes()
-    } else if(this.state.focusPage==='thread' && !this.state.loading) { //!this.state.timelineLoading && !this.state.profileLoading && !this.state.threadLoading) {
-      await this.thread.loadNewMemes()
+    } else if(this.state.focusPage==='thread' && !this.state.loading && this.thread) {
+      //await this.thread.loadNewMemes()
       await this.thread.refreshMemes()
     }
   }
@@ -274,7 +273,6 @@ class Main extends React.Component {
     this.clearPopups()
     if(this.state.focusPage!=='timeline') {
       this.setState({
-        focusPage: null,
         lastPage: [['timeline', '0x0']],
         back: false
       })
@@ -283,7 +281,7 @@ class Main extends React.Component {
       this.setState({
         focusPage: 'timeline',
         timelineFormat: localStorage.getItem('timelineSort'),
-        memeId: null,
+        memeId: null
       })
     }, 50)
     console.log('timeline loading: ' + this.state.timelineLoading)

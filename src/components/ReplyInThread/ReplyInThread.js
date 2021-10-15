@@ -75,7 +75,6 @@ class ReplyInThread extends React.Component {
     this.replyingTo()
     //this.textarea.focus()
     autosize(this.textarea)
-    this.mounted = true
   }
   componentDidUpdate() {
     if(this.state.memeText.length>0) {
@@ -89,7 +88,6 @@ class ReplyInThread extends React.Component {
   }
 
   componentWillUnmount() {
-    this.mounted = false
   }
 
   async handleTextChange(e) {
