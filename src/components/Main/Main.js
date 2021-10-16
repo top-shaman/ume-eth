@@ -371,7 +371,6 @@ class Main extends React.Component {
           />
         </div>
         <div
-          className="Main"
           id="body"
           ref={Ref=>this.body=Ref}
         >

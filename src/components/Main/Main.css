@@ -26,10 +26,11 @@ div.Main {
   color: #61dafb;
 }
 
-div#body.Main {
+.Main div#body {
   position: relative;
   flex-direction: column;
   color: lightgrey;
+  width: inherit;
   min-width: 5rem;
   max-width: 38rem;
   height: 100%;
@@ -222,6 +223,15 @@ small {
   }
 }
 
+@media screen and (max-width: 800px) {
+  div.Main {
+    border-right: 0.05rem solid #AAAAAA;
+    margin-right: 2rem;
+  }
+  .Main div#side-footer {
+    display:none;
+  }
+}
 @media screen and (max-width: 372px) {
   div#subheader input#search.SearchBar_input {
     display: none;

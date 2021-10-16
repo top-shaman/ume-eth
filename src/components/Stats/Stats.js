@@ -72,7 +72,7 @@ class Stats extends React.Component {
       { this.state.statsLoading
           ? <div id="loader"><Loader/></div>
           : <div id="stats">
-              <div id="header">
+              <div id="stats-header">
                 <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
                   <ProfilePic account={this.state.account} />
                 </a>
@@ -86,7 +86,7 @@ class Stats extends React.Component {
                   </a>
                 </p>
               </div>
-              <div id="body">
+              <div id="stats-body">
                 <p id="stats">
                   <span id="label">Memes: </span>
                   <span id="data">{this.state.memes}</span>
