@@ -94,7 +94,7 @@ Click it, and then you should be able to connect.
 
 \* **_Be sure to pay attention to your MetaMask, because if there's a pending action, it will show a similar flag_**
 
-\*\* **_You must be in Ropsten Ethereum Network to connect Wallet to Network, a flag should pop up saying 'UME not deployed to network' if you're on the wrong network_
+\*\* **_You must be in Ropsten Ethereum Network to connect Wallet to Network, a flag should pop up saying 'UME not deployed to network' if you're on the wrong network_**
 
 ## UME User Guide
 ### Creating a Profile
@@ -108,4 +108,4 @@ Create your username & address and write your profile to the Blockchain A notifi
 
 ----------------------------------------------------------
 
-send any inquiries to topshaman@protonmail.com
+please send any issues or inquiries to topshaman@protonmail.com
