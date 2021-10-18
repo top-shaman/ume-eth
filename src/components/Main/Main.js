@@ -168,12 +168,14 @@ class Main extends React.Component {
       popupX: element.x,
       popupY: element.y + offsetY
     })
-    setTimeout(() => {
+    if(this.state.popup!==e[0].target) {
+    //setTimeout(() => {
       // set memeId
       this.setState({
         activePopup: 'upvote'
       })
-    }, 20)
+    }
+    //}, 20)
     if(this.state.activePopup && this.state.popup===e[0].target) {
       this.setState({
         activePopup: null,
@@ -188,11 +190,11 @@ class Main extends React.Component {
     const element = e[0].target.getBoundingClientRect(),
           offsetY = this.props.offsetY ? this.props.offsetY : 0
     this.setState({
-      activePopup: null,
       popupMeme: null,
       popup: null,
       popupX: null,
-      popupY: null
+      popupY: null,
+      activePopup: null
     })
     this.setState({
       popup: e[0].target,
@@ -200,21 +202,24 @@ class Main extends React.Component {
       popupX: element.x,
       popupY: element.y + offsetY
     })
-    setTimeout(() => {
+    if(this.state.popup!==e[0].target) {
       // set memeId
       this.setState({
         activePopup: 'downvote'
       })
-    }, 20)
+    }
+    //}, 20)
+    //setTimeout(() => {
     if(this.state.activePopup && this.state.popup===e[0].target) {
       this.setState({
-        activePopup: null,
         popupMeme: null,
         popup: null,
         popupX: null,
-        popupY: null
+        popupY: null,
+        activePopup: null
       })
     }
+    console.log(this.state.activePopup)
   }
   handleClose(activePopup) {
     this.setState({ activePopup })
@@ -421,7 +426,7 @@ class Main extends React.Component {
               */}
             </section>
           </div>
-          { this.state.activePopup===null && this.state.popupX===null && this.state.popupY===null
+          { this.state.activePopup===null
               ? ''
               : this.state.activePopup==='upvote'
                   ? <UpvotePopup
