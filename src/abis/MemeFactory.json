@@ -45503,6 +45503,101 @@
     "version": "0.8.9+commit.e5eed63a.Emscripten.clang"
   },
   "networks": {
+    "3": {
+      "events": {
+        "0x1838922b4eb20492c478bbdc44a1f4e1cb49bc4702a0af8f4448a412bb5769e4": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "MemeCreated",
+          "type": "event"
+        },
+        "0x31a29f3d549b51b33c10acca465864df60975bf964406b8289c210ecea130faa": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "MemeDeleted",
+          "type": "event"
+        },
+        "0x76ce921e20c471c95deae34d20d53706ec4378ecab394e517f73aef912ae6cdd": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "PostSignerChanged",
+          "type": "event"
+        },
+        "0x069de1c7afdaba4b7727994f755c1584584ca12fdedef1eded797865d094c0e2": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "Tagged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x37Ba3869024F4C112a2efa3094A522268e77D5F4",
+      "transactionHash": "0x715b6372c635c334bc5d185f504fe1ed3237e40ba7f825ade7a8442dd95ae710"
+    },
     "1630295019026": {
       "events": {
         "0x1838922b4eb20492c478bbdc44a1f4e1cb49bc4702a0af8f4448a412bb5769e4": {
@@ -47880,7 +47975,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-10-15T00:12:38.122Z",
+  "updatedAt": "2021-10-18T00:36:53.205Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
