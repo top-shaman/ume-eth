@@ -49,9 +49,9 @@ git clone https://github/top-shaman/ume-eth
 ```
 
 ## Installing Chrome, Brave, or Firefox
-[Chrome](https://www.google.com/chrome/)
-[Brave](https://brave.com/)
-[Firefox](https://www.mozilla.org/en-US/firefox/new/)
+- [Chrome](https://www.google.com/chrome/)
+- [Brave](https://brave.com/)
+- [Firefox](https://www.mozilla.org/en-US/firefox/new/)
 In the current version, **UME cannot run on mobile browsers.**
 
 ## Installing MetaMask
@@ -62,7 +62,43 @@ Set up your MetaMask Wallet by following the instructions, make sure to keep you
 
 ## Accessing the Ropsten Ethereum Testnet
 ### Set MetaMask Network to Ropsten
-Change MetaMask Network to Ropsten
+Change MetaMask Network to Ropsten by selecting **Ropsten** from list of Networks (default set to Ethereum)
+![Highlight Network Select](/public/Network.png)
+![Select Ropsten](/public/Select-Account.png)
 ### Getting Ropsten Ethereum
-Visit the Ropsten Ethereum Faucet [here](https://faucet.ropsten.be/) or [here](https://faucet.dimensions.network/) and enter your Wallet Public Key to receive Ropsten Ethereum
+Visit the Ropsten Ethereum Faucet [here](https://faucet.ropsten.be/) or [here](https://faucet.dimensions.network/) and enter your Wallet Public Key to receive Ropsten Ethereum. Wallet Public Key can be easily copied by clicking 'Account Name' in MetaMask Wallet:
+![Copying Key](/public/Copy-Account.png)
+After you enter the queue, it should take ~15-60 seconds to hit your wallet.
+* _**If you ever need to add more Ropsten Ethereum**, you can use the same faucet after 24 hrs, use the other faucet, or access the same faucet using a different Wallet and different IP address using a VPN._
 
+## Running UME web app via `node`
+Now that we've installed everything and funded our wallets with rETH, we can run the UME web app.
+
+### Hosting web app on local node server
+With your root directory selected, in a bash shell run:
+```
+npm run start
+```
+Node should automatically open the app in your default browser, but if it doesn't, set your browser URL to `localhost:3000`
+
+### Connecting Wallet to UME
+You should see a prompt to connect your Wallet to UME:
+![Connect account](/public/Connect-Account.png)
+
+If not, you should see a blue flag on your MetaMask Browser icon, like this:
+![MetaMask notification](/public/MetaMask-Notification.png)
+Click it, and then you should be able to connect.
+* _Be sure to pay attention to your MetaMask, because if there's a pending action, it will show a similar flag_
+** _You must be in Ropsten Ethereum Network to connect Wallet to Network, a flag should pop up saying 'UME not deployed to network' if you're on the wrong network
+
+## UME User Guide
+### Creating a Profile
+Being a dApp that runs on the Ethereum Blockchain, authentication is performed intrinsically via MetaMask-- your UME account is tied to your Public Key, which is only accessible via your Private Key, which you access via MetaMask. In other words, you don't need a password-- it's all tied to your MetaMask wallet.
+
+Create your username & address and write your profile to the Blockchain A notification will pop up on the MetaMask icon in your browser to initiate the transaction
+![Account creation](/public/Account-Create.png)
+* _This will be how you interact with the Blockchain-- transactions write data onto the Blockchain so each interaction: liking, following, posting, etc. will require transactions.
+
+----------------------------------------------------------
+
+send any inquiries to topshaman@protonmail.com
