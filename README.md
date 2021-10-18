@@ -68,7 +68,8 @@ Change MetaMask Network to Ropsten by selecting **Ropsten** from list of Network
 ### Getting Ropsten Ethereum
 Visit the Ropsten Ethereum Faucet [here](https://faucet.ropsten.be/) or [here](https://faucet.dimensions.network/) and enter your Wallet Public Key to receive Ropsten Ethereum. Wallet Public Key can be easily copied by clicking 'Account Name' in MetaMask Wallet:
 ![Copying Key](/public/Copy-Account.png)
-After you enter the queue, it should take ~15-60 seconds to hit your wallet.
+After you enter the queue, it should take ~15-60 seconds to hit your wallet.\n
+
 \* _**If you ever need to add more Ropsten Ethereum**, you can use the same faucet after 24 hrs, use the other faucet, or access the same faucet using a different Wallet and different IP address using a VPN._
 
 ## Running UME web app via `node`
@@ -87,9 +88,11 @@ You should see a prompt to connect your Wallet to UME:
 
 If not, you should see a blue flag on your MetaMask Browser icon, like this:
 ![MetaMask notification](/public/MetaMask-Notification.png)
-Click it, and then you should be able to connect.
-\* _Be sure to pay attention to your MetaMask, because if there's a pending action, it will show a similar flag_
-\** _You must be in Ropsten Ethereum Network to connect Wallet to Network, a flag should pop up saying 'UME not deployed to network' if you're on the wrong network
+Click it, and then you should be able to connect.\n
+
+\* _Be sure to pay attention to your MetaMask, because if there's a pending action, it will show a similar flag_\n
+
+\*\* _You must be in Ropsten Ethereum Network to connect Wallet to Network, a flag should pop up saying 'UME not deployed to network' if you're on the wrong network_
 
 ## UME User Guide
 ### Creating a Profile
@@ -97,7 +100,7 @@ Being a dApp that runs on the Ethereum Blockchain, authentication is performed i
 
 Create your username & address and write your profile to the Blockchain A notification will pop up on the MetaMask icon in your browser to initiate the transaction
 ![Account creation](/public/Account-Create.png)
-\* _This will be how you interact with the Blockchain-- transactions write data onto the Blockchain so each interaction: liking, following, posting, etc. will require transactions.
+\* _This will be how you interact with the Blockchain-- transactions write data onto the Blockchain so each interaction: liking, following, posting, etc. will require transactions._
 
 ----------------------------------------------------------
 
