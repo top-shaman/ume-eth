@@ -44,6 +44,10 @@ class Reply extends React.Component {
   }
 
   componentDidMount() {
+    const background = document.querySelector('div#background'),
+          container = document.querySelector('div#container')
+    background.style.top = this.props.offsetY + 'px'
+    container.style.top = 'calc(15% + ' +this.props.offsetY + 'px)'
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.Reply p#meme-button'),

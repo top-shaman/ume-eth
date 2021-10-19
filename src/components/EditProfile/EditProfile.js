@@ -45,6 +45,10 @@ class EditProfile extends React.Component {
   }
 
   async componentDidMount() {
+    const background = document.querySelector('div#background'),
+          container = document.querySelector('div#container')
+    background.style.top = this.props.offsetY + 'px'
+    container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
     fadeIn('.EditProfile div#container', 333)
     partialFadeIn('.EditProfile div#background', 100, 0.2)
     this.textareaName.focus()

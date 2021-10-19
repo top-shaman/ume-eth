@@ -6,6 +6,8 @@ import './PageLoader.css'
 
 class PageLoader extends React.Component {
   componentDidMount() {
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e=>e.style.overflow = 'hidden')
     expandFadeInBobble('div.PageLoader', 2000)
   }
   componentWillUnmount() {

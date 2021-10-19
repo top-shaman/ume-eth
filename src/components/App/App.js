@@ -35,7 +35,9 @@ class App extends React.Component {
       entered: false,
       creatingMeme: false,
       replying: false,
-      editing: false
+      editing: false,
+      offsetY: 0,
+      appHeight: window.innerHeight
     }
 
     this.app = React.createRef()
@@ -76,6 +78,8 @@ class App extends React.Component {
     }
   }
   componentDidUpdate() {
+    console.log(window.innerHeight)
+    console.log(this.state.appHeight)
   }
   async componentWillUnmount() {
     window.clearInterval()
@@ -86,40 +90,39 @@ class App extends React.Component {
   handleEntered(entered) {
     this.setState({ entered })
   }
-
-  handleCreateMeme(creatingMeme) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'hidden'
-    this.setState({ creatingMeme })
-  }
-  handleExitCreate(creatingMeme) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'auto'
-    this.setState({ creatingMeme })
-  }
-
-  handleReply(replying) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'hidden'
-    this.setState({ replying })
-  }
-  handleExitReply(replying) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'auto'
-    this.setState({ replying })
-  }
   handleToProfile(e) {
     this.main.handleToProfile(e)
   }
 
+  handleCreateMeme(creatingMeme) {
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'hidden')
+    this.setState({ creatingMeme })
+  }
+  handleExitCreate(creatingMeme) {
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'auto')
+    this.setState({ creatingMeme })
+  }
+
+  handleReply(replying) {
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'hidden')
+    this.setState({ replying })
+  }
+  handleExitReply(replying) {
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'auto')
+    this.setState({ replying })
+  }
   handleEdit(editing) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'hidden'
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'hidden')
     this.setState({ editing })
   }
   handleExitEdit(editing) {
-    //const app = document.querySelectorAll('div.App')
-    //app.style.overflow = 'auto'
+    const app = document.querySelectorAll('div.App')
+    app.forEach(e => e.style.overflow = 'auto')
     this.setState({ editing })
   }
   handleScroll(e) {
@@ -127,7 +130,10 @@ class App extends React.Component {
       this.setState({ atBottom: true })
     }
     else this.setState({ atBottom: false })
-    this.setState({ offsetY: e.target.scrollTop})
+    this.setState({
+      offsetY: e.target.scrollTop,
+      appHeight: e.target.clientHeight
+    })
   }
 
   async request() {
@@ -265,7 +271,10 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
+      <div
+        className="App"
+        onResize={this.handleResize}
+      >
         { this.state.contractLoading && this.state.account!==undefined
             ? <PageLoader/>
             : this.state.account===undefined
@@ -280,6 +289,7 @@ class App extends React.Component {
                       ? this.state.creatingMeme
                         ? <CreateMeme
                             account={this.state.account}
+                            offsetY={this.state.offsetY}
                             handleExitCreate={this.handleExitCreate}
                             userStorage={this.state.userStorage}
                             interface={this.state.interface}
@@ -294,6 +304,7 @@ class App extends React.Component {
                               memeId={this.state.replying[4]}
                               parentId={this.state.replying[5]}
                               originId={this.state.replying[6]}
+                              offsetY={this.state.offsetY}
                               handleExitReply={this.handleExitReply}
                               handleToProfile={this.handleToProfile}
                               userStorage={this.state.userStorage}
@@ -303,9 +314,10 @@ class App extends React.Component {
                           : this.state.editing
                             ? <EditProfile
                                 account={this.state.account}
-                               username={this.state.editing[0]}
+                                username={this.state.editing[0]}
                                 address={this.state.editing[1]}
                                 bio={this.state.editing[2]}
+                                offsetY={this.state.offsetY}
                                 handleExitEdit={this.handleExitEdit}
                                 userStorage={this.state.userStorage}
                                 interface={this.state.interface}

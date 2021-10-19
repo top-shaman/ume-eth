@@ -35,6 +35,12 @@ class CreateMeme extends React.Component {
   }
 
   componentDidMount() {
+    const background = document.querySelector('.CreateMeme div#background'),
+          container = document.querySelector('.CreateMeme div#container')
+    background.style.top = this.props.offsetY + 'px'
+
+    container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.CreateMeme p#meme-button'),
