@@ -11,7 +11,7 @@ class PageLoader extends React.Component {
     expandFadeInBobble('div.PageLoader', 2000)
   }
   componentWillUnmount() {
-    expandToFadeOut('div.PageLoader', 2000)
+    expandToFadeOut('div.PageLoader', 1500)
   }
   render() {
     return(

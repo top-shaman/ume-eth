@@ -219,7 +219,7 @@ class Main extends React.Component {
     this.setState({ handleRefresh })
     if(handleRefresh) console.log('refreshing: ' + this.state.focusPage)
     else console.log(this.state.focusPage + ' refreshed')
-    await this.stats.setInfo()
+    await this.stats.setInfo().catch(e=>console.error(e))
   }
   async handleRefreshClick(e) {
     e.preventDefault()

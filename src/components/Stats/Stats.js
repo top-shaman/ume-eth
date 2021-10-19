@@ -25,7 +25,7 @@ class Stats extends React.Component {
     this.handleToProfile = this.handleToProfile.bind(this)
   }
   async componentDidMount() {
-    await this.setInfo()
+    await this.setInfo().catch(e=>console.error(e))
     this.mounted = true
   }
   componentWillUnmount() {

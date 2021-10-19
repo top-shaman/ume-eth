@@ -231,12 +231,12 @@ class App extends React.Component {
       // mark contract as loaded
       if(this.state.contractLoading) {
         if(this.state.registered) {
-          expandToFadeOut('div.PageLoader', 2000)
-          fadeOut('div#Border-Spinner', 200)
+          expandToFadeOut('div.PageLoader', 1000)
+          fadeOut('div#Border-Spinner', 150)
           setTimeout(()=> {
             this.setState({ contractLoading: false })
             blurToFadeIn('div.App', 1000)
-          }, 2000)
+          }, 1000)
         } else {
           fadeOut('div#Border-Spinner', 800)
           fadeOut('div.PageLoader', 1000)

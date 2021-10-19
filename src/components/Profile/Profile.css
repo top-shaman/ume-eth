@@ -1,4 +1,5 @@
 p#loader.Profile {
+  margin: 1rem 0;
   max-width: 38rem;
 }
 .Profile div#loader {
@@ -101,8 +102,44 @@ div.Profile div#loader-bottom div#spinning-loader {
   text-align: left;
 }
 .Profile div#Profile div#body p#bio {
+  margin: 0 1.5rem 0.5rem 0rem;
+  width: inherit;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #CCDDCC;
+  justify-content: flex-start;
+  border: none;
+  box-shadow: none;
+}
+.Profile p#bio span {
+  display: inline;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: left;
+}
+
+.Profile p#bio span#plain {
+  color: #CCDDCC;
   margin: 0;
 }
+.Profile p#bio a#at,
+.Profile p#bio a#hash {
+  display: inline;
+  margin: 0;
+  color: #00CC89;
+  text-decoration: none;
+  line-break: anywhere;
+}
+.Profile p#bio a#at:hover,
+.Profile p#bio a#hash:hover {
+  color: #00CC89;
+  text-decoration: underline;
+}
+
 
 /* footer */
 .Profile div#Profile div#footer {

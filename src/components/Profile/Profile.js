@@ -1,7 +1,8 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import ProfileThread from './ProfileThread'
-import { fromBytes } from '../../resources/Libraries/Helpers'
+import Tag from '../Tag/Tag'
+import { toBytes, fromBytes, isolateAt, isolateHash, isolatePlain } from '../../resources/Libraries/Helpers'
 import "./Profile.css"
 
 
@@ -26,6 +27,8 @@ class Profile extends React.Component {
     this.handleToProfile = this.handleToProfile.bind(this)
     this.handleToThread = this.handleToThread.bind(this)
     this.handleEdit = this.handleEdit.bind(this)
+    this.handleTag = this.handleTag.bind(this)
+
     this.handleReply = this.handleReply.bind(this)
     this.handleFollow = this.handleFollow.bind(this)
 
@@ -38,7 +41,7 @@ class Profile extends React.Component {
   }
   // lifecycles
   async componentDidMount() {
-    await this.compileProfile()
+    await this.compileProfile().catch(e=>console.error(e))
   }
   componentDidUpdate() {
   }
@@ -64,6 +67,13 @@ class Profile extends React.Component {
       this.state.address,
       this.state.bio
     ])
+  }
+  async handleTag(e) {
+    const address = await toBytes(e).catch(e=>console.error(e)),
+          account = await this.state.userStorage.methods.usersByUserAddr(address).call().catch(e=>console.error(e))
+    if(account!=='0x0000000000000000000000000000000000000000') {
+      this.props.handleToProfile(await account)
+    }
   }
   handleReply(e) {
     this.props.handleReply(e)
@@ -102,6 +112,7 @@ class Profile extends React.Component {
           bio = await this.state.userStorage.methods.users(this.state.profileAccount).call().then(e => e.bio),
           time = await this.state.userStorage.methods.users(this.state.profileAccount).call().then(e => new Date(e.time*1000).toLocaleDateString(undefined, {month: 'long', year: 'numeric'})),
           userMemeCount = await this.state.userStorage.methods.getPostCount(this.state.profileAccount).call()
+    await this.formatText(await bio)
     this.setState({
       username,
       address,
@@ -109,11 +120,32 @@ class Profile extends React.Component {
       isFollower,
       following,
       followers,
-      bio,
       time,
       userMemeCount,
       infoLoading: false
     })
+  }
+  async formatText(text) {
+    let plainMap = await isolatePlain(text).catch(e=>console.error(e)),
+        atMap = await isolateAt(text).catch(e=>console.error(e)),
+        hashMap = await isolateHash(text).catch(e=>console.error(e)),
+        combined = [],
+        formatted = []
+    combined = plainMap.concat(atMap, hashMap)
+      .sort((a,b) => a[0]-b[0])
+    if(combined!==null) {
+      let i = 0
+      combined.forEach(elem => {
+        if(elem[2]==='plain')
+          formatted.push(<span key={i} id="plain">{elem[1]}</span>)
+        else if(elem[2]==='at')
+          formatted.push(<Tag key={i} address={elem[1]} handleTag={this.handleTag}/>)
+        else if(elem[2]==='hash')
+          formatted.push(<a key={i} href={`/${elem[1]}`} id="hash">{elem[1]}</a>)
+        i++
+      })
+    }
+    this.setState({ bio: formatted })
   }
 
   render() {
