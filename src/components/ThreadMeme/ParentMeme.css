@@ -43,6 +43,7 @@ div.ParentMeme:hover {
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
   transform: translateX(-0.2rem);
+  -moz-transform: translateX(-0.2rem);
 }
 .ParentMeme a#profilePic {
 }

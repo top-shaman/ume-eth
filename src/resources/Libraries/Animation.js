@@ -134,7 +134,7 @@ export function clickBobble(element, duration) {
   let progress
   requestAnimationFrame(function animate(time) {
     let fractionOfTime = (time - start) / duration
-    if (fractionOfTime > 1 && phase < 6) {
+    if (fractionOfTime > 1 && phase < 2) {
       fractionOfTime = 0
       start = performance.now()
       phase++
@@ -145,6 +145,37 @@ export function clickBobble(element, duration) {
     elements.forEach(e => e.style.transform = 'scale(' + progress + ')')
     if (fractionOfTime < 1) requestAnimationFrame(animate)
     else elements.forEach(e => e.style.transform = 'scale(' + 1 + ')')
+  })
+}
+export function expandFadeInBobble(element, duration) {
+  duration = duration / 8
+  let start = performance.now()
+  const elements = document.querySelectorAll(element)
+  let phase = 0
+  let progress1, progress2
+  requestAnimationFrame(function animate(time) {
+    let fractionOfTime = (time - start) / duration
+    if (fractionOfTime > 1 && phase < 7) {
+      fractionOfTime = 0
+      start = performance.now()
+      phase++
+    } else if (fractionOfTime > 1) fractionOfTime = 1
+    if(phase===0) {
+      progress1 = easeInOut(fractionOfTime, 0, 1.04)
+      progress2 = easeInOut(fractionOfTime, 0, 1)
+    } else if(phase===1) progress1 = easeInOut(fractionOfTime, 1.04, -0.08)
+    else if(phase===2) progress1 = easeInOut(fractionOfTime, 0.96, 0.06)
+    else if(phase===3) progress1 = easeInOut(fractionOfTime, 1.02, -0.04)
+    else if(phase===4) progress1 = easeInOut(fractionOfTime, 0.98, 0.035)
+    else if(phase===5) progress1 = easeInOut(fractionOfTime, 1.015, -0.02)
+    else if(phase===6) progress1 = easeInOut(fractionOfTime, 0.995, 0.007)
+    else if(phase===7) progress1 = easeInOut(fractionOfTime, 1.002, -0.002)
+    elements.forEach(e => e.style.transform = 'scale(' + progress1 + ')')
+    elements.forEach(e => e.style.opacity = progress2)
+    if (fractionOfTime < 1) requestAnimationFrame(animate)
+    else {
+      elements.forEach(e => e.style.transform = 'scale(' + 1 + ')')
+    }
   })
 }
 export function expandToFadeOut(element, duration) {

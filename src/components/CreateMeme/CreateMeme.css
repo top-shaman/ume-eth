@@ -5,6 +5,7 @@
   width: 100%;
   height: 100%;
   background-color: #AABBBB;
+  overflow: hidden;
 }
 .CreateMeme div#container {
   z-index: 10;
@@ -49,6 +50,7 @@
   border-radius: 100%;
   margin: 0.4rem 0.4rem;
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
 }
 .CreateMeme textarea#meme-text {
   border: none;

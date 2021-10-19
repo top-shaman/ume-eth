@@ -148,6 +148,7 @@ div.ReplyMeme {
 }
 .ReplyMeme div#parentProfilePic {
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
   margin: 0.4rem 0.4rem 0 0.4rem;
 }
 .ReplyMeme div#parentProfilePic div#profilePic {

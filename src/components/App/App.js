@@ -1,6 +1,6 @@
 import React from 'react'
 import Web3 from 'web3'
-import { blurToFadeIn, fadeOut} from '../../resources/Libraries/Animation'
+import { expandToFadeOut, blurToFadeIn, fadeOut} from '../../resources/Libraries/Animation'
 import './App.css';
 import Main from '../Main/Main'
 import Enter from '../Enter/Enter'
@@ -9,6 +9,7 @@ import CreateMeme from '../CreateMeme/CreateMeme'
 import Reply from '../Reply/Reply'
 import EditProfile from '../EditProfile/EditProfile'
 import NoWallet from '../NoWallet/NoWallet'
+import PageLoader from '../Loader/PageLoader'
 
 import UserInterface from '../../abis/UserInterface.json'
 import UserStorage from '../../abis/UserStorage.json'
@@ -28,6 +29,7 @@ class App extends React.Component {
       ume: null,
       umeBalance: null,
       memeIdsByBoost: [],
+      connected: false,
       contractLoading: true,
       registered: false,
       entered: false,
@@ -36,6 +38,7 @@ class App extends React.Component {
       editing: false
     }
 
+    this.app = React.createRef()
     this.main = React.createRef()
 
     this.handleEntered = this.handleEntered.bind(this)
@@ -56,8 +59,7 @@ class App extends React.Component {
   // lifecycle methods
   async componentDidMount() {
     // check if has previously loaded, so page can know to blur
-    if(localStorage.getItem('hasLoaded')!=='true')
-      blurToFadeIn('div.App', 2000)
+    //if(localStorage.getItem('hasLoaded')!=='true')
     // check if account exists, load defaults if no account
     if(this.state.account===undefined) {
       // load Web3 & UME contracts
@@ -86,16 +88,24 @@ class App extends React.Component {
   }
 
   handleCreateMeme(creatingMeme) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'hidden'
     this.setState({ creatingMeme })
   }
   handleExitCreate(creatingMeme) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'auto'
     this.setState({ creatingMeme })
   }
 
   handleReply(replying) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'hidden'
     this.setState({ replying })
   }
   handleExitReply(replying) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'auto'
     this.setState({ replying })
   }
   handleToProfile(e) {
@@ -103,9 +113,13 @@ class App extends React.Component {
   }
 
   handleEdit(editing) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'hidden'
     this.setState({ editing })
   }
   handleExitEdit(editing) {
+    //const app = document.querySelectorAll('div.App')
+    //app.style.overflow = 'auto'
     this.setState({ editing })
   }
   handleScroll(e) {
@@ -121,9 +135,11 @@ class App extends React.Component {
       .request({ method: 'eth_requestAccounts' })
       .catch((e) => {
         if(e.code === 4001) {
+          this.setState({ connected: false })
           console.log('Please connect to MetaMask.')
           this.request()
         } else {
+          this.setState({ connected: false })
           console.error(e)
         }
       })
@@ -148,8 +164,9 @@ class App extends React.Component {
     })
     window.ethereum.on('message', message => {
       console.log('chain change detected')
-        this.setState({ contractLoading: true })
-      this.loadContracts().catch(e => console.error(e))
+      console.log(message)
+      //this.setState({ contractLoading: true })
+      //this.loadContracts().catch(e => console.error(e))
     })
   }
 
@@ -172,8 +189,8 @@ class App extends React.Component {
     const netId = await web3.eth.net.getId(),
           umeNetData = UME.networks[netId],
           interfaceNetData = UserInterface.networks[netId],
-          userStorageNetData= UserStorage.networks[netId],
-          memeStorageNetData= MemeStorage.networks[netId]
+          userStorageNetData = UserStorage.networks[netId],
+          memeStorageNetData = MemeStorage.networks[netId]
 
     // check if Contract netData is valid
     if(umeNetData && interfaceNetData && userStorageNetData && memeStorageNetData) {
@@ -189,10 +206,10 @@ class App extends React.Component {
         interface: uInterface
       })
       // retrieve Blockchain data for development purposes, display to console
-      const memeCount = await memeStorage.methods.memeCount().call(),
-            userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length),
-            userCount = await userStorage.methods.userCount().call(),
-            umeBalance = await ume.methods.balanceOf(this.state.account).call().then(elem => parseInt(elem))
+      const memeCount = await memeStorage.methods.memeCount().call().catch(e=>console.error(e)),
+            userMemeCount = await userStorage.methods.getPosts(this.state.account).call().then(e => e.length).catch(e=>console.error(e)),
+            userCount = await userStorage.methods.userCount().call().catch(e=>console.error(e)),
+            umeBalance = await ume.methods.balanceOf(this.state.account).call().then(elem => parseInt(elem)).catch(e=>console.error(e))
       this.setState({
         memeCount,
         userMemeCount,
@@ -202,12 +219,26 @@ class App extends React.Component {
       console.log('meme count: ' + memeCount)
       console.log('user meme count: ' + userMemeCount)
       console.log('user count: ' + userCount)
-      // mark contract as loaded
-      this.setState({
-        contractLoading: false
-      })
-      // after contract is loaded, load Account
+
+      // load Account
       await this.loadAccount().catch(e => console.error(e))
+      // mark contract as loaded
+      if(this.state.contractLoading) {
+        if(this.state.registered) {
+          expandToFadeOut('div.PageLoader', 2000)
+          fadeOut('div#Border-Spinner', 200)
+          setTimeout(()=> {
+            this.setState({ contractLoading: false })
+            blurToFadeIn('div.App', 1000)
+          }, 2000)
+        } else {
+          fadeOut('div#Border-Spinner', 800)
+          fadeOut('div.PageLoader', 1000)
+          setTimeout(()=> {
+            this.setState({ contractLoading: false })
+          }, 1000)
+        }
+      }
     }
     else {
       window.alert('UME not deployed to detected network')
@@ -218,7 +249,7 @@ class App extends React.Component {
     // helper function to return whether or not user exists on blockchain
     const profileExists = async () => {
       if(this.state.account!==undefined)
-        return await this.state.userStorage.methods.userExists(this.state.account).call()
+        return await this.state.userStorage.methods.userExists(this.state.account).call().catch(e=>console.error(e))
     }
     if(await profileExists()) {
       console.log('account exists')
@@ -235,81 +266,84 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        { this.state.account!==undefined && !this.contractLoading
-          ? this.state.registered
-            ? <div
-                className="App"
-                onScroll={this.handleScroll}
-              >
-                { this.state.creatingMeme || this.state.replying || this.state.editing
-                  ? this.state.creatingMeme
-                    ? <CreateMeme
-                        account={this.state.account}
-                        handleExitCreate={this.handleExitCreate}
-                        userStorage={this.state.userStorage}
-                        interface={this.state.interface}
-                      />
-                    : this.state.replying
-                      ? <Reply
-                          account={this.state.account}
-                          username={this.state.replying[0]}
-                          address={this.state.replying[1]}
-                          author={this.state.replying[2]}
-                          text={this.state.replying[3]}
-                          memeId={this.state.replying[4]}
-                          parentId={this.state.replying[5]}
-                          originId={this.state.replying[6]}
-                          handleExitReply={this.handleExitReply}
-                          handleToProfile={this.handleToProfile}
-                          userStorage={this.state.userStorage}
-                          memeStorage={this.state.memeStorage}
-                          interface={this.state.interface}
-                        />
-                      : this.state.editing
-                        ? <EditProfile
+        { this.state.contractLoading && this.state.account!==undefined
+            ? <PageLoader/>
+            : this.state.account===undefined
+              ? <NoWallet />
+              : this.state.registered
+                ? <div
+                    className="App"
+                    onScroll={this.handleScroll}
+                    ref={Ref=>this.app=Ref}
+                  >
+                    { this.state.creatingMeme || this.state.replying || this.state.editing
+                      ? this.state.creatingMeme
+                        ? <CreateMeme
                             account={this.state.account}
-                           username={this.state.editing[0]}
-                            address={this.state.editing[1]}
-                            bio={this.state.editing[2]}
-                            handleExitEdit={this.handleExitEdit}
+                            handleExitCreate={this.handleExitCreate}
                             userStorage={this.state.userStorage}
                             interface={this.state.interface}
                           />
-                        : ''
-                  : ''
-                }
-                <Main
-                  account={this.state.account}
-                  userStorage={this.state.userStorage}
-                  memeStorage={this.state.memeStorage}
-                  interface={this.state.interface}
-                  ume={this.state.ume}
-                  memeCount={this.state.memeCount}
-                  userMemeCount={this.state.userMemeCount}
-                  umeBalance={this.state.umeBalance}
-                  memeIdsByBoost={this.state.memeIdsByBoost}
-                  contractLoading={this.state.contractLoading}
-                  atBottom={this.state.atBottom}
-                  offsetY={this.state.offsetY}
-                  handleCreateMeme={this.handleCreateMeme}
-                  handleReply={this.handleReply}
-                  handleEdit={this.handleEdit}
-                  handleProfileChange={this.handleProfileChange}
-                  ref={Ref=>this.main=Ref}
-                />
-              </div>
-            : this.state.entered
-              ? <CreateUser
-                  account={this.state.account}
-                  hasEntered={this.state.entered}
-                  interface={this.state.interface}
-                  / >
-              : <Enter
-                  account={this.state.account}
-                  hasEntered={this.handleEntered}
-                  contractLoading={this.state.contractLoading}
-                />
-          : <NoWallet />
+                        : this.state.replying
+                          ? <Reply
+                              account={this.state.account}
+                              username={this.state.replying[0]}
+                              address={this.state.replying[1]}
+                              author={this.state.replying[2]}
+                              text={this.state.replying[3]}
+                              memeId={this.state.replying[4]}
+                              parentId={this.state.replying[5]}
+                              originId={this.state.replying[6]}
+                              handleExitReply={this.handleExitReply}
+                              handleToProfile={this.handleToProfile}
+                              userStorage={this.state.userStorage}
+                              memeStorage={this.state.memeStorage}
+                              interface={this.state.interface}
+                            />
+                          : this.state.editing
+                            ? <EditProfile
+                                account={this.state.account}
+                               username={this.state.editing[0]}
+                                address={this.state.editing[1]}
+                                bio={this.state.editing[2]}
+                                handleExitEdit={this.handleExitEdit}
+                                userStorage={this.state.userStorage}
+                                interface={this.state.interface}
+                              />
+                            : ''
+                      : ''
+                    }
+                    <Main
+                      account={this.state.account}
+                      userStorage={this.state.userStorage}
+                      memeStorage={this.state.memeStorage}
+                      interface={this.state.interface}
+                      ume={this.state.ume}
+                      memeCount={this.state.memeCount}
+                      userMemeCount={this.state.userMemeCount}
+                      umeBalance={this.state.umeBalance}
+                      memeIdsByBoost={this.state.memeIdsByBoost}
+                      contractLoading={this.state.contractLoading}
+                      atBottom={this.state.atBottom}
+                      offsetY={this.state.offsetY}
+                      handleCreateMeme={this.handleCreateMeme}
+                      handleReply={this.handleReply}
+                      handleEdit={this.handleEdit}
+                      handleProfileChange={this.handleProfileChange}
+                      ref={Ref=>this.main=Ref}
+                    />
+                  </div>
+                : this.state.entered
+                  ? <CreateUser
+                      account={this.state.account}
+                      hasEntered={this.state.entered}
+                      interface={this.state.interface}
+                      / >
+                  : <Enter
+                      account={this.state.account}
+                      hasEntered={this.handleEntered}
+                      contractLoading={this.state.contractLoading}
+                    />
         }
       </div>
     );

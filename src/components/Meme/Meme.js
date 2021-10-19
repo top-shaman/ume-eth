@@ -122,8 +122,8 @@ class Meme extends React.Component {
     this.props.handleToProfile(this.state.author)
   }
   async handleTag(e) {
-    const address = await toBytes(e),
-          account = await this.state.userStorage.methods.usersByUserAddr(address).call()
+    const address = await toBytes(e).catch(e=>console.error(e)),
+          account = await this.state.userStorage.methods.usersByUserAddr(address).call().catch(e=>console.error(e))
     if(account!=='0x0000000000000000000000000000000000000000') {
       this.props.handleToProfile(await account)
     }
@@ -183,9 +183,9 @@ class Meme extends React.Component {
 
   async formatText() {
     let text = this.props.text,
-        plainMap = await isolatePlain(text),
-        atMap = await isolateAt(text),
-        hashMap = await isolateHash(text),
+        plainMap = await isolatePlain(text).catch(e=>console.error(e)),
+        atMap = await isolateAt(text).catch(e=>console.error(e)),
+        hashMap = await isolateHash(text).catch(e=>console.error(e)),
         combined = [],
         formatted = []
     combined = plainMap.concat(atMap, hashMap)

@@ -46,6 +46,7 @@
 }
 .Reply section#body img#profile-pic {
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
   width: 3rem;
   height: auto;
   border-radius: 100%;

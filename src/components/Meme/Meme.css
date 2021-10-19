@@ -3,7 +3,7 @@ div.Meme {
   flex-direction: row;
   position: relative;
   background-color: #1D1F22;
-  border-bottom: 0.05rem solid #AAAAAA;
+  border-bottom: 1px solid #AAAAAA;
   width: inherit;
   overflow-x: hidden;
 }
@@ -158,4 +158,5 @@ div.Meme:hover {
 }
 .Meme img#downvote {
   transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
 }

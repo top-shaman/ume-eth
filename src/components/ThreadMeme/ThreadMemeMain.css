@@ -2,7 +2,7 @@ div.ThreadMemeMain {
   display: flex;
   flex-direction: column;
   background-color: #1D1F22;
-  border-bottom: 0.05rem solid #AAAAAA;
+  border-bottom: 1px solid #AAAAAA;
   width: inherit;
   overflow: hidden;
 }
@@ -153,7 +153,7 @@ section#info {
   text-align: left;
   margin: 0 1rem;
   padding-bottom: 1rem;
-  border-bottom: 0.01rem solid #667777
+  border-bottom: 1px solid #667777
 }
 .ThreadMemeMain span#time {
   margin: 0 auto 1rem 0;
@@ -164,7 +164,7 @@ section#info {
   margin: 0 1rem;
   width: auto;
   padding: 0;
-  border-bottom: 0.01rem solid #667777;
+  border-bottom: 1px solid #667777;
 }
 .ThreadMemeMain div#stats p#like-stats {
   margin: 0.6rem 0.2rem 0.8rem 0.2rem;

@@ -17,10 +17,10 @@ div.Main {
   pointer-events: none;
 }
 .Main div#side-header {
-  border-right: 0.05rem solid #AAAAAA;
+  border-right: 1px solid #AAAAAA;
 }
 .Main div#side-footer {
-  border-left: 0.05rem solid #AAAAAA;
+  border-left: 1px solid #AAAAAA;
 }
 .Main div#link {
   color: #61dafb;
@@ -44,7 +44,7 @@ div.Main {
   position: sticky;
   position: -webkit-sticky;
   padding: 0;
-  border-bottom: 0.05rem solid #AAAAAA;
+  border-bottom: 1px solid #AAAAAA;
   background-color: #282c34;
   top:0;
   width: 100%;
@@ -225,7 +225,7 @@ small {
 
 @media screen and (max-width: 800px) {
   div.Main {
-    border-right: 0.05rem solid #AAAAAA;
+    border-right: 1px solid #AAAAAA;
     margin-right: 2rem;
   }
   .Main div#side-footer {

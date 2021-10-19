@@ -101,19 +101,26 @@ nav.navbar {
 }
 .navbar a span#link {
   margin: 0.2rem 0.45rem 0.2rem 0;
+  padding-bottom: 1rem;
 }
 
 /* link-specific settings */
 .navbar a#home p#home img#icon{
   transform: translateY(-0.1rem);
+  -moz-transform: translateY(-0.1rem);
   width: 1.75rem;
   margin: 0.14rem 1rem 0.14rem 0.15rem;
 }
 .navbar a#profile p#profile img#icon{
   transform: translateY(-0.125rem);
+  -moz-transform: translateY(-0.125rem);
   width: 1.9rem;
   margin: 0.14rem 1rem 0.14rem 0.1rem;
 }
+.navbar a#profile p#profile span#link {
+  padding-bottom: 1.2rem;
+}
+
 /* meme button */
 .navbar p#meme{
   display: block;

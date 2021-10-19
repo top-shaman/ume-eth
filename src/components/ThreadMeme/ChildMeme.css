@@ -45,6 +45,7 @@ div.ChildMeme:hover {
   border: 0.05rem solid rgb(0,0,0,0);
   transition: border 0.4s;
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
 }
 .ChildMeme div#profilePic {
   height: 3.125rem;
@@ -147,6 +148,7 @@ div.ChildMeme:hover {
 
 .ChildMeme div.vl {
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
   border-left: 0.1rem solid #667777;
   margin: 0 auto;
   width: 0;
@@ -175,6 +177,7 @@ div.ChildMeme:hover {
 }
 .ChildMeme-Parent div.dotted-line {
   transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
   border-left: 0.1rem dashed #667777;
   width: 0;
   margin: 0 auto;

@@ -1,5 +1,6 @@
 div#upvote-popup {
   transform: translateX(-4.4rem) translateY(-7rem);
+  -moz-transform: translateX(-4.4rem) translateY(-7rem);
   display: flex;
   flex-direction: column;
   z-index: 1;

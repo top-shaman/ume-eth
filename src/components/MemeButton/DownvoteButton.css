@@ -6,4 +6,5 @@ p.downvote:hover {
 }
 img.downvote {
   transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
 }

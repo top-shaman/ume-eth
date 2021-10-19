@@ -138,45 +138,22 @@ class Main extends React.Component {
   handleCreateMeme(e) {
     this.props.handleCreateMeme(e)
     // blur out Main section upon Meme Creation
-    blur('.Main div#header', 500)
-    blur('.Main div#body', 500)
+    blur('div.Main', 500)
   }
   handleReply(e) {
     this.props.handleReply(e)
     // blur out Main section upon Reply Creation
-    blur('.Main div#header', 500)
-    blur('.Main div#body', 500)
+    blur('div.Main', 500)
   }
   handleEdit(e) {
     this.props.handleEdit(e)
-    blur('.Main div#header', 500)
-    blur('.Main div#body', 500)
+    blur('div.Main', 500)
   }
   handleUpvotePopup(e) {
     const element = e[0].target.getBoundingClientRect(),
           offsetY = this.props.offsetY ? this.props.offsetY : 0
-    this.setState({
-      activePopup: null,
-      popupMeme: null,
-      popup: null,
-      popupX: null,
-      popupY: null
-    })
-    this.setState({
-      popup: e[0].target,
-      popupMeme: e[1],
-      popupX: element.x,
-      popupY: element.y + offsetY
-    })
-    if(this.state.popup!==e[0].target) {
-    //setTimeout(() => {
-      // set memeId
-      this.setState({
-        activePopup: 'upvote'
-      })
-    }
-    //}, 20)
-    if(this.state.activePopup && this.state.popup===e[0].target) {
+    // if already pop'd up, or another upvote button, close
+    if(this.state.popupMeme===e[1] && this.state.activePopup==='upvote') {
       this.setState({
         activePopup: null,
         popupMeme: null,
@@ -184,42 +161,54 @@ class Main extends React.Component {
         popupX: null,
         popupY: null
       })
+    } else if(this.state.activePopup!=='upvote' || this.state.popupMeme!==e[1]) {
+      this.setState({
+        activePopup: null,
+        popupMeme: null,
+        popup: null,
+        popupX: null,
+        popupY: null
+      })
+      setTimeout(() => {
+        this.setState({
+          popup: e[0].target,
+          popupMeme: e[1],
+          popupX: element.x,
+          popupY: element.y + offsetY,
+          activePopup: 'upvote'
+        })
+      }, 10)
     }
   }
   handleDownvotePopup(e) {
     const element = e[0].target.getBoundingClientRect(),
           offsetY = this.props.offsetY ? this.props.offsetY : 0
-    this.setState({
-      popupMeme: null,
-      popup: null,
-      popupX: null,
-      popupY: null,
-      activePopup: null
-    })
-    this.setState({
-      popup: e[0].target,
-      popupMeme: e[1],
-      popupX: element.x,
-      popupY: element.y + offsetY
-    })
-    if(this.state.popup!==e[0].target) {
-      // set memeId
+    if(this.state.popupMeme===e[1] && this.state.activePopup==='downvote') {
       this.setState({
-        activePopup: 'downvote'
-      })
-    }
-    //}, 20)
-    //setTimeout(() => {
-    if(this.state.activePopup && this.state.popup===e[0].target) {
-      this.setState({
+        activePopup: null,
         popupMeme: null,
         popup: null,
         popupX: null,
-        popupY: null,
-        activePopup: null
+        popupY: null
       })
+    } else if(this.state.activePopup!=='downvote' || this.state.popupMeme!==e[1]) {
+      this.setState({
+        activePopup: null,
+        popupMeme: null,
+        popup: null,
+        popupX: null,
+        popupY: null
+      })
+      setTimeout(() => {
+        this.setState({
+          popup: e[0].target,
+          popupMeme: e[1],
+          popupX: element.x,
+          popupY: element.y + offsetY,
+          activePopup: 'downvote'
+        })
+      }, 10)
     }
-    console.log(this.state.activePopup)
   }
   handleClose(activePopup) {
     this.setState({ activePopup })

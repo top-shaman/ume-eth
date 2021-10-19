@@ -102,8 +102,7 @@ class EditProfile extends React.Component {
     localStorage.setItem('nameText', this.state.nameText)
     fadeOut('.EditProfile div#container', 500)
     partialFadeOut('.EditProfile div#background', 333, 0.2)
-    unBlur('.Main div#header', 500)
-    unBlur('.Main div#body', 500)
+    unBlur('div.Main', 500)
     setTimeout(async () => {
       await this.setState({ editing: false })
       this.props.handleExitEdit(await this.state.editing)
