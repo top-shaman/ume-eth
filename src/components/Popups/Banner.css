@@ -4,22 +4,34 @@ div.Banner {
   z-index: 10;
   background-color: #282c34;
   padding: 0.4rem 1rem;
-  border: 0.2rem solid #00CC89;
+  border: 0.15rem solid #CCDDDD;
   border-radius: 1rem;
   box-shadow: 0px 0px 8px #667777;
   height: min-content;
   top: 1%;
   left: 50%;
   width: 15rem;
-  margin-left: -7.6rem;
+  margin-left: -7.525rem;
+  /*
   animation: drift 2s ease-in-out infinite;
   -webkit-animation: drift 2s ease-in-out infinite;
+  */
 }
 .Banner p {
   margin: 0;
   padding: 0;
   height: auto;
   text-align: left;
+}
+.Banner p#Banner-header span {
+  font-size: 0.9rem;
+  font-style: Oblique;
+  font-weight: 600;
+}
+.Banner p#Banner-body span {
+  color: #CCDDDD;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 @keyframes drift {

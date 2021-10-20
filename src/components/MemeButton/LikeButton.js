@@ -97,6 +97,10 @@ class LikeButton extends React.Component {
           this.props.handleLike([this.state.memeId, this.state.userHasLiked, this.state.likes])
         }
       })
+      .catch(e => {
+        this.props.handleBanner(false)
+        console.error(e)
+      })
   }
   async userHasLiked() {
     const userHasLiked = await this.state.memeStorage.methods.getLikers(this.state.memeId).call()

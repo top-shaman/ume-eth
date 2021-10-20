@@ -144,15 +144,28 @@ class App extends React.Component {
     //banner.style.top = 'calc(1% + ' + e.target.scrollTop + 'px)'
   }
   handleBanner(e) {
-    this.setState({
-      bannerType: e[0],
-      bannerMessage: e[1],
-      bannerActive: true
-    })
+    if(e) {
+      this.setState({
+        bannerType: e[0],
+        bannerMessage: e[1],
+        bannerActive: true
+      })
+    } else {
+      this.handleBannerExit('Success!')
+    }
   }
   handleBannerExit(e) {
-    fadeOut('div.Banner', 200)
-    setTimeout(()=>this.setState({ bannerActive: false }), 200)
+    if(e==='Success!') {
+      this.setState({ bannerMessage: e })
+      setTimeout(() => {
+        fadeOut('div.Banner', 200)
+        setTimeout(()=>this.setState({ bannerActive: false }), 200)
+      }, 500)
+    }
+    else {
+      fadeOut('div.Banner', 200)
+      setTimeout(()=>this.setState({ bannerActive: false }), 200)
+    }
   }
 
   async request() {

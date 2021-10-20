@@ -124,6 +124,10 @@ class CreateMeme extends React.Component {
         this.state.memeText,
         await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.account})
+      .catch(e => {
+        this.props.handleBanner(false)
+        console.error(e)
+      })
       this.handleCloseClick(e)
       localStorage.setItem('memeText', '')
     }

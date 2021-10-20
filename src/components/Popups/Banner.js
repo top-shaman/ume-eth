@@ -14,8 +14,12 @@ class Banner extends React.Component {
   componentDidMount() {
 //    const banner = document.querySelector('div.Banner')
 //    banner.style.top = 'calc(2% + ' + this.props.offsetY + 'px)'
-    zipUp('div.Banner', 200)
-    fadeIn('div.Banner', 200)
+    zipUp('div.Banner', 500)
+    fadeIn('div.Banner', 500)
+    const banner = document.querySelector('div.Banner')
+    setTimeout(() => {
+      banner.style.animation = 'drift 2s ease-in-out infinite'
+    },500)
   }
 
   render() {

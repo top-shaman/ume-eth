@@ -166,6 +166,10 @@ class ReplyInThread extends React.Component {
         this.state.memeText,
         await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.userAccount})
+      .catch(e => {
+        this.props.handleBanner(false)
+        console.error(e)
+      })
       localStorage.setItem('memeText', '')
     }
   }
