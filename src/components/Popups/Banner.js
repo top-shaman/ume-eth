@@ -28,15 +28,37 @@ class Banner extends React.Component {
         className="Banner"
 //        top={'calc(2% + ' + this.props.offsetY + 'px)'}
       >
-        <p id="Banner-header">
-          { this.state.type==='Writing'
-            ? <span>Blockchain Action</span>
-            : <span>Loading...</span>
+        { this.state.type==='Writing'
+            ? <div id="container">
+                <p id="Banner-header">
+                  <span>Blockchain Action</span>
+                </p>
+                <p id="Banner-body">
+                  <span>Writing {this.state.message} to Blockchain...</span>
+                </p>
+              </div>
+            : this.state.type==='Waiting'
+                ? <div id="container">
+                    <p id="Banner-header">
+                      <span>MetaMask Pending</span>
+                    </p>
+                    <p id="Banner-body">
+                      <span id="plain">Please confirm </span>
+                      <span id="highlight">{this.state.message}</span>
+                      <span id="plain"> in MetaMask</span>
+                    </p>
+                  </div>
+                : this.state.type==='Loading'
+                    ? <div id="container">
+                        <p id="Banner-header">
+                          <span>Blockchain Action</span>
+                        </p>
+                        <p id="Banner-body">
+                          <span>Writing {this.state.message} to Blockchain...</span>
+                        </p>
+                      </div>
+                    : ''
           }
-        </p>
-        <p id="Banner-body">
-          <span>Writing {this.state.message} to Blockchain...</span>
-        </p>
       </div>
     )
   }

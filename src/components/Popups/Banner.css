@@ -12,10 +12,6 @@ div.Banner {
   left: 50%;
   width: 15rem;
   margin-left: -7.525rem;
-  /*
-  animation: drift 2s ease-in-out infinite;
-  -webkit-animation: drift 2s ease-in-out infinite;
-  */
 }
 .Banner p {
   margin: 0;
@@ -31,7 +27,17 @@ div.Banner {
 .Banner p#Banner-body span {
   color: #CCDDDD;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
+}
+.Banner p#Banner-body span#plain {
+  color: #CCDDDD;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.Banner p#Banner-body span#highlight {
+  color: #00CC89;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 @keyframes drift {

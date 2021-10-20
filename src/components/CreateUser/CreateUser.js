@@ -205,12 +205,24 @@ class CreateUser extends React.Component {
   }
 
   async registerUser(e) {
+    this.props.handleBanner([
+      'Writing',
+      'New User'
+    ])
     const username = toBytes(this.state.username)
     const address = toBytes('@' + this.state.address)
     console.log(username + ' ' + address + ' submitted')
     if(this.state.submitReady) {
       await this.props.interface.methods.newUser(this.state.account, username, address)
         .send({from: this.state.account})
+        .then(() => {
+          this.props.handleBanner([
+            'Writing',
+            'New User'
+          ])
+        })
+        .catch(e => console.error(e))
+      this.props.handleRegistered(true)
       window.location.reload()
     }
   }

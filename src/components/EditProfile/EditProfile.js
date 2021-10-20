@@ -91,13 +91,31 @@ class EditProfile extends React.Component {
     let updated = false
     if(this.state.username!==this.state.nameText && !this.state.flagName) {
       const nameBytes = await toBytes(this.state.nameText)
-      await this.state.interface.methods.changeUserName(this.state.account, nameBytes).send({from: this.state.account})
+      await this.state.interface.methods
+        .changeUserName(this.state.account, nameBytes)
+        .send({from: this.state.account})
+        .catch(e => {
+          this.props.handleError([
+            'Writing',
+            'Profile Update'
+          ])
+          console.error(e)
+        })
       this.setState({ username: this.state.nameText })
       localStorage.setItem('userInfo', this.state.account)
       updated = true
     }
     if(this.state.bio!==this.state.bioText) {
-      await this.state.interface.methods.newBio(this.state.account, this.state.bioText).send({from: this.state.account})
+      await this.state.interface.methods
+        .newBio(this.state.account, this.state.bioText)
+        .send({from: this.state.account})
+        .catch(e => {
+          this.props.handleError([
+            'Writing',
+            'Profile Update'
+          ])
+          console.error(e)
+        })
       updated = true
     }
     if(updated) window.location.reload()

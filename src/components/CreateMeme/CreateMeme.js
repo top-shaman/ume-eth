@@ -119,10 +119,10 @@ class CreateMeme extends React.Component {
           'Meme'
         ])
       const tags = await this.validAts()
-      this.state.interface.methods.newMeme(
-        this.props.account,
-        this.state.memeText,
-        await tags, this.state.parentId, this.state.originId)
+      await this.state.interface.methods.newMeme(
+          this.props.account,
+          this.state.memeText,
+          await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.account})
       .catch(e => {
         this.props.handleBanner(false)

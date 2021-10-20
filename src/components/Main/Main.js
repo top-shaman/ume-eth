@@ -9,7 +9,7 @@ import UpvotePopup from '../Popups/UpvotePopup'
 import DownvotePopup from '../Popups/DownvotePopup'
 import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
-import { blur, blurToFadeIn } from '../../resources/Libraries/Animation'
+import { blur, blurToFadeIn, fadeOut } from '../../resources/Libraries/Animation'
 import './Main.css'
 import Arrow from '../../resources/arrow-left.svg'
 
@@ -90,7 +90,7 @@ class Main extends React.Component {
       //localStorage.setItem('hasLoaded', 'true')
     }
     // blur entrance for dev purposes
-    //blurToFadeIn('div.Main', 2000)
+    blurToFadeIn('div.App', 2000)
 
     // by default, set User Account's user info for profile navigation
     this.setState({
@@ -154,6 +154,7 @@ class Main extends React.Component {
     const element = e[0].target.getBoundingClientRect(),
           offsetY = this.props.offsetY ? this.props.offsetY : 0
     // if already pop'd up, or another upvote button, close
+    fadeOut('div#upvote-popup', 300)
     if(this.state.popupMeme===e[1] && this.state.activePopup==='upvote') {
       this.setState({
         activePopup: null,
@@ -184,6 +185,7 @@ class Main extends React.Component {
   handleDownvotePopup(e) {
     const element = e[0].target.getBoundingClientRect(),
           offsetY = this.props.offsetY ? this.props.offsetY : 0
+    fadeOut('div#downvote-popup', 300)
     if(this.state.popupMeme===e[1] && this.state.activePopup==='downvote') {
       this.setState({
         activePopup: null,

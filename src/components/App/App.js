@@ -16,6 +16,7 @@ import PageLoader from '../Loader/PageLoader'
 import UserInterface from '../../abis/UserInterface.json'
 import UserStorage from '../../abis/UserStorage.json'
 import MemeStorage from '../../abis/MemeStorage.json'
+import MemeFactory from '../../abis/MemeFactory.json'
 import UME from '../../abis/UME.json'
 
 import { ethErrors } from 'eth-rpc-errors'
@@ -95,6 +96,9 @@ class App extends React.Component {
   // handles
   handleEntered(entered) {
     this.setState({ entered })
+  }
+  handleRegistered(registered) {
+    this.setState({ registered })
   }
   handleToProfile(e) {
     this.main.handleToProfile(e)
@@ -204,10 +208,24 @@ class App extends React.Component {
       console.log('chain change detected')
       console.log(message)
 
-      this.setState({ bannerActive: false })
+      //this.setState({ bannerActive: false })
       //this.setState({ contractLoading: true })
       //this.loadContracts().catch(e => console.error(e))
     })
+    this.state.memeFactory.events.MemeCreated({})
+      .on('data', async event => {
+        console.log(event[2])
+        if(this.state.bannerMessage==='Meme' && event[2]===this.state.account) {
+          this.setState({ bannerActive: false })
+        }
+      })
+      .on('error', console.error)
+    this.state.interface.events.NewUser({})
+      .on('data', async event => {
+        if(this.state.bannerMessage==='New User' && event[0]===this.state.account)
+          this.setState({ bannerActive: false })
+      })
+      .on('error', console.error)
   }
 
   async loadWeb3() {
@@ -230,12 +248,14 @@ class App extends React.Component {
           umeNetData = UME.networks[netId],
           interfaceNetData = UserInterface.networks[netId],
           userStorageNetData = UserStorage.networks[netId],
-          memeStorageNetData = MemeStorage.networks[netId]
+          memeStorageNetData = MemeStorage.networks[netId],
+          memeFactoryNetData = MemeFactory.networks[netId]
 
     // check if Contract netData is valid
     if(umeNetData && interfaceNetData && userStorageNetData && memeStorageNetData) {
       const ume = new web3.eth.Contract(UME.abi, umeNetData.address),
             memeStorage = new web3.eth.Contract(MemeStorage.abi, memeStorageNetData.address),
+            memeFactory = new web3.eth.Contract(MemeFactory.abi, memeFactoryNetData.address),
             userStorage = new web3.eth.Contract(UserStorage.abi, userStorageNetData.address),
             uInterface = new web3.eth.Contract(UserInterface.abi, interfaceNetData.address)
       // app state from BlockChain
@@ -243,6 +263,7 @@ class App extends React.Component {
         ume,
         userStorage,
         memeStorage,
+        memeFactory,
         interface: uInterface
       })
       // retrieve Blockchain data for development purposes, display to console
@@ -393,7 +414,7 @@ class App extends React.Component {
                 : this.state.entered
                   ? <CreateUser
                       account={this.state.account}
-                      hasEntered={this.state.entered}
+                      handleRegistered={this.handleRegistered}
                       interface={this.state.interface}
                       handleBanner={this.handleBanner}
                       / >

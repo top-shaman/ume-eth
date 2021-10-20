@@ -1,4 +1,5 @@
 import React from 'react'
+import { fadeIn } from '../../resources/Libraries/Animation'
 import './DownvotePopup.css'
 
 class DownvotePopup extends React.Component {
@@ -28,6 +29,7 @@ class DownvotePopup extends React.Component {
       this.handleClick = this.handleClick.bind(this)
     }
     componentDidMount() {
+      fadeIn('div#downvote-popup', 300)
       this.div.style.left = `${this.state.positionX}px`
       if(parseFloat(this.state.positionY)<150) {
         this.div.style.top = `${parseFloat(this.state.positionY) + 135}px`
@@ -58,7 +60,16 @@ class DownvotePopup extends React.Component {
     async handleClick(e) {
       e.preventDefault()
       if(this.state.valid) {
-        await this.state.interface.methods.unBoostMeme(this.state.account, this.state.memeId, this.state.boostValue).send({ from: this.state.account })
+        await this.state.interface.methods
+          .unBoostMeme(this.state.account, this.state.memeId, this.state.boostValue)
+          .send({ from: this.state.account })
+          .catch(e => {
+            this.props.handleBanner([
+              'Writing',
+              'Upvote'
+            ])
+            console.error(e)
+          })
         this.props.handleClose()
       }
     }

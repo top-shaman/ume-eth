@@ -1,11 +1,13 @@
 import React from 'react'
+
+import { fadeIn } from '../../resources/Libraries/Animation'
+
 import './UpvotePopup.css'
 
 class UpvotePopup extends React.Component {
   constructor(props) {
     super(props)
 
-    this.div = React.createRef()
 
       this.state = {
         account: this.props.account,
@@ -17,6 +19,7 @@ class UpvotePopup extends React.Component {
         interface: this.props.interface
       }
 
+      this.div = React.createRef()
       this.input = React.createRef()
       this.field = React.createRef()
       this.button = React.createRef()
@@ -28,6 +31,7 @@ class UpvotePopup extends React.Component {
       this.handleClick = this.handleClick.bind(this)
     }
     componentDidMount() {
+      fadeIn('div#upvote-popup', 300)
       this.div.style.left = `${this.state.positionX}px`
       if(parseFloat(this.state.positionY)<150) {
         this.div.style.top = `${parseFloat(this.state.positionY) + 135}px`
@@ -58,7 +62,16 @@ class UpvotePopup extends React.Component {
     async handleClick(e) {
       e.preventDefault()
       if(this.state.valid) {
-        await this.state.interface.methods.boostMeme(this.state.account, this.state.memeId, this.state.boostValue).send({ from: this.state.account })
+        await this.state.interface.methods
+          .boostMeme(this.state.account, this.state.memeId, this.state.boostValue)
+          .send({ from: this.state.account })
+          .catch(e => {
+            this.props.handleBanner([
+              'Writing',
+              'Upvote'
+            ])
+            console.error(e)
+          })
         this.props.handleClose()
       }
     }
