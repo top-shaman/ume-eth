@@ -18,6 +18,7 @@ import UserStorage from '../../abis/UserStorage.json'
 import MemeStorage from '../../abis/MemeStorage.json'
 import UME from '../../abis/UME.json'
 
+import { ethErrors } from 'eth-rpc-errors'
 
 class App extends React.Component {
 
