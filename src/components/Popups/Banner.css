@@ -1,0 +1,35 @@
+div.Banner {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+  background-color: #282c34;
+  padding: 0.4rem 1rem;
+  border: 0.2rem solid #00CC89;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 8px #667777;
+  height: min-content;
+  top: 1%;
+  left: 50%;
+  width: 15rem;
+  margin-left: -7.6rem;
+  animation: drift 2s ease-in-out infinite;
+  -webkit-animation: drift 2s ease-in-out infinite;
+}
+.Banner p {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  text-align: left;
+}
+
+@keyframes drift {
+  from {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.2rem);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

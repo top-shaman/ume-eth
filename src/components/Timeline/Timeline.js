@@ -46,6 +46,7 @@ class Timeline extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
 
   }
   async componentDidMount() {
@@ -115,6 +116,11 @@ class Timeline extends React.Component {
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
   }
+  handleBanner(e) {
+    this.props.handleBanner(e)
+  }
+
+  // to be invoked upon page load
 
   // to be invoked upon page load
   async loadTimeline() {
@@ -463,6 +469,7 @@ class Timeline extends React.Component {
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
               handleDownvotePopup={this.handleDownvotePopup}
+              handleBanner={this.handleBanner}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}
               userStorage={this.props.userStorage}

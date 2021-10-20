@@ -37,7 +37,10 @@ UME is a decentralized, user-governed micro-blogging platform built on the Ether
 - MetaMask Wallet
 
 ## Installing Node
-### via Node Version Manager
+### Downloading Node
+Node can be downloaded [here](https://nodejs.org/en/download/).
+
+### using correct version Node Version Manager
 Node Version Manager can be installed on Mac/Linux/Unix systems [here](https://github.com/nvm-sh/nvm),
 or on Windows `nvm ` can be installed [here](https://github.com/coreybutler/nvm-windows).
 
@@ -71,9 +74,15 @@ Visit the Ropsten Ethereum Faucet [here](https://faucet.ropsten.be/) or [here](h
 
 After you enter the queue, it should take ~15-60 seconds to hit your wallet.
 
-\* _**If you ever need to add more Ropsten Ethereum**, you can use the same faucet after 24 hrs, use the other faucet, or access the same faucet using a different Wallet and different IP address using a VPN._
+\* _**If you ever need to add more Ropsten Ethereum, you can use the same faucet after 24 hrs, use the other faucet, or access the same faucet using a different Wallet and different IP address using a VPN.**_
 
 ## Running UME web app via `node`
+### Installing dependencies
+In root folder, run:
+```
+npm install
+```
+
 Now that we've installed everything and funded our wallets with rETH, we can run the UME web app.
 
 ### Hosting web app on local node server

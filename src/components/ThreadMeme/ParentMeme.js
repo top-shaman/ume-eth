@@ -73,6 +73,7 @@ class ParentMeme extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -179,6 +180,9 @@ class ParentMeme extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+  handleBanner(e) {
+    this.props.handleBanner(e)
   }
 
   async formatText() {
@@ -288,6 +292,7 @@ class ParentMeme extends React.Component {
               responses={this.state.responses}
               handleReply={this.handleReply}
               handleOverReply={this.handleOverReply}
+              handleBanner={this.handleBanner}
               ref={Ref=>this.reply=Ref}
             />
             <LikeButton
@@ -300,6 +305,7 @@ class ParentMeme extends React.Component {
               interface={this.state.interface}
               handleLike={this.handleLike}
               handleOverLike={this.handleOverLike}
+              handleBanner={this.handleBanner}
               ref={Ref=>this.like=Ref}
             />
             {/*
@@ -317,6 +323,7 @@ class ParentMeme extends React.Component {
               handleRememe={this.handleRememe}
               rememeCountTotal={rememeCountTotal}
               handleOverRememe={this.handleOverRememe}
+              handleBanner={this.handleBanner}
               ref={Ref=>this.rememe=Ref}
             />
             */}
@@ -327,6 +334,7 @@ class ParentMeme extends React.Component {
               interface={this.state.interface}
               handleOverUpvote={this.handleOverUpvote}
               handleUpvotePopup={this.handleUpvotePopup}
+              handleBanner={this.handleBanner}
               ref={Ref=>this.upvote=Ref}
             />
             <DownvoteButton
@@ -336,6 +344,7 @@ class ParentMeme extends React.Component {
               interface={this.state.interface}
               handleOverDownvote={this.handleOverDownvote}
               handleDownvotePopup={this.handleDownvotePopup}
+              handleBanner={this.handleBanner}
               ref={Ref=>this.downvote=Ref}
             />
           </div>

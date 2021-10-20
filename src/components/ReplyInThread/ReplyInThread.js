@@ -156,6 +156,10 @@ class ReplyInThread extends React.Component {
   }
   async handleReplyClick(e) {
     if(this.state.validMeme) {
+      this.props.handleBanner([
+          'Writing',
+          'Meme'
+        ])
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
         this.props.userAccount,

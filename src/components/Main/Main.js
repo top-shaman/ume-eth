@@ -74,6 +74,7 @@ class Main extends React.Component {
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
   }
 
   // lifecycles
@@ -219,7 +220,7 @@ class Main extends React.Component {
     this.setState({ handleRefresh })
     if(handleRefresh) console.log('refreshing: ' + this.state.focusPage)
     else console.log(this.state.focusPage + ' refreshed')
-    await this.stats.setInfo().catch(e=>console.error(e))
+    if(this.stats) await this.stats.setInfo().catch(e=>console.error(e))
   }
   async handleRefreshClick(e) {
     e.preventDefault()
@@ -329,6 +330,9 @@ class Main extends React.Component {
 
   handleToSettings(e) {
   }
+  handleBanner(e) {
+    this.props.handleBanner(e)
+  }
 
   async headerInfo() {
     const memeIds = await this.state.userStorage.methods.getPosts(this.state.profileAccount).call()
@@ -425,6 +429,7 @@ class Main extends React.Component {
                       memeId={this.state.popupMeme}
                       umeBalance={this.state.umeBalance}
                       handleClose={this.handleClose}
+                      handleBanner={this.handleBanner}
                       interface={this.state.interface}
                     />
                   : this.state.activePopup==='downvote'
@@ -435,6 +440,7 @@ class Main extends React.Component {
                           memeId={this.state.popupMeme}
                           umeBalance={this.state.umeBalance}
                           handleClose={this.handleClose}
+                          handleBanner={this.handleBanner}
                           interface={this.state.interface}
                         />
                       : ''
@@ -456,6 +462,7 @@ class Main extends React.Component {
                 handleReply={this.handleReply}
                 handleUpvotePopup={this.handleUpvotePopup}
                 handleDownvotePopup={this.handleDownvotePopup}
+                handleBanner={this.handleBanner}
                 handleHeight={this.handleHeight}
                 atBottom={this.props.atBottom}
                 ref={Ref => this.timeline=Ref}
@@ -477,6 +484,7 @@ class Main extends React.Component {
                   handleEdit={this.handleEdit}
                   handleUpvotePopup={this.handleUpvotePopup}
                   handleDownvotePopup={this.handleDownvotePopup}
+                  handleBanner={this.handleBanner}
                   handleHeight={this.handleHeight}
                   profileUsername={this.state.profileUsername}
                   profileAddress={this.state.profileAddress}
@@ -500,6 +508,7 @@ class Main extends React.Component {
                       handleReply={this.handleReply}
                       handleUpvotePopup={this.handleUpvotePopup}
                       handleDownvotePopup={this.handleDownvotePopup}
+                      handleBanner={this.handleBanner}
                       handleHeight={this.handleHeight}
                       atBottom={this.props.atBottom}
                       ref={Ref => this.thread=Ref}

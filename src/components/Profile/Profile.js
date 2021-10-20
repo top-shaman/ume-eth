@@ -37,6 +37,7 @@ class Profile extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
 
   }
   // lifecycles
@@ -93,6 +94,9 @@ class Profile extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+  handleBanner(e) {
+    this.props.handleBanner(e)
   }
 
   loadNewMemes() {

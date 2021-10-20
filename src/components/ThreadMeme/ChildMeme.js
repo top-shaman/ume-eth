@@ -92,6 +92,7 @@ class ChildMeme extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
   }
   // lifecycle functions
   async componentDidMount() {
@@ -251,6 +252,9 @@ class ChildMeme extends React.Component {
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
   }
+  handleBanner(e) {
+    this.props.handleBanner(e)
+  }
 
 
   async formatText() {
@@ -365,6 +369,7 @@ class ChildMeme extends React.Component {
                   isMain={false}
                   handleReply={this.handleReply}
                   handleOverReply={this.handleOverReply}
+                  handleBanner={this.handleBanner}
                   ref={Ref=>this.reply=Ref}
                 />
                 <LikeButton
@@ -377,6 +382,7 @@ class ChildMeme extends React.Component {
                   interface={this.state.interface}
                   handleLike={this.handleLike}
                   handleOverLike={this.handleOverLike}
+                  handleBanner={this.handleBanner}
                   ref={Ref=>this.like=Ref}
                 />
                 {/*
@@ -393,6 +399,7 @@ class ChildMeme extends React.Component {
                   isMain={false}
                   handleRememe={this.handleRememe}
                   handleOverRememe={this.handleOverRememe}
+                  handleBanner={this.handleBanner}
                   rememeCountTotal={rememeCountTotal}
                   ref={Ref=>this.rememe=Ref}
                 />
@@ -404,6 +411,7 @@ class ChildMeme extends React.Component {
                   interface={this.state.interface}
                   handleOverUpvote={this.handleOverUpvote}
                   handleUpvotePopup={this.handleUpvotePopup}
+                  handleBanner={this.handleBanner}
                   ref={Ref=>this.upvote=Ref}
                 />
                 <DownvoteButton
@@ -413,6 +421,7 @@ class ChildMeme extends React.Component {
                   interface={this.state.interface}
                   handleOverDownvote={this.handleOverDownvote}
                   handleDownvotePopup={this.handleDownvotePopup}
+                  handleBanner={this.handleBanner}
                   ref={Ref=>this.downvote=Ref}
                 />
               </div>
@@ -450,6 +459,7 @@ class ChildMeme extends React.Component {
                       handleToThread={this.handleToThread}
                       handleUpvotePopup={this.handleUpvotePopup}
                       handleDownvotePopup={this.handleDownvotePopup}
+                      handleBanner={this.handleBanner}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.childThread=Ref}
                       memeId={this.state.memeId}

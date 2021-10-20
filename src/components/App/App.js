@@ -8,6 +8,8 @@ import CreateUser from '../CreateUser/CreateUser'
 import CreateMeme from '../CreateMeme/CreateMeme'
 import Reply from '../Reply/Reply'
 import EditProfile from '../EditProfile/EditProfile'
+
+import Banner from '../Popups/Banner'
 import NoWallet from '../NoWallet/NoWallet'
 import PageLoader from '../Loader/PageLoader'
 
@@ -36,6 +38,9 @@ class App extends React.Component {
       creatingMeme: false,
       replying: false,
       editing: false,
+      bannerActive: false,
+      bannerType: '',
+      bannerMessage: '',
       offsetY: 0,
       appHeight: window.innerHeight
     }
@@ -54,6 +59,8 @@ class App extends React.Component {
 
     this.handleEdit = this.handleEdit.bind(this)
     this.handleExitEdit = this.handleExitEdit.bind(this)
+
+    this.handleBanner = this.handleBanner.bind(this)
 
     this.handleScroll = this.handleScroll.bind(this)
   }
@@ -78,8 +85,6 @@ class App extends React.Component {
     }
   }
   componentDidUpdate() {
-    console.log(window.innerHeight)
-    console.log(this.state.appHeight)
   }
   async componentWillUnmount() {
     window.clearInterval()
@@ -134,6 +139,19 @@ class App extends React.Component {
       offsetY: e.target.scrollTop,
       appHeight: e.target.clientHeight
     })
+    //const banner = document.querySelector('div.Banner')
+    //banner.style.top = 'calc(1% + ' + e.target.scrollTop + 'px)'
+  }
+  handleBanner(e) {
+    this.setState({
+      bannerType: e[0],
+      bannerMessage: e[1],
+      bannerActive: true
+    })
+  }
+  handleBannerExit(e) {
+    fadeOut('div.Banner', 200)
+    setTimeout(()=>this.setState({ bannerActive: false }), 200)
   }
 
   async request() {
@@ -171,6 +189,8 @@ class App extends React.Component {
     window.ethereum.on('message', message => {
       console.log('chain change detected')
       console.log(message)
+
+      this.setState({ bannerActive: false })
       //this.setState({ contractLoading: true })
       //this.loadContracts().catch(e => console.error(e))
     })
@@ -273,14 +293,21 @@ class App extends React.Component {
     return (
       <div
         className="App"
-        onResize={this.handleResize}
       >
+        { this.state.bannerActive
+            ? <Banner
+                type={this.state.bannerType}
+                message={this.state.bannerMessage}
+              />
+            : ''
+        }
         { this.state.contractLoading && this.state.account!==undefined
             ? <PageLoader/>
             : this.state.account===undefined
               ? <NoWallet />
               : this.state.registered
                 ? <div
+                    id="App-body"
                     className="App"
                     onScroll={this.handleScroll}
                     ref={Ref=>this.app=Ref}
@@ -291,6 +318,7 @@ class App extends React.Component {
                             account={this.state.account}
                             offsetY={this.state.offsetY}
                             handleExitCreate={this.handleExitCreate}
+                            handleBanner={this.handleBanner}
                             userStorage={this.state.userStorage}
                             interface={this.state.interface}
                           />
@@ -307,6 +335,7 @@ class App extends React.Component {
                               offsetY={this.state.offsetY}
                               handleExitReply={this.handleExitReply}
                               handleToProfile={this.handleToProfile}
+                              handleBanner={this.handleBanner}
                               userStorage={this.state.userStorage}
                               memeStorage={this.state.memeStorage}
                               interface={this.state.interface}
@@ -319,6 +348,7 @@ class App extends React.Component {
                                 bio={this.state.editing[2]}
                                 offsetY={this.state.offsetY}
                                 handleExitEdit={this.handleExitEdit}
+                                handleBanner={this.handleBanner}
                                 userStorage={this.state.userStorage}
                                 interface={this.state.interface}
                               />
@@ -341,6 +371,7 @@ class App extends React.Component {
                       handleCreateMeme={this.handleCreateMeme}
                       handleReply={this.handleReply}
                       handleEdit={this.handleEdit}
+                      handleBanner={this.handleBanner}
                       handleProfileChange={this.handleProfileChange}
                       ref={Ref=>this.main=Ref}
                     />
@@ -350,6 +381,7 @@ class App extends React.Component {
                       account={this.state.account}
                       hasEntered={this.state.entered}
                       interface={this.state.interface}
+                      handleBanner={this.handleBanner}
                       / >
                   : <Enter
                       account={this.state.account}

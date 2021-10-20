@@ -120,6 +120,10 @@ class Reply extends React.Component {
   }
   async handleMemeClick(e) {
     if(this.state.validMeme) {
+      this.props.handleBanner([
+          'Writing',
+          'Meme'
+        ])
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
         this.props.account,

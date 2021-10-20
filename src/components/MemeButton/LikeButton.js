@@ -74,6 +74,10 @@ class LikeButton extends React.Component {
   }
 
   async likeClick() {
+    this.props.handleBanner([
+      'Writing',
+      'Like'
+    ])
     await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
       .then(() => {
