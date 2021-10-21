@@ -121,8 +121,9 @@ class Reply extends React.Component {
   async handleMemeClick(e) {
     if(this.state.validMeme) {
       this.props.handleBanner([
-          'Writing',
-          'Meme'
+          'Waiting',
+          'Reply',
+          this.state.memeText
         ])
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -130,11 +131,29 @@ class Reply extends React.Component {
         this.state.memeText,
         await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.account})
+      .on('transactionHash', () => {
+        this.props.handleBanner([
+          'Writing',
+          'Reply',
+          this.state.memeText
+        ])
+        this.handleCloseClick(e)
+      })
+      .on('receipt', () => {
+        this.props.handleBanner([
+          'Success',
+          'Reply',
+          this.state.memeText
+        ])
+      })
       .catch(e => {
-        this.props.handleBanner(false)
+        this.props.handleBanner([
+          'Cancel',
+          'Reply',
+          this.state.memeText
+        ])
         console.error(e)
       })
-      this.handleCloseClick(e)
       localStorage.setItem('memeText', '')
     }
   }

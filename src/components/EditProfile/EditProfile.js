@@ -90,14 +90,34 @@ class EditProfile extends React.Component {
   async handleSaveClick(e) {
     let updated = false
     if(this.state.username!==this.state.nameText && !this.state.flagName) {
+      this.props.handleBanner([
+        'Waiting',
+        'Profile Update',
+        this.state.account
+      ])
       const nameBytes = await toBytes(this.state.nameText)
       await this.state.interface.methods
         .changeUserName(this.state.account, nameBytes)
         .send({from: this.state.account})
-        .catch(e => {
-          this.props.handleError([
+        .on('transactionHash', () => {
+          this.props.handleBanner([
             'Writing',
-            'Profile Update'
+            'Username Update',
+            this.state.account
+          ])
+        })
+        .on('receipt', () => {
+          this.props.handleBanner([
+            'Success',
+            'Username Update',
+            this.state.account
+          ])
+        })
+        .catch(e => {
+          this.props.handleBanner([
+            'Cancel',
+            'Username Update',
+            this.state.account
           ])
           console.error(e)
         })
@@ -109,10 +129,25 @@ class EditProfile extends React.Component {
       await this.state.interface.methods
         .newBio(this.state.account, this.state.bioText)
         .send({from: this.state.account})
+        .on('transactionHash', () => {
+          this.props.handleBanner([
+            'Writing',
+            'Bio Update',
+            this.state.account
+          ])
+        })
+        .on('receipt', () => {
+          this.props.handleBanner([
+            'Success',
+            'Bio Update',
+            this.state.account
+          ])
+        })
         .catch(e => {
           this.props.handleError([
-            'Writing',
-            'Profile Update'
+            'Cancel',
+            'BioUpdate',
+            this.state.account
           ])
           console.error(e)
         })

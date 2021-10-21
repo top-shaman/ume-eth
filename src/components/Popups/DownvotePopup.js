@@ -58,15 +58,33 @@ class DownvotePopup extends React.Component {
       console.log(this.state.valid)
     }
     async handleClick(e) {
+      this.props.handleBanner([
+        'Waiting',
+        'Downvote',
+        this.state.memeId
+      ])
       e.preventDefault()
       if(this.state.valid) {
         await this.state.interface.methods
           .unBoostMeme(this.state.account, this.state.memeId, this.state.boostValue)
           .send({ from: this.state.account })
-          .catch(e => {
+          .on('transactionHash', () => {
             this.props.handleBanner([
               'Writing',
-              'Upvote'
+              'Downvote',
+              this.state.memeId
+            ])
+          })
+          .on('receipt', () => this.props.handleBanner([
+            'Success',
+            'Downvote',
+            this.state.memeId
+          ]))
+          .catch(e => {
+            this.props.handleBanner([
+              'Cancel',
+              'Downvote',
+              this.state.memeId
             ])
             console.error(e)
           })

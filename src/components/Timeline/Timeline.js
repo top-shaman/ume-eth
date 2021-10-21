@@ -74,6 +74,7 @@ class Timeline extends React.Component {
   componentWillUnmount() {
     clearInterval(this.intervalTimeline)
     this.props.handleLoading(false)
+    this.props.handleBanner(['Cancel', 'Timeline', this.state.account])
     this.mounted = false
   }
   handleToProfile(e) {
@@ -127,6 +128,8 @@ class Timeline extends React.Component {
     console.log('timeline: Try Load Timeline')
     if(this.state.firstLoad) {
       this.setState({ loading: true })
+      await this.props.handleLoading(this.state.loading)
+      await this.props.handleBanner(['Loading', 'Timeline', this.state.account])
       console.log('load timeline ' + new Date().toTimeString())
 
       // compile all meme id's
@@ -187,7 +190,8 @@ class Timeline extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.loading)
+        await this.props.handleBanner(['Success', 'Timeline', this.state.account])
+        this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({

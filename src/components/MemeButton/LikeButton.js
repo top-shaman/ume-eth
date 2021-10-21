@@ -75,15 +75,24 @@ class LikeButton extends React.Component {
 
   async likeClick() {
     this.props.handleBanner([
-      'Writing',
-      'Like'
+      'Waiting',
+      'Like',
+      this.state.memeId
     ])
     await this.props.interface.methods.likeMeme(this.state.userAccount, this.state.memeId)
       .send({from: this.state.userAccount})
-      .then(() => {
+      .on('transactionHash', () => {
         this.props.handleBanner([
           'Writing',
-          'Like'
+          'Like',
+          this.state.memeId
+        ])
+      })
+      .on('receipt', () => {
+        this.props.handleBanner([
+          'Success',
+          'Like',
+          this.state.memeId
         ])
       })
       .then(() => {
@@ -104,7 +113,11 @@ class LikeButton extends React.Component {
         }
       })
       .catch(e => {
-        this.props.handleBanner(false)
+        this.props.handleBanner([
+          'Cancel',
+          'Like',
+          this.state.memeId
+        ])
         console.error(e)
       })
   }

@@ -115,8 +115,9 @@ class CreateMeme extends React.Component {
   async handleMemeClick(e) {
     if(this.state.validMeme) {
       this.props.handleBanner([
-          'Writing',
-          'Meme'
+          'Waiting',
+          'Meme',
+          this.state.memeText
         ])
       const tags = await this.validAts()
       await this.state.interface.methods.newMeme(
@@ -124,11 +125,29 @@ class CreateMeme extends React.Component {
           this.state.memeText,
           await tags, this.state.parentId, this.state.originId)
       .send({from: this.props.account})
+      .on('transactionHash', () => {
+        this.props.handleBanner([
+          'Writing',
+          'Meme',
+          this.state.memeText
+        ])
+        this.handleCloseClick()
+      })
+      .on('receipt', () => {
+        this.props.handleBanner([
+          'Success',
+          'Meme',
+          this.state.memeText
+        ])
+      })
       .catch(e => {
-        this.props.handleBanner(false)
+        this.props.handleBanner([
+          'Cancel',
+          'Meme',
+          this.state.memeText
+        ])
         console.error(e)
       })
-      this.handleCloseClick(e)
       localStorage.setItem('memeText', '')
     }
   }

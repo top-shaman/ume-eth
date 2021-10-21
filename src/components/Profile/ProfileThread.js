@@ -76,6 +76,7 @@ class ProfileThread extends React.Component {
   }
   async componentWillUnmount() {
     clearInterval(this.intervalProfile)
+    this.props.handleBanner('Cancel', 'Profile', this.state.userAccount)
     this.props.handleLoading(false)
   }
 
@@ -123,6 +124,7 @@ class ProfileThread extends React.Component {
     if(this.state.firstLoad) {
       this.setState({ loading: true })
       await this.props.handleLoading(this.state.loading)
+      this.props.handleBanner(['Loading', 'Profile', this.state.userAccount])
       console.log('load profile ' + new Date().toTimeString())
 
       // compile memes
@@ -180,7 +182,8 @@ class ProfileThread extends React.Component {
         //console.log('total memes: ' + userMemeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleLoading(this.state.loading)
+        this.props.handleBanner(['Success', 'Profile', this.state.userAccount])
+        this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({

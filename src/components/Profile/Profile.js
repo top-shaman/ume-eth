@@ -81,7 +81,37 @@ class Profile extends React.Component {
   }
   async handleFollow(e) {
     e.preventDefault()
-    await this.state.interface.methods.followUser(this.state.userAccount, this.state.profileAccount).send({from: this.state.userAccount}).then(() => this.compileProfile())
+    this.props.handleBanner([
+      'Waiting',
+      'Follow',
+      this.state.profileAccount
+    ])
+    await this.state.interface.methods
+      .followUser(this.state.userAccount, this.state.profileAccount)
+      .send({from: this.state.userAccount})
+      .on('transactionHash', () => {
+        this.props.handleBanner([
+          'Writing',
+          'Follow',
+          this.state.profileAccount
+        ])
+      })
+      .on('receipts', () => {
+        this.props.handleBanner([
+          'Success',
+          'Follow',
+          this.state.profileAccount
+        ])
+      })
+      .then(() => this.compileProfile())
+      .catch(e => {
+        this.props.handleBanner([
+          'Cancel',
+          'Follow',
+          this.state.profileAccount
+        ])
+        console.error(e)
+      })
   }
   handleLoading(e) {
     this.props.handleLoading(e)
@@ -229,6 +259,7 @@ class Profile extends React.Component {
           handleReply={this.handleReply}
           handleUpvotePopup={this.handleUpvotePopup}
           handleDownvotePopup={this.handleDownvotePopup}
+          handleBanner={this.handleBanner}
           profileUsername={this.state.profileUsername}
           profileAddress={this.state.profileAddress}
           profileAccount={this.state.profileAccount}

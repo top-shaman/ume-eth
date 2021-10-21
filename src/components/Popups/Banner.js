@@ -7,57 +7,72 @@ class Banner extends React.Component {
     super(props)
 
     this.state = {
-      type: this.props.type,
-      message: this.props.message
+      bannerId: this.props.bannerId
     }
   }
-  componentDidMount() {
+  async componentDidMount() {
 //    const banner = document.querySelector('div.Banner')
 //    banner.style.top = 'calc(2% + ' + this.props.offsetY + 'px)'
-    zipUp('div.Banner', 500)
-    fadeIn('div.Banner', 500)
-    const banner = document.querySelector('div.Banner')
+    await this.formatId()
+    if(this.props.type==='Waiting' || this.props.type==='Loading') {
+      zipUp('div#Banner-' + this.state.bannerId, 500)
+      fadeIn('div#Banner-' + this.state.bannerId, 500)
+    }
+    const banner = document.querySelector('div#Banner-' + this.state.bannerId)
     setTimeout(() => {
       banner.style.animation = 'drift 2s ease-in-out infinite'
     },500)
+  }
+  async formatId() {
+    const regex = /\W/g
+    this.setState({ bannerId: this.state.bannerId.replace(regex, '_') })
   }
 
   render() {
     return(
       <div
+        id={'Banner-' + this.state.bannerId}
         className="Banner"
 //        top={'calc(2% + ' + this.props.offsetY + 'px)'}
       >
-        { this.state.type==='Writing'
-            ? <div id="container">
+        { this.props.type==='Writing'
+            ? <div id="container-writing">
                 <p id="Banner-header">
                   <span>Blockchain Action</span>
                 </p>
                 <p id="Banner-body">
-                  <span>Writing {this.state.message} to Blockchain...</span>
+                  <span id="plain">Writing </span>
+                  <span id="highlight">{this.props.message}</span>
+                  <span id="plain"> to Blockchain...</span>
                 </p>
               </div>
-            : this.state.type==='Waiting'
+            : this.props.type==='Waiting'
                 ? <div id="container">
                     <p id="Banner-header">
                       <span>MetaMask Pending</span>
                     </p>
                     <p id="Banner-body">
                       <span id="plain">Please confirm </span>
-                      <span id="highlight">{this.state.message}</span>
+                      <span id="highlight">{this.props.message}</span>
                       <span id="plain"> in MetaMask</span>
                     </p>
                   </div>
-                : this.state.type==='Loading'
-                    ? <div id="container">
+                : this.props.type==='Loading'
+                    ? <div id="container-loading">
                         <p id="Banner-header">
-                          <span>Blockchain Action</span>
+                          <span>Loading {this.props.message}</span>
                         </p>
                         <p id="Banner-body">
-                          <span>Writing {this.state.message} to Blockchain...</span>
+                          <span>Reading Blockchain...</span>
                         </p>
                       </div>
-                    : ''
+                    : this.props.type==='Success'
+                        ? <div id="container">
+                            <p id="Banner-body">
+                              <span>Success!</span>
+                            </p>
+                          </div>
+                        : ''
           }
       </div>
     )

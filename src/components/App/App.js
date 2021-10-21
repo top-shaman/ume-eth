@@ -19,8 +19,6 @@ import MemeStorage from '../../abis/MemeStorage.json'
 import MemeFactory from '../../abis/MemeFactory.json'
 import UME from '../../abis/UME.json'
 
-import { ethErrors } from 'eth-rpc-errors'
-
 class App extends React.Component {
 
   constructor(props) {
@@ -36,10 +34,12 @@ class App extends React.Component {
       connected: false,
       contractLoading: true,
       registered: false,
+      writing: false,
       entered: false,
       creatingMeme: false,
       replying: false,
       editing: false,
+      banners: [],
       bannerActive: false,
       bannerType: '',
       bannerMessage: '',
@@ -51,6 +51,7 @@ class App extends React.Component {
     this.main = React.createRef()
 
     this.handleEntered = this.handleEntered.bind(this)
+    this.handleRegistered = this.handleRegistered.bind(this)
 
     this.handleCreateMeme = this.handleCreateMeme.bind(this)
     this.handleExitCreate = this.handleExitCreate.bind(this)
@@ -97,8 +98,16 @@ class App extends React.Component {
   handleEntered(entered) {
     this.setState({ entered })
   }
-  handleRegistered(registered) {
-    this.setState({ registered })
+  handleRegistered(e) {
+    console.log('registered: ' + e)
+    if(e==='writing')
+      this.setState({ writing: true })
+    else if(e==='registered')
+      expandToFadeOut('div.PageLoader', 1000)
+      setTimeout(()=> this.setState({
+        registered: true,
+        writing: false
+      }), 1000)
   }
   handleToProfile(e) {
     this.main.handleToProfile(e)
@@ -148,28 +157,61 @@ class App extends React.Component {
     //banner.style.top = 'calc(1% + ' + e.target.scrollTop + 'px)'
   }
   handleBanner(e) {
-    if(e) {
+    const regex = /\W/g,
+          id = e[2].replace(regex, '_'),
+          loadingIndex = this.state.banners.findIndex(elem => elem.props.type === 'Loading'),
+          index = this.state.banners.findIndex(elem => elem.props.message===e[1] && elem.props.bannerId===id),
+          key = index!==-1 ? index : this.state.banners.length,
+          banner = <Banner key={key} type={e[0]} message={e[1]} bannerId={id}/>
+    if(e[0]==='Waiting') {
+      this.setState({ banners: [...this.state.banners, banner] })
+    }
+    else if(e[0]==='Loading') {
+      if(loadingIndex!==-1) {
+        fadeOut('div#Banner-Loading', 200)
+        setTimeout(() => {
+          this.setState({
+            banners: [...this.state.banners.slice(0, loadingIndex),
+                      ...this.state.banners.slice(loadingIndex+1)]
+          })
+          this.setState({ banners: [...this.state.banners, banner] })
+        }, 200)
+      }
+      else this.setState({ banners: [...this.state.banners, banner] })
+    }
+    else if(e[0]==='Writing' && index!==-1) {
       this.setState({
-        bannerType: e[0],
-        bannerMessage: e[1],
-        bannerActive: true
+        banners: [...this.state.banners.slice(0, index), banner,
+                  ...this.state.banners.slice(index+1)]
       })
-    } else {
-      this.handleBannerExit('Success!')
     }
-  }
-  handleBannerExit(e) {
-    if(e==='Success!') {
-      this.setState({ bannerMessage: e })
+    else if(e[0]==='Success' && index!==-1) {
+      this.setState({
+        banners: [...this.state.banners.slice(0, index), banner,
+                  ...this.state.banners.slice(index+1)]
+      })
+      fadeOut('div#Banner-' + id, 1000)
       setTimeout(() => {
-        fadeOut('div.Banner', 200)
-        setTimeout(()=>this.setState({ bannerActive: false }), 200)
-      }, 500)
+        setTimeout(() => {
+          console.log('delete')
+          this.setState({
+            banners: [...this.state.banners.slice(0, index),
+                      ...this.state.banners.slice(index+1)]
+          })
+        }, 400)
+      }, 600)
     }
-    else {
-      fadeOut('div.Banner', 200)
-      setTimeout(()=>this.setState({ bannerActive: false }), 200)
+    else if(e[0]==='Cancel' && index!==-1) {
+      fadeOut('div#Banner-' + id, 200)
+      setTimeout(() => {
+        console.log('index ' + index)
+        this.setState({
+          banners: [...this.state.banners.slice(0, index),
+                    ...this.state.banners.slice(index+1)]
+        })
+      }, 200)
     }
+    console.log(this.state.banners)
   }
 
   async request() {
@@ -212,22 +254,7 @@ class App extends React.Component {
       //this.setState({ contractLoading: true })
       //this.loadContracts().catch(e => console.error(e))
     })
-    this.state.memeFactory.events.MemeCreated({})
-      .on('data', async event => {
-        console.log(event[2])
-        if(this.state.bannerMessage==='Meme' && event[2]===this.state.account) {
-          this.setState({ bannerActive: false })
-        }
-      })
-      .on('error', console.error)
-    this.state.interface.events.NewUser({})
-      .on('data', async event => {
-        if(this.state.bannerMessage==='New User' && event[0]===this.state.account)
-          this.setState({ bannerActive: false })
-      })
-      .on('error', console.error)
   }
-
   async loadWeb3() {
     if(window.ethereum) {
       window.web3 = new Web3(window.ethereum)
@@ -290,7 +317,7 @@ class App extends React.Component {
           fadeOut('div#Border-Spinner', 150)
           setTimeout(()=> {
             this.setState({ contractLoading: false })
-            blurToFadeIn('div.App', 1000)
+            //blurToFadeIn('div.App', 1000)
           }, 1000)
         } else {
           fadeOut('div#Border-Spinner', 800)
@@ -329,13 +356,7 @@ class App extends React.Component {
       <div
         className="App"
       >
-        { this.state.bannerActive
-            ? <Banner
-                type={this.state.bannerType}
-                message={this.state.bannerMessage}
-              />
-            : ''
-        }
+        <div className="Banners">{ this.state.banners }</div>
         { this.state.contractLoading && this.state.account!==undefined
             ? <PageLoader/>
             : this.state.account===undefined
@@ -412,12 +433,14 @@ class App extends React.Component {
                     />
                   </div>
                 : this.state.entered
-                  ? <CreateUser
-                      account={this.state.account}
-                      handleRegistered={this.handleRegistered}
-                      interface={this.state.interface}
-                      handleBanner={this.handleBanner}
-                      / >
+                  ? this.state.writing
+                      ? <PageLoader/>
+                      : <CreateUser
+                          account={this.state.account}
+                          handleRegistered={this.handleRegistered}
+                          interface={this.state.interface}
+                          handleBanner={this.handleBanner}
+                        />
                   : <Enter
                       account={this.state.account}
                       hasEntered={this.handleEntered}

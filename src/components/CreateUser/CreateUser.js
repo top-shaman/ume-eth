@@ -1,5 +1,6 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
+import PageLoader from '../Loader/PageLoader'
 import { fadeIn, fadeOut } from '../../resources/Libraries/Animation'
 import Web3 from 'web3'
 import './CreateUser.css'
@@ -21,7 +22,8 @@ class CreateUser extends React.Component {
       addressFocused: false,
       submitText: 'please set username & address',
       submitReady: false,
-      registered: false
+      registered: false,
+      writing: false,
     }
     this.handleUsernameChange = this.handleUsernameChange.bind(this)
     this.handleAddressChange = this.handleAddressChange.bind(this)
@@ -206,8 +208,9 @@ class CreateUser extends React.Component {
 
   async registerUser(e) {
     this.props.handleBanner([
-      'Writing',
-      'New User'
+      'Waiting',
+      'New User',
+      this.state.account
     ])
     const username = toBytes(this.state.username)
     const address = toBytes('@' + this.state.address)
@@ -215,15 +218,32 @@ class CreateUser extends React.Component {
     if(this.state.submitReady) {
       await this.props.interface.methods.newUser(this.state.account, username, address)
         .send({from: this.state.account})
-        .then(() => {
+        .on('transactionHash', () => {
           this.props.handleBanner([
             'Writing',
-            'New User'
+            'New User',
+            this.state.account
           ])
+          fadeOut('div.CreateUser', 300)
+          setTimeout(()=> this.props.handleRegistered('writing'), 300)
         })
-        .catch(e => console.error(e))
-      this.props.handleRegistered(true)
-      window.location.reload()
+        .on('receipt', () => {
+          this.props.handleBanner([
+            'Success',
+            'New User',
+            this.state.account
+          ])
+          this.props.handleRegistered('registered')
+        })
+        .catch(e => {
+          this.props.handleBanner([
+            'Cancel',
+            'New User',
+            this.state.account
+          ])
+          console.error(e)
+        })
+      //window.location.reload()
     }
   }
 
