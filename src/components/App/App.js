@@ -11,6 +11,7 @@ import EditProfile from '../EditProfile/EditProfile'
 
 import Banner from '../Popups/Banner'
 import NoWallet from '../NoWallet/NoWallet'
+import NoMetaMask from '../NoMetaMask/NoMetaMask'
 import PageLoader from '../Loader/PageLoader'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -45,7 +46,8 @@ class App extends React.Component {
       bannerMessage: '',
       offsetY: 0,
       windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight
+      windowHeight: window.innerHeight,
+      metaMask: false
     }
 
     this.app = React.createRef()
@@ -91,6 +93,10 @@ class App extends React.Component {
     }
   }
   componentDidUpdate() {
+    let showBanner = false
+    if(this.state.editing || this.state.writing || this.state.replying) {
+
+    }
   }
   async componentWillUnmount() {
     window.clearInterval()
@@ -267,11 +273,14 @@ class App extends React.Component {
   async loadWeb3() {
     if(window.ethereum) {
       window.web3 = new Web3(window.ethereum)
+      this.setState({ metaMask: true })
       this.request()
     } else if(window.web3) {
+      this.setState({ metaMask: true })
       window.web3 = new Web3(window.web3.currentProvider)
     } else {
-      window.alert('Non-Ethereum browser detected. You should consider trying Metamask!')
+      this.setState({ metaMask: false })
+      //window.alert('Non-Ethereum browser detected. You should consider trying Metamask!')
     }
   }
 
@@ -338,7 +347,8 @@ class App extends React.Component {
       }
     }
     else {
-      window.alert('UME not deployed to detected network')
+      window.alert('UME not deployed to detected network.\n' +
+                    'Please connect to Ropsten Ethereum Test Network.')
     }
   }
 
@@ -369,7 +379,9 @@ class App extends React.Component {
         { this.state.contractLoading && this.state.account!==undefined
             ? <PageLoader/>
             : this.state.account===undefined
-              ? <NoWallet />
+              ? this.state.metaMask
+                  ? <NoWallet />
+                  : <NoMetaMask />
               : this.state.registered
                 ? <div
                     id="App-body"

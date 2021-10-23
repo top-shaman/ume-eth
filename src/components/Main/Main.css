@@ -223,12 +223,13 @@ small {
   }
 }
 
-@media screen and (max-width: 800px) {
-  div.Main div#side-footer {
+@media screen and (max-width: 400px) {
+  div#side-footer {
+    margin-right: 0.6rem;
   }
-}
-@media screen and (max-width: 372px) {
-  div#subheader input#search.SearchBar_input {
+  div#side-footer div#stats {
     display: none;
+  }
+  .Main div#body {
   }
 }

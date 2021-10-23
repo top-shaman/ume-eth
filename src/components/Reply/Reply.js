@@ -59,16 +59,18 @@ class Reply extends React.Component {
 
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
-      const buttonText = document.querySelector('.Reply p#meme-button'),
-            memeButton = document.querySelector('.Reply p#meme-button')
+      const buttonText = document.querySelectorAll('.Reply p#meme-button'),
+            memeButton = document.querySelectorAll('.Reply p#meme-button')
       this.setState({
         memeText: this.state.memeText!==null && this.state.memeText!=='null' ? '' : localStorage.getItem('memeText'),
         visibleText: this.state.memeText!==null && this.state.memeText!=='null' ? '' : localStorage.getItem('memeText'),
         validMeme: true
       })
-      memeButton.style.backgroundColor = '#00CC89'
-      memeButton.style.cursor = 'pointer'
-      buttonText.style.color = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.backgroundColor = '#00CC89'
+        elem.style.cursor = 'pointer'
+      })
+      buttonText.forEach(elem => elem.style.color = '#FFFFFF')
     }
     fadeIn('.Reply div#container', 333)
     partialFadeIn('.Reply div#background', 100, 0.2)
@@ -99,32 +101,40 @@ class Reply extends React.Component {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
     const text = await e.target.value,
-          buttonText = document.querySelector('.Reply p#meme-button'),
-          memeButton = document.querySelector('.Reply p#meme-button'),
+          buttonText = document.querySelectorAll('.Reply p#meme-button'),
+          memeButton = document.querySelectorAll('.Reply p#meme-button'),
           textBox = document.querySelector('.Reply div#text-box'),
           textarea = document.querySelector('.Reply textarea#meme-text')
     textBox.style.height = textarea.clientHeight + 'px'
     // check text validity
     if(text.match(/\s/g)) {
       this.setState({ validMeme: text.length!==text.match(/\s/g).length })
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'default'
+        elem.style.backgroundColor = '#334646'
+      })
+      buttonText.forEach(elem => elem.style.color = '#AABBAA')
     } else if(text.length>0 && text.length<=512) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.backgroundColor = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'pointer'
+        elem.style.backgroundColor = '#00CC89'
+      })
+      buttonText.forEach(elem => elem.style.backgroundColor = '#FFFFFF')
       this.setState({ validMeme: true })
     } else if(e.target.value==='') {
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'default'
+        elem.style.backgroundColor = '#334646'
+      })
+      buttonText.forEach(elem => elem.style.color = '#AABBAA')
       this.setState({ validMeme: false })
     }
     if(this.state.validMeme) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.color = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'pointer'
+        elem.style.backgroundColor = '#00CC89'
+      })
+      buttonText.forEach(elem => elem.style.color = '#FFFFFF')
     }
     if(text.length>=412 && text.length<502) {
       this.setState({

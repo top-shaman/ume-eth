@@ -100,6 +100,7 @@ div.Profile div#loader-bottom div#spinning-loader {
 .Profile div#Profile div#body {
   margin: 0.6rem 1rem;
   text-align: left;
+  border: none;
 }
 .Profile div#Profile div#body p#bio {
   margin: 0 1.5rem 0.5rem 0rem;
@@ -154,4 +155,18 @@ div.Profile div#loader-bottom div#spinning-loader {
 .Profile div#Profile div#footer p span#count {
   color: #CCDDDD;
   font-weight: 800;
+}
+
+@media screen and (max-width: 380px) {
+  .Main div#subheader span#memes {
+    display: none;
+  }
+  .Main div#subheader p#profile-subheader {
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+  div#Profile div#header img {
+    width: 3.5rem;
+    height: auto;
+  }
 }

@@ -5,9 +5,10 @@ div.Banners {
   margin-left: -7.525rem;
   z-index: 10;
 }
-div.Banner {
+div.Banner div#body {
   position: relative;
   margin-bottom: 0.4rem;
+  border: none;
 }
 .Banner div#container {
   border: 0.15rem solid #CCDDDD;

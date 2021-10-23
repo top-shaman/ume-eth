@@ -42,6 +42,7 @@ class EditProfile extends React.Component {
 
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
+    this.handleResize = this.handleResize.bind(this)
   }
 
   async componentDidMount() {
@@ -49,6 +50,13 @@ class EditProfile extends React.Component {
           container = document.querySelector('div#container')
     background.style.top = this.props.offsetY + 'px'
     container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    if(window.innerWidth<580) {
+      container.style.top = 'calc(0% + ' + this.props.offsetY +'px)'
+    } else {
+      container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    }
+
+
     fadeIn('.EditProfile div#container', 333)
     partialFadeIn('.EditProfile div#background', 100, 0.2)
     this.textareaName.focus()
@@ -168,6 +176,12 @@ class EditProfile extends React.Component {
   async toBytes32(text) {
     const textBytes = await toBytes(text)
     return await this.state.interface.methods.bytesToBytes32(textBytes).call()
+  }
+  handleResize(ContainerSize, event) {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    })
   }
 
   checkUsername() {

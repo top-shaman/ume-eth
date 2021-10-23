@@ -5,6 +5,10 @@ div.NoWallet {
   font-size: 1.4rem;
   opacity: 0;
 }
-.NoWallet p#p2{
+.NoWallet p#p2 {
+  font-size: 1.4rem;
+  opacity: 0;
+}
+.NoWallet p#p3 {
   opacity: 0;
 }

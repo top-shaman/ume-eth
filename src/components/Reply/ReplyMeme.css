@@ -15,13 +15,17 @@ div.ReplyMeme {
   flex-direction: row;
   margin: 0.5rem 0.4rem 0.1rem 0;
   align-items: flex-end;
+  white-space: pre-line;
+  overflow-wrap: word-break;
+  word-break: break-word;
 }
 .ReplyMeme div#meme-footer {
   display: flex;
   flex-direction: row;
-  margin: 0.2rem 10rem 0.2rem 0.4rem;
+  margin: 0.2rem 1rem 0.2rem 0.4rem;
   justify-content: flex-start;
   align-items: flex-end;
+  word-break: break-all;
 }
 .ReplyMeme img#profile-pic {
 }
@@ -31,10 +35,11 @@ div.ReplyMeme {
   text-align: left;
   word-break: break-word;
   overflow-wrap: break-word;
+  white-space: pre-line;
 }
 .ReplyMeme p#meme-text {
   margin: 0 1.2rem 0 0rem;
-  width: inherit;
+  width: calc(100% - 1rem);
   padding: 0;
   font-family: 'Avenir', sans-serif;
   font-size: 1rem;
@@ -44,6 +49,7 @@ div.ReplyMeme {
   justify-content: flex-start;
   border: none;
   box-shadow: none;
+  word-break: break-word;
 }
 .ReplyMeme p#meme-text span {
   display: inline;
@@ -71,7 +77,9 @@ div.ReplyMeme {
   color: #00CC89;
   text-decoration: underline;
 }
-
+.ReplyMeme span#address {
+  white-space: pre;
+}
 .ReplyMeme a#username {
   font-family: 'Quicksand', sans-serif;
   font-weight: 800;
@@ -79,6 +87,8 @@ div.ReplyMeme {
   font-size: 1rem;
   margin: 0 0.3rem 0 0;
   text-decoration: none;
+  word-wrap: break-word;
+  white-space: pre;
 }
 .ReplyMeme span {
   font-family: 'Avenir', sans-serif;
@@ -101,6 +111,7 @@ div.ReplyMeme {
 }
 .ReplyMeme p span {
   margin: 0 0.1rem 0 0.4rem;
+  word-break: break-word;
 }
 .ReplyMeme p {
   margin: auto auto 0 0;

@@ -49,17 +49,19 @@ class CreateMeme extends React.Component {
 
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
-      const buttonText = document.querySelector('.CreateMeme p#meme-button'),
-            memeButton = document.querySelector('.CreateMeme p#meme-button')
+      const buttonText = document.querySelectorAll('.CreateMeme p#meme-button'),
+            memeButton = document.querySelectorAll('.CreateMeme p#meme-button')
       this.setState({
         memeText: this.state.memeText!=='null' || this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
         visibleText: this.state.memeText!=='null' || this.state.memeText!==null ? '' : localStorage.getItem('memeText'),
         validMeme: true
       })
       console.log(this.textBox.clientHeight)
-      memeButton.style.backgroundColor = '#00CC89'
-      memeButton.style.cursor = 'pointer'
-      buttonText.style.color = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.backgroundColor = '#00CC89'
+        elem.style.cursor = 'pointer'
+      })
+      buttonText.forEach(elem => elem.style.color = '#FFFFFF')
     }
     fadeIn('.CreateMeme div#container', 333)
     partialFadeIn('.CreateMeme div#background', 100, 0.2)
