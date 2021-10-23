@@ -19,6 +19,9 @@ class Banner extends React.Component {
       fadeIn('div#Banner-' + this.state.bannerId, 500)
     }
     const banner = document.querySelector('div#Banner-' + this.state.bannerId)
+    if(this.props.type==='Success') {
+      banner.style.border = '0.15rem solid #00CC89'
+    }
     setTimeout(() => {
       banner.style.animation = 'drift 2s ease-in-out infinite'
     },500)

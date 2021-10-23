@@ -224,12 +224,7 @@ small {
 }
 
 @media screen and (max-width: 800px) {
-  div.Main {
-    border-right: 1px solid #AAAAAA;
-    margin-right: 2rem;
-  }
-  .Main div#side-footer {
-    display:none;
+  div.Main div#side-footer {
   }
 }
 @media screen and (max-width: 372px) {

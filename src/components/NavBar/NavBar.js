@@ -112,6 +112,12 @@ class NavBar extends Component {
 
           <span>Meme</span>
         </p>
+        <p
+          id="meme-small"
+          onClick={this.handleMemeClick}
+        >
+          <span>+</span>
+        </p>
       </nav>
     );
   }

@@ -99,3 +99,43 @@ div#stats p#balance img {
   width: 1.4rem;
   margin: auto 0.3rem auto 0;
 }
+
+@media only screen and (max-width: 800px) {
+  .Main div#side-footer {
+    border-right: none;
+  }
+  div#stats-container {
+    display: flex;
+    width: min-content;
+  }
+  div#stats {
+    display: flex;
+    flex-direction: column;
+    min-width: 3.4rem;
+    width: min-content;
+  }
+  div#side-footer div#loader {
+    display: flex;
+    width: 6rem;
+  }
+  div#stats div#stats-header {
+    padding: 0 0.5rem;
+  }
+  div#stats p#info {
+    display: none;
+  }
+  div#stats p#stats {
+    display: none;
+  }
+  div#stats p#balance {
+    display: inline-flex;
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    height: auto;
+    word-wrap: break-word;
+  }
+  div#stats p#balance span#label,
+  div#stats p#balance span#bold-label {
+    display: none;
+  }
+
+}

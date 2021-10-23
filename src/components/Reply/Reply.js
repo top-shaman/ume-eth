@@ -41,13 +41,22 @@ class Reply extends React.Component {
     this.handleCloseClick = this.handleCloseClick.bind(this)
     this.handleReply = this.handleReply.bind(this)
     this.handleToProfile = this.handleToProfile.bind(this)
+
+    this.handleResize = this.handleResize.bind(this)
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.handleResize)
     const background = document.querySelector('div#background'),
           container = document.querySelector('div#container')
     background.style.top = this.props.offsetY + 'px'
     container.style.top = 'calc(15% + ' +this.props.offsetY + 'px)'
+    if(window.innerWidth<580) {
+      container.style.top = 'calc(0% + ' + this.props.offsetY +'px)'
+    } else {
+      container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    }
+
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
       const buttonText = document.querySelector('.Reply p#meme-button'),
@@ -65,6 +74,21 @@ class Reply extends React.Component {
     partialFadeIn('.Reply div#background', 100, 0.2)
     this.textarea.focus()
     autosize(this.textarea)
+  }
+
+  componentDidUpdate() {
+    const container = document.querySelector('.Reply div#container'),
+          background = document.querySelector('div#background')
+    background.style.top = this.props.offsetY + 'px'
+    if(this.state.windowWidth!==window.innerWidth) {
+      this.setState({ windowWidth: window.innerWidth })
+      this.setState({ windowHeight: window.innerHeight })
+    }
+    if(this.state.windowWidth<580) {
+      container.style.top = 'calc(0% + ' + this.props.offsetY +'px)'
+    } else {
+      container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    }
   }
 
   componentWillUnmount() {
@@ -179,7 +203,12 @@ class Reply extends React.Component {
     this.handleCloseClick(e)
     this.props.handleToProfile(e)
   }
-
+  handleResize(ContainerSize, event) {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    })
+  }
   async formatText() {
     let text = this.state.memeText,
         plainMap = await isolatePlain(text),
@@ -236,7 +265,7 @@ class Reply extends React.Component {
               className="close"
               src={X}
               alt="close button"
-              width="11px"
+              width="13px"
               onClick={this.handleCloseClick}
             />
           </section>
@@ -289,12 +318,20 @@ class Reply extends React.Component {
               </div>
             </form>
           </section>
+          <div id="button-box-small">
+            <div className="counter">{this.state.flag}</div>
+            <p
+              id="meme-button"
+              onClick={this.handleMemeClick}
+            >
+              Reply
+            </p>
+          </div>
         </div>
         <div
           id="background"
           onClick={this.handleCloseClick}
-        >
-        </div>
+        />
       </div>
     )
   }

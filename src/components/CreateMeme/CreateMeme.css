@@ -1,6 +1,6 @@
 .CreateMeme div#background {
   z-index: 8;
-  display:block;
+  display: block;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -14,7 +14,7 @@
   top: 15%;
   left: 50%;
   margin-left: -18rem;
-  padding: 1rem 1rem 0.5rem 1rem;
+  padding: 0 1rem 0.5rem 1rem;
   border-radius: 1.5rem;
   display: flex;
   background-color: #282c34;
@@ -125,10 +125,15 @@
   border-radius: 2rem;
   transition: background-color 0.15s;
 }
-
-img#x.close {
-  padding: 0.8rem;
-  margin: 0 auto 0.2rem 0.3rem;
+.CreateMeme section#head {
+  text-align: left;
+  height: min-content;
+}
+.CreateMeme img#x.close {
+  transform: translateX(-0.5rem);
+  text-align: left;
+  padding: 0.6rem;
+  margin: 0.5rem auto 0 0;
   filter: brightness(20%) invert(1);
   cursor: pointer;
 }
@@ -145,4 +150,84 @@ img#x.close {
   color: #DD4422;
   font-weight: 700;
   margin: 0;
+}
+.CreateMeme div#button-box-small {
+  display: none;
+}
+.CreateMeme div#background-small {
+  display: none;
+}
+
+@media only screen and (max-width: 580px) {
+  .CreateMeme div#background-small {
+    z-index: 8;
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #282c34;
+  }
+  div.CreateMeme {
+    display: flex;
+    height: 100%;
+    overflow-y: scroll;
+  }
+  .CreateMeme div#container {
+    position: fixed;
+    display: flex;
+    top: 0%;
+    left: 50%;
+    margin-top: 0;
+    margin-left: -50%;
+    padding: 0;
+    justify-content: center;
+    border-radius: 0 0 1.5rem 1.5rem;
+    width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .CreateMeme div#profilePic {
+    position: sticky;
+    -webkit-position: sticky;
+    margin-left: 0.2rem;
+  }
+  .CreateMeme img#x.close {
+    margin-left: 0.6rem;
+  }
+  .CreateMeme form {
+    width: calc(100% - 1.6rem);
+  }
+  .CreateMeme form#form div#text-box {
+    width: inherit;
+  }
+  .CreateMeme section#body {
+    width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .CreateMeme textarea#meme-text {
+    width: inherit;
+  }
+  .CreateMeme div#text-box p#text-box {
+    width: inherit;
+  }
+  .CreateMeme div#text-box span {
+    width: inherit;
+  }
+  .CreateMeme div#button-box {
+    display: none;
+  }
+  .CreateMeme div#button-box-small {
+    display: flex;
+    width: 100%;
+    margin: 0 1rem 0 1rem;
+  }
+  .CreateMeme div.counter {
+    margin-left: 4.3rem;
+  }
+  .CreateMeme p#meme-button {
+    height: min-content;
+  }
 }

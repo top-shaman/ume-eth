@@ -14,7 +14,7 @@
   top: 15%;
   left: 50%;
   margin-left: -18rem;
-  padding: 1rem 1rem 0.5rem 1rem;
+  padding: 0 1rem 0.5rem 1rem;
   border-radius: 1.5rem;
   display: flex;
   background-color: #282c34;
@@ -35,6 +35,8 @@
 
 .Reply section#head {
   border-bottom: 0.05rem solid #667777;
+  text-align: left;
+
   width: 100%;
 }
 .Reply section#body {
@@ -127,9 +129,10 @@
   transition: background-color 0.15s;
 }
 
-img#x.close {
-  padding: 0.3rem;
-  margin-right: 100%;
+.Reply img#x.close {
+  transform: translateX(-0.4rem);
+  padding: 0.6rem;
+  margin: 0.5rem auto 0 0;
   filter: brightness(20%) invert(1);
   cursor: pointer;
 }
@@ -147,4 +150,85 @@ img#x.close {
   color: #DD4422;
   font-weight: 700;
   margin: 0;
+}
+div.Reply div#button-box-small {
+  display: none;
+}
+
+@media only screen and (max-width: 580px) {
+  .Reply div#background-small {
+    z-index: 8;
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #282c34;
+  }
+  .Reply img#x.close {
+    margin-left: 0.6rem;
+  }
+  div.Reply {
+    display: flex;
+    height: 100%;
+  }
+  .Reply div.ReplyMeme div#parentProfilePic {
+    transform: translateX(0);
+  }
+  section#body div#profilePic {
+    position: sticky;
+    -webkit-position: sticky;
+    margin-left: 0.15rem;
+  }
+  .Reply div#container {
+    position: fixed;
+    display: flex;
+    top: 0%;
+    left: 50%;
+    margin-top: 0;
+    margin-left: -50%;
+    border-radius: 0 0 1.5rem 1.5rem;
+    padding: 0;
+    justify-content: center;
+    width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .ReplyMeme div.vl {
+  }
+  .Reply form {
+    width: calc(100% - 1.6rem);
+  }
+  .Reply form#form div#text-box {
+    width: inherit;
+  }
+  .Reply section#body {
+    width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .Reply textarea#meme-text {
+    width: inherit;
+  }
+  .Reply div#text-box p#text-box {
+    width: inherit;
+  }
+  .Reply div#text-box span {
+    width: inherit;
+  }
+  .Reply div#button-box {
+    display: none;
+  }
+  div.Reply div#button-box-small {
+    display: flex;
+    width: 100%;
+    margin: 0 1rem 0 1rem;
+  }
+  div.Reply div.counter {
+    margin-left: 4.2rem;
+  }
+  .Reply p#meme-button {
+    height: min-content;
+  }
 }

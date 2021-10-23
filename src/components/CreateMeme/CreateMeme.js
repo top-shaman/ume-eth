@@ -32,14 +32,20 @@ class CreateMeme extends React.Component {
     this.handleTextChange = this.handleTextChange.bind(this)
     this.handleMemeClick = this.handleMemeClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
+    this.handleResize = this.handleResize.bind(this)
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.handleResize)
     const background = document.querySelector('.CreateMeme div#background'),
           container = document.querySelector('.CreateMeme div#container')
     background.style.top = this.props.offsetY + 'px'
 
-    container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    if(window.innerWidth<580) {
+      container.style.top = 'calc(0% + ' + this.props.offsetY +'px)'
+    } else {
+      container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    }
 
     const storage = localStorage.getItem('memeText')
     if(storage && !storage.match(/\s/g)) {
@@ -60,8 +66,23 @@ class CreateMeme extends React.Component {
     this.textarea.focus()
     autosize(this.textarea)
   }
+  componentDidUpdate() {
+    const container = document.querySelector('.CreateMeme div#container'),
+          background = document.querySelector('.CreateMeme div#background')
+    background.style.top = this.props.offsetY + 'px'
+    if(this.state.windowWidth!==window.innerWidth) {
+      this.setState({ windowWidth: window.innerWidth })
+      this.setState({ windowHeight: window.innerHeight })
+    }
+    if(this.state.windowWidth<580) {
+      container.style.top = 'calc(0% + ' + this.props.offsetY +'px)'
+    } else {
+      container.style.top = 'calc(15% + ' + this.props.offsetY + 'px)'
+    }
+  }
 
   componentWillUnmount() {
+    window.addEventListener('resize', null)
     this.mounted = false
   }
 
@@ -69,32 +90,40 @@ class CreateMeme extends React.Component {
     e.preventDefault()
     this.setState({ memeText: e.target.value })
     const text = await e.target.value,
-          buttonText = document.querySelector('.CreateMeme p#meme-button'),
-          memeButton = document.querySelector('.CreateMeme p#meme-button'),
+          buttonText = document.querySelectorAll('.CreateMeme p#meme-button'),
+          memeButton = document.querySelectorAll('.CreateMeme p#meme-button'),
           textBox = document.querySelector('.CreateMeme div#text-box'),
           textarea = document.querySelector('.CreateMeme textarea#meme-text')
     textBox.style.height = textarea.clientHeight + 'px'
     // check text validity
     if(text.match(/\s/g)) {
       this.setState({ validMeme: text.length!==text.match(/\s/g).length })
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'default'
+        elem.style.backgroundColor = '#334646'
+      })
+      buttonText.forEach(elem => elem.style.color = '#AABBAA')
     } else if(text.length>0 && text.length<=512) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.backgroundColor = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'pointer'
+        elem.style.backgroundColor = '#00CC89'
+      })
+      buttonText.forEach(elem => elem.style.backgroundColor = '#FFFFFF')
       this.setState({ validMeme: true })
     } else if(e.target.value==='') {
-      memeButton.style.cursor = 'default'
-      memeButton.style.backgroundColor = '#334646'
-      buttonText.style.color = '#AABBAA'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'default'
+        elem.style.backgroundColor = '#334646'
+      })
+      buttonText.forEach(elem => elem.style.color = '#AABBAA')
       this.setState({ validMeme: false })
     }
     if(this.state.validMeme) {
-      memeButton.style.cursor = 'pointer'
-      memeButton.style.backgroundColor = '#00CC89'
-      buttonText.style.color = '#FFFFFF'
+      memeButton.forEach(elem => {
+        elem.style.cursor = 'pointer'
+        elem.style.backgroundColor = '#00CC89'
+      })
+      buttonText.forEach(elem => elem.style.color = '#FFFFFF')
     }
     if(text.length>=412 && text.length<502) {
       this.setState({
@@ -161,6 +190,12 @@ class CreateMeme extends React.Component {
       this.props.handleExitCreate(await this.state.creatingMeme)
     }, 500)
   }
+  handleResize(ContainerSize, event) {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    })
+  }
 
   async formatText() {
     let text = this.state.memeText,
@@ -208,59 +243,68 @@ class CreateMeme extends React.Component {
     return await this.state.interface.methods.bytesToBytes32(textBytes).call()
   }
 
-  render() {
-    return(
-      <div
-        className="CreateMeme"
-        id="CreateMeme"
-      >
-        <div id="container">
-          <section id="head">
-            <img
-              id="x"
-              className="close"
-              alt="close button"
-              src={X}
-              width="13px"
-              onClick={this.handleCloseClick}
+render() {
+  return(
+    <div
+      className="CreateMeme"
+      id="CreateMeme"
+    >
+      <div id="container">
+        <section id="head">
+          <img
+            id="x"
+            className="close"
+            alt="close button"
+            src={X}
+            width="13px"
+            onClick={this.handleCloseClick}
+          />
+        </section>
+        <section id="body">
+          <div id="profilePic">
+            <ProfilePic
+              id="profilePic"
+              account={this.props.account}
             />
-          </section>
-          <section id="body">
-            <div id="profilePic">
-              <ProfilePic
-                id="profilePic"
-                account={this.props.account}
-              />
+          </div>
+          <form id="form">
+            <div id="text-box" ref={Ref=>this.textBox=Ref}>
+              <textarea
+                name="meme"
+                id="meme-text"
+                type="text"
+                autoComplete="off"
+                placeholder="What's the meme"
+                rows="auto"
+                maxLength="512"
+                value={this.state.memeText}
+                onChange={this.handleTextChange}
+                ref={Ref=>this.textarea=Ref}
+                required/>
+              <p id="text-box">
+                {this.state.visibleText}
+              </p>
             </div>
-            <form id="form">
-              <div id="text-box" ref={Ref=>this.textBox=Ref}>
-                <textarea
-                  name="meme"
-                  id="meme-text"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="What's the meme"
-                  rows="auto"
-                  maxLength="512"
-                  value={this.state.memeText}
-                  onChange={this.handleTextChange}
-                  ref={Ref=>this.textarea=Ref}
-                  required/>
-                <p id="text-box">
-                  {this.state.visibleText}
-                </p>
-              </div>
-              <div id="button-box">
-                <div className="counter">{this.state.flag}</div>
-                <p
-                  id="meme-button"
-                  onClick={this.handleMemeClick}
-                >
-                  Meme
-                </p>
-              </div>
-            </form>
-          </section>
+            <div id="button-box">
+              <div className="counter">{this.state.flag}</div>
+              <p
+                id="meme-button"
+                onClick={this.handleMemeClick}
+              >
+                Meme
+              </p>
+            </div>
+          </form>
+        </section>
+        <div id="button-box-small">
+          <div className="counter">{this.state.flag}</div>
+            <p
+              id="meme-button"
+              onClick={this.handleMemeClick}
+            >
+              Meme
+            </p>
+          </div>
         </div>
         <div
           id="background"

@@ -44,7 +44,8 @@ class App extends React.Component {
       bannerType: '',
       bannerMessage: '',
       offsetY: 0,
-      appHeight: window.innerHeight
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
     }
 
     this.app = React.createRef()
@@ -66,10 +67,12 @@ class App extends React.Component {
     this.handleBanner = this.handleBanner.bind(this)
 
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleResize = this.handleResize.bind(this)
   }
 
   // lifecycle methods
   async componentDidMount() {
+    window.addEventListener('resize', this.handleResize)
     // check if has previously loaded, so page can know to blur
     //if(localStorage.getItem('hasLoaded')!=='true')
     // check if account exists, load defaults if no account
@@ -155,6 +158,12 @@ class App extends React.Component {
     })
     //const banner = document.querySelector('div.Banner')
     //banner.style.top = 'calc(1% + ' + e.target.scrollTop + 'px)'
+  }
+  handleResize(ContainerSize, event) {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    })
   }
   handleBanner(e) {
     const regex = /\W/g,
