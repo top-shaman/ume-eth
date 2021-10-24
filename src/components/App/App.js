@@ -10,8 +10,9 @@ import Reply from '../Reply/Reply'
 import EditProfile from '../EditProfile/EditProfile'
 
 import Banner from '../Popups/Banner'
-import NoWallet from '../NoWallet/NoWallet'
-import NoMetaMask from '../NoMetaMask/NoMetaMask'
+import NoWallet from '../Enter/NoWallet'
+import NoMetaMask from '../Enter/NoMetaMask'
+import NoEth from '../Enter/NoEth'
 import PageLoader from '../Loader/PageLoader'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -47,7 +48,8 @@ class App extends React.Component {
       offsetY: 0,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
-      metaMask: false
+      metaMask: false,
+      hasEth: false
     }
 
     this.app = React.createRef()
@@ -286,8 +288,14 @@ class App extends React.Component {
 
   async loadContracts() {
     const web3 = window.web3,
-          accounts = await web3.eth.getAccounts()
+          accounts = await web3.eth.getAccounts(),
+          network = parseInt(await window.ethereum.networkVersion),
+          balance = parseInt(await web3.eth.getBalance(accounts[0]))
     this.setState({ account: accounts[0] })
+
+    if (await network===3 && await balance>0) {
+      this.setState({ hasEth: true })
+    }
     // retrieve NetId into constants
     const netId = await web3.eth.net.getId(),
           umeNetData = UME.networks[netId],
@@ -456,12 +464,14 @@ class App extends React.Component {
                 : this.state.entered
                   ? this.state.writing
                       ? <PageLoader/>
-                      : <CreateUser
-                          account={this.state.account}
-                          handleRegistered={this.handleRegistered}
-                          interface={this.state.interface}
-                          handleBanner={this.handleBanner}
-                        />
+                      : !this.state.hasEth
+                          ? <NoEth/>
+                          : <CreateUser
+                              account={this.state.account}
+                              handleRegistered={this.handleRegistered}
+                              interface={this.state.interface}
+                              handleBanner={this.handleBanner}
+                            />
                   : <Enter
                       account={this.state.account}
                       hasEntered={this.handleEntered}

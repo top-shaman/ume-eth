@@ -1,5 +1,6 @@
 div.NoWallet {
   margin: auto;
+  line-height: 3rem;
 }
 .NoWallet p#p1 {
   font-size: 1.4rem;

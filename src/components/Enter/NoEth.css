@@ -1,0 +1,104 @@
+div.NoEth {
+  position: relative;
+  margin: 0 auto;
+  cursor: default;
+}
+.NoEth p#p1 {
+  font-size: 1.4rem;
+  line-height: 4rem;
+  opacity: 0;
+}
+.NoEth p#p2 {
+  font-size: 1.4rem;
+  line-height: 4rem;
+  opacity: 0;
+}
+.NoEth p#p3 {
+  font-size: 1.4rem;
+  line-height: 2rem;
+  opacity: 0;
+}
+.NoEth p#p4 {
+  margin-top: 1rem;
+  border-top: 1px solid #667777;
+  font-size: 1.2rem;
+  line-height: 3.5rem;
+  opacity: 0;
+}
+.NoEth span#ume {
+  font-family: 'MuseoModerno', sans-serif;
+}
+.NoEth span#bold {
+  font-weight: 700;
+}
+.NoEth a,
+.NoEth a:visited,
+.NoEth a span {
+  font-size: 1rem;
+  text-decoration: none;
+  color: #00CC89;
+}
+
+.NoEth div#image-section {
+  height: 30%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.NoEth div#image-section img {
+  opacity: 0;
+  max-height: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 0.15rem solid #00CC89;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 8px #667777;
+  transition: opacity 0.5s ease-in-out;
+  background-color: #282c34;
+}
+.NoEth div#image-section div#send-ropsten {
+  display: flex;
+  margin: 0 auto;
+  height: 100%;
+  flex-direction: column;
+}
+.NoEth div#image-section img#copy {
+  margin: 0 auto;
+  width: auto;
+  height: 38%;
+}
+.NoEth div#image-section img#send {
+  margin: 0 auto;
+  width: auto;
+  height: 62%;
+}
+
+@keyframes cycle1 {
+  from {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes cycle2 {
+  from {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

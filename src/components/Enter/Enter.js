@@ -48,7 +48,7 @@ class Enter extends React.Component {
     setTimeout(() => {
       this.setState({ entered: true })
       this.props.hasEntered(this.state.entered)
-      localStorage.setItem('hasEntered', 'true')
+      //localStorage.setItem('hasEntered', 'true')
     }, 1500)
   }
 
