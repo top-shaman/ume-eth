@@ -18,6 +18,7 @@ div.Banner div#body {
   width: 15rem;
   padding: 0.4rem 1rem;
   border-radius: 1rem;
+  transition: border 0.3s ease-in-out;
 }
 .Banner div#container-writing {
   border: 0.15rem solid #CCDDDD;

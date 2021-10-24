@@ -176,16 +176,17 @@ div.ReplyInThread#ReplyInThread {
 }
 .ReplyInThread p#replying a#at,
 .ReplyInThread p#replying a#hash {
-   display: inline;
-   margin: 0;
-   color: #00CC89;
-   text-decoration: none;
-   line-break: anywhere;
+  font-family: 'Avenir', sans-serif;
+  display: inline;
+  margin: 0;
+  color: #00CC89;
+  text-decoration: none;
+  line-break: anywhere;
 }
 .ReplyInThread p#replying a#at:hover,
 .ReplyInThread p#replying a#hash:hover {
-   color: #00CC89;
-   text-decoration: underline;
+  color: #00CC89;
+  text-decoration: underline;
 }
 .ReplyInThread p span#parent {
   height: auto;

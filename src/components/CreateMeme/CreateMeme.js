@@ -148,7 +148,7 @@ class CreateMeme extends React.Component {
       this.props.handleBanner([
           'Waiting',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-create-meme'
         ])
       const tags = await this.validAts()
       await this.state.interface.methods.newMeme(
@@ -160,7 +160,7 @@ class CreateMeme extends React.Component {
         this.props.handleBanner([
           'Writing',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-create-meme'
         ])
         this.handleCloseClick()
       })
@@ -168,14 +168,14 @@ class CreateMeme extends React.Component {
         this.props.handleBanner([
           'Success',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-create-meme'
         ])
       })
       .catch(e => {
         this.props.handleBanner([
           'Cancel',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-create-meme'
         ])
         console.error(e)
       })

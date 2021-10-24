@@ -157,7 +157,7 @@ class Reply extends React.Component {
       this.props.handleBanner([
           'Waiting',
           'Reply',
-          this.state.memeText
+          this.state.memeId + '-reply'
         ])
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -169,7 +169,7 @@ class Reply extends React.Component {
         this.props.handleBanner([
           'Writing',
           'Reply',
-          this.state.memeText
+          this.state.memeId + '-reply'
         ])
         this.handleCloseClick(e)
       })
@@ -177,14 +177,14 @@ class Reply extends React.Component {
         this.props.handleBanner([
           'Success',
           'Reply',
-          this.state.memeText
+          this.state.memeId + '-reply'
         ])
       })
       .catch(e => {
         this.props.handleBanner([
           'Cancel',
           'Reply',
-          this.state.memeText
+          this.state.memeId + '-reply'
         ])
         console.error(e)
       })

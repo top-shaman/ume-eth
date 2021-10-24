@@ -210,7 +210,7 @@ class CreateUser extends React.Component {
     this.props.handleBanner([
       'Waiting',
       'New User',
-      this.state.account
+      this.state.account + '-new-user'
     ])
     const username = toBytes(this.state.username)
     const address = toBytes('@' + this.state.address)
@@ -222,7 +222,7 @@ class CreateUser extends React.Component {
           this.props.handleBanner([
             'Writing',
             'New User',
-            this.state.account
+            this.state.account + '-new-user'
           ])
           fadeOut('div.CreateUser', 300)
           setTimeout(()=> this.props.handleRegistered('writing'), 300)
@@ -231,7 +231,7 @@ class CreateUser extends React.Component {
           this.props.handleBanner([
             'Success',
             'New User',
-            this.state.account
+            this.state.account + '-new-user'
           ])
           this.props.handleRegistered('registered')
         })
@@ -239,7 +239,7 @@ class CreateUser extends React.Component {
           this.props.handleBanner([
             'Cancel',
             'New User',
-            this.state.account
+            this.state.account + '-new-user'
           ])
           console.error(e)
         })

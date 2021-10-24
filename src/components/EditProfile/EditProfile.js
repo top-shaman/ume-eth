@@ -100,8 +100,8 @@ class EditProfile extends React.Component {
     if(this.state.username!==this.state.nameText && !this.state.flagName) {
       this.props.handleBanner([
         'Waiting',
-        'Profile Update',
-        this.state.account
+        'Username Update',
+        this.state.account + '-username'
       ])
       const nameBytes = await toBytes(this.state.nameText)
       await this.state.interface.methods
@@ -111,21 +111,21 @@ class EditProfile extends React.Component {
           this.props.handleBanner([
             'Writing',
             'Username Update',
-            this.state.account
+            this.state.account + '-username'
           ])
         })
         .on('receipt', () => {
           this.props.handleBanner([
             'Success',
             'Username Update',
-            this.state.account
+            this.state.account + '-username'
           ])
         })
         .catch(e => {
           this.props.handleBanner([
             'Cancel',
             'Username Update',
-            this.state.account
+            this.state.account + '-username'
           ])
           console.error(e)
         })
@@ -134,6 +134,11 @@ class EditProfile extends React.Component {
       updated = true
     }
     if(this.state.bio!==this.state.bioText) {
+      this.props.handleBanner([
+        'Waiting',
+        'Bio Update',
+        this.state.account + '-bio'
+      ])
       await this.state.interface.methods
         .newBio(this.state.account, this.state.bioText)
         .send({from: this.state.account})
@@ -141,21 +146,21 @@ class EditProfile extends React.Component {
           this.props.handleBanner([
             'Writing',
             'Bio Update',
-            this.state.account
+            this.state.account + '-bio'
           ])
         })
         .on('receipt', () => {
           this.props.handleBanner([
             'Success',
             'Bio Update',
-            this.state.account
+            this.state.account + '-bio'
           ])
         })
         .catch(e => {
           this.props.handleError([
             'Cancel',
             'BioUpdate',
-            this.state.account
+            this.state.account + '-bio'
           ])
           console.error(e)
         })

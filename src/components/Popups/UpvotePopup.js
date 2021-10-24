@@ -63,7 +63,7 @@ class UpvotePopup extends React.Component {
       this.props.handleBanner([
         'Waiting',
         'Upvote',
-        this.state.memeId
+        this.state.memeId + '-upvote'
       ])
       e.preventDefault()
       if(this.state.valid) {
@@ -74,19 +74,21 @@ class UpvotePopup extends React.Component {
             this.props.handleBanner([
               'Writing',
               'Upvote',
-              this.state.memeId
+              this.state.memeId + '-upvote'
             ])
           })
-          .on('receipt', () => this.props.handleBanner([
-            'Success',
-            'Upvote',
-            this.state.memeId
-          ]))
+          .on('receipt', () => {
+            this.props.handleBanner([
+              'Success',
+              'Upvote',
+              this.state.memeId + '-upvote'
+            ])
+          })
           .catch(e => {
             this.props.handleBanner([
               'Cancel',
               'Upvote',
-              this.state.memeId
+              this.state.memeId + '-upvote'
             ])
             console.error(e)
           })

@@ -42,9 +42,6 @@ class App extends React.Component {
       replying: false,
       editing: false,
       banners: [],
-      bannerActive: false,
-      bannerType: '',
-      bannerMessage: '',
       offsetY: 0,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
@@ -185,7 +182,7 @@ class App extends React.Component {
     }
     else if(e[0]==='Loading') {
       if(loadingIndex!==-1) {
-        fadeOut('div#Banner-Loading', 200)
+        fadeOut('div#Banner-' + id,  200)
         setTimeout(() => {
           this.setState({
             banners: [...this.state.banners.slice(0, loadingIndex),
@@ -210,7 +207,6 @@ class App extends React.Component {
       fadeOut('div#Banner-' + id, 1000)
       setTimeout(() => {
         setTimeout(() => {
-          console.log('delete')
           this.setState({
             banners: [...this.state.banners.slice(0, index),
                       ...this.state.banners.slice(index+1)]

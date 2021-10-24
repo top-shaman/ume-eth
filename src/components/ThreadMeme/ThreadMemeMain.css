@@ -62,7 +62,8 @@ section#info {
 .ThreadMemeMain p#ThreadMemeMain-text {
   margin: 0 1rem 1.2rem 1rem;
   width: inherit;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Avenir', sans-serif;
+  line-height: 2rem;
   font-size: 1.6rem;
   font-weight: 500;
   color: #CCDDCC;
@@ -72,7 +73,7 @@ section#info {
 }
 .ThreadMemeMain p#ThreadMemeMain-text span {
   display: inline;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Avenir', sans-serif;
   font-size: 1.6rem;
   font-weight: 500;
   margin: 0;

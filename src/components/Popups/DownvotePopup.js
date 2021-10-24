@@ -61,7 +61,7 @@ class DownvotePopup extends React.Component {
       this.props.handleBanner([
         'Waiting',
         'Downvote',
-        this.state.memeId
+        this.state.memeId + '-downvote'
       ])
       e.preventDefault()
       if(this.state.valid) {
@@ -72,19 +72,21 @@ class DownvotePopup extends React.Component {
             this.props.handleBanner([
               'Writing',
               'Downvote',
-              this.state.memeId
+              this.state.memeId + '-downvote'
             ])
           })
-          .on('receipt', () => this.props.handleBanner([
-            'Success',
-            'Downvote',
-            this.state.memeId
-          ]))
+          .on('receipt', () => {
+            this.props.handleBanner([
+              'Success',
+              'Downvote',
+              this.state.memeId + '-downvote'
+            ])
+          })
           .catch(e => {
             this.props.handleBanner([
               'Cancel',
               'Downvote',
-              this.state.memeId
+              this.state.memeId + '-downvote'
             ])
             console.error(e)
           })

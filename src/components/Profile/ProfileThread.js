@@ -76,7 +76,7 @@ class ProfileThread extends React.Component {
   }
   async componentWillUnmount() {
     clearInterval(this.intervalProfile)
-    this.props.handleBanner('Cancel', 'Profile', this.state.userAccount)
+    this.props.handleBanner('Cancel', 'Profile', this.state.userAccount + '-profile')
     this.props.handleLoading(false)
   }
 
@@ -124,7 +124,7 @@ class ProfileThread extends React.Component {
     if(this.state.firstLoad) {
       this.setState({ loading: true })
       await this.props.handleLoading(this.state.loading)
-      this.props.handleBanner(['Loading', 'Profile', this.state.userAccount])
+      this.props.handleBanner(['Loading', 'Profile', this.state.userAccount + '-loading'])
       console.log('load profile ' + new Date().toTimeString())
 
       // compile memes
@@ -182,7 +182,7 @@ class ProfileThread extends React.Component {
         //console.log('total memes: ' + userMemeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        this.props.handleBanner(['Success', 'Profile', this.state.userAccount])
+        this.props.handleBanner(['Success', 'Profile', this.state.userAccount + '-loading'])
         this.props.handleLoading(this.state.loading)
       }
       else {
@@ -520,13 +520,13 @@ class ProfileThread extends React.Component {
             ? this.state.allMemesLoaded
               ? <div id="loaded">
                   {this.state.memesHTML}
-                  <p id="loader">All memes loaded!<br/></p>
+                  <p id="loaded">All memes loaded!<br/></p>
                 </div>
               : <div id="loaded">
                   {this.state.memesHTML}
                 </div>
             : <div id="loaded">
-                <p id="loader">No memes yet!</p>
+                <p id="loaded">No memes yet!</p>
               </div>
         }
       </div>

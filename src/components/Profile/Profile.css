@@ -14,6 +14,9 @@ div.Profile div#loader div#spinning-loader {
 div.Profile div#loader-bottom div#spinning-loader {
   margin: 1rem auto 2rem auto;
 }
+div.Profile div#loaded p#loaded {
+  margin: 1rem 0;
+}
 
 .Profile div#Profile {
   display: flex;
@@ -59,6 +62,7 @@ div.Profile div#loader-bottom div#spinning-loader {
 }
 .Profile div#Profile div#left span#username {
   color: #CCDDDD;
+  margin-bottom: 0.5rem;
   font-size: 1.5rem;
   font-weight: 800;
 }

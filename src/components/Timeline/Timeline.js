@@ -129,7 +129,7 @@ class Timeline extends React.Component {
     if(this.state.firstLoad) {
       this.setState({ loading: true })
       await this.props.handleLoading(this.state.loading)
-      await this.props.handleBanner(['Loading', 'Timeline', this.state.account])
+      await this.props.handleBanner(['Loading', 'Timeline', this.state.account + '-loading'])
       console.log('load timeline ' + new Date().toTimeString())
 
       // compile all meme id's
@@ -190,7 +190,7 @@ class Timeline extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        await this.props.handleBanner(['Success', 'Timeline', this.state.account])
+        await this.props.handleBanner(['Success', 'Timeline', this.state.account + '-loading'])
         this.props.handleLoading(this.state.loading)
       }
       else {

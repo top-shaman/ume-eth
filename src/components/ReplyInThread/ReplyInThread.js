@@ -159,7 +159,7 @@ class ReplyInThread extends React.Component {
       this.props.handleBanner([
           'Waiting',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-reply-thread'
         ])
       const tags = await this.validAts()
       this.state.interface.methods.newMeme(
@@ -171,21 +171,21 @@ class ReplyInThread extends React.Component {
         this.props.handleBanner([
           'Writing',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-reply-thread'
         ])
       })
       .on('receipt', () => {
         this.props.handleBanner([
           'Success',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-reply-thread'
         ])
       })
       .catch(e => {
         this.props.handleBanner([
           'Cancel',
           'Meme',
-          this.state.memeText
+          this.state.memeId + '-reply-thread'
         ])
         console.error(e)
       })

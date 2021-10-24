@@ -84,7 +84,7 @@ class Profile extends React.Component {
     this.props.handleBanner([
       'Waiting',
       'Follow',
-      this.state.profileAccount
+      this.state.profileAccount + '-follow'
     ])
     await this.state.interface.methods
       .followUser(this.state.userAccount, this.state.profileAccount)
@@ -93,14 +93,14 @@ class Profile extends React.Component {
         this.props.handleBanner([
           'Writing',
           'Follow',
-          this.state.profileAccount
+          this.state.profileAccount + '-follow'
         ])
       })
       .on('receipts', () => {
         this.props.handleBanner([
           'Success',
           'Follow',
-          this.state.profileAccount
+          this.state.profileAccount + '-follow'
         ])
       })
       .then(() => this.compileProfile())
@@ -108,7 +108,7 @@ class Profile extends React.Component {
         this.props.handleBanner([
           'Cancel',
           'Follow',
-          this.state.profileAccount
+          this.state.profileAccount + '-follow'
         ])
         console.error(e)
       })

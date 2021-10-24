@@ -168,7 +168,7 @@ class Thread extends React.Component {
       this.props.handleBanner([
         'Loading',
         'Meme',
-        this.state.userAccount
+        this.state.userAccount + '-loading'
       ])
       console.log('load thread ' + new Date().toTimeString())
 
@@ -274,7 +274,7 @@ class Thread extends React.Component {
         this.props.handleBanner([
           'Success',
           'Meme',
-          this.state.userAccount
+          this.state.userAccount + '-loading'
         ])
         await this.props.handleLoading(this.state.loading)
       }
