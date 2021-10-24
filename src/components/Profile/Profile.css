@@ -3,6 +3,7 @@ p#loader.Profile {
   max-width: 38rem;
 }
 .Profile div#loader {
+  margin: 1rem 0;
   opacity: 1;
   align-items: flex-start;
   height: 100%;

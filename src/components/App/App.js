@@ -104,6 +104,9 @@ class App extends React.Component {
 
   // handles
   handleEntered(entered) {
+    if(entered) {
+      localStorage.setItem('hasEntered', 'true')
+    }
     this.setState({ entered })
   }
   handleRegistered(e) {

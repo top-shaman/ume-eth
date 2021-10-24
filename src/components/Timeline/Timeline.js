@@ -191,7 +191,7 @@ class Timeline extends React.Component {
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
         await this.props.handleBanner(['Success', 'Timeline', this.state.account + '-loading'])
-        this.props.handleLoading(this.state.loading)
+        await this.props.handleLoading(this.state.loading)
       }
       else {
         this.setState({

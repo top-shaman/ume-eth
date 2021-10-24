@@ -165,7 +165,7 @@ class Thread extends React.Component {
     if(this.state.firstLoad) {
       this.setState({ loading: true })
       await this.props.handleLoading(this.state.loading)
-      this.props.handleBanner([
+      await this.props.handleBanner([
         'Loading',
         'Meme',
         this.state.userAccount + '-loading'
@@ -271,7 +271,7 @@ class Thread extends React.Component {
         //console.log('total memes: ' + memeCount)
         //console.log('memes rendered: ' + memesRendered)
         //console.log('memes not yet rendered: ' + memesNotRendered)
-        this.props.handleBanner([
+        await this.props.handleBanner([
           'Success',
           'Meme',
           this.state.userAccount + '-loading'
