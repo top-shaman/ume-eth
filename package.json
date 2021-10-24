@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "decentralized micro-blogging",
   "author": "topshaman@protonmail.com",
-  "homepage": "https://top-shaman.github.io/ume",
+  "homepage": ".",
   "dependencies": {
     "@babel/core": "7.11.0",
     "@babel/preset-env": "7.11.0",
