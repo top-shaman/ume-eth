@@ -33,6 +33,9 @@ div.NoMetaMask {
   line-height: 8rem;
   text-decoration: none;
 }
-.NoMetaMask a:visited {
+.NoMetaMask a:visited,
+.NoMetaMask a:link,
+.NoMetaMask a:active {
+  text-decoration: none;
   color: #00CC89;
 }

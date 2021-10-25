@@ -96,7 +96,6 @@ class EditProfile extends React.Component {
     this.setState({ bioTextFocused: false })
   }
   async handleSaveClick(e) {
-    let updated = false
     if(this.state.username!==this.state.nameText && !this.state.flagName) {
       this.props.handleBanner([
         'Waiting',
@@ -113,6 +112,7 @@ class EditProfile extends React.Component {
             'Username Update',
             this.state.account + '-username'
           ])
+          this.handleCloseClick(e)
         })
         .on('receipt', () => {
           this.props.handleBanner([
@@ -131,7 +131,6 @@ class EditProfile extends React.Component {
         })
       this.setState({ username: this.state.nameText })
       localStorage.setItem('userInfo', this.state.account)
-      updated = true
     }
     if(this.state.bio!==this.state.bioText) {
       this.props.handleBanner([
@@ -148,6 +147,7 @@ class EditProfile extends React.Component {
             'Bio Update',
             this.state.account + '-bio'
           ])
+          this.handleCloseClick(e)
         })
         .on('receipt', () => {
           this.props.handleBanner([
@@ -164,9 +164,7 @@ class EditProfile extends React.Component {
           ])
           console.error(e)
         })
-      updated = true
     }
-    if(updated) window.location.reload()
   }
   async handleCloseClick(e) {
     localStorage.setItem('nameText', this.state.nameText)

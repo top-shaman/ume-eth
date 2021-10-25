@@ -12,12 +12,12 @@ class NoMetaMask extends React.Component {
     return(
       <div className="NoMetaMask">
         <p id="p1">
-          <a id="install" href="https://metamask.io/download">Please install <span>MetaMask</span> to use</a>
+          <a id="install" href="https://metamask.io/download" target="_blank">Please install <span>MetaMask</span> to use</a>
           <br/>
           <span id="ume">uMe</span>
         </p>
         <p id="p2">
-          <a id="download" href="https://metamask.io/download">(You can download <span>MetaMask</span> here)</a>
+          <a id="download" href="https://metamask.io/download" target="_blank">(You can download <span>MetaMask</span> here)</a>
         </p>
       </div>
     )

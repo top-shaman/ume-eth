@@ -1,6 +1,6 @@
-p#reply-button {
+p.reply {
   cursor: pointer;
 }
-p#reply-button:hover {
+p.reply:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(85deg);
 }
