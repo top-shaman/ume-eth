@@ -32,13 +32,13 @@ class Enter extends React.Component {
     setTimeout(() => fadeIn('.Enter p#p4', 3000), 6500)
   }
   componentWillUnmount() {
-    fadeOut('img.Enter', 1500)
+    fadeOut('.Enter img', 1500)
   }
   handleMouseOver(e) {
     e.preventDefault()
     this.setState({ mouseOver: true })
     if(!this.state.mouseOver) {
-      bobble('img.Enter', 2100)
+      bobble('.Enter img', 2100)
     }
   }
   handleMouseLeave(e) {

@@ -1,0 +1,10 @@
+div#deleted p {
+  background-color: #1D1F22;
+  margin: 0 auto;
+  padding: 1rem;
+  text-align: center;
+}
+div#deleted:hover {
+  background-color: #1D1F22;
+  cursor: default;
+}

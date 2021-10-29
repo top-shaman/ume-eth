@@ -354,29 +354,31 @@ class Timeline extends React.Component {
       await this.props.handleRefresh(this.state.refreshing)
 
       loadedMemes.forEach(async e => {
-        const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
-        const newLikers = await this.props.memeStorage.methods.getLikers(e.memeId).call()
-        const newRememes = await this.props.memeStorage.methods.getReposts(e.memeId).call()
-        const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(e.memeId).call()
-        const newBoosts = await this.props.memeStorage.methods.getBoost(e.memeId).call()
-        if(e.responses.length!==newResponses.length) {
-          e.responses = newResponses
-        }
-        if(e.likes!==newLikers.length) {
-          e.likes = newLikers.length
-          e.likers = newLikers
-          e.userHasLiked = e.likers.includes(this.props.account)
-        }
-        if(e.rememeCount!==newRememes.length){
-          e.rememeCount = newRememes.length
-          e.rememes = newRememes
-        }
-        if(e.quoteCount!==newQuoteMemes.length){
-          e.quoteCount = newQuoteMemes.length
-          e.quoteMemes = newQuoteMemes
-        }
-        if(e.boosts!==newBoosts) {
-          e.boosts = newBoosts
+        if(!e.deleted) {
+          const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
+          const newLikers = await this.props.memeStorage.methods.getLikers(e.memeId).call()
+          const newRememes = await this.props.memeStorage.methods.getReposts(e.memeId).call()
+          const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(e.memeId).call()
+          const newBoosts = await this.props.memeStorage.methods.getBoost(e.memeId).call()
+          if(e.responses.length!==newResponses.length) {
+            e.responses = newResponses
+          }
+          if(e.likes!==newLikers.length) {
+            e.likes = newLikers.length
+            e.likers = newLikers
+            e.userHasLiked = e.likers.includes(this.props.account)
+          }
+          if(e.rememeCount!==newRememes.length){
+            e.rememeCount = newRememes.length
+            e.rememes = newRememes
+          }
+          if(e.quoteCount!==newQuoteMemes.length){
+            e.quoteCount = newQuoteMemes.length
+            e.quoteMemes = newQuoteMemes
+          }
+          if(e.boosts!==newBoosts) {
+            e.boosts = newBoosts
+          }
         }
       })
 
@@ -393,9 +395,8 @@ class Timeline extends React.Component {
 
   // helper functions
   async populateMeme(memeId, memeStorage, userStorage) {
-    const isVisible = await memeStorage.methods.getVisibility(memeId).call()
-    if(await isVisible) {
-      const tempMeme = await memeStorage.methods.memes(memeId).call()
+    const tempMeme = await memeStorage.methods.memes(memeId).call()
+    if(await tempMeme.isVisible) {
       const username = await userStorage.methods.users(tempMeme.author).call()
           .then(e => fromBytes(e.name))
           .then(e => e.toString())
@@ -422,7 +423,7 @@ class Timeline extends React.Component {
         parentId: await tempMeme.parentId,
         originId: await tempMeme.originId,
         author: await tempMeme.author,
-        isVisible: isVisible,
+        isVisible: await tempMeme.isVisible,
         userHasLiked: await likers.includes(this.props.account),
       }
     } else {

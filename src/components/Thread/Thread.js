@@ -313,34 +313,44 @@ class Thread extends React.Component {
   // helper functions
   async populateMeme(memeId, memeStorage, userStorage) {
     const tempMeme = await memeStorage.methods.memes(memeId).call()
-    const username = await userStorage.methods.users(tempMeme.author).call()
-        .then(e => fromBytes(e.name))
-        .then(e => e.toString())
-    const address = await userStorage.methods.users(tempMeme.author).call()
-        .then(e => fromBytes(e.userAddr))
-        .then(e => e.toString())
-    const likers = await memeStorage.methods.getLikers(memeId).call()
-    return {
-      memeId: await memeId,
-      username: await username,
-      address: await address,
-      text: await tempMeme.text,
-      time: new Date(tempMeme.time * 1000).toLocaleString(),
-      boosts: await tempMeme.boosts,
-      likes: await likers.length,
-      likers: await likers,
-      rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
-      rememes: await memeStorage.methods.getReposts(memeId).call(),
-      quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
-      quoteMemes: await memeStorage.methods.getQuotePosts(memeId).call(),
-      responses: await memeStorage.methods.getResponses(memeId).call(),
-      tags: await memeStorage.methods.getTags(memeId).call(),
-      repostId: await tempMeme.repostId,
-      parentId: await tempMeme.parentId,
-      originId: await tempMeme.originId,
-      author: await tempMeme.author,
-      isVisible: await tempMeme.isVisible,
-      userHasLiked: await likers.includes(this.state.userAccount),
+    if(await tempMeme.isVisible) {
+      const username = await userStorage.methods.users(tempMeme.author).call()
+          .then(e => fromBytes(e.name))
+          .then(e => e.toString())
+      const address = await userStorage.methods.users(tempMeme.author).call()
+          .then(e => fromBytes(e.userAddr))
+          .then(e => e.toString())
+      const likers = await memeStorage.methods.getLikers(memeId).call()
+      return {
+        memeId: await memeId,
+        username: await username,
+        address: await address,
+        text: await tempMeme.text,
+        time: new Date(tempMeme.time * 1000).toLocaleString(),
+        boosts: await tempMeme.boosts,
+        likes: await likers.length,
+        likers: await likers,
+        rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
+        rememes: await memeStorage.methods.getReposts(memeId).call(),
+        quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
+        quoteMemes: await memeStorage.methods.getQuotePosts(memeId).call(),
+        responses: await memeStorage.methods.getResponses(memeId).call(),
+        tags: await memeStorage.methods.getTags(memeId).call(),
+        repostId: await tempMeme.repostId,
+        parentId: await tempMeme.parentId,
+        originId: await tempMeme.originId,
+        author: await tempMeme.author,
+        isVisible: await tempMeme.isVisible,
+        userHasLiked: await likers.includes(this.state.userAccount),
+      }
+    } else {
+      return {
+        memeId: await memeId,
+        responses: await memeStorage.methods.getResponses(memeId).call(),
+        parentId: await tempMeme.parentId,
+        originId: await tempMeme.originId,
+        deleted: 'deleted'
+      }
     }
   }
 
@@ -354,7 +364,7 @@ class Thread extends React.Component {
       for(let i = 0; i < memesRendered+memesInQueue; i++) {
         const meme = tempMemes[i]
         //add Meme component to temporary array
-        if(meme.isVisible) {
+        if(!meme.deleted) {
           tempMemesHTML.unshift(
             <ParentMeme
               key={i+1}
@@ -374,7 +384,6 @@ class Thread extends React.Component {
               tags={meme.tags}
               repostId={meme.repostId}
               parentId={meme.parentId}
-              chainParentId={meme.chainParentId}
               originId={meme.originId}
               author={meme.author}
               isVisible={meme.isVisible}
@@ -402,6 +411,15 @@ class Thread extends React.Component {
               firstParent={i===memesRendered+memesInQueue-1}
             />
           )
+        } else {
+          tempMemesHTML.unshift(
+            <ParentMeme
+              deleted={meme.deleted}
+              responses={meme.responses}
+              parentId={meme.parentId}
+              originId={meme.originId}
+              firstParent={i===memesRendered+memesInQueue-1}
+            />)
         }
         //tempMemes[i-1].renderOrder = 0
       }
@@ -424,7 +442,7 @@ class Thread extends React.Component {
       for(let i = 0; i < memesRendered+memesInQueue; i++) {
         const meme = tempMemes[i]
         //add Meme component to temporary array
-        if(meme.isVisible) {
+        if(!meme.deleted) {
           tempMemesHTML.unshift(
             <ChildMeme
               key={i+1}
@@ -474,6 +492,18 @@ class Thread extends React.Component {
               finalChild={i===0}
             />
           )
+        } else {
+          tempMemesHTML.unshift(
+            <ChildMeme
+              deleted={meme.deleted}
+              responses={meme.responses}
+              parentId={meme.parentId}
+              originId={meme.originId}
+              firstChild={i===memesRendered+memesInQueue-1}
+              lastChild={i===0}
+              finalChild={i===0}
+            />
+          )
         }
       }
     }
@@ -486,7 +516,7 @@ class Thread extends React.Component {
   async renderMeme(meme) {
     let tempMeme = meme,
         tempMemeHTML
-    if(meme.isVisible) {
+    if(!meme.deleted) {
       tempMemeHTML =
         <ThreadMemeMain
           memeId={meme.memeId}
@@ -505,7 +535,6 @@ class Thread extends React.Component {
           tags={meme.tags}
           repostId={meme.repostId}
           parentId={meme.parentId}
-          chainParentId={meme.chainParentId}
           originId={meme.originId}
           author={meme.author}
           isVisible={meme.isVisible}
@@ -556,60 +585,64 @@ class Thread extends React.Component {
   }
   async updateMemes(loadedMemes) {
     loadedMemes.forEach(async e => {
-      const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
-      const newLikers = await this.props.memeStorage.methods.getLikers(e.memeId).call()
-      const newRememes = await this.props.memeStorage.methods.getReposts(e.memeId).call()
-      const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(e.memeId).call()
-      const newBoosts = await this.props.memeStorage.methods.getBoost(e.memeId).call()
-      if(e.responses.length!==newResponses.length) {
-        e.responses = newResponses
-      }
-      if(e.likes!==newLikers.length) {
-        e.likes = newLikers.length
-        e.likers = newLikers
-        e.userHasLiked = e.likers.includes(this.state.userAccount)
-      }
-      if(e.rememeCount!==newRememes.length){
-        e.rememeCount = newRememes.length
-        e.rememes = newRememes
-      }
-      if(e.quoteCount!==newQuoteMemes.length){
-        e.quoteCount = newQuoteMemes.length
-        e.quoteMemes = newQuoteMemes
-      }
-      if(e.boosts!==newBoosts) {
-        e.boosts = newBoosts
+      if(!e.deleted) {
+        const newResponses = await this.props.memeStorage.methods.getResponses(e.memeId).call()
+        const newLikers = await this.props.memeStorage.methods.getLikers(e.memeId).call()
+        const newRememes = await this.props.memeStorage.methods.getReposts(e.memeId).call()
+        const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(e.memeId).call()
+        const newBoosts = await this.props.memeStorage.methods.getBoost(e.memeId).call()
+        if(e.responses.length!==newResponses.length) {
+          e.responses = newResponses
+        }
+        if(e.likes!==newLikers.length) {
+          e.likes = newLikers.length
+          e.likers = newLikers
+          e.userHasLiked = e.likers.includes(this.state.userAccount)
+        }
+        if(e.rememeCount!==newRememes.length){
+          e.rememeCount = newRememes.length
+          e.rememes = newRememes
+        }
+        if(e.quoteCount!==newQuoteMemes.length){
+          e.quoteCount = newQuoteMemes.length
+          e.quoteMemes = newQuoteMemes
+        }
+        if(e.boosts!==newBoosts) {
+          e.boosts = newBoosts
+        }
       }
     })
     return loadedMemes
   }
   async updateMeme() {
-    const loadedMeme = this.state.meme
-    const newResponses = await this.props.memeStorage.methods.getResponses(loadedMeme.memeId).call()
-    const newLikers = await this.props.memeStorage.methods.getLikers(loadedMeme.memeId).call()
-    const newRememes = await this.props.memeStorage.methods.getReposts(loadedMeme.memeId).call()
-    const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(loadedMeme.memeId).call()
-    const newBoosts = await this.props.memeStorage.methods.getBoost(loadedMeme.memeId).call()
-    if(loadedMeme.responses.length!==newResponses.length) {
-      loadedMeme.responses = newResponses
+    const loadedMeme = await this.state.meme
+    if(await !loadedMeme.deleted) {
+      const newResponses = await this.props.memeStorage.methods.getResponses(loadedMeme.memeId).call()
+      const newLikers = await this.props.memeStorage.methods.getLikers(loadedMeme.memeId).call()
+      const newRememes = await this.props.memeStorage.methods.getReposts(loadedMeme.memeId).call()
+      const newQuoteMemes = await this.props.memeStorage.methods.getQuotePosts(loadedMeme.memeId).call()
+      const newBoosts = await this.props.memeStorage.methods.getBoost(loadedMeme.memeId).call()
+      if(loadedMeme.responses.length!==newResponses.length) {
+        loadedMeme.responses = newResponses
+      }
+      if(loadedMeme.likes!==newLikers.length) {
+        loadedMeme.likes = newLikers.length
+        loadedMeme.likers = newLikers
+        loadedMeme.userHasLiked = loadedMeme.likers.includes(this.state.userAccount)
+      }
+      if(loadedMeme.rememeCount!==newRememes.length){
+        loadedMeme.rememeCount = newRememes.length
+        loadedMeme.rememes = newRememes
+      }
+      if(loadedMeme.quoteCount!==newQuoteMemes.length){
+        loadedMeme.quoteCount = newQuoteMemes.length
+        loadedMeme.quoteMemes = newQuoteMemes
+      }
+      if(loadedMeme.boosts!==newBoosts) {
+        loadedMeme.boosts = newBoosts
+      }
+      return loadedMeme
     }
-    if(loadedMeme.likes!==newLikers.length) {
-      loadedMeme.likes = newLikers.length
-      loadedMeme.likers = newLikers
-      loadedMeme.userHasLiked = loadedMeme.likers.includes(this.state.userAccount)
-    }
-    if(loadedMeme.rememeCount!==newRememes.length){
-      loadedMeme.rememeCount = newRememes.length
-      loadedMeme.rememes = newRememes
-    }
-    if(loadedMeme.quoteCount!==newQuoteMemes.length){
-      loadedMeme.quoteCount = newQuoteMemes.length
-      loadedMeme.quoteMemes = newQuoteMemes
-    }
-    if(loadedMeme.boosts!==newBoosts) {
-      loadedMeme.boosts = newBoosts
-    }
-    return loadedMeme
   }
 
   async compileRepliesByTime() {

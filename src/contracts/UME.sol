@@ -137,7 +137,9 @@ contract UME is ERC20 {
     // set event for RESPOND token FROM
     emit Minted(_from, block.timestamp, 'RESPOND FROM');
     // mint RESPOND tokens for responded
-    _mint(_to, 4);
+    if(_to!=address(0x0)) {
+      _mint(_to, 4);
+    }
     // set event for RESPOND token TO
     emit Minted(_to, block.timestamp, 'RESPOND TO');
   }
@@ -160,7 +162,9 @@ contract UME is ERC20 {
     // set event for CURATE token FROM
     emit Minted(_from, block.timestamp, 'CURATE');
     // mint CURATE tokens for curator
-    _mint(_to, 4);
+    if(_to!=address(0x0)) {
+      _mint(_to, 4);
+    }
     // set event for CURATE token TO
     emit Minted(_to, block.timestamp, 'CURATE');
   }

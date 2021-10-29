@@ -156,3 +156,15 @@ div.ParentMeme:hover {
   width: 0;
   height: 100%;
 }
+
+div#Parent-deleted.ParentMeme {
+}
+div#Parent-deleted.ParentMeme p {
+  margin: 0 auto;
+  padding: 1rem;
+  text-align: center;
+}
+div#Parent-deleted.ParentMeme:hover {
+  background-color: #1D1F22;
+  cursor: default;
+}

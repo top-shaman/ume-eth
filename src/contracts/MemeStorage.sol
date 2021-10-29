@@ -64,7 +64,24 @@ contract MemeStorage {
       msg.sender==factorySigner,
       'Error: only factorySigner can delete');
     // create empty Meme instance
-    delete memes[_memeId];
+    Meme memory _meme = Meme(
+      _memeId,
+      0,
+      '',
+      0,
+      new address[](0),
+      new address[](0),
+      new bytes32[](0),
+      new bytes32[](0),
+      0x0,
+      new address[](0),
+      memes[_memeId].responses,
+      memes[_memeId].parentId,
+      memes[_memeId].originId,
+      address(0x0),
+      false
+    );
+    memes[_memeId] = _meme;
   }
   function increaseMemeCount() public {
     require(

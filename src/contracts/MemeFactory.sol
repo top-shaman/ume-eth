@@ -150,6 +150,7 @@ contract MemeFactory {
     bytes32 _repostId = memeStorage.getRepostId(_memeId);
     string memory _repostText = memeStorage.getText(_repostId);
     emit MemeDeleted(_memeId, block.timestamp, memeStorage.getAuthor(_memeId));
+/*
     if(memeStorage.getResponseCount(_parentId)>0)
       _deleteResponse(_memeId, _parentId, memeStorage.getResponses(_parentId));
     if(memeStorage.getRepostCount(_repostId)>0) {
@@ -157,6 +158,7 @@ contract MemeFactory {
         _deleteRepost(_memeId, _repostId, '', memeStorage.getReposts(_repostId));
       else _deleteRepost(_memeId, _repostId, _bytesToBytes32(bytes(_repostText)), memeStorage.getQuotePosts(_repostId));
     }
+    */
     memeStorage.deleteMeme(_memeId);
   }
 
@@ -172,7 +174,7 @@ contract MemeFactory {
     _newResponses[_newResponses.length-1] = _memeId;
     memeStorage.setResponses(_parentId, _newResponses);
   }
-
+/*
   function _deleteResponse(
     bytes32 _memeId,
     bytes32 _parentId,
@@ -193,7 +195,7 @@ contract MemeFactory {
     }
     memeStorage.setResponses(_parentId, _newResponses);
   }
-
+*/
   function _addRepost(
     bytes32 _memeId,
     string memory _memeText,
@@ -210,7 +212,7 @@ contract MemeFactory {
     if(bytes(_memeText).length==0) memeStorage.setReposts(_repostId, _newReposts);
     else memeStorage.setQuotePosts(_repostId, _newReposts);
   }
-
+/*
   function _deleteRepost(
     bytes32 _memeId,
     bytes32 _repostId,
@@ -234,6 +236,7 @@ contract MemeFactory {
       memeStorage.setReposts(_repostId, _newReposts);
     else memeStorage.setQuotePosts(_repostId, _newReposts);
   }
+  */
   function _addPostToUser(
     address _account,
     bytes32 _memeId

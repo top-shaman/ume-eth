@@ -26,6 +26,7 @@ export const isolatePlainNew = async text => {
         split = text.split(regex).filter(elem => !regex.test(elem) && elem ),
         plainMap = [],
         indices = []
+  /*
   let exec, count = 0
   if(!regex.test(text)) {
     indices.push(0)
@@ -44,6 +45,15 @@ export const isolatePlainNew = async text => {
       count++
     }
   }
+  */
+  let exec, count = 0
+  /*
+  while((exec = new RegExp(split[count]).exec(text))) {
+    const first = exec.index,
+          match = exec[0]
+    plainMap.push([first, match, 'plain'])
+  }
+  */
   console.log(text)
   console.log(indices)
   return split
