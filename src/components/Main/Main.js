@@ -7,6 +7,7 @@ import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
 import UpvotePopup from '../Popups/UpvotePopup'
 import DownvotePopup from '../Popups/DownvotePopup'
+import SortButton from '../SortButton/SortButton'
 import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
 import { blur, blurToFadeIn, fadeOut } from '../../resources/Libraries/Animation'
@@ -26,7 +27,7 @@ class Main extends React.Component {
       memeCount: this.props.memeCount,
       userMemeCount: this.props.userMemeCount,
       umeBalance: this.props.umeBalance,
-      timelineFormat: 'boost',
+      sort: 'boost',
       timelineLoading: false,
       profileLoading: false,
       threadLoading: false,
@@ -62,6 +63,7 @@ class Main extends React.Component {
     this.handleLoading = this.handleLoading.bind(this)
     this.handleRefresh = this.handleRefresh.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this)
+    this.handleSort = this.handleSort.bind(this)
     this.handleBack = this.handleBack.bind(this)
     this.handleBalance = this.handleBalance.bind(this)
 
@@ -100,7 +102,7 @@ class Main extends React.Component {
     })
 
     if(localStorage.getItem('focusPage')==='timeline') {
-      localStorage.setItem('timelineSort', 'boost')
+      localStorage.setItem('timelineSort', 'time')
     }
     // if previously on profile page, set to profile page upon reload
     // change profile query with one parameter
@@ -233,13 +235,19 @@ class Main extends React.Component {
       await this.profile.loadNewMemes()
       await this.profile.refreshMemes()
     } else if(this.state.focusPage==='thread' && !this.state.loading && this.thread) {
-      //await this.thread.loadNewMemes()
       await this.thread.refreshMemes()
     }
   }
   handleLoading(loading) {
     this.setState({ loading })
     console.log(this.state.focusPage + ' loading: ' + this.state.loading)
+  }
+  handleSort(e) {
+    this.setState({
+      sort: e[1],
+      focusPage: null
+    })
+    this.handleToTimeline(e[0])
   }
   handleBalance(umeBalance) {
     this.setState({ umeBalance })
@@ -277,7 +285,7 @@ class Main extends React.Component {
     setTimeout(() => {
       this.setState({
         focusPage: 'timeline',
-        timelineFormat: localStorage.getItem('timelineSort'),
+        //sort: localStorage.getItem('timelineSort'),
         memeId: null
       })
     }, 50)
@@ -376,7 +384,7 @@ class Main extends React.Component {
         >
           <div id="subheader">
             <section id="title">
-              { this.state.focusPage!=='timeline'
+              { this.state.focusPage!=='timeline' && this.state.focusPage!==null
                   ? <
                       img src={Arrow}
                       alt="back-arrow"
@@ -384,8 +392,8 @@ class Main extends React.Component {
                     />
                   : ''
               }
-              { this.state.focusPage==='timeline'
-                ? <a href="#home">
+              { this.state.focusPage==='timeline' || this.state.focusPage===null
+                ? <a href="#home" id="ume">
                     <p id="subheader">
                       uMe
                     </p>
@@ -412,13 +420,11 @@ class Main extends React.Component {
                         : ''
                   }
             </section>
-            <section id="searchBar">
-              {/*
-              <SearchBar
-                userStorage={this.state.userStorage}
-                memeStorage={this.state.memeStorage}
-              />
-              */}
+            <section id="sort-button">
+              { this.state.focusPage==='timeline'
+                  ? <SortButton handleSort={this.handleSort} sort={this.state.sort} />
+                  : ''
+              }
             </section>
           </div>
           { this.state.activePopup===null
@@ -456,6 +462,7 @@ class Main extends React.Component {
                 interface={this.state.interface}
                 memeIdsByBoost={this.props.memeIdsByBoost}
                 loading={this.state.loading}
+                sort={this.state.sort}
                 handleLoading={this.handleLoading}
                 handleRefresh={this.handleRefresh}
                 contractLoading={this.props.contractLoading}

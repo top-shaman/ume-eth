@@ -43,6 +43,7 @@ class App extends React.Component {
       editing: false,
       banners: [],
       offsetY: 0,
+      help: true,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       metaMask: false,
@@ -83,9 +84,13 @@ class App extends React.Component {
       await this.loadContracts().catch(e => console.error(e))
     }
     // automatically emit account updates
-    const checkEntered = localStorage.getItem('hasEntered')
+    const checkEntered = localStorage.getItem('hasEntered'),
+          checkHelp = localStorage.getItem('help')
     if(checkEntered) {
       this.setState({ entered: true })
+    }
+    if(checkHelp==='false') {
+      this.setState({ help: false })
     }
     if(window.ethereum) {
       this.chainListen()

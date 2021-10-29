@@ -66,7 +66,7 @@ class Profile extends React.Component {
     this.props.handleEdit([
       this.state.username,
       this.state.address,
-      this.state.bio
+      this.state.bioText
     ])
   }
   async handleTag(e) {
@@ -156,6 +156,7 @@ class Profile extends React.Component {
       followers,
       time,
       userMemeCount,
+      bioText: bio,
       infoLoading: false
     })
   }

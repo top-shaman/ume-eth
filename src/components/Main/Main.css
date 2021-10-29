@@ -103,6 +103,9 @@ small {
   animation-duration: 0.33s;
   animation-timing-function: ease-in-out;
 }
+.Main div#subheader a#ume {
+  margin: 0.8rem 0;
+}
 .Main div#subheader a {
   justify-content: center;
 }
@@ -139,7 +142,8 @@ small {
   background-color: #1D1F22;
   transition: background-color 0.3s ease-in-out;
 }
-.Main div#subheader img:active {
+.Main div#subheader section#sort-button {
+  margin: 0.8rem;
 }
 
 /* Profile-specific subheader */

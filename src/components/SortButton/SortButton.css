@@ -1,0 +1,21 @@
+.SortButton p#sort-button {
+  display: block;
+  cursor: pointer;
+  font-family: 'Avenir', sans-serif;
+}
+.SortButton span {
+  cursor: pointer;
+  width: 6.4rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.6rem;
+  font-family: 'Avenir', sans-serif;
+  white-space: pre;
+  text-align: left;
+}
+.SortButton span#style {
+  cursor: pointer;
+  padding: 0 0 0 0.2rem;
+  font-family: 'Avenir', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  text-align: left;
+}

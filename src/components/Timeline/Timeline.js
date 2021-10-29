@@ -28,7 +28,7 @@ class Timeline extends React.Component {
       refreshing: false,
       allMemesLoaded: false,
       firstLoad: true,
-      sortStyle: 'boost'
+      sortStyle: this.props.sort
     }
     this.div = React.createRef()
 
@@ -530,14 +530,12 @@ class Timeline extends React.Component {
               </div>
             : this.state.loadingBottom
               ? <div id="loader-bottom">
-                  {//this.state.oldMemesHTML}
-                    this.state.memesHTML}
+                  {this.state.memesHTML}
                   <Loader/>
                 </div>
               : <div id="loader">
                   <Loader/>
-                  {//this.state.oldMemesHTML}
-                    this.state.memesHTML}
+                {this.state.memesHTML}
                 </div>
           : this.state.memeCount > 0
             ? this.state.allMemesLoaded
