@@ -5,8 +5,6 @@
   "author": "topshaman@protonmail.com",
   "homepage": ".",
   "dependencies": {
-    "@babel/core": "7.11.0",
-    "@babel/preset-env": "7.11.0",
     "@openzeppelin/contracts": "4.3.0-rc.0",
     "@truffle/hdwallet-provider": "1.1.0",
     "autosize": "^5.0.1",
@@ -43,6 +41,10 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-react": "^7.14.5",
     "file-loader": "^6.2.0",
     "gh-pages": "^2.2.0",
     "truffle-hdwallet-provider-privkey": "^0.3.0"

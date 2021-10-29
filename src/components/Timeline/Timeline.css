@@ -8,6 +8,9 @@ p#loader.Timeline {
   align-items: flex-start;
   height: 100%;
 }
+.Timeline div#loaded p#loader {
+  margin: 1rem 0;
+}
 
 div.Timeline div#loader div#spinning-loader {
   margin: 1rem auto;
