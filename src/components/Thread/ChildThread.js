@@ -371,6 +371,31 @@ class ChildThread extends React.Component {
               finalChild={this.props.finalChild}
             />
           )
+        } else {
+          tempMemesHTML.unshift(
+            <ChildMeme
+              deleted={meme.deleted}
+              userAccount={this.state.userAccount}
+              responses={meme.responses}
+              parentId={meme.parentId}
+              originId={meme.originId}
+              handleToProfile={this.handleToProfile}
+              handleToThread={this.handleToThread}
+              handleRefresh={this.handleRefresh}
+              handleReply={this.handleReply}
+              handleLike={this.handleLike}
+              handleOverMeme={this.handleOverMeme}
+              handleUpvotePopup={this.handleUpvotePopup}
+              handleDownvotePopup={this.handleDownvotePopup}
+              handleBanner={this.handleBanner}
+              interface={this.props.interface}
+              memeStorage={this.props.memeStorage}
+              userStorage={this.props.userStorage}
+              firstChild={i===memesRendered+memesInQueue-1}
+              lastChild={i===0}
+              finalChild={i===0}
+            />
+          )
         }
       }
     }
