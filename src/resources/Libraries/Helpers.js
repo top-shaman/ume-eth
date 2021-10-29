@@ -21,6 +21,33 @@ export const isolatePlain = async text => {
   }
   return plainMap
 }
+export const isolatePlainNew = async text => {
+  const regex = /([@]\w{1,31})|([#]\w+)/g,
+        split = text.split(regex).filter(elem => !regex.test(elem) && elem ),
+        plainMap = [],
+        indices = []
+  let exec, count = 0
+  if(!regex.test(text)) {
+    indices.push(0)
+    plainMap.push([0, text, 'plain'])
+  }
+  while((exec = regex.exec(text)) !== null) {
+    if(indices.length===0 && exec.index!==0) {
+      indices.push(0)
+      plainMap.push([indices[0], split[0], 'plain'])
+      count++
+    }
+    const next = exec.index + exec[0].length
+    if(next!==text.length) {
+      indices.push(next)
+      plainMap.push(indices[count], split[count], 'plain')
+      count++
+    }
+  }
+  console.log(text)
+  console.log(indices)
+  return split
+}
 export const isolateAt = async text => {
   const regex = /@\w{1,31}/g,
         atMap = []

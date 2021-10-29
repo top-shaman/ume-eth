@@ -232,7 +232,6 @@ class App extends React.Component {
         })
       }, 200)
     }
-    console.log(this.state.banners)
   }
 
   async request() {

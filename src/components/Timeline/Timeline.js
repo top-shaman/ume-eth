@@ -393,35 +393,43 @@ class Timeline extends React.Component {
 
   // helper functions
   async populateMeme(memeId, memeStorage, userStorage) {
-    const tempMeme = await memeStorage.methods.memes(memeId).call()
-    const username = await userStorage.methods.users(tempMeme.author).call()
-        .then(e => fromBytes(e.name))
-        .then(e => e.toString())
-    const address = await userStorage.methods.users(tempMeme.author).call()
-        .then(e => fromBytes(e.userAddr))
-        .then(e => e.toString())
-    const likers = await memeStorage.methods.getLikers(memeId).call()
-    return {
-      memeId: await memeId,
-      username: await username,
-      address: await address,
-      text: await tempMeme.text,
-      time: new Date(tempMeme.time * 1000).toLocaleString(),
-      boosts: await tempMeme.boosts,
-      likes: await likers.length,
-      likers: await likers,
-      rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
-      rememes: await memeStorage.methods.getReposts(memeId).call(),
-      quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
-      quoteMemes: await memeStorage.methods.getQuotePosts(memeId).call(),
-      responses: await memeStorage.methods.getResponses(memeId).call(),
-      tags: await memeStorage.methods.getTags(memeId).call(),
-      repostId: await tempMeme.repostId,
-      parentId: await tempMeme.parentId,
-      originId: await tempMeme.originId,
-      author: await tempMeme.author,
-      isVisible: await tempMeme.isVisible,
-      userHasLiked: await likers.includes(this.props.account),
+    const isVisible = await memeStorage.methods.getVisibility(memeId).call()
+    if(await isVisible) {
+      const tempMeme = await memeStorage.methods.memes(memeId).call()
+      const username = await userStorage.methods.users(tempMeme.author).call()
+          .then(e => fromBytes(e.name))
+          .then(e => e.toString())
+      const address = await userStorage.methods.users(tempMeme.author).call()
+          .then(e => fromBytes(e.userAddr))
+          .then(e => e.toString())
+      const likers = await memeStorage.methods.getLikers(memeId).call()
+      return {
+        memeId: await memeId,
+        username: await username,
+        address: await address,
+        text: await tempMeme.text,
+        time: new Date(tempMeme.time * 1000).toLocaleString(),
+        boosts: await tempMeme.boosts,
+        likes: await likers.length,
+        likers: await likers,
+        rememeCount: await memeStorage.methods.getRepostCount(memeId).call(),
+        rememes: await memeStorage.methods.getReposts(memeId).call(),
+        quoteCount: await memeStorage.methods.getQuotePostCount(memeId).call(),
+        quoteMemes: await memeStorage.methods.getQuotePosts(memeId).call(),
+        responses: await memeStorage.methods.getResponses(memeId).call(),
+        tags: await memeStorage.methods.getTags(memeId).call(),
+        repostId: await tempMeme.repostId,
+        parentId: await tempMeme.parentId,
+        originId: await tempMeme.originId,
+        author: await tempMeme.author,
+        isVisible: isVisible,
+        userHasLiked: await likers.includes(this.props.account),
+      }
+    } else {
+      return {
+        memeId: await memeId,
+        deleted: 'deleted'
+      }
     }
   }
 
@@ -436,7 +444,7 @@ class Timeline extends React.Component {
       for(let i = 0; i < memesRendered+memesInQueue; i++) {
         meme = tempMemes[i]
         //add Meme component to temporary array
-        if(meme.isVisible) {
+        if(!meme.deleted) {
           tempMemesHTML.unshift(
             <Meme
               key={i+1}

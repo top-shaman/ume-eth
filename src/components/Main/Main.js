@@ -253,11 +253,8 @@ class Main extends React.Component {
     this.setState({ umeBalance })
   }
   async handleBack(e) {
-    console.log(this.state.lastPage)
     const index = this.state.lastPage.length - 2,
           id = this.state.lastPage[index][1]
-    console.log(index)
-    console.log(id)
     if(this.state.lastPage[index][0]==='timeline') {
       await this.handleToTimeline(e)
     } else if(this.state.lastPage[index][0]==='profile') {
@@ -273,7 +270,6 @@ class Main extends React.Component {
 
   async handleToTimeline(e) {
     e.preventDefault()
-    console.log('coming from: ' + this.state.focusPage)
     console.log('timeline loading: ' + this.state.timelineLoading)
     this.clearPopups()
     if(this.state.focusPage!=='timeline') {
