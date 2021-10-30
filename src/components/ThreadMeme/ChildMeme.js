@@ -93,6 +93,7 @@ class ChildMeme extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleDeletePopup = this.handleDeletePopup.bind(this)
     this.handleBanner = this.handleBanner.bind(this)
   }
   // lifecycle functions
@@ -166,6 +167,7 @@ class ChildMeme extends React.Component {
        e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
        e.target.id!=='at' &&
+       e.target.id!=='delete' &&
        e.target.className!=='reply' &&
        e.target.className!=='LikeButton' &&
        e.target.className!=='LikeButton-Liked' &&
@@ -254,6 +256,14 @@ class ChildMeme extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+  handleDeletePopup(e) {
+    console.log(e)
+    if(e.length==2) {
+      this.props.handleDeletePopup(e)
+    } else {
+      this.props.handleDeletePopup([e, this.state.memeId])
+    }
   }
   handleBanner(e) {
     this.props.handleBanner(e)
@@ -344,15 +354,23 @@ class ChildMeme extends React.Component {
                   </section>
                   <div id="ChildMeme-body">
                     <div id="ChildMeme-header">
-                      <a
-                        href={`/${this.state.address.slice(1)}`}
-                        id="username"
-                        onClick={this.handleProfileClick}
-                      >
-                        {this.state.username}
-                      </a>
-                      <span id="address">{this.state.address}</span>
-                      <span id="time">{time}</span>
+                      <section id="left">
+                        <a
+                          href={`/${this.state.address.slice(1)}`}
+                          id="username"
+                          onClick={this.handleProfileClick}
+                        >
+                          {this.state.username}
+                        </a>
+                        <span id="address">{this.state.address}</span>
+                        <span id="time">{time}</span>
+                      </section>
+                      <section id="right">
+                        { this.state.author===this.state.userAccount
+                            ? <p id="delete" onClick={this.handleDeletePopup}> ... </p>
+                            : ''
+                        }
+                      </section>
                     </div>
                     <div id="text-box">
                       <p id="ChildMeme-text">
@@ -445,6 +463,7 @@ class ChildMeme extends React.Component {
                 handleOverMeme={this.handleOverMeme}
                 handleUpvotePopup={this.handleUpvotePopup}
                 handleDownvotePopup={this.handleDownvotePopup}
+                handleDeletePopup={this.handleDeletePopup}
                 handleBanner={this.handleBanner}
                 interface={this.state.interface}
                 memeStorage={this.state.memeStorage}
@@ -485,6 +504,7 @@ class ChildMeme extends React.Component {
                       handleToThread={this.handleToThread}
                       handleUpvotePopup={this.handleUpvotePopup}
                       handleDownvotePopup={this.handleDownvotePopup}
+                      handleDeletePopup={this.handleDeletePopup}
                       handleBanner={this.handleBanner}
                       handleRefresh={this.handleRefresh}
                       handleLike={this.handleLike}

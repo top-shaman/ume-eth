@@ -57,7 +57,7 @@ div.Main {
 .Main div#subheader section#title {
   display: flex;
   justify-content: center;
-  margin: 0 1rem 0 0;
+  margin: 0;
   border: none;
   font-family: 'MuseoModerno', sans-sarif;
   font-size: 2.15rem;
@@ -84,8 +84,8 @@ small {
   align-items: center;
   justify-content: center;
   font-family: 'MuseoModerno', sans-serif;
-  margin: 0.6rem auto 0.6rem auto;
-  padding: 0.25rem 0.4rem;
+  margin: 0.2rem auto 0.6rem auto;
+  padding: 0.5rem 0.4rem;
   transition: background-color 0.2s ease-in-out 0s;
   border-radius: 1rem;
 }
@@ -143,7 +143,7 @@ small {
   transition: background-color 0.3s ease-in-out;
 }
 .Main div#subheader section#sort-button {
-  margin: 0.8rem 0.8rem 0.6rem 0.8rem;
+  margin: 0.8rem 0.8rem 0.6rem 0;
 }
 
 /* Profile-specific subheader */
@@ -227,13 +227,34 @@ small {
   }
 }
 
+@media screen and (max-width: 448px) {
+  .Main div#subheader section#title p {
+    font-size: 1.5rem;
+  }
+  .Main div#subheader section#sort-button {
+    padding: 0.1rem;
+    margin: 0 0.2rem 0 0;
+    width: 6.5rem;
+  }
+  .Main div#subheader section#sort-button p.SortButton {
+    margin: 0.5rem 0.2rem 0.5rem 0;
+    padding: 0.1rem 0.1rem 0.2rem 0.1rem;
+  }
+  .Main div#subheader section#sort-button span {
+    font-size: 0.9rem;
+  }
+}
 @media screen and (max-width: 400px) {
-  div#side-footer {
+  .Main div#side-footer {
     margin-right: 0.6rem;
   }
-  div#side-footer div#stats {
+  .Main div#side-footer div#stats {
     display: none;
   }
   .Main div#body {
+  }
+}
+@media screen and (max-width: 300px) {
+  .Main div#subheader section#sort-button p.SortButton {
   }
 }

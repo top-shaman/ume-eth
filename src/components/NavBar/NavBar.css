@@ -238,3 +238,14 @@ nav.navbar {
     padding: 0;
   }
 }
+@media only screen and (max-width: 300px) {
+  nav.navbar {
+    width: 4rem;
+  }
+  .navbar p#meme-small {
+    padding: 0 0.7rem;
+  }
+  .navbar img#logo {
+    width: 2.5rem;
+  }
+}

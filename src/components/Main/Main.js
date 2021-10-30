@@ -7,6 +7,7 @@ import Profile from '../Profile/Profile'
 import Thread from '../Thread/Thread'
 import UpvotePopup from '../Popups/UpvotePopup'
 import DownvotePopup from '../Popups/DownvotePopup'
+import DeletePopup from '../Popups/DeletePopup'
 import SortButton from '../SortButton/SortButton'
 import Loader from '../Loader/Loader'
 import { fromBytes } from '../../resources/Libraries/Helpers'
@@ -75,7 +76,8 @@ class Main extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
-    this.handleClose = this.handleClose.bind(this)
+    this.handleDeletePopup = this.handleDeletePopup.bind(this)
+    this.handleClosePopup = this.handleClosePopup.bind(this)
     this.handleBanner = this.handleBanner.bind(this)
   }
 
@@ -154,6 +156,8 @@ class Main extends React.Component {
   }
   handleUpvotePopup(e) {
     const element = e[0].target.getBoundingClientRect(),
+          body = this.body.getBoundingClientRect(),
+          offsetX = element.x - body.width - body.x + 92,
           offsetY = this.props.offsetY ? this.props.offsetY : 0
     // if already pop'd up, or another upvote button, close
     fadeOut('div#upvote-popup', 300)
@@ -177,7 +181,7 @@ class Main extends React.Component {
         this.setState({
           popup: e[0].target,
           popupMeme: e[1],
-          popupX: element.x,
+          popupX: offsetX>0 ? element.x - offsetX : element.x,
           popupY: element.y + offsetY,
           activePopup: 'upvote'
         })
@@ -186,6 +190,8 @@ class Main extends React.Component {
   }
   handleDownvotePopup(e) {
     const element = e[0].target.getBoundingClientRect(),
+          body = this.body.getBoundingClientRect(),
+          offsetX = element.x - body.width - body.x + 92,
           offsetY = this.props.offsetY ? this.props.offsetY : 0
     fadeOut('div#downvote-popup', 300)
     if(this.state.popupMeme===e[1] && this.state.activePopup==='downvote') {
@@ -208,14 +214,49 @@ class Main extends React.Component {
         this.setState({
           popup: e[0].target,
           popupMeme: e[1],
-          popupX: element.x,
+          popupX: offsetX>0 ? element.x - offsetX : element.x,
           popupY: element.y + offsetY,
           activePopup: 'downvote'
         })
       }, 10)
     }
   }
-  handleClose(activePopup) {
+  handleDeletePopup(e) {
+    const element = e[0].target.getBoundingClientRect(),
+          body = this.body.getBoundingClientRect(),
+          offsetX = element.x - body.width - body.x + 16,
+          offsetY = this.props.offsetY ? this.props.offsetY : 0
+    console.log(offsetX)
+    fadeOut('div#delete-popup', 300)
+    if(this.state.popupMeme===e[1] && this.state.activePopup==='delete') {
+      this.setState({
+        activePopup: null,
+        popupMeme: null,
+        popup: null,
+        popupX: null,
+        popupY: null
+      })
+    } else if(this.state.activePopup!=='delete' || this.state.popupMeme!==e[1]) {
+      this.setState({
+        activePopup: null,
+        popupMeme: null,
+        popup: null,
+        popupX: null,
+        popupY: null
+      })
+      setTimeout(() => {
+        this.setState({
+          popup: e[0].target,
+          popupMeme: e[1],
+          popupX: element.x + offsetX,
+          //popupX: offsetX>0 ? element.x - offsetX : element.x,
+          popupY: element.y + offsetY,
+          activePopup: 'delete'
+        })
+      }, 10)
+    }
+  }
+  handleClosePopup(activePopup) {
     this.setState({ activePopup })
   }
 
@@ -432,7 +473,7 @@ class Main extends React.Component {
                       account={this.state.account}
                       memeId={this.state.popupMeme}
                       umeBalance={this.state.umeBalance}
-                      handleClose={this.handleClose}
+                      handleClosePopup={this.handleClosePopup}
                       handleBanner={this.handleBanner}
                       interface={this.state.interface}
                     />
@@ -443,10 +484,21 @@ class Main extends React.Component {
                           account={this.state.account}
                           memeId={this.state.popupMeme}
                           umeBalance={this.state.umeBalance}
-                          handleClose={this.handleClose}
+                          handleClosePopup={this.handleClosePopup}
                           handleBanner={this.handleBanner}
                           interface={this.state.interface}
                         />
+                      : this.state.activePopup==='delete'
+                          ? <DeletePopup
+                              positionX={`${this.state.popupX - this.body.getBoundingClientRect().left}`}
+                              positionY={`${this.state.popupY}`}
+                              account={this.state.account}
+                              memeId={this.state.popupMeme}
+                              umeBalance={this.state.umeBalance}
+                              handleClosePopup={this.handleClosePopup}
+                              handleBanner={this.handleBanner}
+                              interface={this.state.interface}
+                            />
                       : ''
           }
           { this.state.focusPage==='timeline' //&& !this.state.reload
@@ -467,6 +519,7 @@ class Main extends React.Component {
                 handleReply={this.handleReply}
                 handleUpvotePopup={this.handleUpvotePopup}
                 handleDownvotePopup={this.handleDownvotePopup}
+                handleDeletePopup={this.handleDeletePopup}
                 handleBanner={this.handleBanner}
                 handleHeight={this.handleHeight}
                 atBottom={this.props.atBottom}
@@ -489,6 +542,7 @@ class Main extends React.Component {
                   handleEdit={this.handleEdit}
                   handleUpvotePopup={this.handleUpvotePopup}
                   handleDownvotePopup={this.handleDownvotePopup}
+                  handleDeletePopup={this.handleDeletePopup}
                   handleBanner={this.handleBanner}
                   handleHeight={this.handleHeight}
                   profileUsername={this.state.profileUsername}
@@ -513,6 +567,7 @@ class Main extends React.Component {
                       handleReply={this.handleReply}
                       handleUpvotePopup={this.handleUpvotePopup}
                       handleDownvotePopup={this.handleDownvotePopup}
+                      handleDeletePopup={this.handleDeletePopup}
                       handleBanner={this.handleBanner}
                       handleHeight={this.handleHeight}
                       atBottom={this.props.atBottom}

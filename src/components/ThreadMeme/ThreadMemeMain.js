@@ -72,6 +72,7 @@ class ThreadMemeMain extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleDeletePopup = this.handleDeletePopup.bind(this)
     this.handleBanner = this.handleBanner.bind(this)
   }
   // lifecycle functions
@@ -86,7 +87,7 @@ class ThreadMemeMain extends React.Component {
     // adjust header size if main meme has parents
     if(this.state.parentId!==this.state.memeId) {
       const header = document.querySelector('div#ThreadMemeMain-header')
-      header.style.margin = '0 1rem 0.5rem 0.687rem'
+      header.style.margin = '0 0.5rem 0.5rem 0.687rem'
     }
 
     await this.formatText()
@@ -158,6 +159,9 @@ class ThreadMemeMain extends React.Component {
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
   }
+  handleDeletePopup(e) {
+    this.props.handleDeletePopup([e, this.state.memeId])
+  }
   handleBanner(e) {
     this.props.handleBanner(e)
   }
@@ -203,29 +207,37 @@ class ThreadMemeMain extends React.Component {
         >
           <div id="ThreadMemeMain-body">
             <div id="ThreadMemeMain-header">
-              <section
-                id="profilePic-main"
-                ref={Ref=>this.pfp=Ref}
-              >
-                <a
-                  id="profilePic"
-                  href={`/${this.state.address.slice(1)}`}
-                  onClick={this.handleProfileClick}
+              <section id="left">
+                <section
+                  id="profilePic-main"
+                  ref={Ref=>this.pfp=Ref}
                 >
-                  <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
-                </a>
-              </section>
-              <section id="info">
-                <div id="username">
                   <a
+                    id="profilePic"
                     href={`/${this.state.address.slice(1)}`}
-                    id="username"
                     onClick={this.handleProfileClick}
                   >
-                    {this.state.username}
+                    <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
                   </a>
-                </div>
-                <span id="address">{this.state.address}</span>
+                </section>
+                <section id="info">
+                  <div id="username">
+                    <a
+                      href={`/${this.state.address.slice(1)}`}
+                      id="username"
+                      onClick={this.handleProfileClick}
+                    >
+                      {this.state.username}
+                    </a>
+                  </div>
+                  <span id="address">{this.state.address}</span>
+                </section>
+              </section>
+              <section id="right">
+                { this.state.author===this.state.userAccount
+                    ? <p id="delete" onClick={this.handleDeletePopup}> ... </p>
+                    : ''
+                }
               </section>
             </div>
             <div id="text-box">

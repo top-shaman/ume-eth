@@ -73,6 +73,7 @@ class ParentMeme extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleDeletePopup = this.handleDeletePopup.bind(this)
     this.handleBanner = this.handleBanner.bind(this)
   }
   // lifecycle functions
@@ -118,6 +119,7 @@ class ParentMeme extends React.Component {
        e.target.id!=='profile-pic' &&
        e.target.id!=='username' &&
        e.target.id!=='at' &&
+       e.target.id!=='delete' &&
        e.target.className!=='reply' &&
        e.target.className!=='LikeButton' &&
        e.target.className!=='LikeButton-Liked' &&
@@ -182,6 +184,9 @@ class ParentMeme extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+  handleDeletePopup(e) {
+    this.props.handleDeletePopup([e, this.state.memeId])
   }
   handleBanner(e) {
     this.props.handleBanner(e)
@@ -266,15 +271,23 @@ class ParentMeme extends React.Component {
           </section>
           <div id="ParentMeme-body">
             <div id="ParentMeme-header">
-              <a
-                href={`/${this.state.address.slice(1)}`}
-                id="username"
-                onClick={this.handleProfileClick}
-              >
-                {this.state.username}
-              </a>
-              <span id="address">{this.state.address}</span>
-              <span id="time">{time}</span>
+              <section id="left">
+                <a
+                  href={`/${this.state.address.slice(1)}`}
+                  id="username"
+                  onClick={this.handleProfileClick}
+                >
+                  {this.state.username}
+                </a>
+                <span id="address">{this.state.address}</span>
+                <span id="time">{time}</span>
+              </section>
+              <section id="right">
+                { this.state.author===this.state.userAccount
+                    ? <p id="delete" onClick={this.handleDeletePopup}> ... </p>
+                    : ''
+                }
+              </section>
             </div>
             <div id="text-box">
               <p id="ParentMeme-text">

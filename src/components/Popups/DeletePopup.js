@@ -2,9 +2,9 @@ import React from 'react'
 
 import { fadeIn } from '../../resources/Libraries/Animation'
 
-import './UpvotePopup.css'
+import './DeletePopup.css'
 
-class UpvotePopup extends React.Component {
+class DeletePopup extends React.Component {
   constructor(props) {
     super(props)
 
@@ -31,10 +31,10 @@ class UpvotePopup extends React.Component {
       this.handleClick = this.handleClick.bind(this)
     }
     componentDidMount() {
-      fadeIn('div#upvote-popup', 300)
+      fadeIn('div#delete-popup', 300)
       this.div.style.left = `${this.state.positionX}px`
       if(parseFloat(this.state.positionY)<150) {
-        this.div.style.top = `${parseFloat(this.state.positionY) + 135}px`
+        this.div.style.top = `${parseFloat(this.state.positionY) + 90}px`
       } else {
         this.div.style.top = `${this.state.positionY}px`
       }
@@ -43,7 +43,7 @@ class UpvotePopup extends React.Component {
     componentDidUpdate() {
       this.div.style.left = `${this.props.positionX}px`
       if(parseFloat(this.state.positionY)<150) {
-        this.div.style.top = `${parseFloat(this.state.positionY) + 135}px`
+        this.div.style.top = `${parseFloat(this.state.positionY) + 90}px`
       } else {
         this.div.style.top = `${this.state.positionY}px`
       }
@@ -62,38 +62,36 @@ class UpvotePopup extends React.Component {
     async handleClick(e) {
       this.props.handleBanner([
         'Waiting',
-        'Upvote',
-        this.state.memeId + '-upvote'
+        'Delete',
+        this.state.memeId + '-delete'
       ])
       e.preventDefault()
-      if(this.state.valid) {
-        await this.state.interface.methods
-          .boostMeme(this.state.account, this.state.memeId, this.state.boostValue)
-          .send({ from: this.state.account })
-          .on('transactionHash', () => {
-            this.props.handleBanner([
-              'Writing',
-              'Upvote',
-              this.state.memeId + '-upvote'
-            ])
-          })
-          .on('receipt', () => {
-            this.props.handleBanner([
-              'Success',
-              'Upvote',
-              this.state.memeId + '-upvote'
-            ])
-          })
-          .catch(e => {
-            this.props.handleBanner([
-              'Cancel',
-              'Upvote',
-              this.state.memeId + '-upvote'
-            ])
-            console.error(e)
-          })
-        this.props.handleClosePopup()
-      }
+      await this.state.interface.methods
+        .deleteMeme(this.state.account, this.state.memeId)
+        .send({ from: this.state.account })
+        .on('transactionHash', () => {
+          this.props.handleBanner([
+            'Writing',
+            'Delete',
+            this.state.memeId + '-delete'
+          ])
+        })
+        .on('receipt', () => {
+          this.props.handleBanner([
+            'Success',
+            'Delete',
+            this.state.memeId + '-delete'
+          ])
+        })
+        .catch(e => {
+          this.props.handleBanner([
+            'Cancel',
+            'Delete',
+            this.state.memeId + '-delete'
+          ])
+          console.error(e)
+        })
+      this.props.handleClosePopup()
     }
 
     async increment(e) {
@@ -128,53 +126,21 @@ class UpvotePopup extends React.Component {
     render() {
       return(
         <div
-          id="upvote-popup"
+          id="delete-popup"
           ref={Ref=>this.div=Ref}
         >
-
-          <form>
-            <div id="boost">
-              <label htmlFor="boost" id="boost" onClick={this.handleClick}>
-                <span
-                  id="boost"
-                  ref={Ref=>this.button=Ref}
-                >
-                  Promote
-                </span>
-              </label>
-              <div
-                id="boost-field"
-                onFocus={this.handleFocus}
-                ref={Ref=>this.field=Ref}
-              >
-                <span id="decrease" onClick={async () => this.decrement().then(()=> this.validate())}>
-                  -
-                </span>
-                { this.state.umeBalance
-                    ? <input
-                        type="number"
-                        id="boost"
-                        name="boost"
-                        min="0"
-                        max={this.state.umeBalance}
-                        value={this.state.boostValue}
-                        step="5"
-                        onChange={this.handleChange}
-                        ref={Ref=>this.input=Ref}
-                        required>
-                      </input>
-                    : ''
-              }
-              <span id="increase" onClick={async () => this.increment().then(()=> this.validate())}>
-                +
-              </span>
-            </div>
-          </div>
-        </form>
-      </div>
+          <p id="delete" onClick={this.handleClick}>
+            <span
+              id="delete"
+              ref={Ref=>this.button=Ref}
+            >
+             Delete
+            </span>
+          </p>
+        </div>
     )
   }
 
 }
 
-export default UpvotePopup
+export default DeletePopup

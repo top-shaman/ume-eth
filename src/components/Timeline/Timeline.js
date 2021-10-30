@@ -46,6 +46,7 @@ class Timeline extends React.Component {
 
     this.handleUpvotePopup = this.handleUpvotePopup.bind(this)
     this.handleDownvotePopup = this.handleDownvotePopup.bind(this)
+    this.handleDeletePopup = this.handleDeletePopup.bind(this)
     this.handleBanner = this.handleBanner.bind(this)
 
   }
@@ -116,6 +117,9 @@ class Timeline extends React.Component {
   }
   handleDownvotePopup(e) {
     this.props.handleDownvotePopup(e)
+  }
+  handleDeletePopup(e) {
+    this.props.handleDeletePopup(e)
   }
   handleBanner(e) {
     this.props.handleBanner(e)
@@ -482,6 +486,7 @@ class Timeline extends React.Component {
               handleOverDownvote={this.handleOverDownvote}
               handleUpvotePopup={this.handleUpvotePopup}
               handleDownvotePopup={this.handleDownvotePopup}
+              handleDeletePopup={this.handleDeletePopup}
               handleBanner={this.handleBanner}
               interface={this.props.interface}
               memeStorage={this.props.memeStorage}

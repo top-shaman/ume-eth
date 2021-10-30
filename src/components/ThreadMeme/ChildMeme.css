@@ -21,11 +21,31 @@ div.ChildMeme:hover {
 .ChildMeme div#ChildMeme-header {
   display: flex;
   text-align: left;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-direction: row;
   flex-wrap: wrap;
   margin: 0.1rem 0 0.5rem 0;
   align-items: flex-end;
+}
+.ChildMeme div#ChildMeme-header section#left {
+  word-wrap: break-word;
+}
+.ChildMeme div#ChildMeme-header section#right p#delete {
+  flex-wrap: nowrap;
+  line-height: 0;
+  transform: translateY(-1rem);
+  color: #CCDDDD;
+  font-size: 2rem;
+  align-items: center;
+  margin: 0 0.2rem;
+  padding: 0;
+  vertical-align: top;
+  transition: color 0.3s ease-in-out;
+  white-space: pre;
+}
+.ChildMeme div#ChildMeme-header section#right p#delete:hover {
+  color: #00CC89;
+  transition: color 0.3s ease-in-out;
 }
 .ChildMeme div#ChildMeme-footer {
   display: flex;

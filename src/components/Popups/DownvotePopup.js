@@ -90,7 +90,7 @@ class DownvotePopup extends React.Component {
             ])
             console.error(e)
           })
-        this.props.handleClose()
+        this.props.handleCloseProps()
       }
     }
 

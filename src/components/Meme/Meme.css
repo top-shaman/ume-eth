@@ -19,11 +19,31 @@ div.Meme:hover {
 .Meme div#meme-header {
   display: flex;
   text-align: left;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin: 0.53rem 0.4rem 0.5rem 0.4rem;
   align-items: flex-end;
+}
+.Meme div#meme-header section#left {
+  word-wrap: break-word;
+}
+.Meme div#meme-header section#right p#delete {
+  flex-wrap: nowrap;
+  line-height: 0;
+  transform: translateY(-1rem);
+  color: #CCDDDD;
+  font-size: 2rem;
+  align-items: center;
+  margin: 0 0.2rem;
+  padding: 0;
+  vertical-align: top;
+  transition: color 0.3s ease-in-out;
+  white-space: pre;
+}
+.Meme div#meme-header section#right p#delete:hover {
+  color: #00CC89;
+  transition: color 0.3s ease-in-out;
 }
 .Meme div#meme-footer {
   display: flex;
@@ -102,7 +122,7 @@ div.Meme:hover {
   margin: 0 0.3rem 0 0;
 }
 .Meme span#time {
-  word-break: break-all;
+  word-break: break-word;
   margin: 0 0.3rem 0 0;
 }
 .Meme a#username {
@@ -153,8 +173,6 @@ div.Meme:hover {
 }
 .Meme p#downvote-button:hover {
   filter: sepia(1) brightness(0.43) saturate(10000%) hue-rotate(180deg);
-}
-.Meme img#upvote {
 }
 .Meme img#downvote {
   transform: rotate(180deg);

@@ -12,20 +12,46 @@ section#MainMeme.ThreadMemeMain {
   flex-direction: row;
   width: inherit;
 }
-section#info {
-  margin: auto 0 auto 0.5rem;
+.ThreadMemeMain div#ThreadMemeMain-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0.5rem 0.5rem 0.5rem 0.687rem;
+}
+.ThreadMemeMain section#info {
+  display: flex;
+  flex-direction: column;
+  margin: 0.2rem 0 auto 0.5rem;
   text-align: left;
+}
+.ThreadMemeMain div#ThreadMemeMain-header section#left {
+  display: flex;
+  flex-direction: row;
+  margin-right: 1rem;
+  word-wrap: break-word;
+}
+.ThreadMemeMain div#ThreadMemeMain-header section#right p#delete {
+  cursor: pointer;
+  line-height: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  color: #CCDDDD;
+  font-size: 2rem;
+  align-items: center;
+  margin: 0 0.2rem;
+  padding: 0;
+  vertical-align: top;
+  transition: color 0.3s ease-in-out;
+  white-space: pre;
+}
+.ThreadMemeMain div#ThreadMemeMain-header section#right p#delete:hover {
+  color: #00CC89;
+  transition: color 0.3s ease-in-out;
 }
 .ThreadMemeMain div#ThreadMemeMain-body {
   display: flex;
   width: 100%;
   flex-direction: column;
-}
-.ThreadMemeMain div#ThreadMemeMain-header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin: 0.5rem 1rem 0.5rem 0.687rem;
 }
 .ThreadMemeMain div#ThreadMemeMain-footer {
   display: flex;
@@ -107,7 +133,7 @@ section#info {
   font-weight: 800;
   color: #CCDDCC;
   font-size: 1.1rem;
-  margin: 0 0.3rem 0 0;
+  margin: 0 0.3rem 0.4rem 0;
   width: min-content;
   white-space: pre;
   text-decoration: none;
