@@ -291,10 +291,16 @@ class App extends React.Component {
   async loadWeb3() {
     if(window.ethereum) {
       window.web3 = new Web3(window.ethereum)
-      this.setState({ metaMask: true })
+      this.setState({
+        metaMask: true,
+        validBrowser: true
+      })
       this.request()
     } else if(window.web3) {
-      this.setState({ metaMask: true })
+      this.setState({
+        metaMask: true,
+        validBrowser: true
+      })
       window.web3 = new Web3(window.web3.currentProvider)
     } else {
       this.setState({ metaMask: false })
