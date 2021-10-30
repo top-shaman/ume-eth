@@ -91,7 +91,6 @@ nav.navbar {
 .navbar a p {
   margin: 0;
   padding: 0.6rem;
-  line-height: 0;
 }
 .navbar a img#icon {
   margin: 0.3rem 1rem 0.3rem 0.2rem;

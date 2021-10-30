@@ -6,7 +6,7 @@ import UpvoteButton from '../MemeButton/UpvoteButton'
 import DownvoteButton from '../MemeButton/DownvoteButton'
 import ProfilePic from '../ProfilePic/ProfilePic'
 import Tag from '../Tag/Tag'
-import { toBytes, isolatePlain, isolatePlainNew, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
+import { toBytes, isolatePlain, isolateAt, isolateHash } from '../../resources/Libraries/Helpers'
 import { bgColorChange } from '../../resources/Libraries/Animation'
 import "./Meme.css"
 
@@ -197,7 +197,6 @@ class Meme extends React.Component {
         hashMap = await isolateHash(text).catch(e=>console.error(e)),
         combined = [],
         formatted = []
-    console.log(await isolatePlainNew(text))
     combined = plainMap.concat(atMap, hashMap)
       .sort((a,b) => a[0]-b[0])
     if(combined!==null) {

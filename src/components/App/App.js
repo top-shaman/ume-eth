@@ -13,6 +13,7 @@ import Banner from '../Popups/Banner'
 import NoWallet from '../Enter/NoWallet'
 import NoMetaMask from '../Enter/NoMetaMask'
 import NoEth from '../Enter/NoEth'
+import NotSupported from '../Enter/NotSupported'
 import PageLoader from '../Loader/PageLoader'
 
 import UserInterface from '../../abis/UserInterface.json'
@@ -47,7 +48,8 @@ class App extends React.Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       metaMask: false,
-      hasEth: true//false
+      hasEth: false,
+      validBrowser: false
     }
 
     this.app = React.createRef()
@@ -74,6 +76,7 @@ class App extends React.Component {
 
   // lifecycle methods
   async componentDidMount() {
+    await this.detectBrowser().catch(e=>console.error(e))
     window.addEventListener('resize', this.handleResize)
     // check if has previously loaded, so page can know to blur
     //if(localStorage.getItem('hasLoaded')!=='true')
@@ -234,6 +237,16 @@ class App extends React.Component {
     }
   }
 
+  async detectBrowser() {
+    let userAgentString = navigator.userAgent,
+        chromeAgent = userAgentString.indexOf('Chrome') > -1,
+        firefoxAgent = userAgentString.indexOf('Firefox') > -1,
+        safariAgent = userAgentString.indexOf('Safari') > -1
+    if (chromeAgent || firefoxAgent || (chromeAgent && safariAgent)) {
+      this.setState({ validBrowser: true })
+    }
+  }
+
   async request() {
     window.ethereum
       .request({ method: 'eth_requestAccounts' })
@@ -387,99 +400,101 @@ class App extends React.Component {
         className="App"
       >
         <div className="Banners">{ this.state.banners }</div>
-        { this.state.contractLoading && this.state.account!==undefined
-            ? <PageLoader/>
-            : this.state.account===undefined
-              ? this.state.metaMask
-                  ? <NoWallet />
-                  : <NoMetaMask />
-              : this.state.registered
-                ? <div
-                    id="App-body"
-                    className="App"
-                    onScroll={this.handleScroll}
-                    ref={Ref=>this.app=Ref}
-                  >
-                    { this.state.creatingMeme || this.state.replying || this.state.editing
-                      ? this.state.creatingMeme
-                        ? <CreateMeme
-                            account={this.state.account}
-                            offsetY={this.state.offsetY}
-                            handleExitCreate={this.handleExitCreate}
-                            handleBanner={this.handleBanner}
-                            userStorage={this.state.userStorage}
-                            interface={this.state.interface}
-                          />
-                        : this.state.replying
-                          ? <Reply
-                              account={this.state.account}
-                              username={this.state.replying[0]}
-                              address={this.state.replying[1]}
-                              author={this.state.replying[2]}
-                              text={this.state.replying[3]}
-                              memeId={this.state.replying[4]}
-                              parentId={this.state.replying[5]}
-                              originId={this.state.replying[6]}
-                              offsetY={this.state.offsetY}
-                              handleExitReply={this.handleExitReply}
-                              handleToProfile={this.handleToProfile}
-                              handleBanner={this.handleBanner}
-                              userStorage={this.state.userStorage}
-                              memeStorage={this.state.memeStorage}
-                              interface={this.state.interface}
-                            />
-                          : this.state.editing
-                            ? <EditProfile
+        { !this.state.validBrowser
+            ? <NotSupported/>
+            : this.state.contractLoading && this.state.account!==undefined
+                ? <PageLoader/>
+                : this.state.account===undefined
+                  ? this.state.metaMask
+                      ? <NoWallet />
+                      : <NoMetaMask />
+                  : this.state.registered
+                    ? <div
+                        id="App-body"
+                        className="App"
+                        onScroll={this.handleScroll}
+                        ref={Ref=>this.app=Ref}
+                      >
+                        { this.state.creatingMeme || this.state.replying || this.state.editing
+                          ? this.state.creatingMeme
+                            ? <CreateMeme
                                 account={this.state.account}
-                                username={this.state.editing[0]}
-                                address={this.state.editing[1]}
-                                bio={this.state.editing[2]}
                                 offsetY={this.state.offsetY}
-                                handleExitEdit={this.handleExitEdit}
+                                handleExitCreate={this.handleExitCreate}
                                 handleBanner={this.handleBanner}
                                 userStorage={this.state.userStorage}
                                 interface={this.state.interface}
                               />
-                            : ''
-                      : ''
-                    }
-                    <Main
-                      account={this.state.account}
-                      userStorage={this.state.userStorage}
-                      memeStorage={this.state.memeStorage}
-                      interface={this.state.interface}
-                      ume={this.state.ume}
-                      memeCount={this.state.memeCount}
-                      userMemeCount={this.state.userMemeCount}
-                      umeBalance={this.state.umeBalance}
-                      memeIdsByBoost={this.state.memeIdsByBoost}
-                      contractLoading={this.state.contractLoading}
-                      atBottom={this.state.atBottom}
-                      offsetY={this.state.offsetY}
-                      handleCreateMeme={this.handleCreateMeme}
-                      handleReply={this.handleReply}
-                      handleEdit={this.handleEdit}
-                      handleBanner={this.handleBanner}
-                      handleProfileChange={this.handleProfileChange}
-                      ref={Ref=>this.main=Ref}
-                    />
-                  </div>
-                : this.state.entered
-                  ? this.state.writing
-                      ? <PageLoader/>
-                      : !this.state.hasEth
-                          ? <NoEth/>
-                          : <CreateUser
-                              account={this.state.account}
-                              handleRegistered={this.handleRegistered}
-                              interface={this.state.interface}
-                              handleBanner={this.handleBanner}
-                            />
-                  : <Enter
-                      account={this.state.account}
-                      hasEntered={this.handleEntered}
-                      contractLoading={this.state.contractLoading}
-                    />
+                            : this.state.replying
+                              ? <Reply
+                                  account={this.state.account}
+                                  username={this.state.replying[0]}
+                                  address={this.state.replying[1]}
+                                  author={this.state.replying[2]}
+                                  text={this.state.replying[3]}
+                                  memeId={this.state.replying[4]}
+                                  parentId={this.state.replying[5]}
+                                  originId={this.state.replying[6]}
+                                  offsetY={this.state.offsetY}
+                                  handleExitReply={this.handleExitReply}
+                                  handleToProfile={this.handleToProfile}
+                                  handleBanner={this.handleBanner}
+                                  userStorage={this.state.userStorage}
+                                  memeStorage={this.state.memeStorage}
+                                  interface={this.state.interface}
+                                />
+                              : this.state.editing
+                                ? <EditProfile
+                                    account={this.state.account}
+                                    username={this.state.editing[0]}
+                                    address={this.state.editing[1]}
+                                    bio={this.state.editing[2]}
+                                    offsetY={this.state.offsetY}
+                                    handleExitEdit={this.handleExitEdit}
+                                    handleBanner={this.handleBanner}
+                                    userStorage={this.state.userStorage}
+                                    interface={this.state.interface}
+                                  />
+                                : ''
+                          : ''
+                        }
+                        <Main
+                          account={this.state.account}
+                          userStorage={this.state.userStorage}
+                          memeStorage={this.state.memeStorage}
+                          interface={this.state.interface}
+                          ume={this.state.ume}
+                          memeCount={this.state.memeCount}
+                          userMemeCount={this.state.userMemeCount}
+                          umeBalance={this.state.umeBalance}
+                          memeIdsByBoost={this.state.memeIdsByBoost}
+                          contractLoading={this.state.contractLoading}
+                          atBottom={this.state.atBottom}
+                          offsetY={this.state.offsetY}
+                          handleCreateMeme={this.handleCreateMeme}
+                          handleReply={this.handleReply}
+                          handleEdit={this.handleEdit}
+                          handleBanner={this.handleBanner}
+                          handleProfileChange={this.handleProfileChange}
+                          ref={Ref=>this.main=Ref}
+                        />
+                      </div>
+                    : this.state.entered
+                      ? this.state.writing
+                          ? <PageLoader/>
+                          : !this.state.hasEth
+                              ? <NoEth/>
+                              : <CreateUser
+                                  account={this.state.account}
+                                  handleRegistered={this.handleRegistered}
+                                  interface={this.state.interface}
+                                  handleBanner={this.handleBanner}
+                                />
+                      : <Enter
+                          account={this.state.account}
+                          hasEntered={this.handleEntered}
+                          contractLoading={this.state.contractLoading}
+                        />
         }
       </div>
     );

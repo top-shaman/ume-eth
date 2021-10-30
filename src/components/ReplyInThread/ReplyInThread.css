@@ -51,6 +51,7 @@ div.ReplyInThread#ReplyInThread {
   caret-color: #667777;
   box-shadow: none;
   color: rgb(0,0,0,0);
+  line-height: 1.8rem;
   font-family: 'Avenir', sans-serif;
   font-size: 1.4rem;
   letter-spacing: 0.01rem;
@@ -75,6 +76,7 @@ div.ReplyInThread#ReplyInThread {
   color: #CCDDCC;
   font-family: 'Avenir', sans-serif;
   font-size: 1.4rem;
+  line-height: 1.8rem;
   letter-spacing: 0.01rem;
   font-weight: 500;
   margin: 0;

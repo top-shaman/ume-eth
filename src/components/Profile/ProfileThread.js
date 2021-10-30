@@ -372,6 +372,7 @@ class ProfileThread extends React.Component {
       this.setState({
         refreshing: false
       })
+      await this.props.handleBanner(['Cancel', 'Profile', this.state.userAccount + '-loading'])
       this.props.handleRefresh(false)
     }
   }
