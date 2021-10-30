@@ -14,7 +14,7 @@ class NotSupported extends React.Component {
         <p id="p1">
           <span>Must have </span>
           <br/>
-          <a href="https://www.google.com/intl/en/chrome/" target="_blank">Chrome</a>, <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a>, or <a href="https://brave.com/download/">Brave</a>
+          <a href="https://www.google.com/intl/en/chrome/" target="_blank">Chrome</a>, <a href="https://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>, or <a href="https://brave.com/download/" target="_blank">Brave</a>
           <br/>
           <span> installed to use </span>
           <br/>
