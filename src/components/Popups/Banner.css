@@ -100,3 +100,8 @@ div.Banner div#body {
     border: 0.15rem solid #CCDDDD;
   }
 }
+@media screen and (max-width: 400px) {
+  .Banner div#container {
+    width: 10rem;
+  }
+}

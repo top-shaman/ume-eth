@@ -75,6 +75,7 @@ class DeletePopup extends React.Component {
             'Delete',
             this.state.memeId + '-delete'
           ])
+          this.props.handleClosePopup()
         })
         .on('receipt', () => {
           this.props.handleBanner([
@@ -91,7 +92,6 @@ class DeletePopup extends React.Component {
           ])
           console.error(e)
         })
-      this.props.handleClosePopup()
     }
 
     async increment(e) {
