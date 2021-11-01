@@ -6,187 +6,176 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract UME is ERC20 {
 
-  // minter's address
-  address public minter;
+  // minting values
+  uint public postValue = 8e18;
+  uint public likeFromValue = 2e18;
+  uint public likeToValue = 5e18;
+  uint public tagToValue = 1e18;
+  uint public tagFromValue = 3e18;
+  uint public followFromValue = 1e18;
+  uint public followToValue = 6e18;
+  uint public respondFromValue = 2e18;
+  uint public respondToValue = 4e18;
+  uint public curateFromValue = 2e18;
+  uint public curateToValue = 4e18;
+  uint public repostFromValue = 5e18;
+  uint public repostToValue = 6e18;
+
+  // signer's address
   address public memeFactorySigner;
   address public postSigner;
   address public likeSigner;
   address public followSigner;
   address public boostSigner;
+  address public valueSigner;
 
-  // minter role has changed to We
-  event MinterChanged(address indexed from, address indexed to);
-  event PostSignerChanged(address indexed from, address indexed to);
-  event MemeFactorySignerChanged(address indexed from, address indexed to);
-  event LikeSignerChanged(address indexed from, address indexed to);
-  event FollowSignerChanged(address indexed from, address indexed to);
-  event BoostSignerChanged(address indexed from, address indexed to);
-  // minting events
-  event Minted(address indexed account, uint time, string flag);
+  // Signer role changes
+  event PostSignerChanged(
+        address indexed from,
+        address indexed to);
+  event MemeFactorySignerChanged(
+        address indexed from,
+        address indexed to);
+  event LikeSignerChanged(
+        address indexed from,
+        address indexed to);
+  event FollowSignerChanged(
+        address indexed from,
+        address indexed to);
+  event BoostSignerChanged(
+        address indexed from,
+        address indexed to);
+  event ValueSignerChanged(
+        address indexed from,
+        address indexed to);
+  event Minted(
+        address indexed account,
+        uint time,
+        uint256 amount,
+        string flag);
 
-  constructor() public payable ERC20("uMe token", "UME") {
-    // assign minter & caller roles
-    minter = msg.sender;
+  constructor()
+    public payable ERC20("uMe token", "UME") {
+    // assign signer roles
     postSigner = msg.sender;
     memeFactorySigner = msg.sender;
     likeSigner = msg.sender;
     followSigner = msg.sender;
     boostSigner = msg.sender;
+    valueSigner = msg.sender;
   }
 
   function mintPost(
-    address _account,
-    string memory _postText
-  ) public {
+            address _account,
+            string memory _postText)
+            public {
     // make sure minter is same as sender
     require(
       postSigner==msg.sender,
-      'Error: wrong _account calling mint');
-    //require(minter!=_account, 'Error: "we" cannot call mint');
-    //require(bytes(_postHash).length > 0, 'Error: no post exists'); // check if post hash exists
-//    require(
-//      bytes(_postText).length > 0,
-//      'Error: no text in post'); // check if there's text in post
-    // mint UME token for Posted
-    _mint(address(_account), 8);
+      'Error: wrong account calling post mint');
+    _mint(address(_account), postValue);
     // set event for minted Posted UME tokens
-    emit Minted(_account, block.timestamp /*, _postHash  */ , 'POST');
+    emit Minted(_account, block.timestamp, postValue, 'POST');
   }
   function mintLike(
-    address _from,
-    address _to
-  ) public { // 2:5 Liker:Liked
+            address _from,
+            address _to)
+            public { // 2:5 Liker:Liked
     require(
       likeSigner==msg.sender,
-      'Error: wrong account calling mint');
-//    require(
-//      _from!=_to,
-//      'Error: same account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot call mint');
-    //require(bytes(_postHash).length > 0, 'Error: no post exists');
+      'Error: wrong account calling like mint');
     // mint a LIKE token for liker
-    _mint(address(_from), 2);
+    _mint(address(_from), likeToValue);
     // set event for LIKE token FROM
-    emit Minted(_from, block.timestamp /*, _postHash  */ , 'LIKE');
+    emit Minted(_from, block.timestamp, likeFromValue, 'LIKE');
     // mint LIKE tokens for likee
-    _mint(address(_to), 5);
+    _mint(address(_to), likeToValue);
     // set event for LIKE token TO
-    emit Minted(_to, block.timestamp /*, _postHash  */ , 'LIKE');
+    emit Minted(_to, block.timestamp, likeToValue, 'LIKE');
   }
   function mintTag(
-    address _from,
-    address _to
-  ) public { // 1:3 Tagger:Tagged
+            address _from,
+            address _to)
+            public { // 1:3 Tagger:Tagged
     require(
       memeFactorySigner==msg.sender,
-      'Error: wrong account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot call mint');
-//    require(
-//      _from!=_to,
-//      'Error: same account');
+      'Error: wrong account calling tag mint');
     // mint a TAG token for tagger
-    _mint(_from, 1);
+    _mint(_from, tagFromValue);
     // set event for TAG token FROM
-    emit Minted(_from, block.timestamp /*, _postHash  */ , 'TAG');
+    emit Minted(_from, block.timestamp, tagFromValue, 'TAG');
     // mint TAG tokens for taggee
-    _mint(_to, 3);
+    _mint(_to, tagToValue);
     // set event for TAG token TO
-    emit Minted(_to, block.timestamp /*, _postHash  */ , 'TAG');
+    emit Minted(_to, block.timestamp, tagToValue, 'TAG');
   }
   function mintFollow(
-    address _from,
-    address _to
-  ) public { // 1:3 Follower:Followed
+            address _from,
+            address _to)
+            public { // 1:3 Follower:Followed
     require(
       followSigner==msg.sender,
       'Error: wrong account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot call mint');
-//    require(
-//      _from!=_to,
-//      'Error: same account'); // doesn't mint tokens if tagged oneself
     // mint a FOLLOW token for follower
-    _mint(_from, 1);
+    _mint(_from, followFromValue);
     // set event for FOLLOW token FROM
-    emit Minted(_from, block.timestamp, 'FOLLOW');
+    emit Minted(_from, block.timestamp, followFromValue, 'FOLLOW');
     // mint FOLLOW tokens for followed
-    _mint(_to, 6);
+    _mint(_to, followToValue);
     // set event for FOLLOW token TO
-    emit Minted(_to, block.timestamp,'FOLLOW');
+    emit Minted(_to, block.timestamp, followToValue, 'FOLLOW');
   }
   function mintRespond(
-    address _from,
-    address _to
-  ) public { // 2:4 Responder:Responded
+            address _from,
+            address _to)
+            public { // 2:4 Responder:Responded
     require(
       memeFactorySigner==msg.sender,
       'Error: wrong account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot call mint');
-//    require(
-//      _from!=_to,
-//      'Error: same account');
     // mint a RESPOND token for responder
-    _mint(_from, 2);
+    _mint(_from, respondFromValue);
     // set event for RESPOND token FROM
-    emit Minted(_from, block.timestamp, 'RESPOND FROM');
+    emit Minted(_from, block.timestamp, respondFromValue, 'RESPOND FROM');
     // mint RESPOND tokens for responded
     if(_to!=address(0x0)) {
-      _mint(_to, 4);
+      _mint(_to, respondToValue);
     }
     // set event for RESPOND token TO
-    emit Minted(_to, block.timestamp, 'RESPOND TO');
+    emit Minted(_to, block.timestamp, respondToValue, 'RESPOND TO');
   }
   function mintCurate(
-    address _from,
-    address _to
-  ) public { // 2:4 Responder:Responded
+            address _from,
+            address _to)
+            public { // 2:4 Responder:Responded
     require(
       memeFactorySigner==msg.sender,
       'Error: wrong account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot mint');
-//    require(
-//      _from!=_to,
-//      'Error: same account'); // doesn't mint tokens if tagged oneself
-    //require(bytes(_postHash).length > 0, 'Error: no post exists');
     // mint a CURATE token for curatee
-    _mint(_from, 2);
+    _mint(_from, curateToValue);
     // set event for CURATE token FROM
-    emit Minted(_from, block.timestamp, 'CURATE');
+    emit Minted(_from, block.timestamp, curateFromValue, 'CURATE');
     // mint CURATE tokens for curator
     if(_to!=address(0x0)) {
-      _mint(_to, 4);
+      _mint(_to, curateToValue);
     }
     // set event for CURATE token TO
-    emit Minted(_to, block.timestamp, 'CURATE');
+    emit Minted(_to, block.timestamp, curateToValue, 'CURATE');
   }
   function mintRepost(
-    address _from,
-    address _to
-  ) public {
+            address _from,
+            address _to)
+            public {
     require(
       postSigner==msg.sender,
       'Error: wrong account');
-//    require(
-//      minter!=_from,
-//      'Error: "we" cannot mint');
-//    require(_from!=_to, 'Error: same account');
     //mint REPOST token for reposter
-    _mint(_from, 5);
+    _mint(_from, repostFromValue);
     // set event for REPOST from
-    emit Minted(_from, block.timestamp, 'REPOST');
+    emit Minted(_from, block.timestamp, repostFromValue, 'REPOST');
     // mint REPOST token for original poster
-    _mint(_to, 6);
+    _mint(_to, repostToValue);
     // set event for REPOST to
-    emit Minted(_from, block.timestamp, 'REPOST');
+    emit Minted(_from, block.timestamp, repostToValue, 'REPOST');
   }
   /*
   function mintJury(
@@ -215,25 +204,111 @@ contract UME is ERC20 {
     }
   }
 */
-  function burn(address _account, uint _amount) public {
+  function burn(
+            address _account,
+            uint _amount)
+            public {
     require(
+      msg.sender==likeSigner ||
       msg.sender==boostSigner,
-      'Error: burner must be boost-signer');
-//    require(
-//      minter!=_account,
-//      'Error: "we" cannot call burn');
+      'Error: burner must be valid signer');
     _burn(_account, _amount);
   }
-  function passMinterRole(address _we) public returns (bool) {
-    require(
-      msg.sender==minter,
-      'Error: only deployer can change pass minter role');
-    minter = _we;
 
-    emit MinterChanged(msg.sender, minter);
-    return true;
+  function setPostValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    postValue = _value;
   }
-  function passPostSignerRole(address _post) public returns (bool) {
+  function setLikeFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    likeFromValue = _value;
+  }
+  function setLikeToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    likeToValue = _value;
+  }
+  function setTagFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    tagFromValue = _value;
+  }
+  function setTagToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    tagToValue = _value;
+  }
+  function setFollowFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    followFromValue = _value;
+  }
+  function setFollowToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    followToValue = _value;
+  }
+  function setRespondFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    respondFromValue = _value;
+  }
+  function setRespondToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    respondToValue = _value;
+  }
+  function setCurateFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    curateFromValue = _value;
+  }
+  function setCurateToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    curateToValue = _value;
+  }
+  function setRepostFromValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    repostFromValue = _value;
+  }
+  function setRepostToValue(uint256 _value)
+            public {
+    require(
+      msg.sender==valueSigner,
+      'Error: value must be changed by signer');
+    repostToValue = _value;
+  }
+
+  function passPostSignerRole(address _post)
+            public returns (bool) {
     require(
       msg.sender==postSigner,
       'Error, only deployer can pass post\'s caller role');
@@ -241,7 +316,8 @@ contract UME is ERC20 {
     emit PostSignerChanged(msg.sender, postSigner);
     return true;
   }
-  function passMemeFactorySignerRole(address _memeFactory) public returns (bool) {
+  function passMemeFactorySignerRole(address _memeFactory)
+            public returns (bool) {
     require(
       msg.sender==memeFactorySigner,
       'Error, only deployer can pass memeFactory caller role');
@@ -249,7 +325,8 @@ contract UME is ERC20 {
     emit PostSignerChanged(msg.sender, memeFactorySigner);
     return true;
   }
-  function passLikeSignerRole(address _like) public returns (bool) {
+  function passLikeSignerRole(address _like)
+            public returns (bool) {
     require(
       msg.sender==likeSigner,
       'Error: only deployer can pass like minter signer caller role');
@@ -257,7 +334,8 @@ contract UME is ERC20 {
     emit PostSignerChanged(msg.sender, likeSigner);
     return true;
   }
-  function passFollowSignerRole(address _follow) public returns (bool) {
+  function passFollowSignerRole(address _follow)
+            public returns (bool) {
     require(
       msg.sender==followSigner,
       'Error: only deployer can pass follow minter signer role');
@@ -265,12 +343,22 @@ contract UME is ERC20 {
     emit FollowSignerChanged(msg.sender, followSigner);
     return true;
   }
-  function passBoostSignerRole(address _boost) public returns (bool) {
+  function passBoostSignerRole(address _boost)
+            public returns (bool) {
     require(
       msg.sender==boostSigner,
       'Error: only deployer can pass boost signer role');
     boostSigner = _boost;
     emit BoostSignerChanged(msg.sender, boostSigner);
+    return true;
+  }
+  function passValueSignerRole(address _value)
+            public returns (bool) {
+    require(
+      msg.sender==valueSigner,
+      'Error: only deployer can pass value signer role');
+    valueSigner = _value;
+    emit BoostSignerChanged(msg.sender, valueSigner);
     return true;
   }
 }

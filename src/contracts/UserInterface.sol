@@ -25,40 +25,26 @@ contract UserInterface {
 
   bytes32 zeroBytes;
 
-  /*
-  struct User {
-    uint id; // user number in order
-    string name; // user name
-    string userAddr; // user address (@)
-    uint time; // user creation time
-    address addr; // address of user
-    address[] followers; // addresses of followers
-    address[] following; // addressses of following
-    uint[] posts; // memeIds of posts
-  }
-  */
-
   event NewUser(
-    address indexed account,
-    bytes32 userName,
-    bytes32 userAddress);
+        address indexed account,
+        bytes32 userName,
+        bytes32 userAddress);
   event ChangedUserName(
-    address indexed account,
-    bytes32 userName);
+        address indexed account,
+        bytes32 userName);
   event ChangedUserAddress(
-    address indexed account,
-    bytes32 userAddress);
+        address indexed account,
+        bytes32 userAddress);
 
-  constructor(
-    UME _umeToken,
-    MemeStorage _memeStorage,
-    UserStorage _userStorage,
-    UserFactory _userFactory,
-    Post _post,
-    Like _like,
-    Follow _follow,
-    Boost _boost
-  ) public {
+  constructor(UME _umeToken,
+              MemeStorage _memeStorage,
+              UserStorage _userStorage,
+              UserFactory _userFactory,
+              Post _post,
+              Like _like,
+              Follow _follow,
+              Boost _boost)
+              public {
     umeToken = _umeToken;
     memeStorage = _memeStorage;
     userStorage = _userStorage;
@@ -70,10 +56,10 @@ contract UserInterface {
   }
 
   function newUser(
-    address _account,
-    bytes memory _userName,
-    bytes memory _userAddress
-  ) public {
+            address _account,
+            bytes memory _userName,
+            bytes memory _userAddress)
+            public {
     require(
       msg.sender==_account,
       'Error: account must be account creator');
@@ -101,9 +87,9 @@ contract UserInterface {
     emit NewUser(_account, _un, _ua);
   }
   function changeUserName(
-    address _account,
-    bytes memory _userName
-  ) public {
+            address _account,
+            bytes memory _userName)
+            public {
     bytes32 _un = bytesToBytes32(_userName);
     require(
       msg.sender==_account,
@@ -123,9 +109,9 @@ contract UserInterface {
     emit ChangedUserName(_account, _un);
   }
   function changeUserAddress(
-    address _account,
-    bytes memory _userAddress
-  ) public {
+            address _account,
+            bytes memory _userAddress)
+            public {
     bytes32 _ua = bytesToBytes32(_userAddress);
     require(
       msg.sender==_account,
@@ -149,9 +135,9 @@ contract UserInterface {
   }
 
   function newBio(
-    address _account,
-    string memory _bio
-  ) public {
+            address _account,
+            string memory _bio)
+            public {
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
@@ -163,9 +149,9 @@ contract UserInterface {
   }
 
   function newProfilePic(
-    address _account,
-    string memory _imgHash
-  ) public {
+            address _account,
+            string memory _imgHash)
+            public {
     require(
       msg.sender==_account,
       'Error: operator must be account owner');
@@ -178,12 +164,12 @@ contract UserInterface {
 
   // Meme posting functionality
   function newMeme(
-    address _account,
-    string memory _postText,
-    address[] memory _tags,
-    bytes32 _parentId,
-    bytes32 _originId
-  ) public {
+            address _account,
+            string memory _postText,
+            address[] memory _tags,
+            bytes32 _parentId,
+            bytes32 _originId)
+            public {
     require(
       _account==msg.sender,
       'Error: wrong account calling post');
@@ -204,9 +190,9 @@ contract UserInterface {
     post.newMeme(_account, _postText, _tags, _parentId, _originId);
   }
   function rememe(
-    address _account,
-    bytes32 _memeId
-  ) public {
+            address _account,
+            bytes32 _memeId)
+            public {
     require(
       _account==msg.sender,
       'Error: wrong account calling post');
@@ -220,13 +206,13 @@ contract UserInterface {
     post.rememe(_account, _memeId);
   }
   function quoteMeme(
-    address _account,
-    string memory _postText,
-    address[] memory _tags,
-    bytes32 _parentId,
-    bytes32 _originId,
-    bytes32 _memeId
-  ) public {
+            address _account,
+            string memory _postText,
+            address[] memory _tags,
+            bytes32 _parentId,
+            bytes32 _originId,
+            bytes32 _memeId)
+            public {
     require(
       _account==msg.sender,
       'Error: wrong account calling post');
@@ -252,21 +238,24 @@ contract UserInterface {
   }
 
   function deleteMeme(
-    address _account,
-    bytes32 _memeId
-  ) public {
+            address _account,
+            bytes32 _memeId)
+            public {
     require(
       _account==msg.sender,
       'Error: only account can delete meme');
-    post.deleteMeme(_memeId);
+    require(
+      umeToken.balanceOf(msg.sender)>=umeToken.postValue(),
+      'Error: not enough UME to delete meme');
+    post.deleteMeme(_account, _memeId);
   }
 
 
   // like functions
   function likeMeme(
-    address _account,
-    bytes32 _memeId
-  ) public {
+            address _account,
+            bytes32 _memeId)
+            public {
      require(
        _account==msg.sender,
        'Error: liker must be operating account');
@@ -281,9 +270,9 @@ contract UserInterface {
   }
 
   function followUser(
-    address _from,
-    address _to
-  ) public {
+            address _from,
+            address _to)
+            public {
     require(
       _from==msg.sender,
       'Error: follower must be operating account');
@@ -299,10 +288,10 @@ contract UserInterface {
   }
 
   function boostMeme(
-    address _account,
-    bytes32 _memeId,
-    uint _boostNumber
-  ) public {
+            address _account,
+            bytes32 _memeId,
+            uint _boostNumber)
+            public {
     require(
       _account==msg.sender,
       'Error: booster must be msg.sender');
@@ -312,10 +301,10 @@ contract UserInterface {
     boost.boostCall(_account, _memeId, _boostNumber);
   }
   function unBoostMeme(
-    address _account,
-    bytes32 _memeId,
-    uint _boostNumber
-  ) public {
+            address _account,
+            bytes32 _memeId,
+            uint _boostNumber)
+            public {
     require(
       _account==msg.sender,
       'Error: booster must be msg.sender');
@@ -326,18 +315,23 @@ contract UserInterface {
   }
 
   // helper functions
-  function bytesToBytes32(bytes memory source) public pure returns(bytes32 result) {
+  function bytesToBytes32(bytes memory source)
+            public pure returns(bytes32 result) {
     if(source.length==0) return 0x0;
     assembly {
       result := mload(add(source, 32))
     }
   }
 
-  function encode(uint num) public view returns(bytes32) {
+  function encode(uint num)
+            public view returns(bytes32) {
     return keccak256(abi.encodePacked(num));
   }
 
-  function _deleteUints(uint[] memory array, uint index) private pure returns(uint[] memory) {
+  function _deleteUints(
+            uint[] memory array,
+            uint index)
+            private pure returns(uint[] memory) {
     uint[] memory _array = new uint[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];

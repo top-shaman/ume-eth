@@ -17,9 +17,8 @@ module.exports = async function(deployer) {
   // deploy token
   await deployer.deploy(UME)
   const umeToken = await UME.deployed()
-  // deploy token minter
-  await deployer.deploy(We, UME.address)
-  const we = await We.deployed()
+  // deploy fallback
+  await deployer.deploy(We)
   // deploy storage
   await deployer.deploy(MemeStorage)
   const memeStorage = await MemeStorage.deployed()
@@ -45,8 +44,6 @@ module.exports = async function(deployer) {
   await deployer.deploy(UserInterface, UME.address, MemeStorage.address, UserStorage.address, UserFactory.address, Post.address, Like.address, Follow.address, Boost.address)
   const userInterface = await UserInterface.deployed()
 
-  // pass minter role
-  await umeToken.passMinterRole(we.address)
   // pass minter signing roles to post, like & follow
   await umeToken.passPostSignerRole(post.address)
   await umeToken.passMemeFactorySignerRole(memeFactory.address)
@@ -77,4 +74,6 @@ module.exports = async function(deployer) {
   await like.passInterfaceSigner(userInterface.address)
   await follow.passInterfaceSigner(userInterface.address)
   await boost.passInterfaceSigner(userInterface.address)
+  await boost.passFactorySigner(memeFactory.address)
+  await boost.passLikeSigner(like.address)
 }

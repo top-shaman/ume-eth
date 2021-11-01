@@ -14,6 +14,8 @@ contract MemeStorage {
 
   // mapping of Memes
   mapping(bytes32 => Meme) public memes; // memeId to meme map
+  mapping(bytes32 => mapping(address => bool)) public hasLiked;
+  mapping(bytes32 => mapping(address => bool)) public hasUnliked;
 
   // Meme structure
   struct Meme {
@@ -34,11 +36,21 @@ contract MemeStorage {
     bool isVisible; // is visible
   }
 
-  event FactorySignerChanged(address indexed from, address indexed to);
-  event InterfaceSignerChanged(address indexed from, address indexed to);
-  event PostSignerChanged(address indexed from, address indexed to);
-  event LikeSignerChanged(address indexed from, address indexed to);
-  event BoostSignerChanged(address indexed from, address indexed to);
+  event FactorySignerChanged(
+        address indexed from,
+        address indexed to);
+  event InterfaceSignerChanged(
+        address indexed from,
+        address indexed to);
+  event PostSignerChanged(
+        address indexed from,
+        address indexed to);
+  event LikeSignerChanged(
+        address indexed from,
+        address indexed to);
+  event BoostSignerChanged(
+        address indexed from,
+        address indexed to);
 
   constructor() public {
     factorySigner = msg.sender;
@@ -50,16 +62,17 @@ contract MemeStorage {
 
   // Factory-Specific setters
   function setMeme(
-    bytes32 _memeId,
-    Meme memory _meme
-  ) public {
+            bytes32 _memeId,
+            Meme memory _meme)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: msg.sender must be memeFactory to create meme');
     memes[_memeId] = _meme;
     memeIds.push(_memeId);
   }
-  function deleteMeme(bytes32 _memeId) public {
+  function deleteMeme(bytes32 _memeId)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: only factorySigner can delete');
@@ -83,7 +96,8 @@ contract MemeStorage {
     );
     memes[_memeId] = _meme;
   }
-  function increaseMemeCount() public {
+  function increaseMemeCount()
+            public {
     require(
       msg.sender==factorySigner,
       'Error: only factorySigner can increase Count'
@@ -92,9 +106,9 @@ contract MemeStorage {
   }
 
   function setResponses(
-    bytes32 _memeId,
-    bytes32[] memory _responses
-  ) public {
+            bytes32 _memeId,
+            bytes32[] memory _responses)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: msg.sender must be factorySigner');
@@ -102,18 +116,18 @@ contract MemeStorage {
   }
 
   function setReposts(
-    bytes32 _memeId,
-    bytes32[] memory _reposts
-  ) public {
+            bytes32 _memeId,
+            bytes32[] memory _reposts)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: msg.sender must be factorySigner');
     memes[_memeId].reposts = _reposts;
   }
   function setQuotePosts(
-    bytes32 _memeId,
-    bytes32[] memory _quotePosts
-  ) public {
+            bytes32 _memeId,
+            bytes32[] memory _quotePosts)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: msg.sender must be factorySigner');
@@ -121,40 +135,55 @@ contract MemeStorage {
   }
 
   function setLikers(
-    bytes32 _memeId,
-    address[] memory _likers
-  ) public {
+            bytes32 _memeId,
+            address[] memory _likers)
+            public {
     require(
       msg.sender==likeSigner,
       'Error: msg.sender must be likeSigner');
     memes[_memeId].likers = _likers;
   }
   function setUnlikers(
-    bytes32 _memeId,
-    address[] memory _unlikers
-  ) public {
+            bytes32 _memeId,
+            address[] memory _unlikers)
+            public {
     require(
       msg.sender==likeSigner,
       'Error: msg.sender must be likeSigner');
     memes[_memeId].unlikers = _unlikers;
   }
+  function setHasLiked(
+            bytes32 _memeId,
+            address _account)
+            public {
+    require(
+      msg.sender==likeSigner,
+      'Error: msg.sender must be likeSigner');
+    hasLiked[_memeId][_account] = true;
+  }
+  function setHasUnliked(
+            bytes32 _memeId,
+            address _account)
+            public {
+    require(
+      msg.sender==likeSigner,
+      'Error: msg.sender must be likeSigner');
+    hasUnliked[_memeId][_account] = true;
+  }
 
   function addBoost(
-    bytes32 _memeId,
-    uint _boosts
-  ) public {
+            bytes32 _memeId,
+            uint _boosts)
+            public {
     require(
-      msg.sender==boostSigner ||
-      msg.sender==likeSigner ||
-      msg.sender==postSigner ||
-      msg.sender==factorySigner,
-      'Error: msg.sender must be like, post, or boost signer');
+      msg.sender==boostSigner,
+      'Error: msg.sender must be boost signer');
     memes[_memeId].boosts += _boosts;
   }
   function subtractBoost(
-    bytes32 _memeId,
-    uint _boosts
-  ) public {
+            bytes32 _memeId,
+            uint _boosts)
+            public {
     require(
       msg.sender==boostSigner,
       'Error: msg.sender must be like, post, or boost signer');
@@ -162,114 +191,149 @@ contract MemeStorage {
   }
 
   // getter functions for Meme
-  function getMemeCount() public view returns(uint) {
+  function getMemeCount()
+            public view returns(uint) {
     return memeCount;
   }
 
-  function getText(bytes32 _memeId) public view returns(string memory) {
+  function getText(bytes32 _memeId)
+            public view returns(string memory) {
     return memes[_memeId].text;
   }
-  function getLikeCount(bytes32 _memeId) public view returns(uint) {
+  function getLikeCount(bytes32 _memeId)
+            public view returns(uint) {
     return memes[_memeId].likers.length;
   }
-  function getBoost(bytes32 _memeId) public view returns(uint) {
+  function getBoost(bytes32 _memeId)
+            public view returns(uint) {
     return memes[_memeId].boosts;
   }
-  function getLikers(bytes32 _memeId) public view returns(address[] memory) {
+  function getLikers(bytes32 _memeId)
+            public view returns(address[] memory) {
     return memes[_memeId].likers;
   }
-  function getUnlikers(bytes32 _memeId) public view returns(address[] memory) {
+  function getUnlikers(bytes32 _memeId)
+            public view returns(address[] memory) {
     return memes[_memeId].unlikers;
   }
-  function getRepostCount(bytes32 _memeId) public view returns(uint) {
+  function getRepostCount(bytes32 _memeId)
+            public view returns(uint) {
     return memes[_memeId].reposts.length;
   }
-  function getReposts(bytes32 _memeId) public view returns(bytes32[] memory) {
+  function getReposts(bytes32 _memeId)
+            public view returns(bytes32[] memory) {
     return memes[_memeId].reposts;
   }
-  function getQuotePostCount(bytes32 _memeId) public view returns(uint) {
+  function getQuotePostCount(bytes32 _memeId)
+            public view returns(uint) {
     return memes[_memeId].quotePosts.length;
   }
-  function getQuotePosts(bytes32 _memeId) public view returns(bytes32[] memory) {
+  function getQuotePosts(bytes32 _memeId)
+            public view returns(bytes32[] memory) {
     return memes[_memeId].quotePosts;
   }
-  function getTags(bytes32 _memeId) public view returns(address[] memory) {
+  function getTags(bytes32 _memeId)
+            public view returns(address[] memory) {
     return memes[_memeId].tags;
   }
-  function getResponseCount(bytes32 _memeId) public view returns(uint) {
+  function getResponseCount(bytes32 _memeId)
+            public view returns(uint) {
     return memes[_memeId].responses.length;
   }
-  function getResponses(bytes32 _memeId) public view returns(bytes32[] memory) {
+  function getResponses(bytes32 _memeId)
+            public view returns(bytes32[] memory) {
     return memes[_memeId].responses;
   }
-  function getParentId(bytes32 _memeId) public view returns(bytes32) {
+  function getParentId(bytes32 _memeId)
+            public view returns(bytes32) {
     return memes[_memeId].parentId;
   }
-  function getOriginId(bytes32 _memeId) public view returns(bytes32) {
+  function getOriginId(bytes32 _memeId)
+            public view returns(bytes32) {
     return memes[_memeId].originId;
   }
-  function getRepostId(bytes32 _memeId) public view returns(bytes32) {
+  function getRepostId(bytes32 _memeId)
+            public view returns(bytes32) {
     return memes[_memeId].repostId;
   }
-  function getAuthor(bytes32 _memeId) public view returns(address) {
+  function getAuthor(bytes32 _memeId)
+            public view returns(address) {
     return memes[_memeId].author;
   }
-  function getVisibility(bytes32 _memeId) public view returns(bool) {
+  function getVisibility(bytes32 _memeId)
+            public view returns(bool) {
     return memes[_memeId].isVisible;
   }
-
-// encode uint for testing
-  function getEncodeId(uint _memeId) public view returns(bytes32) {
-    return memes[keccak256(abi.encodePacked(_memeId))].id;
-  }
-  function getEncodeLikeCount(uint _memeId) public view returns(uint) {
-    return memes[keccak256(abi.encodePacked(_memeId))].likers.length;
-  }
-  function getEncodeLikers(uint _memeId) public view returns(address[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].likers;
-  }
-  function getEncodeUnlikers(uint _memeId) public view returns(address[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].unlikers;
-  }
-  function getEncodeRepostCount(uint _memeId) public view returns(uint) {
-    return memes[keccak256(abi.encodePacked(_memeId))].reposts.length;
-  }
-  function getEncodeReposts(uint _memeId) public view returns(bytes32[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].reposts;
-  }
-  function getEncodeQuotePostCount(uint _memeId) public view returns(uint) {
-    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts.length;
-  }
-  function getEncodeQuotePosts(uint _memeId) public view returns(bytes32[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts;
-  }
-  function getEncodeTags(uint _memeId) public view returns(address[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].tags;
-  }
-  function getEncodeResponseCount(uint _memeId) public view returns(uint) {
-    return memes[keccak256(abi.encodePacked(_memeId))].responses.length;
-  }
-  function getEncodeResponses(uint _memeId) public view returns(bytes32[] memory) {
-    return memes[keccak256(abi.encodePacked(_memeId))].responses;
-  }
-  function getEncodeParentId(uint _memeId) public view returns(bytes32) {
-    return memes[keccak256(abi.encodePacked(_memeId))].parentId;
-  }
-  function getEncodeOriginId(uint _memeId) public view returns(bytes32) {
-    return memes[keccak256(abi.encodePacked(_memeId))].originId;
-  }
-  function getEncodeAuthor(uint _memeId) public view returns(address) {
-    return memes[keccak256(abi.encodePacked(_memeId))].author;
-  }
-  function getEncodeVisibility(uint _memeId) public view returns(bool) {
-    return memes[keccak256(abi.encodePacked(_memeId))].isVisible;
-  }
-  function getEncodedIds() public view returns(bytes32[] memory) {
+  function getEncodedIds()
+            public view returns(bytes32[] memory) {
     return memeIds;
   }
 
+// encode uint for testing
+  function getEncodeId(uint _memeId)
+            public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].id;
+  }
+  function getEncodeLikeCount(uint _memeId)
+            public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].likers.length;
+  }
+  function getEncodeLikers(uint _memeId)
+            public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].likers;
+  }
+  function getEncodeUnlikers(uint _memeId)
+            public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].unlikers;
+  }
+  function getEncodeRepostCount(uint _memeId)
+            public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].reposts.length;
+  }
+  function getEncodeReposts(uint _memeId)
+            public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].reposts;
+  }
+  function getEncodeQuotePostCount(uint _memeId)
+            public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts.length;
+  }
+  function getEncodeQuotePosts(uint _memeId)
+            public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].quotePosts;
+  }
+  function getEncodeTags(uint _memeId)
+            public view returns(address[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].tags;
+  }
+  function getEncodeResponseCount(uint _memeId)
+            public view returns(uint) {
+    return memes[keccak256(abi.encodePacked(_memeId))].responses.length;
+  }
+  function getEncodeResponses(uint _memeId)
+            public view returns(bytes32[] memory) {
+    return memes[keccak256(abi.encodePacked(_memeId))].responses;
+  }
+  function getEncodeParentId(uint _memeId)
+            public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].parentId;
+  }
+  function getEncodeOriginId(uint _memeId)
+            public view returns(bytes32) {
+    return memes[keccak256(abi.encodePacked(_memeId))].originId;
+  }
+  function getEncodeAuthor(uint _memeId)
+            public view returns(address) {
+    return memes[keccak256(abi.encodePacked(_memeId))].author;
+  }
+  function getEncodeVisibility(uint _memeId)
+            public view returns(bool) {
+    return memes[keccak256(abi.encodePacked(_memeId))].isVisible;
+  }
+
   // set caller role to User upon deployment
-  function passFactorySigner(address _memeFactory) public returns (bool) {
+  function passFactorySigner(address _memeFactory)
+            public returns (bool) {
     require(
       msg.sender == factorySigner,
       'Error: msg.sender must be factorySigner');
@@ -278,7 +342,8 @@ contract MemeStorage {
     emit FactorySignerChanged(msg.sender, factorySigner);
     return true;
   }
-  function passInterfaceSigner(address _userInterface) public returns (bool) {
+  function passInterfaceSigner(address _userInterface)
+            public returns (bool) {
     require(
       msg.sender == interfaceSigner,
       'Error: msg.sender must be factorySigner');
@@ -287,7 +352,8 @@ contract MemeStorage {
     emit InterfaceSignerChanged(msg.sender, interfaceSigner);
     return true;
   }
-  function passPostSigner(address _post) public returns (bool) {
+  function passPostSigner(address _post)
+            public returns (bool) {
     require(
       msg.sender == postSigner,
       'Error: msg.sender must be postSigner');
@@ -296,7 +362,8 @@ contract MemeStorage {
     emit PostSignerChanged(msg.sender, postSigner);
     return true;
   }
-  function passLikeSigner(address _like) public returns (bool) {
+  function passLikeSigner(address _like)
+            public returns (bool) {
     require(
       msg.sender == likeSigner,
       'Error: msg.sender must be likeSigner');
@@ -305,7 +372,8 @@ contract MemeStorage {
     emit LikeSignerChanged(msg.sender, likeSigner);
     return true;
   }
-  function passBoostSigner(address _boost) public returns (bool) {
+  function passBoostSigner(address _boost)
+            public returns (bool) {
     require(
       msg.sender == boostSigner,
       'Error: msg.sender must be likeSigner');

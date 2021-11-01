@@ -1,14 +1,25 @@
 // SPDX-License-Identifier: MIT
+pragma solidity >=0.6.0 <0.9.0;
 
-pragma solidity >=0.8.0 <0.9.0;
-
-import "./UME.sol";
-
-// smart contract for We (decentralized bank which mints UME)
 contract We {
-  UME private umeToken;
+  mapping(address => uint) balance;
 
-  constructor(UME _umeToken) public {
-    umeToken = _umeToken;
+  function receiveEth()
+            public payable {
+    assert(balance[msg.sender] + msg.value >= balance[msg.sender]);
+    balance[msg.sender] += msg.value;
+  }
+  function withdrawEth(
+            address payable _to,
+            uint _amount)
+            public {
+    require(_amount <= balance[msg.sender], 'not enough funds');
+    assert(balance[msg.sender] >= balance[msg.sender] - _amount);
+    balance[msg.sender] -= _amount;
+    _to.transfer(_amount);
+  }
+
+  receive() external payable {
+    receiveEth();
   }
 }

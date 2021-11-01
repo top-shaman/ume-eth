@@ -3,44 +3,49 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "./UME.sol";
+import "./Boost.sol";
 import "./MemeStorage.sol";
 
 contract Like {
 
   UME private umeToken;
   MemeStorage private memeStorage;
+  Boost private boost;
 
   address public interfaceSigner;
 
-  event InterfaceSignerChanged(address indexed from, address indexed to);
+  event InterfaceSignerChanged(
+        address indexed from,
+        address indexed to);
+  event Liked(address indexed liker,
+             bytes32 indexed memeId);
 
-  constructor(
-    UME _umeToken,
-    MemeStorage _memeStorage
-  ) public {
+  constructor(UME _umeToken,
+              MemeStorage _memeStorage)
+              public {
     umeToken = _umeToken;
     memeStorage = _memeStorage;
     interfaceSigner = msg.sender;
   }
-
   // like functions
   function likeMeme(
-    address _account,
-    bytes32 _memeId
-  ) public {
+            address _account,
+            bytes32 _memeId)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: liker must be operating account');
     address[] memory _likers = memeStorage.getLikers(_memeId);
     uint _likeCount = _likers.length;
-    bool _alreadyLiked = false;
+    bool _alreadyLiked = memeStorage.hasLiked(_memeId, _account);
+    bool _alreadyUnliked = memeStorage.hasUnliked(_memeId, _account);
     bool _unliked = false;
     // remove like if already liked
     for(uint i = 0; i < _likeCount; i++) {
       if(_account==_likers[i]) {
-        _alreadyLiked = true;
-        _unLike(_account, _memeId, _likers, i);
+        _unLike(_account, _memeId, _likers, i, _alreadyUnliked);
         _unliked = true;
+        memeStorage.setHasUnliked(_memeId, _account);
         break;
       }
     } // check for double like minting
@@ -48,30 +53,30 @@ contract Like {
     uint _unlikeCount = _unlikers.length;
     for(uint i = 0; i < _unlikeCount; i++) {
       if(_account==_unlikers[i] && _unliked==false) {
-        _alreadyLiked = true;
         _addLike(_account, _memeId, _likers, _unlikers, i, _alreadyLiked);
         break;
       }
     }
     if(_alreadyLiked==false && _unliked==false) {
-      // might have to set new address[](0) for likers & unlikers
       _addLike(_account, _memeId, _likers, _unlikers, 0, _alreadyLiked);
       // mint like token
       if(_account!=memeStorage.getAuthor(_memeId)) {
         umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));
-        memeStorage.addBoost(_memeId, 5);
+        memeStorage.setHasLiked(_memeId, _account);
+        boost.likeBoost(_memeId);
       }
+      emit Liked(_account, _memeId);
     }
   }
   // setter functions for Meme
   function _addLike(
-    address _account,
-    bytes32 _memeId,
-    address[] memory _oldLikers,
-    address[] memory _unlikers,
-    uint _index,
-    bool _alreadyLiked
-  ) private {
+            address _account,
+            bytes32 _memeId,
+            address[] memory _oldLikers,
+            address[] memory _unlikers,
+            uint _index,
+            bool _alreadyLiked)
+            private {
     if(_alreadyLiked==true) {
       memeStorage.setUnlikers(_memeId, _deleteAddress(_unlikers, _index));
     }
@@ -90,14 +95,21 @@ contract Like {
     memeStorage.setLikers(_memeId, _newLikers);
   }
   function _unLike(
-    address _account,
-    bytes32 _memeId,
-    address[] memory _oldLikers,
-    uint _index
-  ) private {
+            address _account,
+            bytes32 _memeId,
+            address[] memory _oldLikers,
+            uint _index,
+            bool _alreadyUnliked)
+            private {
     require(
       memeStorage.getLikeCount(_memeId)>0,
       'Error: no likers in meme');
+    if(_alreadyUnliked==false) {
+      require(
+        umeToken.balanceOf(_account)>=umeToken.likeFromValue(),
+        'Error: not enough UME to unlike');
+      umeToken.burn(_account, umeToken.likeFromValue());
+    }
     address[] memory _oldUnlikers = memeStorage.getUnlikers(_memeId);
     // delete liked index, moving all successive elements
     memeStorage.setLikers(_memeId, _deleteAddress(_oldLikers, _index));
@@ -117,9 +129,9 @@ contract Like {
 
   // helper functions
   function _deleteAddress(
-    address[] memory array,
-    uint index
-  ) private pure returns(address[] memory) {
+            address[] memory array,
+            uint index)
+            private pure returns(address[] memory) {
     address[] memory _array = new address[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];
@@ -131,7 +143,8 @@ contract Like {
   }
 
   // set interfaceSigner role to User upon deployment
-  function passInterfaceSigner(address _userInterface) public returns (bool) {
+  function passInterfaceSigner(address _userInterface)
+            public returns (bool) {
     require(
       msg.sender == interfaceSigner,
       'Error: only deployer can pass signer role');

@@ -14,6 +14,9 @@ contract UserStorage {
   mapping(address => User) public users; // address to Users map
   mapping(bytes32 => address) public usersByMeme; // memeId to account addresses
   mapping(bytes32 => address) public usersByUserAddr; // userAddr to account address
+  mapping(address => mapping(address => bool)) public hasFollowed;
+  mapping(address => mapping(address => bool)) public hasUnfollowed;
+
 
   struct User {
     bytes32 id; // user number in order
@@ -28,13 +31,23 @@ contract UserStorage {
     address[] unfollowers; // addresses of followers
     address[] unfollowing; // addressses of following
     bytes32[] posts; // memeIds of posts
-  }
+    }
 
-  event FactorySignerChanged(address indexed from, address indexed to);
-  event InterfaceSignerChanged(address indexed from, address indexed to);
-  event PostSignerChanged(address indexed from, address indexed to);
-  event LikeSignerChanged(address indexed from, address indexed to);
-  event FollowSignerChanged(address indexed from, address indexed to);
+  event FactorySignerChanged(
+        address indexed from,
+        address indexed to);
+  event InterfaceSignerChanged(
+        address indexed from,
+        address indexed to);
+  event PostSignerChanged(
+        address indexed from,
+        address indexed to);
+  event LikeSignerChanged(
+        address indexed from,
+        address indexed to);
+  event FollowSignerChanged(
+        address indexed from,
+        address indexed to);
 
   constructor() public {
     factorySigner = msg.sender;
@@ -47,9 +60,9 @@ contract UserStorage {
 
   // Factory-Specific setters
   function setUser(
-    address _account,
-    User memory _user
-  ) public {
+            address _account,
+            User memory _user)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: user factory must be signer');
@@ -57,24 +70,25 @@ contract UserStorage {
     usersByUserAddr[_user.userAddr] = _account;
   }
   function setUsersByUserAddress(
-    bytes32 _userAddr,
-    address _account
-  ) public {
+            bytes32 _userAddr,
+            address _account)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: user factory must be signer');
     usersByUserAddr[_userAddr] = _account;
   }
   function setUsersByMeme(
-    bytes32 _memeId,
-    address _account
-  ) public {
+            bytes32 _memeId,
+            address _account)
+            public {
     require(
       msg.sender==memeFactorySigner,
       'Error: user factory must be signer');
     usersByMeme[_memeId] = _account;
   }
-  function deleteUser(address _account) public {
+  function deleteUser(address _account)
+            public {
     require(
       msg.sender==factorySigner,
       'Error: user factory must be signer');
@@ -88,18 +102,18 @@ contract UserStorage {
   }
   // Setters for interface only
   function setUserName(
-    address _account,
-    bytes32 _userName
-  ) public {
+            address _account,
+            bytes32 _userName)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: user factory must be signer');
     users[_account].name= _userName;
   }
   function setUserAddress(
-    address _account,
-    bytes32 _userAddress
-  ) public {
+            address _account,
+            bytes32 _userAddress)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: user factory must be signer');
@@ -110,18 +124,18 @@ contract UserStorage {
     usersByUserAddr[_userAddress] = _account;
   }
   function setBio(
-    address _account,
-    string memory _bio
-  ) public {
+            address _account,
+            string memory _bio)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error, interface must be signer');
     users[_account].bio = _bio;
   }
   function setProfilePic(
-    address _account,
-    string memory _imgHash
-  ) public {
+            address _account,
+            string memory _imgHash)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error, interface must be signer');
@@ -131,40 +145,53 @@ contract UserStorage {
   // Setters for all signers
   // set post meme
   function setPosts(
-    address _account,
-    bytes32[] memory _posts
-  ) public {
+            address _account,
+            bytes32[] memory _posts)
+            public {
     users[_account].posts = _posts;
   }
 
   // set follow
   function setFollowers(
-    address _account,
-    address[] memory _followers
-  ) public {
+            address _account,
+            address[] memory _followers)
+            public {
     users[_account].followers = _followers;
   }
   function setFollowing(
-    address _account,
-    address[] memory _following
-  ) public {
+            address _account,
+            address[] memory _following)
+            public {
     users[_account].following = _following;
   }
   function setUnfollowers(
-    address _account,
-    address[] memory _unfollowers
-  ) public {
+            address _account,
+            address[] memory _unfollowers)
+            public {
     users[_account].unfollowers = _unfollowers;
   }
   function setUnfollowing(
-    address _account,
-    address[] memory _unfollowing
-  ) public {
+            address _account,
+            address[] memory _unfollowing)
+            public {
     users[_account].unfollowing = _unfollowing;
+  }
+  function setHasFollowed(
+            address _following,
+            address _follower)
+            public {
+    hasFollowed[_following][_follower] = true;
+  }
+  function setHasUnfollowed(
+            address _following,
+            address _follower)
+            public {
+    hasUnfollowed[_following][_follower] = true;
   }
 
   // getter functions for UserStorage
-  function userExists(address _account) public view returns(bool) {
+  function userExists(address _account)
+            public view returns(bool) {
     if(users[_account].addr!=address(0x0)) {
       return true;
     }
@@ -172,7 +199,8 @@ contract UserStorage {
       return false;
     }
   }
-  function userAddressExists(bytes32 _userAddress) public view returns(bool) {
+  function userAddressExists(bytes32 _userAddress)
+            public view returns(bool) {
     if(usersByUserAddr[_userAddress]!=address(0x0)) {
       return true;
     }
@@ -181,9 +209,9 @@ contract UserStorage {
     }
   }
   function isFollowing(
-    address _from,
-    address _to
-  ) public view returns(bool) {
+            address _from,
+            address _to)
+            public view returns(bool) {
     for(uint i = 0; i < users[_to].following.length; i++) {
       if(_from==users[_to].following[i]) {
         return true;
@@ -191,9 +219,9 @@ contract UserStorage {
     }
   }
   function isFollower(
-    address _from,
-    address _to
-  ) public view returns(bool) {
+            address _from,
+            address _to)
+            public view returns(bool) {
     for(uint i = 0; i < users[_to].followers.length; i++) {
       if(_from==users[_to].followers[i]) {
         return true;
@@ -202,69 +230,92 @@ contract UserStorage {
   }
 
 
-  function getUser(address _account) public view returns(User memory){
+  function getUser(address _account)
+            public view returns(User memory){
     return users[_account];
   }
-  function getId(address _account) public view returns(bytes32) {
+  function getId(address _account)
+            public view returns(bytes32) {
     return users[_account].id;
   }
-  function getName(address _account) public view returns(bytes32) {
+  function getName(address _account)
+            public view returns(bytes32) {
     return users[_account].name;
   }
-  function getUserAddr(address _account) public view returns(bytes32) {
+  function getUserAddr(address _account)
+            public view returns(bytes32) {
     return users[_account].userAddr;
   }
-  function getAddr(address _account) public view returns(address) {
+  function getAddr(address _account)
+            public view returns(address) {
     return users[_account].addr;
   }
-  function getBio(address _account) public view returns(string memory) {
+  function getBio(address _account)
+            public view returns(string memory) {
     return users[_account].bio;
   }
-  function getTime(address _account) public view returns(uint) {
+  function getTime(address _account)
+            public view returns(uint) {
     return users[_account].time;
   }
-  function getProfilePic(address _account) public view returns(string memory) {
+  function getProfilePic(address _account)
+            public view returns(string memory) {
     return users[_account].profilePic;
   }
-  function getFollowerCount(address _account) public view returns(uint) {
+  function getFollowerCount(address _account)
+            public view returns(uint) {
     return users[_account].followers.length;
   }
-  function getFollowers(address _account) public view returns(address[] memory) {
+  function getFollowers(address _account)
+            public view returns(address[] memory) {
     return users[_account].followers;
   }
-  function getFollowerAt(address _account, uint _index) public view returns(address) {
+  function getFollowerAt(
+            address _account,
+            uint _index)
+            public view returns(address) {
     return users[_account].followers[_index];
   }
-  function getFollowingCount(address _account) public view returns(uint) {
+  function getFollowingCount(address _account)
+            public view returns(uint) {
     return users[_account].following.length;
   }
-  function getFollowing(address _account) public view returns(address[] memory) {
+  function getFollowing(address _account)
+            public view returns(address[] memory) {
     return users[_account].following;
   }
-  function getFollowingAt(address _account, uint _index) public view returns(address) {
+  function getFollowingAt(address _account, uint _index)
+            public view returns(address) {
     return users[_account].following[_index];
   }
-  function getUnfollowerCount(address _account) public view returns(uint) {
+  function getUnfollowerCount(address _account)
+            public view returns(uint) {
     return users[_account].unfollowers.length;
   }
-  function getUnfollowers(address _account) public view returns(address[] memory) {
+  function getUnfollowers(address _account)
+            public view returns(address[] memory) {
     return users[_account].unfollowers;
   }
-  function getUnfollowingCount(address _account) public view returns(uint) {
+  function getUnfollowingCount(address _account)
+            public view returns(uint) {
     return users[_account].unfollowing.length;
   }
-  function getUnfollowing(address _account) public view returns(address[] memory) {
+  function getUnfollowing(address _account)
+            public view returns(address[] memory) {
     return users[_account].unfollowing;
   }
-  function getPostCount(address _account) public view returns (uint) {
+  function getPostCount(address _account)
+            public view returns (uint) {
     return users[_account].posts.length;
   }
-  function getPosts(address _account) public view returns (bytes32[] memory) {
+  function getPosts(address _account)
+            public view returns (bytes32[] memory) {
     return users[_account].posts;
   }
 
   // pass signer roles
-  function passFactorySigner(address _userFactory) public returns(bool){
+  function passFactorySigner(address _userFactory)
+            public returns(bool){
     require(
       msg.sender==factorySigner,
       'Error: msg.sender must be factorySigner');
@@ -273,7 +324,8 @@ contract UserStorage {
     emit FactorySignerChanged(msg.sender, factorySigner);
     return true;
   }
-  function passInterfaceSigner(address _userInterface) public returns(bool){
+  function passInterfaceSigner(address _userInterface)
+            public returns(bool){
     require(
       msg.sender==interfaceSigner,
       'Error: msg.sender must be factorySigner');
@@ -282,7 +334,8 @@ contract UserStorage {
     emit InterfaceSignerChanged(msg.sender, interfaceSigner);
     return true;
   }
-  function passMemeFactorySigner(address _memeFactory) public returns(bool){
+  function passMemeFactorySigner(address _memeFactory)
+            public returns(bool){
     require(
       msg.sender==memeFactorySigner,
       'Error: msg.sender must be memeFactorySigner');
@@ -291,7 +344,8 @@ contract UserStorage {
     emit PostSignerChanged(msg.sender, memeFactorySigner);
     return true;
   }
-  function passLikeSigner(address _likeSigner) public returns(bool){
+  function passLikeSigner(address _likeSigner)
+            public returns(bool){
     require(
       msg.sender==likeSigner,
       'Error: msg.sender must be likeSigner');
@@ -300,7 +354,8 @@ contract UserStorage {
     emit LikeSignerChanged(msg.sender, likeSigner);
     return true;
   }
-  function passFollowSigner(address _followSigner) public returns(bool){
+  function passFollowSigner(address _followSigner)
+            public returns(bool){
     require(
       msg.sender==followSigner,
       'Error: msg.sender must be factorySigner');

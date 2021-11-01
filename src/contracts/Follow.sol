@@ -11,9 +11,16 @@ contract Follow {
 
   address public interfaceSigner;
 
-  event FollowSignerChanged(address indexed from, address indexed to);
+  event FollowSignerChanged(
+        address indexed from,
+        address indexed to);
+  event Followed(
+        address indexed following,
+        address indexed followed);
 
-  constructor (UME _umeToken, UserStorage _userStorage) public {
+  constructor(UME _umeToken,
+              UserStorage _userStorage)
+              public {
     umeToken = _umeToken;
     userStorage = _userStorage;
 
@@ -21,31 +28,33 @@ contract Follow {
   }
 
   function follow(
-    address _from,
-    address _to
-  ) public {
+            address _from,
+            address _to)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: operator must be user interface');
     _addFollower(_from, _to);
     _addFollowing(_from, _to);
+    emit Followed(_from, _to);
   }
 
   function _addFollower(
-    address _from,
-    address _to
-  ) private {
+            address _from,
+            address _to)
+            private {
     // create new memory instance of an array one larger than current follower count
-    bool _alreadyFollower=false;
+    bool _alreadyFollower = userStorage.hasUnfollowed(_from, _to);
+    bool _alreadyUnfollower = userStorage.hasUnfollowed(_from, _to);
     bool _isUnfollower = false;
     address[] memory _oldFollowers = userStorage.getFollowers(_to);
     uint _followerCount = _oldFollowers.length;
     address[] memory _newFollowers = new address[](_followerCount+1);
     for (uint i = 0; i < _followerCount; i++) {
       if(_oldFollowers[i]==_from) {
-        _alreadyFollower = true;
-        _unFollower(_from, _to, _oldFollowers, i);
+        _unFollower(_from, _to, _oldFollowers, i, _alreadyUnfollower);
         _isUnfollower = true;
+        userStorage.setHasUnfollowed(_from, _to);
         break;
       }
       _newFollowers[i] = _oldFollowers[i];
@@ -54,7 +63,6 @@ contract Follow {
     uint _unfollowCount = _unfollowers.length;
     for(uint i = 0; i < _unfollowCount; i++) {
       if(_to==_unfollowers[i] && _isUnfollower==false) {
-        _alreadyFollower = true;
         userStorage.setFollowers(_to, _newFollowers);
         userStorage.setUnfollowers(_to, _deleteAddress(_unfollowers, i));
         break;
@@ -65,16 +73,17 @@ contract Follow {
       _newFollowers[_followerCount] = _from;
       // update followers to storage
       userStorage.setFollowers(_to, _newFollowers);
+      userStorage.setHasFollowed(_from, _to);
       umeToken.mintFollow(_from, _to);
     }
   }
   function _addFollowing(
-    address _from,
-    address _to
-  ) private {
+            address _from,
+            address _to)
+            private {
     // create new memory instance of an array one larger than current following count
     bool _alreadyFollowing=false;
-    bool _isUnfollowing = false;
+    bool _isUnfollowing=false;
     address[] memory _oldFollowing = userStorage.getFollowing(_from);
     uint _followingCount = _oldFollowing.length;
     address[] memory _newFollowing = new address[](_followingCount+1);
@@ -106,14 +115,21 @@ contract Follow {
   }
 
   function _unFollower(
-    address _from,
-    address _to,
-    address[] memory _oldFollowers,
-    uint index
-  ) private {
+            address _from,
+            address _to,
+            address[] memory _oldFollowers,
+            uint index,
+            bool _alreadyUnfollower)
+            private {
     require(
       userStorage.getFollowerCount(_to)>0,
       'Error: no followers');
+    if(_alreadyUnfollower==false) {
+      require(
+        umeToken.balanceOf(_from)>=umeToken.followFromValue(),
+        'Error: not enough UME to unfollow');
+      umeToken.burn(_from, umeToken.followFromValue());
+    }
     address[] memory _oldUnfollowers = userStorage.getUnfollowers(_to);
     userStorage.setFollowers(_to, _deleteAddress(_oldFollowers, index));
     uint _oldUnfollowCount = _oldUnfollowers.length;
@@ -126,11 +142,11 @@ contract Follow {
     userStorage.setUnfollowers(_to, _newUnfollowers);
   }
   function _unFollowing(
-    address _from,
-    address _to,
-    address[] memory _oldFollowing,
-    uint index
-  ) private {
+            address _from,
+            address _to,
+            address[] memory _oldFollowing,
+            uint index)
+            private {
     require(
       userStorage.getFollowingCount(_from)>0,
       'Error: no following');
@@ -147,9 +163,9 @@ contract Follow {
   }
 
   function _deleteAddress(
-    address[] memory array,
-    uint index
-  ) private pure returns(address[] memory) {
+            address[] memory array,
+            uint index)
+            private pure returns(address[] memory) {
     address[] memory _array = new address[](array.length-1);
     for(uint i = 0; i < index; i++) {
       _array[i] = array[i];
@@ -160,7 +176,8 @@ contract Follow {
     return _array;
   }
 
-  function passInterfaceSigner(address _userInterface) public returns(bool){
+  function passInterfaceSigner(address _userInterface)
+            public returns(bool){
     require(
       interfaceSigner==msg.sender,
       'Error: msg.sender must be interfaceSigner');

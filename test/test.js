@@ -30,7 +30,6 @@ var UserFactory = artifacts.require("./UserFactory.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
 
 var UME = artifacts.require("./UME.sol");
-var We = artifacts.require("./We.sol");
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -46,12 +45,12 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
 
   beforeEach(async () => {
     umeToken = await UME.new()
-    we = await We.new(umeToken.address)
 
     memeStorage = await MemeStorage.new()
     userStorage = await UserStorage.new()
     memeFactory = await MemeFactory.new(umeToken.address, memeStorage.address, userStorage.address)
     userFactory = await UserFactory.new(userStorage.address)
+    we = await We.new()
 
     post = await Post.new(umeToken.address, memeFactory.address, memeStorage.address)
     like = await Like.new(umeToken.address, memeStorage.address)
@@ -169,9 +168,6 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
 //        expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('40')
 //        expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('26')
 //      })
-//      it('We should have the UME token minter role', async () => {
-//        expect(await umeToken.minter()).to.be.eq(we.address)
-//      })
 //      it('For the sake of these tests, user1 should have caller role', async () => {
 //        expect(await umeToken.postCaller()).to.be.eq(user1)
 //        expect(await umeToken.userCaller()).to.be.eq(user1)
@@ -190,19 +186,6 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
 //      })
 //    })
 //    describe('failures', () => {
-//      it('checking for false minting, group', async () => {
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//        expect(await umeToken.balanceOf(we.address).then(bal => bal.toString())).to.be.eq('0')
-//      })
-//      it('We shouldn\'t be able to post and therefore cannot mint UME', async () => {
-//        await umeToken.passPostCallerRole(we.address, {from: user1})
-//        await umeToken.mintPost(we.address /* , '0x012345' */, 'hello world!', {from: we.address}).should.be.rejectedWith(EVM_SENDER)
-//      })
 //      it('Incorrect addresses shouldn\'t be able to mint POST UME if they are not caller', async () => {
 //        await umeToken.passPostCallerRole(post.address, {from: user1})
 //        await umeToken.passUserCallerRole(user.address, {from: user1})

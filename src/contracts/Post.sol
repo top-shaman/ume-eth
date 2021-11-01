@@ -17,11 +17,10 @@ contract Post {
 
   event InterfaceSignerChanged(address indexed from, address indexed to);
 
-  constructor(
-    UME _umeToken,
-    MemeFactory _memeFactory,
-    MemeStorage _memeStorage
-  ) public {
+  constructor(UME _umeToken,
+              MemeFactory _memeFactory,
+              MemeStorage _memeStorage)
+              public {
     umeToken = _umeToken;
     memeFactory = _memeFactory;
     memeStorage = _memeStorage;
@@ -31,12 +30,12 @@ contract Post {
 
   // posting meme functions
   function newMeme(
-    address _account,
-    string memory _memeText,
-    address[] memory _tags,
-    bytes32 _parentId,
-    bytes32 _originId
-  ) public {
+            address _account,
+            string memory _memeText,
+            address[] memory _tags,
+            bytes32 _parentId,
+            bytes32 _originId)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: poster must be operating account');
@@ -45,47 +44,48 @@ contract Post {
   }
 
   function rememe(
-    address _account,
-    bytes32 _repostId
-  ) public {
+            address _account,
+            bytes32 _repostId)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: poster must be operating account');
     memeFactory.newMeme(_account, '', new address[](0), zeroBytes, zeroBytes, _repostId);
     if(_account!=memeStorage.getAuthor(_repostId)) {
       umeToken.mintRepost(_account, memeStorage.getAuthor(_repostId));
-      memeStorage.addBoost(_repostId, 8);
     }
   }
   function quoteMeme(
-    address _account,
-    string memory _memeText,
-    address[] memory _tags,
-    bytes32 _parentId,
-    bytes32 _originId,
-    bytes32 _repostId
-  ) public {
+            address _account,
+            string memory _memeText,
+            address[] memory _tags,
+            bytes32 _parentId,
+            bytes32 _originId,
+            bytes32 _repostId)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: poster must be operating account');
     memeFactory.newMeme(_account, _memeText, _tags, _parentId, _originId, _repostId);
     if(_account!=memeStorage.getAuthor(_repostId)) {
       umeToken.mintRepost(_account, memeStorage.getAuthor(_repostId));
-      memeStorage.addBoost(_repostId, 8);
     }
   }
 
-  function deleteMeme(
-    bytes32 _memeId
-  ) public {
+  function deleteMeme(address _account, bytes32 _memeId)
+            public {
     require(
       msg.sender==interfaceSigner,
       'Error: only interface signer can delete meme');
-    memeFactory.deleteMeme(_memeId);
+    require(
+      umeToken.balanceOf(msg.sender)>=umeToken.postValue(),
+      'Error: not enough UME to delete meme');
+    memeFactory.deleteMeme(_account, _memeId);
   }
 
   // set caller role to User upon deployment
-  function passInterfaceSigner(address _userInterface) public returns (bool) {
+  function passInterfaceSigner(address _userInterface)
+            public returns (bool) {
     require(
       msg.sender == interfaceSigner,
       'Error, only deployer can pass interface signer role');

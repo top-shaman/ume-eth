@@ -10,31 +10,29 @@ contract UserFactory {
 
   address public signer;
 
-  event NewUser(address account, bytes32 userName, bytes32 userAddr, uint time);
-  event DeletedUser(bytes32 id, uint time);
-  event SignerChanged(address from, address to);
-/*
-  struct User {
-    bytes32 id; // user number in order
-    bytes32 name; // user name
-    bytes32 userAddr; // user address (@)
-    uint time; // user creation time
-    address addr; // address of user
-    address[] followers; // addresses of followers
-    address[] following; // addressses of following
-    uint[] posts; // memeIds of posts
-  }
-*/
-  constructor(UserStorage _userStorage) public {
+  event NewUser(
+         address indexed account,
+         bytes32 userName,
+         bytes32 userAddr,
+         uint time);
+  event DeletedUser(
+         address indexed account,
+         uint time);
+  event SignerChanged(
+         address indexed from,
+         address indexed to);
+
+  constructor(UserStorage _userStorage)
+              public {
     signer = msg.sender;
     userStorage = _userStorage;
   }
 
   function newUser(
-    address _account,
-    bytes32 _userName,
-    bytes32 _userAddress
-  ) public {
+            address _account,
+            bytes32 _userName,
+            bytes32 _userAddress)
+            public {
     require(
       msg.sender==signer,
       'Error: account must be interface');
@@ -57,9 +55,9 @@ contract UserFactory {
     emit NewUser(_account, _userName, _userAddress, block.timestamp);
   }
   function deleteUser(
-    address _account,
-    bool failSafe
-  ) public {
+            address _account,
+            bool failSafe)
+            public {
     require(
       msg.sender==signer && failSafe==true,
       'Error: account must be interface');
@@ -67,14 +65,14 @@ contract UserFactory {
       userStorage.getAddr(_account)==_account,
       'Error: account doesn\'t exist');
 
-    bytes32 _deletedUser = userStorage.getId(_account);
     // remove followers and following here
     userStorage.deleteUser(_account);
-    emit DeletedUser(_deletedUser, block.timestamp);
+    emit DeletedUser(_account, block.timestamp);
   }
 
   // pass signer role to interface
-  function passInterfaceSigner(address _userInterface) public returns(bool) {
+  function passInterfaceSigner(address _userInterface)
+            public returns(bool) {
     require(
       msg.sender==signer,
       'Error: msg.sender must be factorySigner');
