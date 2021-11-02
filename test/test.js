@@ -5,7 +5,7 @@ const EVM_SENDER = 'Returned error: sender account not recognized'
 
 const ether = n => {
   return new web3.utils.BN(
-    web3.utils.toWei(n.toString(), 'ether')
+    web3.utils.toWei(n.toString(), 'ether').toNumber()
   )
 }
 
@@ -41,25 +41,25 @@ const toBytes = async s => await web3.utils.fromAscii(s)
 const fromBytes = async b => await web3.utils.toAscii(b)
 
 contract('UME', ([deployer, user1, user2, user3, user4]) => {
-  let post, like, follow, memeFactory, memeStorage, interface, userFactory, userStorage, we, umeToken
+  let post, like, follow, boost, memeFactory, memeStorage, interface, userFactory, userStorage, we, umeToken
 
   beforeEach(async () => {
     umeToken = await UME.new()
 
     memeStorage = await MemeStorage.new()
+
+    boost = await Boost.new(umeToken.address, memeStorage.address)
+
     userStorage = await UserStorage.new()
-    memeFactory = await MemeFactory.new(umeToken.address, memeStorage.address, userStorage.address)
+    memeFactory = await MemeFactory.new(umeToken.address, memeStorage.address, userStorage.address, boost.address)
     userFactory = await UserFactory.new(userStorage.address)
-    we = await We.new()
 
     post = await Post.new(umeToken.address, memeFactory.address, memeStorage.address)
-    like = await Like.new(umeToken.address, memeStorage.address)
+    like = await Like.new(umeToken.address, memeStorage.address, boost.address)
     follow = await Follow.new(umeToken.address, userStorage.address)
-    boost = await Boost.new(umeToken.address, memeStorage.address) // to add more
 
     interface = await UserInterface.new(umeToken.address, memeStorage.address, userStorage.address, userFactory.address, post.address, like.address, follow.address, boost.address)
 
-    await umeToken.passMinterRole(we.address, {from: deployer})
     await umeToken.passPostSignerRole(post.address, {from: deployer})
     await umeToken.passMemeFactorySignerRole(memeFactory.address, {from: deployer})
     await umeToken.passLikeSignerRole(like.address, {from: deployer})
@@ -88,7 +88,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
     await like.passInterfaceSigner(interface.address)
     await follow.passInterfaceSigner(interface.address)
     await boost.passInterfaceSigner(interface.address)
-
+    await boost.passLikeSigner(like.address)
+    await boost.passFactorySigner(memeFactory.address)
   })
 //  describe ('testing basic UME minting functionality', () => { // made with previous build
 //    beforeEach(async () => {
@@ -269,21 +270,24 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
     beforeEach(async () => {
       let un1 = web3.utils.fromAscii('user_1')
       let un2 = web3.utils.fromAscii('user_2')
+      let un3 = web3.utils.fromAscii('user_3')
       let dn = web3.utils.fromAscii('deployer')
       let ua1 = web3.utils.fromAscii('@user_1')
       let ua2 = web3.utils.fromAscii('@user_2')
+      let ua3 = web3.utils.fromAscii('@user_3')
       let da = web3.utils.fromAscii('@deployer')
 
       await interface.newUser(user1, un1, ua1, {from: user1})
       await interface.newUser(user2, un2, ua2, {from: user2})
       await interface.newUser(deployer, dn, da, {from: deployer})
-      await interface.newUser(user3, un2, ua2, {from: user3})
+      await interface.newUser(user3, un3, ua3, {from: user3})
 
       let account1 = await userStorage.getUser(user1)
       let account2 = await userStorage.getUser(user2)
       let account3 = await userStorage.getUser(deployer)
       let account4 = await userStorage.getUser(user3)
     })
+    /*
     describe('User functionality', () => {
       describe('success', () => {
         it('4 accounts created from before statement', async () => {
@@ -313,8 +317,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           expect(await userStorage.getFollowing(user2).then(e => e)).to.deep.eq([])
 
           // check minting
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('1')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('6')
         })
         it('unfollow functionality', async () => {
           await interface.followUser(user1, user2, {from: user1})
@@ -327,8 +331,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           expect(await userStorage.getFollowing(user2).then(e => e)).to.deep.eq([])
 
           // check minting
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('1')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('6')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('0')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('6')
         })
       })
       describe('failure', () => {
@@ -350,9 +354,6 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
         })
         it('can\'t change userAddress to same user address', async () => {
           await interface.changeUserAddress(user2, toBytes('@user_2'), {from: user2}).should.be.rejected
-        })
-        it('can\'t change userName to same username', async () => {
-          await interface.changeUserName(user2, toBytes('user_2'), {from: user2}).should.be.rejected
         })
         it('can\'t change userName to same username', async () => {
           await interface.changeUserName(user2, toBytes('user_2'), {from: user2}).should.be.rejected
@@ -380,8 +381,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
           const id = await interface.encode(1);
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('1')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('8')
+          expect(await memeStorage.memeCount().then(elem => elem.toNumber())).to.be.eq(1)
 
           expect(await memeStorage.getEncodeId(1)).to.be.eq(id)
         })
@@ -389,11 +390,11 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
           await interface.newMeme(user2, 'hello world!', [], '0x0', '0x0', {from: user2})
           await interface.newMeme(deployer, 'hello world!', [], '0x0', '0x0', {from: deployer})
-          const id1 = await interface.encode(1);
-          const id2 = await interface.encode(2);
-          const id3 = await interface.encode(3);
+          const id1 = await interface.encode(1)
+          const id2 = await interface.encode(2)
+          const id3 = await interface.encode(3)
 
-          expect(await memeStorage.memeCount().then(bal => bal.toString())).to.be.eq('3')
+          expect(await memeStorage.memeCount().then(elem => elem.toNumber())).to.be.eq(3)
 
           expect(await memeStorage.getEncodeId(1)).to.be.eq(id1)
           expect(await memeStorage.getEncodeId(2)).to.be.eq(id2)
@@ -403,21 +404,21 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.newMeme(user1, 'hello world!', [user2, deployer], BYTES32, BYTES32, {from: user1})
           expect(await memeStorage.getEncodeTags(1)).to.deep.eq([user2, deployer])
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('10')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('3')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('3')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('10')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('3')
+          expect(await umeToken.balanceOf(deployer).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('3')
         })
         it('no excess UME minted upon "dry" post', async () => { // with empty tag list & 0 for parentId and originId, no excess
           await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1})
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('0')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('0')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('8')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('0')
+          expect(await umeToken.balanceOf(deployer).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('0')
         })
         it('no UME minted from tagging self', async () => {
           await interface.newMeme(user1, 'hello world!', [user1], BYTES32, BYTES32, {from: user1})
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('8')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('8')
         })
         it('respond works when parentId & originId are the same', async () => {
           await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1})
@@ -425,8 +426,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.newMeme(user2, 'what up?', [], id1, id1, {from: user2})
           let id2 = await interface.encode(2).valueOf()
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('12')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('10')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('12')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('10')
         })
         it('respond & curate work when parentId & originId are different', async () => {
           await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
@@ -435,9 +436,9 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           let id2 = await interface.encode(2)
           await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user2
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('16')
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('14')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('12')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('16')
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('14')
+          expect(await umeToken.balanceOf(deployer).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('12')
         })
         it('post gets added to User', async () => {
           await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1})
@@ -461,21 +462,17 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
         it('delete meme works', async () => {
           await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
           const id1 = await interface.encode(1)
+          console.log(await web3.utils.fromWei(await umeToken.balanceOf(user1)))
           await interface.deleteMeme(user1, id1, {from: user1})
 
           const meme1 = await memeStorage.memes(id1);
-          expect(await meme1.id).to.be.eq(BYTES32)
           expect(await meme1.time.toNumber()).to.be.eq(0)
           expect(await meme1.text).to.be.eq('')
-          expect(await meme1.parentId).to.be.eq(BYTES32)
-          expect(await meme1.originId).to.be.eq(BYTES32)
-          expect(await meme1.author).to.be.eq(ETHER_ADDRESS)
           expect(await meme1.isVisible).to.be.eq(false)
 
           expect(await memeStorage.getEncodeLikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
           expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
           expect(await memeStorage.getEncodeTags(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
 
         })
         it('memeStorage.meme tallies responses', async () => {
@@ -495,28 +492,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           expect(await memeStorage.getEncodeResponses(3).then(elem => elem)).to.deep.eq([id4])
           expect(await memeStorage.getEncodeResponses(4).then(elem => elem)).to.deep.eq([])
         })
-        it('delete meme deletes response in parent', async () => {
-          await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
-          const id1 = await interface.encode(1)
-          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
-          const id2 = await interface.encode(2)
-          await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
-          const id3 = await interface.encode(3)
-          await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
-          const id4 = await interface.encode(4)
-          await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
-          const id5 = await interface.encode(5)
-
-          await interface.deleteMeme(user2, id2, {from: user2})
-          await interface.deleteMeme(deployer, id3, {from: deployer})
-          await interface.deleteMeme(deployer, id5, {from: deployer})
-
-          expect(await memeStorage.getEncodeResponses(1).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(2).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(3).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-          expect(await memeStorage.getEncodeResponses(4).then(elem => elem.map(e => e.toString()))).to.deep.eq([])
-        })
       })
+      /*
       describe('failure', () => {
         it('doesn\'t post meme with wrong users', async () => {
           await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user2}).should.be.rejectedWith(EVM_REVERT)
@@ -626,9 +603,9 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           expect(await memeStorage.getEncodeLikeCount(1).then(e => e.toNumber())).to.be.eq(1)
           expect(await memeStorage.getEncodeLikeCount(2).then(e => e.toNumber())).to.be.eq(0)
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
-          expect(await umeToken.balanceOf(deployer).then(bal => bal.toString())).to.be.eq('14')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('19')
+          expect(await umeToken.balanceOf(deployer).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('14')
         })
         it('unlike functionality', async () => {
           const id1 = await interface.encode(1)
@@ -643,8 +620,8 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           // likes should decrement
           expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(0)
           // balance should remain unchanged
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('17')
         })
         it('like, unlike, like functionality', async () => {
           const id1 = await interface.encode(1)
@@ -660,25 +637,25 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           // checks number of likes in first & 2nd post
           expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(1)
 
-          expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+          expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+          expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('17')
         })
         it('like tallies multiple users', async () => {
           const id1 = await interface.encode(1)
           await interface.likeMeme(user2, id1, {from: user2}) //user2 likes meme id1
-          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+          //console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
           await interface.likeMeme(user3, id1, {from: user3}) //user3 likes meme id1
-          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+          //console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
           await interface.likeMeme(deployer, id1, {from: deployer}) //deployer likes meme id1
-          console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
+          //console.log(await memeStorage.getEncodeLikers(1).then(elem => elem))
 
           expect(await memeStorage.getEncodeLikers(1).then(elem => elem)).to.deep.eq([user2, user3, deployer])
           expect(await memeStorage.getEncodeUnlikers(1).then(elem => elem)).to.deep.eq([])
           // checks taggs of third post
           expect(await memeStorage.getEncodeLikeCount(1).then(elem => elem.toNumber())).to.be.eq(3)
 
-          //expect(await umeToken.balanceOf(user1).then(bal => bal.toString())).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
-          //expect(await umeToken.balanceOf(user2).then(bal => bal.toString())).to.be.eq('19')
+          //expect(await umeToken.balanceOf(user1).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('24') // 1 post + 2 f.responses, + 1 t.curate + 1 t.like + 1 t.tag
+          //expect(await umeToken.balanceOf(user2).then(async bal => await web3.utils.fromWei(await bal, 'ether'))).to.be.eq('19')
 
         })
       })
@@ -707,8 +684,18 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
         })
       })
     })
+    */
     describe('Boost', () => {
       describe('success', () => {
+        it('single response boosts meme', async () => {
+          await interface.newMeme(user1, 'hello world!', [], '0x0', '0x0', {from: user1}) // user1 post
+          const id1 = await interface.encode(1)
+          await interface.newMeme(user2, 'what\'s up?', [], id1, id1, {from: user2}) // user2 responds to user1
+          const id2 = await interface.encode(2)
+
+          expect(await memeStorage.getBoost(id1).then(e => e.toNumber())).to.be.eq(4)
+          expect(await memeStorage.getBoost(id2).then(e => e.toNumber())).to.be.eq(0)
+        })
         it('liking memes boosts', async () => {
           await interface.newMeme(user1, 'hello world!', [], BYTES32, BYTES32, {from: user1}) // user1 post
           const id1 = await interface.encode(1)
@@ -739,8 +726,10 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           const id2 = await interface.encode(2)
           await interface.newMeme(deployer, 'what?', [], id2, id1, {from: deployer}) // deployer responds to user.
           const id3 = await interface.encode(3)
+          console.log(await memeStorage.getBoost(id3).then(e => e.toString()))
           await interface.newMeme(user1, 'you heard me!', [], id3, id1, {from: user1}) // user1 post
           const id4 = await interface.encode(4)
+          console.log(await memeStorage.getBoost(id3).then(e => e.toString()))
           await interface.newMeme(deployer, 'wait what?', [], id1, id1, {from: deployer}) // deployer responds to user.
           const id5 = await interface.encode(5)
 
@@ -749,13 +738,13 @@ contract('UME', ([deployer, user1, user2, user3, user4]) => {
           await interface.likeMeme(user1, id5, {from: user1})
           await interface.likeMeme(deployer, id5, {from: deployer})
 
-          await umeToken.balanceOf(user1).then(e => console.log(e.toNumber()))
+          await umeToken.balanceOf(user1).then(async bal => console.log(await web3.utils.fromWei(bal)))
 
           await interface.boostMeme(user1, id2, 5, {from: user1})
           await interface.unBoostMeme(user1, id4, 5, {from: user1})
           await interface.unBoostMeme(user1, id5, 5,  {from: user1})
 
-          await umeToken.balanceOf(user1).then(e => console.log(e.toNumber()))
+          await umeToken.balanceOf(user1).then(async bal => console.log(await web3.utils.fromWei(bal)))
 
           expect(await memeStorage.getBoost(id1).then(e => e.toNumber())).to.be.eq(16)
           expect(await memeStorage.getBoost(id2).then(e => e.toNumber())).to.be.eq(9)

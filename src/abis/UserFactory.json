@@ -92,7 +92,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -16968,10 +16969,239 @@
       "links": {},
       "address": "0x75719851F245F4EFdBac1613fd189232E60418D8",
       "transactionHash": "0xd9f728cd86aef4b57207b7473855f60696eb00ee26471ba5d03fdc6778b98ae9"
+    },
+    "1635795993507": {
+      "events": {
+        "0x1a7fe41b9767c0ba9c18dced521efc73b20feb650691659c8609704e103555ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "DeletedUser",
+          "type": "event"
+        },
+        "0xad37dec01c6ce7809ff746e60106df4650385c4edc5e42cec69b5b2c47caebe1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userName",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userAddr",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewUser",
+          "type": "event"
+        },
+        "0xeeb293e1f8f3a9db91ade748726387ed1352ca78f5430c5f06fe3d1e1ad50579": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "SignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xD9c490209431bE6765a642316788A0346e42B3b8",
+      "transactionHash": "0x58901ae7a8e28381cd2532984b1cf4042e9ca2f794505d9e0475f04958ceb742"
+    },
+    "1635803084472": {
+      "events": {
+        "0x1a7fe41b9767c0ba9c18dced521efc73b20feb650691659c8609704e103555ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "DeletedUser",
+          "type": "event"
+        },
+        "0xad37dec01c6ce7809ff746e60106df4650385c4edc5e42cec69b5b2c47caebe1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userName",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userAddr",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewUser",
+          "type": "event"
+        },
+        "0xeeb293e1f8f3a9db91ade748726387ed1352ca78f5430c5f06fe3d1e1ad50579": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "SignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xA2deE465CedBFb5d50ddac90597B134de0Ec2D0C",
+      "transactionHash": "0x6d87500343428029807c36dc7cd6dce1fcc9bf6e3c1054719f03cdf7637e89ce"
+    },
+    "1635823679713": {
+      "events": {
+        "0x1a7fe41b9767c0ba9c18dced521efc73b20feb650691659c8609704e103555ca": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "DeletedUser",
+          "type": "event"
+        },
+        "0xad37dec01c6ce7809ff746e60106df4650385c4edc5e42cec69b5b2c47caebe1": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userName",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "userAddr",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewUser",
+          "type": "event"
+        },
+        "0xeeb293e1f8f3a9db91ade748726387ed1352ca78f5430c5f06fe3d1e1ad50579": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "SignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1f24b9A4D7bEC5833E2d56B5400950a8053F5f28",
+      "transactionHash": "0xf51b1c20d5de406cdd4a59a6b57dd3f8cd12e279fc947bd323dacef073255254"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-01T06:47:09.234Z",
+  "updatedAt": "2021-11-02T03:50:55.617Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -10,8 +10,8 @@ contract UME is ERC20 {
   uint public postValue = 8e18;
   uint public likeFromValue = 2e18;
   uint public likeToValue = 5e18;
-  uint public tagToValue = 1e18;
-  uint public tagFromValue = 3e18;
+  uint public tagFromValue = 1e18;
+  uint public tagToValue = 3e18;
   uint public followFromValue = 1e18;
   uint public followToValue = 6e18;
   uint public respondFromValue = 2e18;
@@ -85,7 +85,7 @@ contract UME is ERC20 {
       likeSigner==msg.sender,
       'Error: wrong account calling like mint');
     // mint a LIKE token for liker
-    _mint(address(_from), likeToValue);
+    _mint(address(_from), likeFromValue);
     // set event for LIKE token FROM
     emit Minted(_from, block.timestamp, likeFromValue, 'LIKE');
     // mint LIKE tokens for likee
@@ -151,7 +151,7 @@ contract UME is ERC20 {
       memeFactorySigner==msg.sender,
       'Error: wrong account');
     // mint a CURATE token for curatee
-    _mint(_from, curateToValue);
+    _mint(_from, curateFromValue);
     // set event for CURATE token FROM
     emit Minted(_from, block.timestamp, curateFromValue, 'CURATE');
     // mint CURATE tokens for curator
@@ -177,39 +177,13 @@ contract UME is ERC20 {
     // set event for REPOST to
     emit Minted(_from, block.timestamp, repostToValue, 'REPOST');
   }
-  /*
-  function mintJury(
-    address account,
-    bool consensusReached
-  ) public { // 4 Juror token if no consensus reached, 24 if consensus reached
-    require(
-      followSigner==msg.sender,
-      'Error: wrong account, needs to be signer');
-    require(
-    minter!=account,
-    'Error: "we" cannot mint');
-    //require(
-    bytes(_postHash).length > 0,
-    'Error: no post exists');
-    if(consensusReached==true){
-      // mint 10 JURY token for juror
-      _mint(account, 24);
-      // set event for JURY token consensus reached
-      emit Minted(account, block.timestamp, 'JURY');
-    } else if(consensusReached==false){
-      // mint a JURY token for juror
-      _mint(account, 4);
-      // set event for JURY no consensus reached
-      emit Minted(account, block.timestamp, 'JURY');
-    }
-  }
-*/
   function burn(
             address _account,
             uint _amount)
             public {
     require(
       msg.sender==likeSigner ||
+      msg.sender==followSigner ||
       msg.sender==boostSigner,
       'Error: burner must be valid signer');
     _burn(_account, _amount);

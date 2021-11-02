@@ -91,31 +91,30 @@ contract MemeFactory {
       if(memeStorage.getAuthor(_parentId)!=_account)
         umeToken.mintRespond(_account, memeStorage.getAuthor(_parentId));
         _addResponse(_memeId, _parentId);
-        boost.respondBoost(_memeId);
+        boost.respondBoost(_parentId);
     } // if responding to a thread, mint respond token for parent, curate token for original
     else if(_memeId!=_parentId && _parentId!=_originId) {
       if(memeStorage.getAuthor(_parentId)!=_account)
         umeToken.mintRespond(_account, memeStorage.getAuthor(_parentId));
-        boost.respondBoost(_memeId);
+        boost.respondBoost(_parentId);
       if(memeStorage.getAuthor(_originId)!=_account)
         umeToken.mintCurate(_account, memeStorage.getAuthor(_originId));
         _addResponse(_memeId, _parentId);
-        boost.curateBoost(_memeId);
+        boost.curateBoost(_originId);
     }
     // mint tags
     for(uint i = 0; i < _tags.length; i++) {
       if(_account!=_tags[i] && _tags[i]!=address(0x0)){
-        umeToken.mintTag(_account, _tags[i]);
         boost.tagBoost(_memeId);
+        umeToken.mintTag(_account, _tags[i]);
         emit Tagged(_account, _tags[i]);
       }
     }
     if(_repostId!=zeroBytes) {
       if(bytes(_memeText).length==0) {
         bytes32[] memory _oldReposts = memeStorage.getReposts(_repostId);
-        _addRepost(_memeId, _memeText, _repostId, _oldReposts);
-        memeStorage.addBoost(_memeId, 4);
         boost.repostBoost(_repostId);
+        _addRepost(_memeId, _memeText, _repostId, _oldReposts);
       } else {
         bytes32[] memory _oldReposts = memeStorage.getQuotePosts(_repostId);
         _addRepost(_memeId, _memeText, _repostId, _oldReposts);

@@ -22,10 +22,14 @@ module.exports = async function(deployer) {
   // deploy storage
   await deployer.deploy(MemeStorage)
   const memeStorage = await MemeStorage.deployed()
+
+  await deployer.deploy(Boost, UME.address, MemeStorage.address) // to add more
+  const boost = await Boost.deployed()
+
   await deployer.deploy(UserStorage)
   const userStorage = await UserStorage.deployed()
   // deploy factories
-  await deployer.deploy(MemeFactory, UME.address, MemeStorage.address, UserStorage.address)
+  await deployer.deploy(MemeFactory, UME.address, MemeStorage.address, UserStorage.address, Boost.address)
   const memeFactory = await MemeFactory.deployed()
   await deployer.deploy(UserFactory, UserStorage.address)
   const userFactory = await UserFactory.deployed()
@@ -33,12 +37,10 @@ module.exports = async function(deployer) {
   // deploy interface functions
   await deployer.deploy(Post, UME.address, MemeFactory.address, MemeStorage.address)
   const post = await Post.deployed()
-  await deployer.deploy(Like, UME.address, MemeStorage.address)
+  await deployer.deploy(Like, UME.address, MemeStorage.address, Boost.address)
   const like = await Like.deployed()
   await deployer.deploy(Follow, UME.address, UserStorage.address)
   const follow = await Follow.deployed()
-  await deployer.deploy(Boost, UME.address, MemeStorage.address) // to add more
-  const boost = await Boost.deployed()
 
   // deploy interface
   await deployer.deploy(UserInterface, UME.address, MemeStorage.address, UserStorage.address, UserFactory.address, Post.address, Like.address, Follow.address, Boost.address)

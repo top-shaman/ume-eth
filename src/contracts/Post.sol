@@ -77,9 +77,6 @@ contract Post {
     require(
       msg.sender==interfaceSigner,
       'Error: only interface signer can delete meme');
-    require(
-      umeToken.balanceOf(msg.sender)>=umeToken.postValue(),
-      'Error: not enough UME to delete meme');
     memeFactory.deleteMeme(_account, _memeId);
   }
 

@@ -15,7 +15,7 @@ contract Boost {
   address public valueSigner;
 
   // boost values
-  uint public postBoostValue = 8;
+  uint public postBoostValue = 0;
   uint public likeBoostValue = 5;
   uint public tagBoostValue = 0;
   uint public respondBoostValue = 4;
@@ -62,7 +62,7 @@ contract Boost {
     require(
       msg.sender==interfaceSigner,
       'Error: msg.sender must be interfaceSigner');
-    umeToken.burn(_account, _boostNumber);
+    umeToken.burn(_account, _boostNumber*1e18);
     memeStorage.addBoost(_memeId, _boostNumber);
     emit Promote(_account, _memeId, _boostNumber);
   }
@@ -76,7 +76,7 @@ contract Boost {
       'Error: msg.sender must be interfaceSigner');
     uint _currentBoost = memeStorage.getBoost(_memeId);
     if(_boostNumber>_currentBoost) _boostNumber=_currentBoost;
-    umeToken.burn(_account, _boostNumber);
+    umeToken.burn(_account, _boostNumber*1e18);
     memeStorage.subtractBoost(_memeId, _boostNumber);
     emit Demote(_account, _memeId, _boostNumber);
   }
@@ -86,7 +86,7 @@ contract Boost {
             public {
     require(
       msg.sender==factorySigner,
-      'Error: msg.sender must be factorySigner');
+      'Error: post msg.sender must be factorySigner');
     memeStorage.addBoost(_memeId, postBoostValue);
   }
   function likeBoost(
@@ -94,7 +94,7 @@ contract Boost {
             public {
     require(
       msg.sender==likeSigner,
-      'Error: msg.sender must be likeSigner');
+      'Error: like msg.sender must be likeSigner');
     memeStorage.addBoost(_memeId, likeBoostValue);
   }
   function tagBoost(
@@ -102,7 +102,7 @@ contract Boost {
             public {
     require(
       msg.sender==factorySigner,
-      'Error: msg.sender must be factorySigner');
+      'Error: tag msg.sender must be factorySigner');
     memeStorage.addBoost(_memeId, tagBoostValue);
   }
   function respondBoost(
@@ -110,7 +110,7 @@ contract Boost {
             public {
     require(
       msg.sender==factorySigner,
-      'Error: msg.sender must be factorySigner');
+      'Error: respond msg.sender must be factorySigner');
     memeStorage.addBoost(_memeId, respondBoostValue);
   }
   function curateBoost(
@@ -118,7 +118,7 @@ contract Boost {
             public {
     require(
       msg.sender==factorySigner,
-      'Error: msg.sender must be factorySigner');
+      'Error: curate msg.sender must be factorySigner');
     memeStorage.addBoost(_memeId, curateBoostValue);
   }
   function repostBoost(
@@ -126,7 +126,7 @@ contract Boost {
             public {
     require(
       msg.sender==factorySigner,
-      'Error: msg.sender must be factorySigner');
+      'Error: repost msg.sender must be factorySigner');
     memeStorage.addBoost(_memeId, repostBoostValue);
   }
 

@@ -152,6 +152,19 @@ contract MemeStorage {
       'Error: msg.sender must be likeSigner');
     memes[_memeId].unlikers = _unlikers;
   }
+  function getHasLiked(
+            bytes32 _memeId,
+            address _account)
+            public view returns (bool){
+    return hasLiked[_memeId][_account];
+  }
+  function getHasUnliked(
+            bytes32 _memeId,
+            address _account)
+            public view returns (bool){
+    return hasUnliked[_memeId][_account];
+  }
+
   function setHasLiked(
             bytes32 _memeId,
             address _account)
@@ -376,7 +389,7 @@ contract MemeStorage {
             public returns (bool) {
     require(
       msg.sender == boostSigner,
-      'Error: msg.sender must be likeSigner');
+      'Error: msg.sender must be boostSigner');
 
     boostSigner = _boost;
     emit BoostSignerChanged(msg.sender, boostSigner);

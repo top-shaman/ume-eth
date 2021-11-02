@@ -21,10 +21,12 @@ contract Like {
              bytes32 indexed memeId);
 
   constructor(UME _umeToken,
-              MemeStorage _memeStorage)
+              MemeStorage _memeStorage,
+              Boost _boost)
               public {
     umeToken = _umeToken;
     memeStorage = _memeStorage;
+    boost = _boost;
     interfaceSigner = msg.sender;
   }
   // like functions
@@ -37,15 +39,15 @@ contract Like {
       'Error: liker must be operating account');
     address[] memory _likers = memeStorage.getLikers(_memeId);
     uint _likeCount = _likers.length;
-    bool _alreadyLiked = memeStorage.hasLiked(_memeId, _account);
-    bool _alreadyUnliked = memeStorage.hasUnliked(_memeId, _account);
     bool _unliked = false;
+    bool _alreadyLiked = memeStorage.getHasLiked(_memeId, _account);
+    //bool _alreadyLiked = false;
     // remove like if already liked
     for(uint i = 0; i < _likeCount; i++) {
       if(_account==_likers[i]) {
-        _unLike(_account, _memeId, _likers, i, _alreadyUnliked);
+    //    _alreadyLiked = true;
+        _unLike(_account, _memeId, _likers, i);
         _unliked = true;
-        memeStorage.setHasUnliked(_memeId, _account);
         break;
       }
     } // check for double like minting
@@ -53,6 +55,7 @@ contract Like {
     uint _unlikeCount = _unlikers.length;
     for(uint i = 0; i < _unlikeCount; i++) {
       if(_account==_unlikers[i] && _unliked==false) {
+    //    _alreadyLiked = true;
         _addLike(_account, _memeId, _likers, _unlikers, i, _alreadyLiked);
         break;
       }
@@ -62,7 +65,6 @@ contract Like {
       // mint like token
       if(_account!=memeStorage.getAuthor(_memeId)) {
         umeToken.mintLike(_account, memeStorage.getAuthor(_memeId));
-        memeStorage.setHasLiked(_memeId, _account);
         boost.likeBoost(_memeId);
       }
       emit Liked(_account, _memeId);
@@ -79,6 +81,8 @@ contract Like {
             private {
     if(_alreadyLiked==true) {
       memeStorage.setUnlikers(_memeId, _deleteAddress(_unlikers, _index));
+    } else {
+      memeStorage.setHasLiked(_memeId, _account);
     }
     uint _oldLikeCount = _oldLikers.length;
     // set memory to _meme.likers length plus one
@@ -98,17 +102,18 @@ contract Like {
             address _account,
             bytes32 _memeId,
             address[] memory _oldLikers,
-            uint _index,
-            bool _alreadyUnliked)
+            uint _index)
             private {
     require(
       memeStorage.getLikeCount(_memeId)>0,
       'Error: no likers in meme');
+    bool _alreadyUnliked = memeStorage.getHasUnliked(_memeId, _account);
     if(_alreadyUnliked==false) {
       require(
         umeToken.balanceOf(_account)>=umeToken.likeFromValue(),
         'Error: not enough UME to unlike');
       umeToken.burn(_account, umeToken.likeFromValue());
+      memeStorage.setHasUnliked(_memeId, _account);
     }
     address[] memory _oldUnlikers = memeStorage.getUnlikers(_memeId);
     // delete liked index, moving all successive elements

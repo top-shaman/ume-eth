@@ -296,7 +296,7 @@ contract UserInterface {
       _account==msg.sender,
       'Error: booster must be msg.sender');
     require(
-      umeToken.balanceOf(_account)>=_boostNumber,
+      umeToken.balanceOf(_account)>=_boostNumber*1e18,
       'Error: booster must have tokens in balance');
     boost.boostCall(_account, _memeId, _boostNumber);
   }
@@ -309,7 +309,7 @@ contract UserInterface {
       _account==msg.sender,
       'Error: booster must be msg.sender');
     require(
-      umeToken.balanceOf(_account)>=_boostNumber,
+      umeToken.balanceOf(_account)>=_boostNumber*1e18,
       'Error: booster must have tokens in balance');
     boost.unBoostCall(_account, _memeId, _boostNumber);
   }
