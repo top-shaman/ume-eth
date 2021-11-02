@@ -345,7 +345,11 @@ class ChildMeme extends React.Component {
                       href={`/${this.state.address.slice(1)}`}
                       onClick={this.handleProfileClick}
                     >
-                      <ProfilePic account={this.state.author} id="ChildMeme"/>
+                      <ProfilePic
+                        account={this.state.author}
+                        id="ChildMeme"
+                        userStorage={this.state.userStorage}
+                      />
                     </a>
                     {this.state.responses.length
                        ? <div className="vl"/>

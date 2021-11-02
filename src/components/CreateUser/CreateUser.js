@@ -258,7 +258,13 @@ class CreateUser extends React.Component {
         <div id="box">
           <p id="username">{this.state.username}</p>
           <div id="profile-pic">
-            <ProfilePic id="ProfilePic" account={this.props.account} hasEntered={this.props.hasEntered}/>
+            <ProfilePic id="ProfilePic"
+              account={this.props.account}
+              hasEntered={this.props.hasEntered}
+              interface={this.props.interface}
+              userStorage={this.props.userStorage}
+              handleBanner={this.handleBanner}
+            />
           </div>
           <p id="address">
             {this.state.address ? '@' + this.state.address : ''}

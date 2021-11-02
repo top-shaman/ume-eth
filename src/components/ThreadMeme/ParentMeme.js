@@ -265,7 +265,11 @@ class ParentMeme extends React.Component {
               id="profilePic"
               href={`/${this.state.address.slice(1)}`}
             >
-              <ProfilePic account={this.state.author} id="ParentMeme"/>
+              <ProfilePic
+                account={this.state.author}
+                id="ParentMeme"
+                userStorage={this.state.userStorage}
+              />
             </a>
             <div className="vl"/>
           </section>

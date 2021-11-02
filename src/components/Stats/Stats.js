@@ -74,7 +74,10 @@ class Stats extends React.Component {
           : <div id="stats">
               <div id="stats-header">
                 <a href={this.state.address.split(1)} onClick={this.handleToProfile}>
-                  <ProfilePic account={this.state.account} />
+                  <ProfilePic
+                    account={this.state.account}
+                    userStorage={this.state.userStorage}
+                  />
                 </a>
                 <p id="info">
                   <a href={this.state.address.split(1)} onClick={this.handleToProfile}>

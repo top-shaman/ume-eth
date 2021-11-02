@@ -308,6 +308,9 @@ class EditProfile extends React.Component {
               <ProfilePic
                 id="profilePic"
                 account={this.props.account}
+                interface={this.state.interface}
+                userStorage={this.state.userStorage}
+                handleBanner={this.handleBanner}
               />
             </div>
             <form id="form">

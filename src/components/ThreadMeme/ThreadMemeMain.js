@@ -217,7 +217,11 @@ class ThreadMemeMain extends React.Component {
                     href={`/${this.state.address.slice(1)}`}
                     onClick={this.handleProfileClick}
                   >
-                    <ProfilePic account={this.state.author} id="ThreadMemeMain"/>
+                    <ProfilePic
+                      account={this.state.author}
+                      id="ThreadMemeMain"
+                      userStorage={this.state.userStorage}
+                    />
                   </a>
                 </section>
                 <section id="info">

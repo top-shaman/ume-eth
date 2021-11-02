@@ -261,7 +261,11 @@ class Meme extends React.Component {
             href={`/${this.state.address.slice(1)}`}
             onClick={this.handleProfileClick}
           >
-            <ProfilePic account={this.state.author} id="Meme"/>
+            <ProfilePic
+              account={this.state.author}
+              id="Meme"
+              userStorage={this.state.userStorage}
+            />
           </a>
         </section>
         <div id="meme-body">

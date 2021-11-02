@@ -197,6 +197,7 @@ class Profile extends React.Component {
                   <div id="left">
                     <ProfilePic
                       account={this.state.profileAccount}
+                      userStorage={this.state.userStorage}
                     />
                     <p id="info">
                       <span id="username">{this.state.username}</span>

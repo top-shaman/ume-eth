@@ -48,7 +48,7 @@ class App extends React.Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       metaMask: false,
-      hasEth: false,
+      hasEth: true,//false,
       validBrowser: false
     }
 
@@ -494,6 +494,7 @@ class App extends React.Component {
                                   account={this.state.account}
                                   handleRegistered={this.handleRegistered}
                                   interface={this.state.interface}
+                                  userStorage={this.state.userStorage}
                                   handleBanner={this.handleBanner}
                                 />
                       : <Enter
