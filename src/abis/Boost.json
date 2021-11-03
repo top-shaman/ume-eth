@@ -24089,12 +24089,145 @@
         }
       },
       "links": {},
-      "address": "0xD1B6Fb67aA92639fbe2E7b9FB89123643D2bFd46",
-      "transactionHash": "0x377504d6c227a4d54215283a2401173da5c7b9c850a6f25a0c4bbbe8361569bb"
+      "address": "0x167e22913a9D40DbA771A588145299BFF3C22b7b",
+      "transactionHash": "0xa22362279f3b6aa86c623300e84852f00141b780a8c808be7e097c99b6ad2f9a"
+    },
+    "1635929040333": {
+      "events": {
+        "0x053020ef2153302ab1b8d538cea2a0b592dadeb160f4ddc3ecc39536f3416d66": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "demoter",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Demote",
+          "type": "event"
+        },
+        "0x5f8b18be53cdf9843c4263461966fc46896a2d372d3fa87fc22f6cfed0241862": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "FactorySignerChanged",
+          "type": "event"
+        },
+        "0xdf570d582e474b2d7915b12f6f773eb74e4bc78a660caeeccf19491c8578507b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "InterfaceSignerChanged",
+          "type": "event"
+        },
+        "0x2364065f519eb2e0ac13040d65b1d1140f6677de0518b6dee6954e49f7f7a5b6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "LikeSignerChanged",
+          "type": "event"
+        },
+        "0xaf3129821ba0980fd100074f6d610c2003b00e3ae4053f07fc752e5085275818": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "promoter",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Promote",
+          "type": "event"
+        },
+        "0xf1511333f5f2fb77f74ba02751546dcae093e522147abff4f4ceadf9992ef7d5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "ValueSignerChanged",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x324B35e6589C4fea7d20388262FAA21DD3C2683F",
+      "transactionHash": "0x2bffb28cba92adea9ab226c45fd4c64791cc63ceae8a40df1fc79810b10f2b46"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-02T20:15:27.709Z",
+  "updatedAt": "2021-11-03T08:44:39.259Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

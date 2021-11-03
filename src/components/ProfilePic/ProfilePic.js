@@ -15,25 +15,51 @@ class ProfilePic extends React.Component {
       account: this.props.account,
       userStorage: this.props.userStorage,
       interface: this.props.interface,
-      picHash: null,
-      hasPic: false,
+      url: null,
+      imgHash: this.props.imgHash,
+      loading: false,
       preview: null,
       tempFile: null
     }
 
     this.img = React.createRef()
-    this.input = React.createRef()
 
     this.captureFile = this.captureFile.bind(this)
     this.uploadImage = this.uploadImage.bind(this)
   }
   async componentDidMount() {
-    await this.findPic()
+    if(!this.state.imgHash) {
+      await this.findPic()
+    } else {
+      this.setState({
+        url: `https://ipfs.infura.io/ipfs/${this.props.imgHash}`
+      })
+    }
   }
 
   async findPic() {
+    this.setState({ loading: true })
     if(this.state.userStorage) {
-      this.setState({ picHash: await this.state.userStorage.methods.getProfilePic(this.state.account).call() })
+      const hash = await this.state.userStorage.methods.getProfilePic(this.state.account).call()
+      if(hash) {
+        const url = `https://ipfs.infura.io/ipfs/${hash}`
+        this.setState({
+          url,
+          loading: false
+        })
+      } else {
+        const url = `data:image/png;base64,${new Identicon(this.props.account, 120).toString()}`
+        this.setState({
+          url,
+          loading: false
+        })
+      }
+    } else {
+      const url = `data:image/png;base64,${new Identicon(this.props.account, 120).toString()}`
+      this.setState({
+        url,
+        loading: false
+      })
     }
   }
 
@@ -57,18 +83,18 @@ class ProfilePic extends React.Component {
   }
 
   // upload image to IPFS and blockchain
-  uploadImage() {
+  async uploadImage() {
     console.log("Submitting file to IPFS...")
 
+    let hash
     // add file to IPFS
-    ipfs.add(this.state.buffer, (error, result) => {
+    await ipfs.add(this.state.buffer, async (error, result) => {
       console.log('IPFS result', result[0].hash)
       if(error) {
         console.error(error)
         return
       }
       // add image to User
-      console.log(result)
       this.state.interface.methods
         .newProfilePic(this.state.account, result[0].hash)
         .send({from: this.state.account})
@@ -78,7 +104,7 @@ class ProfilePic extends React.Component {
             'Profile Pic',
             this.state.account + '-profile-pic'
           ])
-          this.handleClose()
+          this.props.handleClose()
         })
         .on('receipt', () => {
           this.props.handleBanner([
@@ -88,7 +114,7 @@ class ProfilePic extends React.Component {
           ])
         })
         .catch(e => {
-          this.props.handleError([
+          this.props.handleBanner([
             'Cancel',
             'Profile Pic',
             this.state.account + '-profile-pic'
@@ -97,69 +123,52 @@ class ProfilePic extends React.Component {
         })
       console.log('from: ' + this.state.account)
     })
+    return hash
   }
 
   render() {
     return(
       <div id="profilePic">
-        { this.state.interface
-            ? <div id="isEditable">
-                { this.state.picHash
-                  ? <img
-                      className="ProfilePic"
-                      id="profile-pic"
-                      alt="profile-pic"
-                      width="140"
-                      height="140"
-                      src={`https://ipfs.infura.io/ipfs/${this.state.picHash}`}
-                      ref={Ref=>this.img=Ref}
+        { this.state.loading
+            ? <div id="blank"/>
+            : this.state.interface
+                ? <div id="isEditable">
+                    { this.state.preview
+                        ? <img
+                            className="ProfilePic"
+                            id="profile-pic"
+                            width="140"
+                            height="140"
+                            alt="profile-pic"
+                            src={this.state.preview}
+                            ref={Ref=>this.preview=Ref}
+                          />
+                        : <img
+                            className="ProfilePic" id="profile-pic"
+                            width="140"
+                            height="140"
+                            alt="profile-pic"
+                            src={this.state.url}
+                            ref={Ref=>this.img=Ref}
+                          />
+                    }
+                    <div id="banner"/>
+                    <input
+                      type="file"
+                      id="image-select"
+                      accept=".jpg, .jpeg, .png, .bmp, .gif"
+                      onChange={this.captureFile}
+                      ref={Ref=>this.input=Ref}
                     />
-                  : this.state.preview
-                      ? <img
-                          className="ProfilePic"
-                          id="profile-pic"
-                          width="140"
-                          height="140"
-                          alt="profile-pic"
-                          src={this.state.preview}
-                          ref={Ref=>this.preview=Ref}
-                        />
-                      : <img
-                          className="ProfilePic" id="profile-pic"
-                          width="140"
-                          height="140"
-                          alt="profile-pic"
-                          src={`data:image/png;base64,${
-                            new Identicon(this.props.account, 120).toString()
-                          }`}
-                          ref={Ref=>this.img=Ref}
-                        />
-                }
-              <input
-                type="file"
-                accept=".jpg, .jpeg, .png, .bmp, .gif"
-                onChange={this.captureFile}
-                ref={Ref=>this.input=Ref}
-              />
-              </div>
-            : this.state.picHash
-                ? <img
+                  </div>
+                : <img
                     className="ProfilePic"
                     id="profile-pic"
                     alt="profile-pic"
                     width="140"
                     height="140"
-                    src={`https://ipfs.infura.io/ipfs/${this.state.picHash}`}
+                    src={this.state.url}
                     ref={Ref=>this.img=Ref}
-                  />
-                : <img
-                    className="ProfilePic" id="profile-pic"
-                    width="140"
-                    height="140"
-                    alt="profile-pic"
-                    src={`data:image/png;base64,${
-                        new Identicon(this.props.account, 120).toString()
-                    }`}
                   />
         }
       </div>

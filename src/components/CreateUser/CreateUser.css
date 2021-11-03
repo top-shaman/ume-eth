@@ -24,12 +24,26 @@ div#box {
   border-radius: 100%;
   box-shadow: 0 0 0 0.1rem #00CC89;
 }
+.CreateUser div#profile-pic {
+  width: min-content;
+  margin: 0 auto;
+  transform: translateX(-0.8rem);
+}
 
 .CreateUser form#CreateUser{
   display: flex;
   flex-direction: column;
   padding: 1rem 2rem 2rem 2rem;
   justify-content: center;
+}
+.CreateUser div#profilePic div#isEditable div#banner {
+  margin-top: 0;
+  left: -0.1rem;
+  width: calc(140px + 0.2rem);
+}
+.CreateUser div#profilePic div#isEditable input[type=file]::file-selector-button,
+.CreateUser div#profilePic div#isEditable input[type=file]::-webkit-file-upload-button {
+  margin-top: 0;
 }
 
 .CreateUser p#username {

@@ -58,7 +58,8 @@ contract UserInterface {
   function newUser(
             address _account,
             bytes memory _userName,
-            bytes memory _userAddress)
+            bytes memory _userAddress,
+            string memory _imgHash)
             public {
     require(
       msg.sender==_account,
@@ -83,7 +84,7 @@ contract UserInterface {
       'Error: user address already exists');
 
     bytes32 _un = bytesToBytes32(_userName);
-    userFactory.newUser(_account, _un, _ua);
+    userFactory.newUser(_account, _un, _ua, _imgHash);
     emit NewUser(_account, _un, _ua);
   }
   function changeUserName(

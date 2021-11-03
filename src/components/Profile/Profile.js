@@ -198,6 +198,7 @@ class Profile extends React.Component {
                     <ProfilePic
                       account={this.state.profileAccount}
                       userStorage={this.state.userStorage}
+                      imgHash={this.props.imgHash}
                     />
                     <p id="info">
                       <span id="username">{this.state.username}</span>

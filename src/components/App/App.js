@@ -69,6 +69,7 @@ class App extends React.Component {
     this.handleExitEdit = this.handleExitEdit.bind(this)
 
     this.handleBanner = this.handleBanner.bind(this)
+    this.handleImgHash = this.handleImgHash.bind(this)
 
     this.handleScroll = this.handleScroll.bind(this)
     this.handleResize = this.handleResize.bind(this)
@@ -235,6 +236,9 @@ class App extends React.Component {
         })
       }, 200)
     }
+  }
+  handleImgHash(imgHash) {
+    this.setState({ imgHash })
   }
 
   async detectBrowser() {
@@ -428,6 +432,7 @@ class App extends React.Component {
                                 offsetY={this.state.offsetY}
                                 handleExitCreate={this.handleExitCreate}
                                 handleBanner={this.handleBanner}
+                                imgHash={this.state.imgHash}
                                 userStorage={this.state.userStorage}
                                 interface={this.state.interface}
                               />
@@ -445,6 +450,7 @@ class App extends React.Component {
                                   handleExitReply={this.handleExitReply}
                                   handleToProfile={this.handleToProfile}
                                   handleBanner={this.handleBanner}
+                                  imgHash={this.state.imgHash}
                                   userStorage={this.state.userStorage}
                                   memeStorage={this.state.memeStorage}
                                   interface={this.state.interface}
@@ -456,6 +462,7 @@ class App extends React.Component {
                                     address={this.state.editing[1]}
                                     bio={this.state.editing[2]}
                                     offsetY={this.state.offsetY}
+                                    imgHash={this.state.imgHash}
                                     handleExitEdit={this.handleExitEdit}
                                     handleBanner={this.handleBanner}
                                     userStorage={this.state.userStorage}
@@ -481,6 +488,7 @@ class App extends React.Component {
                           handleReply={this.handleReply}
                           handleEdit={this.handleEdit}
                           handleBanner={this.handleBanner}
+                          handleImgHash={this.handleImgHash}
                           handleProfileChange={this.handleProfileChange}
                           ref={Ref=>this.main=Ref}
                         />

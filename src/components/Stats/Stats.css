@@ -36,6 +36,12 @@ div#stats div#stats-header img {
   margin: 0 auto;
   border-radius: 50%;
 }
+div#stats div#stats-header div#blank {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto;
+  border-radius: 50%;
+}
 
 div#stats p#info {
   margin: 0 0.8rem 0.8rem 0.8rem;

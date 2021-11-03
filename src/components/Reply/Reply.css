@@ -53,6 +53,14 @@ margin.Reply div#background {
   border-radius: 100%;
   margin: 0.4rem;
 }
+.Reply section#body div#blank {
+  transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 100%;
+  margin: 0.4rem;
+}
 .Reply textarea#meme-text {
   border: none;
   outline: none;

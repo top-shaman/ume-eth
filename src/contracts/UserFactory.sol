@@ -31,7 +31,8 @@ contract UserFactory {
   function newUser(
             address _account,
             bytes32 _userName,
-            bytes32 _userAddress)
+            bytes32 _userAddress,
+            string memory _imgHash)
             public {
     require(
       msg.sender==signer,
@@ -45,7 +46,7 @@ contract UserFactory {
       block.timestamp, // user creation time
       _account, // address of user
       string(''), // bio
-      string(''), // profile pic
+      _imgHash, // profile pic
       new address[](0), // addresses of followers
       new address[](0), // addresses of following
       new address[](0), // addresses of unfollowers

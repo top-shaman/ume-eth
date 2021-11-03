@@ -25,8 +25,6 @@ class Enter extends React.Component {
     setTimeout(() => fadeIn('.Enter p#p3', 3000), 1000)
     setTimeout(() => lightBlurToFadeIn('.Enter p#title', 3000), 2500)
     setTimeout(() => {
-      const logo = document.querySelector('.Enter img')
-      logo.style.cursor = 'pointer'
       lightBlurToFadeIn('.Enter img', 5000)
     }, 3200)
     setTimeout(() => fadeIn('.Enter p#p4', 3000), 6500)

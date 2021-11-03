@@ -8,6 +8,7 @@ article.Enter {
   opacity: 0;
   margin: 1rem auto;
   max-width: 20rem;
+  cursor: pointer;
 }
 
 .Enter p {

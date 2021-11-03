@@ -6,6 +6,8 @@ import Web3 from 'web3'
 import './CreateUser.css'
 
 const toBytes = string => Web3.utils.fromAscii(string)
+const ipfsClient = require('ipfs-http-client'),
+      ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class CreateUser extends React.Component {
   constructor(props) {
@@ -24,7 +26,11 @@ class CreateUser extends React.Component {
       submitReady: false,
       registered: false,
       writing: false,
+      hash: ''
     }
+
+    this.img = React.createRef()
+
     this.handleUsernameChange = this.handleUsernameChange.bind(this)
     this.handleAddressChange = this.handleAddressChange.bind(this)
     this.handleUsernameFocus = this.handleUsernameFocus.bind(this)
@@ -32,6 +38,8 @@ class CreateUser extends React.Component {
     this.handleUsernameBlur = this.handleUsernameBlur.bind(this)
     this.handleAddressBlur = this.handleAddressBlur.bind(this)
     this.registerUser = this.registerUser.bind(this)
+
+    this.handleBuffer = this.handleBuffer.bind(this)
   }
 
   componentDidMount() {
@@ -69,6 +77,10 @@ class CreateUser extends React.Component {
   handleAddressBlur(e) {
     e.preventDefault()
     this.setState({ addressFocused: false })
+  }
+
+  handleBuffer(buffer) {
+    this.setState({ buffer })
   }
 
   checkUsername() {
@@ -214,39 +226,53 @@ class CreateUser extends React.Component {
     ])
     const username = toBytes(this.state.username)
     const address = toBytes('@' + this.state.address)
-    console.log(username + ' ' + address + ' submitted')
-    if(this.state.submitReady) {
-      await this.props.interface.methods.newUser(this.state.account, username, address)
-        .send({from: this.state.account})
-        .on('transactionHash', () => {
-          this.props.handleBanner([
-            'Writing',
-            'New User',
-            this.state.account + '-new-user'
-          ])
-          fadeOut('div.CreateUser', 300)
-          setTimeout(()=> this.props.handleRegistered('writing'), 300)
+    if(this.state.submitReady && this.state.buffer) {
+      const hash = await ipfs
+        .add(this.state.buffer, async (error, result) => {
+          console.log('IPFS result', result[0].hash)
+          if(error) {
+            console.error(error)
+            return ''
+          }
+          this.submitUser(this.state.account, username, address, result[0].hash)
         })
-        .on('receipt', () => {
-          this.props.handleBanner([
-            'Success',
-            'New User',
-            this.state.account + '-new-user'
-          ])
-          this.props.handleRegistered('registered')
-        })
-        .catch(e => {
-          this.props.handleBanner([
-            'Cancel',
-            'New User',
-            this.state.account + '-new-user'
-          ])
-          console.error(e)
-        })
-      //window.location.reload()
+    } else if(this.state.submitReady) {
+      this.submitUser(this.state.account, username, address, '')
     }
   }
-
+  async submitUser(account, username, address, hash) {
+    await this.props.interface.methods.newUser(account, username, address, hash)
+      .send({from: this.state.account})
+      .on('transactionHash', () => {
+        this.props.handleBanner([
+          'Writing',
+          'New User',
+          this.state.account + '-new-user'
+        ])
+        console.log(this.state.hash)
+        fadeOut('div.CreateUser', 300)
+        setTimeout(()=> this.props.handleRegistered('writing'), 300)
+      })
+      .on('receipt', () => {
+        this.props.handleBanner([
+          'Success',
+          'New User',
+          this.state.account + '-new-user'
+        ])
+        this.props.handleRegistered('registered')
+      })
+      .then(async () => {
+      })
+      .catch(e => {
+        this.props.handleBanner([
+          'Cancel',
+          'New User',
+          this.state.account + '-new-user'
+        ])
+        console.error(e)
+      })
+    console.log(username + ' ' + address + ' submitted')
+  }
 
   render() {
     return(
@@ -264,6 +290,8 @@ class CreateUser extends React.Component {
               interface={this.props.interface}
               userStorage={this.props.userStorage}
               handleBanner={this.handleBanner}
+              handleBuffer={this.handleBuffer}
+              ref={Ref=>this.img=Ref}
             />
           </div>
           <p id="address">

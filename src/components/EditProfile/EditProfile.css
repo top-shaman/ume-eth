@@ -75,6 +75,10 @@
   border-radius: 100%;
   margin: 0.8rem 0.4rem;
 }
+.EditProfile div#blank {
+  border-radius: 100%;
+  margin: 0.8rem 0.4rem;
+}
 .EditProfile div#profilePic {
   display: flex;
   flex-direction: column;

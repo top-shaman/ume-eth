@@ -44,6 +44,14 @@
 }
 .CreateMeme img#profile-pic {
   width: 3.3rem;
+  height: 3.3rem;
+  border-radius: 100%;
+  margin: 0.4rem 0.4rem;
+  transform: translateX(-0.3rem);
+  -moz-transform: translateX(-0.3rem);
+}
+.CreateMeme div#blank {
+  width: 3.3rem;
   height: auto;
   border-radius: 100%;
   margin: 0.4rem 0.4rem;

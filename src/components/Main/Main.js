@@ -67,6 +67,7 @@ class Main extends React.Component {
     this.handleSort = this.handleSort.bind(this)
     this.handleBack = this.handleBack.bind(this)
     this.handleBalance = this.handleBalance.bind(this)
+    this.handleImgHash = this.handleImgHash.bind(this)
 
     // page navigation handles
     this.handleToTimeline = this.handleToTimeline.bind(this)
@@ -293,6 +294,10 @@ class Main extends React.Component {
   handleBalance(umeBalance) {
     this.setState({ umeBalance })
   }
+  handleImgHash(imgHash) {
+    this.setState({ imgHash })
+    this.props.handleImgHash(imgHash)
+  }
   async handleBack(e) {
     const index = this.state.lastPage.length - 2,
           id = this.state.lastPage[index][1]
@@ -325,6 +330,7 @@ class Main extends React.Component {
         //sort: localStorage.getItem('timelineSort'),
         memeId: null
       })
+      this.stats.setInfo()
     }, 50)
     console.log('timeline loading: ' + this.state.timelineLoading)
   }
@@ -353,6 +359,7 @@ class Main extends React.Component {
           memeId: null
         })
       }
+      this.stats.setInfo()
     }, 50)
   }
 
@@ -371,6 +378,7 @@ class Main extends React.Component {
         this.setState({
           focusPage: 'thread'
         })
+        this.stats.setInfo()
       }
     }, 50)
   }
@@ -533,6 +541,7 @@ class Main extends React.Component {
                   userMemeCount={this.state.userMemeCount}
                   interface={this.state.interface}
                   loading={this.state.loading}
+                  imgHash={this.state.imgHash}
                   handleLoading={this.handleLoading}
                   handleRefresh={this.handleRefresh}
                   contractLoading={this.props.contractLoading}
@@ -603,6 +612,7 @@ class Main extends React.Component {
             account={this.state.account}
             userStorage={this.state.userStorage}
             memeStorage={this.state.memeStorage}
+            handleImgHash={this.handleImgHash}
             ume={this.state.ume}
             handleToProfile={this.handleToProfile}
             handleBalance={this.handleBalance}

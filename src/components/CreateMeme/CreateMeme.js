@@ -267,6 +267,8 @@ render() {
             <ProfilePic
               id="profilePic"
               account={this.props.account}
+              userStorage={this.state.userStorage}
+              imgHash={this.props.imgHash}
             />
           </div>
           <form id="form">

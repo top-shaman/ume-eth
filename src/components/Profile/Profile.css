@@ -51,6 +51,12 @@ div.Profile div#loaded p#loaded {
   transition: filter 0.2s ease-in-out;
   cursor: pointer;
 }
+.Profile div#Profile div#blank {
+  border: 0.05rem solid #CCDDDD;
+  border-radius: 50%;
+  transition: filter 0.2s ease-in-out;
+  cursor: pointer;
+}
 .Profile div#Profile img#profile-pic:hover {
   filter: brightness(0.9);
   transition: filter 0.2s ease-in-out;
@@ -172,6 +178,10 @@ div.Profile div#loaded p#loaded {
     white-space: pre-wrap;
   }
   div#Profile div#header img {
+    width: 3.5rem;
+    height: auto;
+  }
+  div#Profile div#header div#blank {
     width: 3.5rem;
     height: auto;
   }

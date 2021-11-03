@@ -20,6 +20,7 @@ class EditProfile extends React.Component {
       interface: this.props.interface,
       nameText: this.props.username,
       bioText: this.props.bio,
+      imgHash: this.props.imgHash,
       nameTextFocused: false,
       bioTextFocused: false,
       flagName: '',
@@ -109,7 +110,6 @@ class EditProfile extends React.Component {
     this.props.handleBanner(e)
   }
   async handleClose(e) {
-    e.preventDefault()
     await this.handleCloseClick(e)
   }
 
@@ -175,7 +175,7 @@ class EditProfile extends React.Component {
           ])
         })
         .catch(e => {
-          this.props.handleError([
+          this.props.handleBanner([
             'Cancel',
             'Bio Update',
             this.state.account + '-bio'
@@ -333,6 +333,7 @@ class EditProfile extends React.Component {
                 account={this.props.account}
                 interface={this.state.interface}
                 userStorage={this.state.userStorage}
+                imgHash={this.props.imgHash}
                 handleBuffer={this.handleBuffer}
                 handleBanner={this.handleBanner}
                 handleClose={this.handleClose}
