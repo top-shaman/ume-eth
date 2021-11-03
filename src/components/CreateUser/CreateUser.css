@@ -4,12 +4,14 @@ div#container.CreateUser {
 div#box {
   display: flex;
   flex-direction: column;
-  margin: 0 auto 8rem auto;
+  margin: 0 0.4rem 0.4rem 0.4rem;
   padding-top: 0.7rem;
   border-radius: 3rem;
   box-shadow: 0 0 0 0.1rem #00CC89;
-  width: 23rem;
+  width: 21rem;
   height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .CreateUser p#title {
   margin: 0 auto;
@@ -33,7 +35,7 @@ div#box {
 .CreateUser form#CreateUser{
   display: flex;
   flex-direction: column;
-  padding: 1rem 2rem 2rem 2rem;
+  padding: 1rem 1rem 2rem 1rem;
   justify-content: center;
 }
 .CreateUser div#profilePic div#isEditable div#banner {
@@ -55,6 +57,7 @@ div#box {
 }
 .CreateUser p#address {
   margin: 0.5rem auto 0 auto;
+  word-break: break-all;
   font-size: 1.2rem;
   font-weight: 500;
   font-family: 'Avenir', sans-serif;
@@ -63,6 +66,7 @@ div#box {
 .CreateUser p#description {
   font-family: 'Montserrat Alternates', sans-serif;
   font-size: 1.2rem;
+  margin-top: 1rem;
   font-weight: 300;
 }
 .CreateUser p {
@@ -162,4 +166,32 @@ div#box {
   font-family: Avenir;
   font-weight: 500;
   transition: box-shadow 0.5s ease-in-out;
+}
+
+@media screen and (max-width: 360px) {
+
+  div#box {
+    height: 100%;
+    margin: 0;
+    width: calc(100% - 0.2rem);
+    padding: 0;
+    box-shadow: none;
+  }
+  .CreateUser p#title {
+    display: none;
+  }
+  .CreateUser p#username {
+    margin: 0 0.2rem 1rem 0.2rem;
+    word-break: break-all;
+  }
+  .CreateUser p#address {
+    margin: 0 0.2rem 0 0.2rem;
+  }
+  .CreateUser p#description {
+    margin: 1.5rem 2.5rem;
+    line-height: 1.5rem;
+  }
+  .CreateUser form#CreateUser {
+    padding: 0;
+  }
 }

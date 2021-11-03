@@ -259,7 +259,7 @@ class ChildMeme extends React.Component {
   }
   handleDeletePopup(e) {
     console.log(e)
-    if(e.length==2) {
+    if(e.length===2) {
       this.props.handleDeletePopup(e)
     } else {
       this.props.handleDeletePopup([e, this.state.memeId])
@@ -513,7 +513,6 @@ class ChildMeme extends React.Component {
                       handleRefresh={this.handleRefresh}
                       handleLike={this.handleLike}
                       handleOverMeme={this.handleOverMeme}
-                      handleBanner={this.handleBanner}
                       atBottom={this.state.atBottom}
                       ref={Ref => this.childThread=Ref}
                       memeId={this.state.memeId}

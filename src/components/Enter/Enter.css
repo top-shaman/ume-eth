@@ -1,24 +1,29 @@
 div.Enter {
   margin: auto;
+  max-width: 22rem;
 }
 article.Enter {
   margin: 0 auto 10rem auto;
 }
 .Enter img {
   opacity: 0;
-  margin: 1rem auto;
-  max-width: 20rem;
+  margin: 1rem;
+  width: calc(100% - 2rem);
   cursor: pointer;
 }
 
 .Enter p {
+  font-size: 1rem;
   line-height: 2rem;
+  word-break: break-word;
 }
 
 .Enter p#title{
   opacity: 0;
   font-size: 5rem;
   line-height: 4rem;
+  word-break: initial;
+  word-wrap: none;
   font-family: 'MuseoModerno', sans-serif;
   margin: 2rem auto 1rem auto;
 }
@@ -27,6 +32,7 @@ article.Enter {
   opacity: 0;
 }
 .Enter p#p2 {
+  font-size: 0.9rem;
   opacity: 0;
 }
 .Enter p#p3 {
@@ -36,3 +42,14 @@ article.Enter {
   opacity: 0;
 }
 
+@media screen and (max-width: 400px) {
+  .Enter p#p2 {
+    line-height: 1rem;
+    margin: auto 2rem;
+  }
+}
+@media screen and (max-width: 200px) {
+  .Enter p#title {
+    font-size: 4rem;
+  }
+}

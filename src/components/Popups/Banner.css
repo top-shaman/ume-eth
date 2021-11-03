@@ -101,7 +101,12 @@ div.Banner div#body {
   }
 }
 @media screen and (max-width: 400px) {
-  .Banner div#container {
+  div.Banners {
+    margin-left: -5.25rem;
+  }
+  div.Banner div#container,
+  div.Banner div#container-loading,
+  div.Banner div#container-writing {
     width: 10rem;
   }
 }

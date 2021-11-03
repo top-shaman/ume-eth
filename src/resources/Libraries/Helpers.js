@@ -40,7 +40,7 @@ export const isolatePlain = async text => {
       count++
     }
   }
-  if(plainMap.length===0 && indices.length==0) {
+  if(plainMap.length===0 && indices.length===0) {
     plainMap.push([0, split[0], 'plain'])
   }
   return plainMap

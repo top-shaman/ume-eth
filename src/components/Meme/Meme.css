@@ -160,7 +160,8 @@ div.Meme:hover {
   padding: 0.2rem;
   flex-direction: row;
   flex-wrap: nowrap;
-  min-width: 2rem;
+  width: min-content;
+  white-space: pre;
   justify-content: space-between;
   border-radius: 1rem;
   position: relative;
@@ -185,4 +186,14 @@ div.Meme:hover {
 .Meme img#downvote {
   transform: rotate(180deg);
   -moz-transform: rotate(180deg);
+}
+
+@media screen and (max-width: 385px) {
+  .Meme div#meme-footer p {
+    margin: 0.15rem 0;
+  }
+  .Meme div#meme-footer p.upvote,
+  .Meme div#meme-footer p.downvote {
+    width: 1.1rem;
+  }
 }

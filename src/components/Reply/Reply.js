@@ -47,8 +47,8 @@ class Reply extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize)
-    const background = document.querySelector('div#background'),
-          container = document.querySelector('div#container')
+    const background = document.querySelector('.Reply div#background'),
+          container = document.querySelector('.Reply div#container')
     background.style.top = this.props.offsetY + 'px'
     container.style.top = 'calc(15% + ' +this.props.offsetY + 'px)'
     if(window.innerWidth<580) {
@@ -80,7 +80,7 @@ class Reply extends React.Component {
 
   componentDidUpdate() {
     const container = document.querySelector('.Reply div#container'),
-          background = document.querySelector('div#background')
+          background = document.querySelector('.Reply div#background')
     background.style.top = this.props.offsetY + 'px'
     if(this.state.windowWidth!==window.innerWidth) {
       this.setState({ windowWidth: window.innerWidth })

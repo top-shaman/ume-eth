@@ -169,6 +169,12 @@ div.Profile div#loaded p#loaded {
   font-weight: 800;
 }
 
+@media screen and (max-width: 485px) {
+  div#Profile div#header img {
+    width: 4rem;
+    height: auto;
+  }
+}
 @media screen and (max-width: 380px) {
   .Main div#subheader span#memes {
     display: none;
@@ -184,5 +190,10 @@ div.Profile div#loaded p#loaded {
   div#Profile div#header div#blank {
     width: 3.5rem;
     height: auto;
+  }
+}
+@media screen and (max-width: 275px) {
+  div#Profile div#header div#right p {
+    display: none;
   }
 }

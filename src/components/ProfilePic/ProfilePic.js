@@ -17,6 +17,7 @@ class ProfilePic extends React.Component {
       interface: this.props.interface,
       url: null,
       imgHash: this.props.imgHash,
+      registered: this.props.registered,
       loading: false,
       preview: null,
       tempFile: null
@@ -95,32 +96,36 @@ class ProfilePic extends React.Component {
         return
       }
       // add image to User
-      this.state.interface.methods
-        .newProfilePic(this.state.account, result[0].hash)
-        .send({from: this.state.account})
-        .on('transactionHash', () => {
-          this.props.handleBanner([
-            'Writing',
-            'Profile Pic',
-            this.state.account + '-profile-pic'
-          ])
-          this.props.handleClose()
-        })
-        .on('receipt', () => {
-          this.props.handleBanner([
-            'Success',
-            'Profile Pic',
-            this.state.account + '-profile-pic'
-          ])
-        })
-        .catch(e => {
-          this.props.handleBanner([
-            'Cancel',
-            'Profile Pic',
-            this.state.account + '-profile-pic'
-          ])
-          console.error(e)
-        })
+      if(this.state.registered) {
+        this.state.interface.methods
+          .newProfilePic(this.state.account, result[0].hash)
+          .send({from: this.state.account})
+          .on('transactionHash', () => {
+            this.props.handleBanner([
+              'Writing',
+              'Profile Pic',
+              this.state.account + '-profile-pic'
+            ])
+            this.props.handleClose()
+          })
+          .on('receipt', () => {
+            this.props.handleBanner([
+              'Success',
+              'Profile Pic',
+              this.state.account + '-profile-pic'
+            ])
+          })
+          .catch(e => {
+            this.props.handleBanner([
+              'Cancel',
+              'Profile Pic',
+              this.state.account + '-profile-pic'
+            ])
+            console.error(e)
+          })
+      } else {
+        this.props.handleHash(result[0].hash)
+      }
       console.log('from: ' + this.state.account)
     })
     return hash
@@ -137,16 +142,16 @@ class ProfilePic extends React.Component {
                         ? <img
                             className="ProfilePic"
                             id="profile-pic"
-                            width="140"
-                            height="140"
+                            width="140px"
+                            height="140px"
                             alt="profile-pic"
                             src={this.state.preview}
                             ref={Ref=>this.preview=Ref}
                           />
                         : <img
                             className="ProfilePic" id="profile-pic"
-                            width="140"
-                            height="140"
+                            width="140px"
+                            height="140px"
                             alt="profile-pic"
                             src={this.state.url}
                             ref={Ref=>this.img=Ref}
@@ -165,8 +170,8 @@ class ProfilePic extends React.Component {
                     className="ProfilePic"
                     id="profile-pic"
                     alt="profile-pic"
-                    width="140"
-                    height="140"
+                    width="140px"
+                    height="140px"
                     src={this.state.url}
                     ref={Ref=>this.img=Ref}
                   />

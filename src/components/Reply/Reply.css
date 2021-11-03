@@ -1,4 +1,4 @@
-margin.Reply div#background {
+.Reply div#background {
   z-index: 8;
   display:block;
   position: fixed;

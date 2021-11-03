@@ -9,7 +9,6 @@ div#profilePic div#blank {
   margin: 0;
   padding: 0;
   background-color: #1D1F22;
-  animation: pulse 1s linear infinite;
 }
 div#profilePic div#isEditable {
   position: relative;

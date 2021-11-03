@@ -122,12 +122,13 @@ class App extends React.Component {
     console.log('registered: ' + e)
     if(e==='writing')
       this.setState({ writing: true })
-    else if(e==='registered')
+    else if(e==='registered') {
       expandToFadeOut('div.PageLoader', 1000)
       setTimeout(()=> this.setState({
         registered: true,
         writing: false
       }), 1000)
+    }
   }
   handleToProfile(e) {
     this.main.handleToProfile(e)
@@ -271,6 +272,7 @@ class App extends React.Component {
       if (this.state.account!==undefined) {
         console.log('account disconnected')
         this.setState({
+          writing: false,
           registered: false,
           contractLoading: true
         })
@@ -279,7 +281,11 @@ class App extends React.Component {
         this.request()
       } else if (this.state.account===undefined) { // account works
         console.log('account connected')
-        this.setState({ contractLoading: true })
+        this.setState({
+          writing: false,
+          registered: false,
+          contractLoading: true
+        })
         this.loadContracts().catch(e => console.error(e))
       }
     })
@@ -383,6 +389,7 @@ class App extends React.Component {
     else {
       window.alert('UME not deployed to detected network.\n' +
                     'Please connect to Ropsten Ethereum Test Network.')
+      this.setState({ contractLoading: false })
     }
   }
 
@@ -394,7 +401,10 @@ class App extends React.Component {
     }
     if(await profileExists()) {
       console.log('account exists')
-      this.setState({ registered: true })
+      this.setState({
+        writing: false,
+        registered: true
+      })
     } else if(window.ethereum) {
       this.setState({ registered: false })
       console.log('wallet not connected')
@@ -412,104 +422,104 @@ class App extends React.Component {
         <div className="Banners">{ this.state.banners }</div>
         { !this.state.validBrowser
             ? <NotSupported/>
-            : this.state.contractLoading && this.state.account!==undefined
+            : this.state.contractLoading && this.state.account!==undefined && !this.state.registered
                 ? <PageLoader/>
                 : this.state.account===undefined
                   ? this.state.metaMask
                       ? <NoWallet />
                       : <NoMetaMask />
-                  : this.state.registered
-                    ? <div
-                        id="App-body"
-                        className="App"
-                        onScroll={this.handleScroll}
-                        ref={Ref=>this.app=Ref}
-                      >
-                        { this.state.creatingMeme || this.state.replying || this.state.editing
-                          ? this.state.creatingMeme
-                            ? <CreateMeme
-                                account={this.state.account}
-                                offsetY={this.state.offsetY}
-                                handleExitCreate={this.handleExitCreate}
-                                handleBanner={this.handleBanner}
-                                imgHash={this.state.imgHash}
-                                userStorage={this.state.userStorage}
-                                interface={this.state.interface}
-                              />
-                            : this.state.replying
-                              ? <Reply
+                  : this.state.registered && !this.state.writing
+                      ? <div
+                          id="App-body"
+                          className="App"
+                          onScroll={this.handleScroll}
+                          ref={Ref=>this.app=Ref}
+                        >
+                          { this.state.creatingMeme || this.state.replying || this.state.editing
+                            ? this.state.creatingMeme
+                              ? <CreateMeme
                                   account={this.state.account}
-                                  username={this.state.replying[0]}
-                                  address={this.state.replying[1]}
-                                  author={this.state.replying[2]}
-                                  text={this.state.replying[3]}
-                                  memeId={this.state.replying[4]}
-                                  parentId={this.state.replying[5]}
-                                  originId={this.state.replying[6]}
                                   offsetY={this.state.offsetY}
-                                  handleExitReply={this.handleExitReply}
-                                  handleToProfile={this.handleToProfile}
+                                  handleExitCreate={this.handleExitCreate}
                                   handleBanner={this.handleBanner}
                                   imgHash={this.state.imgHash}
                                   userStorage={this.state.userStorage}
-                                  memeStorage={this.state.memeStorage}
                                   interface={this.state.interface}
                                 />
-                              : this.state.editing
-                                ? <EditProfile
+                              : this.state.replying
+                                ? <Reply
                                     account={this.state.account}
-                                    username={this.state.editing[0]}
-                                    address={this.state.editing[1]}
-                                    bio={this.state.editing[2]}
+                                    username={this.state.replying[0]}
+                                    address={this.state.replying[1]}
+                                    author={this.state.replying[2]}
+                                    text={this.state.replying[3]}
+                                    memeId={this.state.replying[4]}
+                                    parentId={this.state.replying[5]}
+                                    originId={this.state.replying[6]}
                                     offsetY={this.state.offsetY}
-                                    imgHash={this.state.imgHash}
-                                    handleExitEdit={this.handleExitEdit}
+                                    handleExitReply={this.handleExitReply}
+                                    handleToProfile={this.handleToProfile}
                                     handleBanner={this.handleBanner}
+                                    imgHash={this.state.imgHash}
                                     userStorage={this.state.userStorage}
+                                    memeStorage={this.state.memeStorage}
                                     interface={this.state.interface}
                                   />
-                                : ''
-                          : ''
-                        }
-                        <Main
-                          account={this.state.account}
-                          userStorage={this.state.userStorage}
-                          memeStorage={this.state.memeStorage}
-                          interface={this.state.interface}
-                          ume={this.state.ume}
-                          memeCount={this.state.memeCount}
-                          userMemeCount={this.state.userMemeCount}
-                          umeBalance={this.state.umeBalance}
-                          memeIdsByBoost={this.state.memeIdsByBoost}
-                          contractLoading={this.state.contractLoading}
-                          atBottom={this.state.atBottom}
-                          offsetY={this.state.offsetY}
-                          handleCreateMeme={this.handleCreateMeme}
-                          handleReply={this.handleReply}
-                          handleEdit={this.handleEdit}
-                          handleBanner={this.handleBanner}
-                          handleImgHash={this.handleImgHash}
-                          handleProfileChange={this.handleProfileChange}
-                          ref={Ref=>this.main=Ref}
-                        />
-                      </div>
-                    : this.state.entered
-                      ? this.state.writing
-                          ? <PageLoader/>
-                          : !this.state.hasEth
-                              ? <NoEth/>
-                              : <CreateUser
-                                  account={this.state.account}
-                                  handleRegistered={this.handleRegistered}
-                                  interface={this.state.interface}
-                                  userStorage={this.state.userStorage}
-                                  handleBanner={this.handleBanner}
-                                />
-                      : <Enter
-                          account={this.state.account}
-                          hasEntered={this.handleEntered}
-                          contractLoading={this.state.contractLoading}
-                        />
+                                : this.state.editing
+                                  ? <EditProfile
+                                      account={this.state.account}
+                                      username={this.state.editing[0]}
+                                      address={this.state.editing[1]}
+                                      bio={this.state.editing[2]}
+                                      offsetY={this.state.offsetY}
+                                      imgHash={this.state.imgHash}
+                                      handleExitEdit={this.handleExitEdit}
+                                      handleBanner={this.handleBanner}
+                                      userStorage={this.state.userStorage}
+                                      interface={this.state.interface}
+                                    />
+                                  : ''
+                            : ''
+                          }
+                          <Main
+                            account={this.state.account}
+                            userStorage={this.state.userStorage}
+                            memeStorage={this.state.memeStorage}
+                            interface={this.state.interface}
+                            ume={this.state.ume}
+                            memeCount={this.state.memeCount}
+                            userMemeCount={this.state.userMemeCount}
+                            umeBalance={this.state.umeBalance}
+                            memeIdsByBoost={this.state.memeIdsByBoost}
+                            contractLoading={this.state.contractLoading}
+                            atBottom={this.state.atBottom}
+                            offsetY={this.state.offsetY}
+                            handleCreateMeme={this.handleCreateMeme}
+                            handleReply={this.handleReply}
+                            handleEdit={this.handleEdit}
+                            handleBanner={this.handleBanner}
+                            handleImgHash={this.handleImgHash}
+                            handleProfileChange={this.handleProfileChange}
+                            ref={Ref=>this.main=Ref}
+                          />
+                        </div>
+                      : this.state.entered
+                        ? this.state.writing
+                            ? <PageLoader/>
+                            : !this.state.hasEth
+                                ? <NoEth/>
+                                : <CreateUser
+                                    account={this.state.account}
+                                    handleRegistered={this.handleRegistered}
+                                    interface={this.state.interface}
+                                    userStorage={this.state.userStorage}
+                                    handleBanner={this.handleBanner}
+                                  />
+                        : <Enter
+                            account={this.state.account}
+                            hasEntered={this.handleEntered}
+                            contractLoading={this.state.contractLoading}
+                          />
         }
       </div>
     );

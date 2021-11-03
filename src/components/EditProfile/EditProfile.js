@@ -189,7 +189,7 @@ class EditProfile extends React.Component {
         'Profile Pic',
         this.state.account + '-profile-pic'
       ])
-      this.img.uploadImage()
+      await this.img.uploadImage()
     }
   }
   async handleCloseClick(e) {
@@ -337,6 +337,7 @@ class EditProfile extends React.Component {
                 handleBuffer={this.handleBuffer}
                 handleBanner={this.handleBanner}
                 handleClose={this.handleClose}
+                registered={true}
                 ref={Ref=>this.img=Ref}
               />
             </div>

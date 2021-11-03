@@ -1,13 +1,9 @@
 import React from 'react'
 import ProfilePic from '../ProfilePic/ProfilePic'
-import PageLoader from '../Loader/PageLoader'
 import { fadeIn, fadeOut } from '../../resources/Libraries/Animation'
-import Web3 from 'web3'
+import { toBytes } from '../../resources/Libraries/Helpers'
 import './CreateUser.css'
 
-const toBytes = string => Web3.utils.fromAscii(string)
-const ipfsClient = require('ipfs-http-client'),
-      ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class CreateUser extends React.Component {
   constructor(props) {
@@ -40,9 +36,12 @@ class CreateUser extends React.Component {
     this.registerUser = this.registerUser.bind(this)
 
     this.handleBuffer = this.handleBuffer.bind(this)
+    this.handleHash = this.handleHash.bind(this)
   }
 
   componentDidMount() {
+    const app = document.querySelector('div.App')
+    app.style.overflow = 'scroll'
     fadeIn('div#container.CreateUser', 1500)
   }
   componentDidUpdate() {
@@ -52,6 +51,8 @@ class CreateUser extends React.Component {
   }
 
   componentWillUnmount() {
+    const app = document.querySelector('div.App')
+    app.style.overflow = 'hidden'
     fadeOut('div#container.CreateUser', 1500)
   }
   handleUsernameChange(e) {
@@ -81,6 +82,9 @@ class CreateUser extends React.Component {
 
   handleBuffer(buffer) {
     this.setState({ buffer })
+  }
+  async handleHash(hash) {
+    await this.submitUser(this.state.account, this.state.username, this.state.address, hash)
   }
 
   checkUsername() {
@@ -224,19 +228,15 @@ class CreateUser extends React.Component {
       'New User',
       this.state.account + '-new-user'
     ])
-    const username = toBytes(this.state.username)
-    const address = toBytes('@' + this.state.address)
-    if(this.state.submitReady && this.state.buffer) {
-      const hash = await ipfs
-        .add(this.state.buffer, async (error, result) => {
-          console.log('IPFS result', result[0].hash)
-          if(error) {
-            console.error(error)
-            return ''
-          }
-          this.submitUser(this.state.account, username, address, result[0].hash)
-        })
-    } else if(this.state.submitReady) {
+    const username = await toBytes(this.state.username),
+          address = await toBytes('@' + this.state.address)
+    this.setState({
+      username,
+      address
+    })
+    if(this.state.buffer) {
+      this.img.uploadImage()
+    } else {
       this.submitUser(this.state.account, username, address, '')
     }
   }
@@ -259,11 +259,10 @@ class CreateUser extends React.Component {
           'New User',
           this.state.account + '-new-user'
         ])
-        this.props.handleRegistered('registered')
-      })
-      .then(async () => {
+        setTimeout(()=> this.props.handleRegistered('registered'), 300)
       })
       .catch(e => {
+        this.setState({ writing: false })
         this.props.handleBanner([
           'Cancel',
           'New User',
@@ -291,6 +290,8 @@ class CreateUser extends React.Component {
               userStorage={this.props.userStorage}
               handleBanner={this.handleBanner}
               handleBuffer={this.handleBuffer}
+              handleHash={this.handleHash}
+              registered={false}
               ref={Ref=>this.img=Ref}
             />
           </div>

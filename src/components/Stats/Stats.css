@@ -31,9 +31,10 @@ div#stats div#stats-header {
 }
 
 div#stats div#stats-header img {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 4rem;
+  height: 4rem;
   margin: 0 auto;
+  border: 0.13rem solid #CCDDDD;
   border-radius: 50%;
 }
 div#stats div#stats-header div#blank {
@@ -114,6 +115,10 @@ div#stats p#balance img {
   div#stats-container {
     display: flex;
     width: min-content;
+  }
+  div#stats div#stats-header img {
+    width: 3.2rem;
+    height: 3.2rem;
   }
   div#stats {
     display: flex;
