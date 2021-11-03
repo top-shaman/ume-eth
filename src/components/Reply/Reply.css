@@ -1,4 +1,4 @@
-.Reply div#background {
+margin.Reply div#background {
   z-index: 8;
   display:block;
   position: fixed;
@@ -49,7 +49,7 @@
   transform: translateX(-0.3rem);
   -moz-transform: translateX(-0.3rem);
   width: 3rem;
-  height: auto;
+  height: 3rem;
   border-radius: 100%;
   margin: 0.4rem;
 }

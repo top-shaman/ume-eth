@@ -57,7 +57,8 @@ div.Meme:hover {
 }
 .Meme img#profile-pic {
   width: 3rem;
-  height: auto;
+  height: 3rem;
+  object-fit: cover;
   border-radius: 100%;
   margin: 0;
   border: 0.05rem solid rgb(0,0,0,0);

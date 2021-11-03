@@ -45,7 +45,10 @@ class Stats extends React.Component {
           memes = await this.state.userStorage.methods.getPostCount(this.state.account).call().then(elem => parseInt(elem)),
           totalLikes = await this.calculateLikes(),
           followers = await this.state.userStorage.methods.getFollowerCount(this.state.account).call(),
-      umeBalance = await this.state.ume.methods.balanceOf(this.state.account).call().then(balance => new Intl.NumberFormat('en-IN', {}).format(balance))
+          umeBalance = await this.state.ume.methods.balanceOf(this.state.account).call()
+                       .then(balance => Math.floor(balance / (10**18)))
+                       .then(balance => new Intl.NumberFormat('en-IN', {}).format(balance))
+
     this.setState({
       username,
       address,

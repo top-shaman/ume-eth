@@ -1,7 +1,25 @@
-img#profilePic {
-  width: inherit;
+img#profile-pic {
   margin: 0;
+  object-fit: cover;
 }
 div#profilePic {
   margin: 0;
+}
+
+div#profilePic input[type=file]::file-selector-button,
+div#profilePic input[type=file]::-webkit-file-upload-button {
+  margin-left: 0.7rem;
+  background-color: #282c34;
+  color: #00CC89;
+  border: 0.1rem solid #00CC89;
+  border-radius: 0.4rem;
+  padding: 0.2rem 0.3rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+div#profilePic input[type=file]::file-selector-button:hover,
+div#profilePic input[type=file]::-webkit-file-upload-button:hover {
+  background-color: #444444;
+  color: #00CC89;
+  transition: background-color 0.2s ease-in-out;
 }

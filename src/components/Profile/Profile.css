@@ -43,6 +43,7 @@ div.Profile div#loaded p#loaded {
 }
 .Profile div#Profile div#profilePic {
   text-align: left;
+  margin-bottom: 0.5rem;
 }
 .Profile div#Profile img#profile-pic {
   border: 0.05rem solid #CCDDDD;

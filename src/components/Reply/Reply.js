@@ -297,6 +297,7 @@ class Reply extends React.Component {
               <ProfilePic
                 id="profilePic"
                 account={this.state.account}
+                userStorage={this.state.userStorage}
               />
             </div>
             <form id="form">

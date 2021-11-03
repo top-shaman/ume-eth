@@ -37,7 +37,7 @@ div.ReplyInThread#ReplyInThread {
 .ReplyInThread div#reply-profilePic img#profile-pic {
   position: relative;
   width: 3rem;
-  height: auto;
+  height: 3rem;
   border-radius: 100%;
   margin: 0.4rem 0.2rem 0 0;
   transform: translateX(-0.25rem);

@@ -168,7 +168,7 @@ div.ReplyMeme {
 }
 .ReplyMeme div#parentProfilePic div#profilePic img#profile-pic.ProfilePic {
   width: 3rem;
-  height: auto;
+  height: 3rem;
   border-radius: 100%;
   position: relative;
   margin: 0 auto;

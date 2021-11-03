@@ -24,6 +24,7 @@ class EditProfile extends React.Component {
       bioTextFocused: false,
       flagName: '',
       flagBio: '',
+      buffer: null,
       isClickable: false
     }
 
@@ -31,6 +32,7 @@ class EditProfile extends React.Component {
     this.nameBox = React.createRef()
     this.textareaBio = React.createRef()
     this.bioBox = React.createRef()
+    this.img = React.createRef()
 
     this.handleNameTextChange = this.handleNameTextChange.bind(this)
     this.handleNameTextFocus = this.handleNameTextFocus.bind(this)
@@ -39,6 +41,10 @@ class EditProfile extends React.Component {
     this.handleBioTextChange = this.handleBioTextChange.bind(this)
     this.handleBioTextFocus = this.handleBioTextFocus.bind(this)
     this.handleBioTextBlur = this.handleBioTextBlur.bind(this)
+
+    this.handleBuffer = this.handleBuffer.bind(this)
+    this.handleBanner = this.handleBanner.bind(this)
+    this.handleClose = this.handleClose.bind(this)
 
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCloseClick = this.handleCloseClick.bind(this)
@@ -95,6 +101,18 @@ class EditProfile extends React.Component {
   handleBioTextBlur(e) {
     this.setState({ bioTextFocused: false })
   }
+
+  handleBuffer(buffer) {
+    this.setState({ buffer })
+  }
+  handleBanner(e) {
+    this.props.handleBanner(e)
+  }
+  async handleClose(e) {
+    e.preventDefault()
+    await this.handleCloseClick(e)
+  }
+
   async handleSaveClick(e) {
     if(this.state.username!==this.state.nameText && !this.state.flagName) {
       this.props.handleBanner([
@@ -159,11 +177,19 @@ class EditProfile extends React.Component {
         .catch(e => {
           this.props.handleError([
             'Cancel',
-            'BioUpdate',
+            'Bio Update',
             this.state.account + '-bio'
           ])
           console.error(e)
         })
+    }
+    if(this.state.buffer) {
+      this.props.handleBanner([
+        'Waiting',
+        'Profile Pic',
+        this.state.account + '-profile-pic'
+      ])
+      this.img.uploadImage()
     }
   }
   async handleCloseClick(e) {
@@ -262,12 +288,9 @@ class EditProfile extends React.Component {
   }
   updateButton() {
     const button = document.querySelector('.EditProfile p#save-button')
-    if(this.state.username!==this.state.nameText && !this.state.flagName) {
-      button.style.cursor = 'pointer'
-      button.style.backgroundColor = '#00CC89'
-      button.style.color = '#FFFFFF'
-      //this.setState({ isClickable: true })
-    } else if(this.state.bio!==this.state.bioText) {
+    if((this.state.username!==this.state.nameText && !this.state.flagName) ||
+        this.state.bio!==this.state.bioText ||
+        this.state.buffer) {
       button.style.cursor = 'pointer'
       button.style.backgroundColor = '#00CC89'
       button.style.color = '#FFFFFF'
@@ -310,7 +333,10 @@ class EditProfile extends React.Component {
                 account={this.props.account}
                 interface={this.state.interface}
                 userStorage={this.state.userStorage}
+                handleBuffer={this.handleBuffer}
                 handleBanner={this.handleBanner}
+                handleClose={this.handleClose}
+                ref={Ref=>this.img=Ref}
               />
             </div>
             <form id="form">

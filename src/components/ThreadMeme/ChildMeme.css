@@ -59,7 +59,7 @@ div.ChildMeme:hover {
 }
 .ChildMeme img#profile-pic {
   width: 3rem;
-  height: auto;
+  height: 3rem;
   border-radius: 100%;
   margin: 0;
   border: 0.05rem solid rgb(0,0,0,0);

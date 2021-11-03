@@ -301,6 +301,7 @@ class ReplyInThread extends React.Component {
               <ProfilePic
                 id="profilePic"
                 account={this.props.userAccount}
+                userStorage={this.state.userStorage}
               />
             </div>
             <form id="reply-form">

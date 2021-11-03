@@ -32,8 +32,8 @@ div#stats div#stats-header {
 
 div#stats div#stats-header img {
   width: 3.5rem;
+  height: 3.5rem;
   margin: 0 auto;
-  height: auto;
   border-radius: 50%;
 }
 

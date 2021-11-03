@@ -112,7 +112,11 @@ class ReplyMeme extends Component {
         <div
           id="parentProfilePic"
         >
-          <ProfilePic account={this.state.author} id="ReplyMeme"/>
+          <ProfilePic
+            account={this.state.author}
+            id="ReplyMeme"
+            userStorage={this.state.userStorage}
+          />
           <div className="vl"/>
         </div>
         <div id="meme-body">
