@@ -48,7 +48,7 @@ class App extends React.Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       metaMask: false,
-      hasEth: true,//false,
+      hasEth: false,
       validBrowser: false
     }
 

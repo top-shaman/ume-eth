@@ -39791,7 +39791,7 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "bytes32",
               "name": "memeId",
               "type": "bytes32"
@@ -39816,7 +39816,7 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "bytes32",
               "name": "memeId",
               "type": "bytes32"
@@ -39860,13 +39860,13 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "from",
               "type": "address"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "to",
               "type": "address"
@@ -39877,8 +39877,8 @@
         }
       },
       "links": {},
-      "address": "0x74a98040D18660a290C24A10E9273f57038053a3",
-      "transactionHash": "0x749c0918dc5e8c06dcbcea3c246b68035b9fba22011066b6e48308c63155d16e"
+      "address": "0x35a98FB9b7c35B3EAd02B22d197cC4ba4919A699",
+      "transactionHash": "0xf3181d00b051517174020f85fa3c869056e68504fe6c5bf269984764932be654"
     },
     "1630295019026": {
       "events": {
@@ -42827,7 +42827,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T08:44:39.290Z",
+  "updatedAt": "2021-11-03T10:48:21.208Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

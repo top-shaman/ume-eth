@@ -23007,11 +23007,30 @@
           ],
           "name": "InterfaceSignerChanged",
           "type": "event"
+        },
+        "0xf4c7c8319889522b975200d5ea7248189357b673b0053f977a724d31f6a55732": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "liker",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Liked",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0xf6a48a3783485615615fcbE4a4D2d800DD721872",
-      "transactionHash": "0xd802fa7902da1e3517a64a18bad8f8c849de8917285b7ead9a15fb6b82f20366"
+      "address": "0xB4bec3cFFFa4ea028e692Ee768b29f2AB02c10df",
+      "transactionHash": "0xbb85d8a48f47db6a021071700d2d627174a90cf242d18e5cd3b7c675ca91d41d"
     },
     "1630295019026": {
       "events": {
@@ -23916,7 +23935,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T08:44:39.201Z",
+  "updatedAt": "2021-11-03T10:48:21.151Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

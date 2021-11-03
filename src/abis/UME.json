@@ -41987,11 +41987,61 @@
           ],
           "name": "Transfer",
           "type": "event"
+        },
+        "0xf2cb5e52049d127ad1c335f1cc25f2fdbc911bec1beb2611f4c1e8b1c274d4b4": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "flag",
+              "type": "string"
+            }
+          ],
+          "name": "Minted",
+          "type": "event"
+        },
+        "0xf1511333f5f2fb77f74ba02751546dcae093e522147abff4f4ceadf9992ef7d5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "ValueSignerChanged",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x00862e949d276Cf927e005ac96D836dBa451ed70",
-      "transactionHash": "0xe7b3e9d7da11216f36458d69f74998b84ac0cafecb810b05b50c63e6a796ad12"
+      "address": "0xF4F8F97Fea649124640472D79966ab17c75f2257",
+      "transactionHash": "0x717c84fe8660048a90d6d02639c0034e5d08dd89f082c66de2be20e9a73e10b8"
     },
     "1630295019026": {
       "events": {
@@ -47664,7 +47714,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T08:44:39.778Z",
+  "updatedAt": "2021-11-03T10:48:21.330Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

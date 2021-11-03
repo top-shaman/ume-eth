@@ -27214,11 +27214,30 @@
           ],
           "name": "FollowSignerChanged",
           "type": "event"
+        },
+        "0x6178e95c138f06036cdc07a49ed6a3d23008969fa143baeceb037ebae22e8d14": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "following",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "followed",
+              "type": "address"
+            }
+          ],
+          "name": "Followed",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x9021242574b6662b665EdD78C49a1154f21C60aE",
-      "transactionHash": "0x674672ac98cc560df3c4c45f45d8da4ddf966ba226bda9372585757f8ad12f52"
+      "address": "0x423850cAc55347f7c332bfF8A6ad05513e732A4D",
+      "transactionHash": "0xf49d0386cf93789950b777726c7a4532de8e898862c3babe2feb0f48f84bf015"
     },
     "1630295019026": {
       "events": {
@@ -28123,7 +28142,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T08:44:39.230Z",
+  "updatedAt": "2021-11-03T10:48:21.167Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

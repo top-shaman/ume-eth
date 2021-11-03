@@ -22864,13 +22864,13 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "from",
               "type": "address"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "to",
               "type": "address"
@@ -22878,11 +22878,118 @@
           ],
           "name": "InterfaceSignerChanged",
           "type": "event"
+        },
+        "0x053020ef2153302ab1b8d538cea2a0b592dadeb160f4ddc3ecc39536f3416d66": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "demoter",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Demote",
+          "type": "event"
+        },
+        "0x5f8b18be53cdf9843c4263461966fc46896a2d372d3fa87fc22f6cfed0241862": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "FactorySignerChanged",
+          "type": "event"
+        },
+        "0x2364065f519eb2e0ac13040d65b1d1140f6677de0518b6dee6954e49f7f7a5b6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "LikeSignerChanged",
+          "type": "event"
+        },
+        "0xaf3129821ba0980fd100074f6d610c2003b00e3ae4053f07fc752e5085275818": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "promoter",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "memeId",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Promote",
+          "type": "event"
+        },
+        "0xf1511333f5f2fb77f74ba02751546dcae093e522147abff4f4ceadf9992ef7d5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "ValueSignerChanged",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0xb63197f0b90430A9c0211fB63f637F96C5221570",
-      "transactionHash": "0x07934c8fc8991bc21f27dfae75ddf2d4c0fa25935acb57f135576551689c111e"
+      "address": "0xc23B6848E3D9f49b57F598AD210835257224f171",
+      "transactionHash": "0x61ba95355ad5cafe29c6de68823772b5f2fcc486767eae7f558407209c8ae612"
     },
     "1630295019026": {
       "events": {
@@ -24227,7 +24334,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T08:44:39.259Z",
+  "updatedAt": "2021-11-03T10:48:21.184Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
